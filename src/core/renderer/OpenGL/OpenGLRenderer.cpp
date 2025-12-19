@@ -199,6 +199,15 @@ void OpenGLRenderer::setIcon(std::shared_ptr<PS2Icon::Icon> icon)
 	}
 }
 
+void OpenGLRenderer::setAnimationEnabled(bool enabled)
+{
+	m_animationEnabled = enabled;
+	if (!enabled)
+	{
+		prepareVertexData();
+	}
+}
+
 void OpenGLRenderer::prepareVertexData()
 {
 	if (!m_icon || !m_context)

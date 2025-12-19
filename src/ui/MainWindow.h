@@ -14,6 +14,8 @@ class QStatusBar;
 class QLabel;
 class Config;
 
+#include "ui_MainWindow.h"
+
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -46,40 +48,13 @@ private slots:
 	void onCardItemDoubleClicked();
 
 private:
-	void setupUI();
-	void createActions();
-	void createMenus();
-	void createToolbar();
 	void updateCardView();
 	void updateStatusBar();
 	void updateForceImportWarning();
 	void closeCard();
 
-	MemoryCardBrowser* cardBrowser;
-	SaveDetailsPanel* detailsPanel;
-	QStatusBar* statusBar;
-	QLabel* forceImportWarning;
-
-	QAction* openAction;
-	QAction* createAction;
-	QAction* closeAction;
-	QAction* saveAsAction;
-	QAction* exitAction;
-	QAction* importAction;
-	QAction* exportAction;
-	QAction* deleteAction;
-	QAction* selectAllAction;
-	QAction* formatAction;
-	QAction* eccToolAction;
-	QAction* asciiAction;
-	QAction* forceImportAction;
-	QAction* preferencesAction;
-	QAction* aboutAction;
-	QAction* gitHubAction;
-	QAction* documentationAction;
-	QAction* discordAction;
-	QAction* checkUpdatesAction;
-	QAction* aboutQtAction;
+	// UI Structure
+	std::unique_ptr<Ui::MainWindow> ui;
 
 	std::unique_ptr<CardActionHandler> actionHandler;
 	std::unique_ptr<PS2MemoryCard> memoryCard;

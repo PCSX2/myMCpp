@@ -30,6 +30,7 @@ bool VulkanSwapchain::create(VulkanDevice& device, uint32_t width, uint32_t heig
 
 void VulkanSwapchain::destroy(VkDevice device)
 {
+	Logger::info("VK: VulkanSwapchain::destroy start");
 	for (auto framebuffer : m_framebuffers)
 	{
 		if (framebuffer != VK_NULL_HANDLE)
@@ -66,11 +67,13 @@ void VulkanSwapchain::destroy(VkDevice device)
 	}
 	m_imageViews.clear();
 
+	Logger::info("VK: Destroying swapchain handle: {}", (void*)m_swapchain);
 	if (m_swapchain != VK_NULL_HANDLE)
 	{
 		vkDestroySwapchainKHR(device, m_swapchain, nullptr);
 		m_swapchain = VK_NULL_HANDLE;
 	}
+	Logger::info("VK: VulkanSwapchain::destroy end");
 }
 
 bool VulkanSwapchain::recreate(VulkanDevice& device, uint32_t width, uint32_t height)
