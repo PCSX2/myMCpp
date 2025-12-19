@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discussions
+    url: https://github.com/SternXD/myMCpp/discussions
+    about: Use Discussions for questions, ideas, or general support.
+  - name: Discord
+    url: https://discord.gg/TBD # TODO: Add Discord invite
+    about: Use Discord for real-time support and community interaction.
+  - name: Wiki
+    url: https://github.com/SternXD/myMCpp/wiki
+    about: Use the Wiki for documentation and information about the project.

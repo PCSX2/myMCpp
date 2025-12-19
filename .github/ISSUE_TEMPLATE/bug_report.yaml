@@ -1,0 +1,107 @@
+# Docs: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
+# Some of this is based on https://github.com/PCSX2/pcsx2/blob/master/.github/ISSUE_TEMPLATE/app_bug_report.yaml
+
+name: Application Bug Report
+description: Report a bug or incorrect behavior in myMCpp
+title: "[BUG]: "
+labels: [bug]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Important: Read First
+
+        This issue tracker is for **bugs and feature requests only**.
+        Please do **not** use GitHub issues for general support questions.
+
+        If you are unsure whether something is a bug, please check existing issues first.
+
+        **Do not report issues involving piracy** (BIOS files, copyrighted game data, etc.).
+        Such issues will be closed and deleted without response.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the Bug
+      description: A clear and concise description of the problem.
+      placeholder: "Example: Dragging a save file causes the app to crash."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: List the steps needed to reproduce the issue.
+      placeholder: |
+        1. Open myMCpp
+        2. Load a .ps2 memory card
+        3. Drag a save file into the window
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened instead?
+    validations:
+      required: false
+
+  - type: dropdown
+    id: filetype
+    attributes:
+      label: Affected File Type
+      options:
+        - .ps2 (PCSX2)
+        - .mc2 (MemCard PRO2)
+        - Other / Unknown
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: myMCpp Version / Commit
+      description: Version number or Git commit hash.
+      placeholder: "Example: v0.1.0 or commit abc1234"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - Windows
+        - Linux
+        - macOS
+    validations:
+      required: true
+
+  - type: input
+    id: linux-distro
+    attributes:
+      label: Linux Distribution (if applicable)
+      placeholder: "Example: Arch, Fedora 40"
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Screenshots
+      description: |
+        Attach logs, screenshots, or crash output if available.
+        Use code blocks for logs.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Anything else that might help diagnose the issue.
+    validations:
+      required: false
