@@ -1,0 +1,68 @@
+name: Feature Request
+description: Suggest a new feature or improvement for myMCpp
+title: "[FEATURE]: "
+labels: [enhancement]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to suggest **new features or improvements**.
+        Please ensure the feature aligns with the scope of myMCpp.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: Briefly describe the requested feature.
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why is this feature useful? What problem does it solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Proposed Behavior
+      description: How should the feature work from a user perspective?
+    validations:
+      required: false
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Affected Area
+      options:
+        - GUI (Qt)
+        - CLI
+        - File Format Handling
+        - Import / Export
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: Platforms
+      options:
+        - Windows
+        - Linux
+        - macOS
+        - All Platforms
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Mockups, references, or related tools.
+    validations:
+      required: false
