@@ -1,0 +1,84 @@
+// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-License-Identifier: GPL-3.0+
+
+#pragma once
+
+#include "../Renderer.h"
+#include "../../common/WindowInfo.h"
+#include "../Common/RendererCommon.h"
+
+#include <Metal/Metal.h>
+#include <QuartzCore/CAMetalLayer.h>
+#include "MetalDevice.h"
+#include "MetalPipeline.h"
+#include "MetalResources.h"
+
+#include <vector>
+#include <memory>
+#include <chrono>
+
+namespace PS2Icon
+{
+	class Icon;
+}
+
+class MetalRenderer : public Renderer
+{
+public:
+	explicit MetalRenderer(const WindowInfo& windowInfo);
+	~MetalRenderer();
+
+	bool initialize() override;
+	void shutdown() override;
+	bool isInitialized() const override { return m_initialized; }
+
+	void setIcon(std::shared_ptr<PS2Icon::Icon> icon) override;
+	bool hasValidIcon() const override { return m_icon != nullptr; }
+
+	void setAnimationEnabled(bool enabled) override { m_animationEnabled = enabled; }
+	bool isAnimationEnabled() const override { return m_animationEnabled; }
+
+	void setRotation(float x, float y, float z) override;
+	void setZoom(float zoom) override;
+	void setCameraMode(CameraMode mode) override;
+
+	void setLightingFromIconSys(PS2IconSys* iconSys) override;
+	void setLightingMode(LightingMode mode) override;
+	void setBackgroundFromIconSys(PS2IconSys* iconSys) override;
+	void setBackgroundColor(float r, float g, float b, float a = 1.0f) override;
+
+	void render() override;
+	void resize(uint32_t width, uint32_t height) override;
+
+	uint32_t getVertexCount() const override { return m_vertexCount; }
+	uint32_t getFrameCount() const override { return m_frameCount; }
+
+private:
+	void renderFrame();
+    void updateBackgroundData(const struct MetalResources::FrameResources& frameRes);
+    void updateVertexData(const struct MetalResources::FrameResources& frameRes);
+    void updateUniformData(const struct MetalResources::FrameResources& frameRes);
+
+	bool m_initialized = false;
+	WindowInfo m_windowInfo;
+	uint32_t m_vertexCount = 0;
+	uint32_t m_frameCount = 0;
+    uint32_t m_frameIndex = 0; // Ring buffer index
+
+	std::shared_ptr<PS2Icon::Icon> m_icon;
+	bool m_animationEnabled = true;
+
+    bool m_iconChanged = false;
+
+	std::chrono::steady_clock::time_point m_animStart;
+
+	LightingState m_lighting;
+	CameraState m_camera;
+	BackgroundState m_background;
+
+	MetalDevice m_device;
+    MetalPipeline m_pipeline;
+    MetalResources m_resources;
+    
+    CAMetalLayer* m_metalLayer = nil;
+};

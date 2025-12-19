@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/AppIcon.png</file>
+        <file>icons/discord.svg</file>
+        <file>icons/qt.svg</file>
+        <file>icons/feather/book-open.svg</file>
+        <file>icons/feather/github.svg</file>
+        <file>icons/feather/download.svg</file>
+        <file>icons/feather/refresh-cw.svg</file>
+        <file>shaders/vulkan/icon.vert.spv</file>
+        <file>shaders/vulkan/icon.frag.spv</file>
+        <file>shaders/opengl/icon.vert</file>
+        <file>shaders/opengl/icon.frag</file>
+    </qresource>
+</RCC>

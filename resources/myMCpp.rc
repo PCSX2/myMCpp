@@ -1,0 +1,35 @@
+// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-License-Identifier: GPL-3.0+
+
+#include <windows.h>
+
+IDI_APPICON ICON "icons/AppIcon.ico"
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION 1,0,0,0
+PRODUCTVERSION 1,0,0,0
+FILEFLAGSMASK 0x3f
+FILEFLAGS 0x0
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName", "myMCpp"
+            VALUE "FileDescription", "PS2 Memory Card Manager"
+            VALUE "FileVersion", "1.0.0.0"
+            VALUE "InternalName", "myMCpp"
+            VALUE "LegalCopyright", "GPLv3"
+            VALUE "OriginalFilename", "myMCpp.exe"
+            VALUE "ProductName", "myMCpp"
+            VALUE "ProductVersion", "1.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
