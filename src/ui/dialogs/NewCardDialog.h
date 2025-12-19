@@ -6,8 +6,11 @@
 #include <QDialog>
 
 class QRadioButton;
-class QCheckBox;
+#include <memory>
+
 class QButtonGroup;
+
+#include "ui_NewCardDialog.h"
 
 class NewCardDialog : public QDialog
 {
@@ -16,14 +19,12 @@ class NewCardDialog : public QDialog
 public:
 	explicit NewCardDialog(QWidget* parent = nullptr);
 
+	~NewCardDialog();
+
 	int getCardSizeMB() const;
 	bool getDisableEcc() const;
 
 private:
+	std::unique_ptr<Ui::NewCardDialog> ui;
 	QButtonGroup* sizeGroup;
-	QRadioButton* size8MB;
-	QRadioButton* size16MB;
-	QRadioButton* size32MB;
-	QRadioButton* size64MB;
-	QCheckBox* disableEccCheckbox;
 };

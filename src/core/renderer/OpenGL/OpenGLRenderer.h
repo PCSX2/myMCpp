@@ -33,7 +33,7 @@ public:
 	void setIcon(std::shared_ptr<PS2Icon::Icon> icon) override;
 	bool hasValidIcon() const override { return m_icon != nullptr; }
 
-	void setAnimationEnabled(bool enabled) override { m_animationEnabled = enabled; }
+	void setAnimationEnabled(bool enabled) override;
 	bool isAnimationEnabled() const override { return m_animationEnabled; }
 
 	void setRotation(float x, float y, float z) override;

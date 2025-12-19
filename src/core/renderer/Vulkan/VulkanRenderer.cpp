@@ -53,7 +53,7 @@ VulkanRenderer::~VulkanRenderer()
 
 bool VulkanRenderer::initialize()
 {
-	Logger::info("VK: VulkanRenderer::initialize() - Size: {}x{}", m_width, m_height);
+	Logger::info("VK: VulkanRenderer::initialize() - Size: {}x{} Ptr: {}", m_width, m_height, (void*)this);
 
 	if (m_width < 100 || m_height < 100)
 	{
@@ -153,6 +153,12 @@ bool VulkanRenderer::hasValidIcon() const
 void VulkanRenderer::setAnimationEnabled(bool enabled)
 {
 	m_animationEnabled = enabled;
+	if (!enabled)
+	{
+		// Reset to base pose
+		prepareVertexData();
+		m_iconChanged = true;
+	}
 }
 
 void VulkanRenderer::setRotation(float x, float y, float z)
@@ -272,10 +278,54 @@ void VulkanRenderer::render()
 
 void VulkanRenderer::resize(uint32_t width, uint32_t height)
 {
+	if (!m_initialized)
+		return;
+
 	m_width = width;
 	m_height = height;
-	Logger::info("VK: Resized to {}x{}", width, height);
-	// TODO: Recreate swapchain for new size
+	Logger::info("VK: Resizing to {}x{}", width, height);
+
+	VkDevice device = m_vulkanDevice.getDevice();
+	vkDeviceWaitIdle(device);
+
+	if (!m_commandBuffers.empty())
+	{
+		vkFreeCommandBuffers(device, m_vulkanResources.getCommandPool(),
+			static_cast<uint32_t>(m_commandBuffers.size()), m_commandBuffers.data());
+		m_commandBuffers.clear();
+	}
+
+	m_vulkanPipeline.destroy(device);
+
+	if (!m_vulkanSwapchain.recreate(m_vulkanDevice, width, height))
+	{
+		Logger::error("VK: Failed to recreate swapchain");
+		return;
+	}
+
+	VkRenderPass renderPass = m_vulkanSwapchain.getRenderPass();
+	VkExtent2D extent = m_vulkanSwapchain.getExtent();
+
+	if (!m_vulkanPipeline.createMainPipeline(device, renderPass, extent))
+	{
+		Logger::error("VK: Failed to recreate main pipeline");
+		return;
+	}
+
+	if (!m_vulkanPipeline.createBackgroundPipeline(device, renderPass, extent))
+	{
+		Logger::error("VK: Failed to recreate background pipeline");
+		return;
+	}
+
+	if (!createCommandBuffers())
+	{
+		Logger::error("VK: Failed to recreate command buffers");
+		return;
+	}
+
+	m_iconChanged = true;
+	render();
 }
 
 uint32_t VulkanRenderer::getVertexCount() const

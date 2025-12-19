@@ -3,6 +3,7 @@
 
 #include "IconWidget.h"
 #include "Config.h"
+#include "../../common/Logger.h"
 #include "../common/WindowInfo.h"
 #include <QResizeEvent>
 #include <QShowEvent>
@@ -78,10 +79,10 @@ static float getRefreshRate(QWidget* widget)
 	{
 		wi.type = WindowInfo::Type::X11;
 		auto* x11App = qApp->nativeInterface<QNativeInterface::QX11Application>();
-        if (x11App)
-        {
-            wi.display_connection = x11App->display();
-        }
+		if (x11App)
+		{
+			wi.display_connection = x11App->display();
+		}
 		wi.window_handle = reinterpret_cast<void*>(widget->winId());
 	}
 #endif
@@ -89,7 +90,7 @@ static float getRefreshRate(QWidget* widget)
 	auto rate = WindowInfo::QueryRefreshRateForWindow(wi);
 	if (rate.has_value() && *rate > 0.0f)
 		return *rate;
-	
+
 	return 60.0f;
 }
 
@@ -103,16 +104,20 @@ IconWidget::IconWidget(Config* config, QWidget* parent)
 	setAttribute(Qt::WA_DontCreateNativeAncestors, true);
 	setFocusPolicy(Qt::NoFocus);
 	printPlatformInfo();
+	Logger::info("IconWidget constructed: {}", (void*)this);
 }
 
 IconWidget::~IconWidget()
 {
+	Logger::info("IconWidget destructor start: {}", (void*)this);
 	stopRendering();
 	if (m_renderer)
 	{
+		Logger::info("IconWidget shutting down renderer");
 		m_renderer->shutdown();
 		m_renderer.reset();
 	}
+	Logger::info("IconWidget destructor end: {}", (void*)this);
 }
 
 void IconWidget::printPlatformInfo()
@@ -139,7 +144,23 @@ bool IconWidget::loadIcon(const std::vector<uint8_t>& iconData)
 		}
 
 		emit iconLoaded();
-		startRendering();
+
+		bool animate = true;
+		if (m_config)
+		{
+			animate = m_config->getAnimateIcons();
+		}
+
+		if (animate)
+		{
+			startRendering();
+		}
+		else
+		{
+			stopRendering();
+			renderFrame();
+		}
+
 		return true;
 	}
 	catch (const std::exception& e)
@@ -251,6 +272,7 @@ void IconWidget::applyConfigToRenderer(PS2IconSys* iconSys)
 
 void IconWidget::startRendering()
 {
+	Logger::info("IconWidget::startRendering {}", (void*)this);
 	m_renderLoopEnabled = true;
 
 	float rate = 60.0f;
@@ -260,10 +282,12 @@ void IconWidget::startRendering()
 	rate = getRefreshRate(this);
 #endif
 
-	if (rate < 30.0f) rate = 60.0f;
+	if (rate < 30.0f)
+		rate = 60.0f;
 
 	int interval = static_cast<int>(1000.0f / rate);
-	if (interval <= 0) interval = 16;
+	if (interval <= 0)
+		interval = 16;
 
 	if (m_renderTimer.isActive())
 	{
@@ -274,12 +298,13 @@ void IconWidget::startRendering()
 	{
 		m_renderTimer.start(interval, this);
 	}
-	
+
 	renderFrame();
 }
 
 void IconWidget::stopRendering()
 {
+	Logger::info("IconWidget::stopRendering {}", (void*)this);
 	m_renderLoopEnabled = false;
 	if (m_renderTimer.isActive())
 	{
@@ -304,32 +329,46 @@ void IconWidget::ensureRenderer()
 		wi.surface_height = static_cast<uint32_t>(s.height());
 		wi.surface_scale = 1.0f;
 
-#if defined(_WIN32)
-		wi.type = WindowInfo::Type::Win32;
-		wi.window_handle = reinterpret_cast<void*>(winId());
-#elif defined(__linux__)
+#if defined(__linux__)
 		if (QGuiApplication::platformName().startsWith("wayland", Qt::CaseInsensitive))
 		{
 			wi.type = WindowInfo::Type::Wayland;
 			QPlatformNativeInterface* pni = QGuiApplication::platformNativeInterface();
 			if (pni)
 			{
-				wi.display_connection = pni->nativeResourceForWindow("display", windowHandle());
-				wi.window_handle = pni->nativeResourceForWindow("surface", windowHandle());
+				if (windowHandle())
+				{
+					wi.display_connection = pni->nativeResourceForWindow("display", windowHandle());
+					wi.window_handle = pni->nativeResourceForWindow("surface", windowHandle());
+				}
+			}
+
+			if (!wi.window_handle)
+			{
+				Logger::info("IconWidget: Wayland surface not ready yet");
+				return;
 			}
 		}
 		else if (QGuiApplication::platformName().startsWith("xcb", Qt::CaseInsensitive))
 		{
 			wi.type = WindowInfo::Type::X11;
-			            
-            auto* x11App = qApp->nativeInterface<QNativeInterface::QX11Application>();
-            if (x11App)
-            {
-                wi.display_connection = x11App->display();
-            }
+
+			auto* x11App = qApp->nativeInterface<QNativeInterface::QX11Application>();
+			if (x11App)
+			{
+				wi.display_connection = x11App->display();
+			}
 			wi.window_handle = reinterpret_cast<void*>(winId());
 		}
 #endif
+
+		if (!wi.window_handle && wi.type != WindowInfo::Type::Surfaceless)
+		{
+			Logger::error("IconWidget: Invalid window handle, postponing renderer creation");
+			return;
+		}
+
+		Logger::info("IconWidget: Creating renderer: {}", rendererType);
 
 		if (rendererType == "opengl")
 		{
@@ -420,7 +459,7 @@ void IconWidget::resizeEvent(QResizeEvent* event)
 
 	if (m_renderer)
 	{
-		recreateRenderer();
+		m_renderer->resize(event->size().width(), event->size().height());
 	}
 }
 

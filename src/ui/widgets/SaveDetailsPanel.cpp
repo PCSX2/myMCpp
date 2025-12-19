@@ -11,47 +11,41 @@
 #include <QFrame>
 #include <QWidget>
 
-SaveDetailsPanel::SaveDetailsPanel(Config* config, QWidget* parent)
+#include "SaveDetailsPanel.h"
+#include "IconWidget.h"
+#include "Config.h"
+#include "ps2mc.h"
+#include "ps2iconsys.h"
+#include <QVBoxLayout>
+#include <QGroupBox>
+#include <QFrame>
+#include <QWidget>
+
+SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)
 	: QWidget(parent)
-	, m_config(config)
-	, iconLayout(nullptr)
+	, m_config(nullptr)
 	, iconWidget(nullptr)
-	, iconContainer(nullptr)
+	, ui(new Ui::SaveDetailsPanel)
 {
-	setupUI();
+	ui->setupUi(this);
+
+	// The UI file creates a placeholder iconContainer. We will use the layout to place our IconWidget.
+	// Ideally we would promote the widget in Designer but IconWidget takes custom constructor args (config).
+	// So we will replace the placeholder or add to layout.
+
+	// Let's remove the placeholder
+	if (ui->iconContainer)
+	{
+		ui->iconLayout->removeWidget(ui->iconContainer);
+		delete ui->iconContainer;
+		ui->iconContainer = nullptr;
+	}
 }
 
-void SaveDetailsPanel::setupUI()
+void SaveDetailsPanel::setConfig(Config* config)
 {
-	QVBoxLayout* mainLayout = new QVBoxLayout(this);
-
-	QGroupBox* iconGroup = new QGroupBox("Icon");
-	iconLayout = new QVBoxLayout(iconGroup);
-
+	m_config = config;
 	createIconWidget();
-
-	mainLayout->addWidget(iconGroup);
-
-	QGroupBox* infoGroup = new QGroupBox("Details");
-	QVBoxLayout* infoLayout = new QVBoxLayout(infoGroup);
-
-	titleLabel = new QLabel("No save selected");
-	titleLabel->setWordWrap(true);
-	titleLabel->setMinimumHeight(40);
-	titleLabel->setStyleSheet("font-weight: bold; font-size: 12pt;");
-	infoLayout->addWidget(titleLabel);
-
-	QFrame* separator = new QFrame();
-	separator->setFrameShape(QFrame::HLine);
-	separator->setFrameShadow(QFrame::Sunken);
-	infoLayout->addWidget(separator);
-	detailsLabel = new QLabel("No details available");
-	detailsLabel->setWordWrap(true);
-	detailsLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-	infoLayout->addWidget(detailsLabel);
-	mainLayout->addWidget(infoGroup);
-
-	mainLayout->addStretch();
 }
 
 void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
@@ -93,7 +87,7 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 	{
 	}
 
-	titleLabel->setText(fullTitle);
+	ui->titleLabel->setText(fullTitle);
 
 	QString details = QString("Size: %1\nModified: %2").arg(size, modified);
 
@@ -119,7 +113,7 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 	{
 	}
 
-	detailsLabel->setText(details);
+	ui->detailsLabel->setText(details);
 
 	try
 	{
@@ -176,34 +170,42 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 
 void SaveDetailsPanel::clear()
 {
-	if (titleLabel)
-		titleLabel->setText("No save selected");
-	if (detailsLabel)
-		detailsLabel->setText("No details available");
+	if (ui->titleLabel)
+		ui->titleLabel->setText("No save selected");
+	if (ui->detailsLabel)
+		ui->detailsLabel->setText("No details available");
 	currentCard = nullptr;
 	currentSavePath.clear();
 }
 
 void SaveDetailsPanel::createIconWidget()
 {
-	if (iconContainer)
+	if (iconWidget)
 	{
-		iconLayout->removeWidget(iconContainer);
-		iconContainer->deleteLater();
-		iconContainer = nullptr;
+		ui->iconLayout->removeWidget(iconWidget);
+		delete iconWidget;
 		iconWidget = nullptr;
 	}
 
+	// Only create if we have config, or create with nullptr if safely handled
 	iconWidget = new IconWidget(m_config, this);
+	if (m_config)
+		m_lastRendererType = m_config->getRenderer();
+	else
+		m_lastRendererType = "vulkan";
+
 	iconWidget->setMinimumSize(256, 256);
 	iconWidget->setMaximumSize(256, 256);
-	iconContainer = iconWidget;
-	iconLayout->addWidget(iconContainer);
+	ui->iconLayout->addWidget(iconWidget);
 }
 
 void SaveDetailsPanel::refreshConfig()
 {
-	createIconWidget();
+	std::string currentRenderer = m_config ? m_config->getRenderer() : "vulkan";
+	if (!iconWidget || currentRenderer != m_lastRendererType)
+	{
+		createIconWidget();
+	}
 
 	if (currentCard && !currentSavePath.isEmpty())
 	{
