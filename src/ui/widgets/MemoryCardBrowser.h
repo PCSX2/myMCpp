@@ -6,8 +6,11 @@
 #include <QTreeWidget>
 #include <QDateTime>
 #include <QString>
+#include <memory>
 
 class PS2MemoryCard;
+
+#include "ui_MemoryCardBrowser.h"
 
 class MemoryCardBrowser : public QTreeWidget
 {
@@ -31,5 +34,5 @@ protected:
 	void dropEvent(QDropEvent* event) override;
 
 private:
-	void setupUI();
+	std::unique_ptr<Ui::MemoryCardBrowser> ui;
 };

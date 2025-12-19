@@ -12,12 +12,16 @@ class IconWidget;
 class Config;
 class QVBoxLayout;
 
+#include "ui_SaveDetailsPanel.h"
+
 class SaveDetailsPanel : public QWidget
 {
 	Q_OBJECT
 
 public:
-	explicit SaveDetailsPanel(Config* config, QWidget* parent = nullptr);
+	explicit SaveDetailsPanel(QWidget* parent = nullptr);
+
+	void setConfig(Config* config);
 
 	void setSave(PS2MemoryCard* card, const QString& savePath,
 		const QString& size, const QString& modified);
@@ -25,18 +29,17 @@ public:
 	void refreshConfig();
 
 private:
-	void setupUI();
 	void createIconWidget();
 
 	Config* m_config;
-	QVBoxLayout* iconLayout;
 	IconWidget* iconWidget;
-	QWidget* iconContainer;
-	QLabel* titleLabel;
-	QLabel* detailsLabel;
 
 	PS2MemoryCard* currentCard = nullptr;
 	QString currentSavePath;
 	QString currentSize;
 	QString currentModified;
+
+	std::string m_lastRendererType;
+
+	std::unique_ptr<Ui::SaveDetailsPanel> ui;
 };

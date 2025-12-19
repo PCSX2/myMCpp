@@ -12,18 +12,9 @@
 
 MemoryCardBrowser::MemoryCardBrowser(QWidget* parent)
 	: QTreeWidget(parent)
+	, ui(new Ui::MemoryCardBrowser)
 {
-	setupUI();
-}
-
-void MemoryCardBrowser::setupUI()
-{
-	setHeaderLabels({"Name", "Size", "Modified"});
-	setColumnWidth(0, 200);
-	setColumnWidth(1, 80);
-	setMinimumWidth(400);
-
-	setAcceptDrops(true);
+	ui->setupUi(this);
 }
 
 void MemoryCardBrowser::clear()
