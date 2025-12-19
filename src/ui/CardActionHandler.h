@@ -1,0 +1,35 @@
+// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-License-Identifier: GPL-3.0+
+
+#pragma once
+
+#include <QString>
+#include <QObject>
+#include <memory>
+
+class PS2MemoryCard;
+class QWidget;
+class QStatusBar;
+
+class CardActionHandler : public QObject
+{
+	Q_OBJECT
+
+public:
+	explicit CardActionHandler(QWidget* parent = nullptr);
+
+	PS2MemoryCard* openCard(const QString& filename);
+	PS2MemoryCard* createCard(const QString& filename, int sizeMB = 8, bool disableEcc = false);
+	void closeCard();
+
+	void importSave(PS2MemoryCard* card, const QString& filename);
+	void exportSave(PS2MemoryCard* card, const QString& savePath, const QString& filename);
+	void deleteSave(PS2MemoryCard* card, const QString& savePath);
+	void formatCard(PS2MemoryCard* card, const QString& cardPath, int sizeMB = 8);
+
+	void setStatusBar(QStatusBar* statusBar);
+
+private:
+	QWidget* parentWidget;
+	QStatusBar* statusBar;
+};

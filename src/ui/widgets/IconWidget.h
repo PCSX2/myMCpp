@@ -1,0 +1,62 @@
+// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-License-Identifier: GPL-3.0+
+
+#pragma once
+
+#include <QWidget>
+#include <QBasicTimer>
+#include <memory>
+#include "../core/formats/ps2icon.h"
+#include "../core/renderer/Renderer.h"
+
+class Config;
+
+class IconWidget : public QWidget
+{
+	Q_OBJECT
+
+public:
+	explicit IconWidget(Config* config, QWidget* parent = nullptr);
+	~IconWidget();
+
+	bool loadIcon(const std::vector<uint8_t>& data);
+	bool loadIcon(const std::string& data);
+
+	void setAnimationEnabled(bool enabled);
+	bool isAnimationEnabled() const;
+
+	void setRotation(float x, float y, float z);
+	void setZoom(float zoom);
+
+	void setLightingFromIconSys(class PS2IconSys* iconSys);
+
+	void setBackgroundFromIconSys(class PS2IconSys* iconSys);
+	void setBackgroundColor(float r, float g, float b, float a = 1.0f);
+
+	void applyConfigToRenderer(class PS2IconSys* iconSys);
+
+	void startRendering();
+	void stopRendering();
+
+signals:
+	void iconLoaded();
+	void iconLoadFailed(const QString& error);
+
+protected:
+	void timerEvent(QTimerEvent* event) override;
+	void resizeEvent(QResizeEvent* event) override;
+	void showEvent(QShowEvent* event) override;
+	QPaintEngine* paintEngine() const override;
+
+private:
+	void printPlatformInfo();
+	void ensureRenderer();
+	void recreateRenderer();
+	void renderFrame();
+
+	Config* m_config;
+	std::shared_ptr<PS2Icon::Icon> m_icon;
+	std::unique_ptr<Renderer> m_renderer;
+	QBasicTimer m_renderTimer;
+	bool m_renderLoopEnabled = false;
+};
