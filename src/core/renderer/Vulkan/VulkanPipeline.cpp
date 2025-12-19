@@ -71,7 +71,7 @@ VkShaderModule VulkanPipeline::createShaderModule(VkDevice device, const std::ve
 
 bool VulkanPipeline::createShaderModules(VkDevice device)
 {
-	fs::path shaderPath = ResourcePath::shaders() / "vulkan" / "icon.vert.spv";
+	fs::path shaderPath = ResourcePath::shaders() / "Vulkan" / "icon.vert.spv";
 	std::ifstream vertFile(shaderPath, std::ios::binary | std::ios::ate);
 	if (!vertFile.is_open())
 	{
@@ -89,7 +89,7 @@ bool VulkanPipeline::createShaderModules(VkDevice device)
 	}
 	vertFile.close();
 
-	shaderPath = ResourcePath::shaders() / "vulkan" / "icon.frag.spv";
+	shaderPath = ResourcePath::shaders() / "Vulkan" / "icon.frag.spv";
 	std::ifstream fragFile(shaderPath, std::ios::binary | std::ios::ate);
 	if (!fragFile.is_open())
 	{
@@ -302,7 +302,7 @@ bool VulkanPipeline::createMainPipeline(VkDevice device, VkRenderPass renderPass
 
 bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass renderPass, VkExtent2D extent)
 {
-	fs::path shaderPath = ResourcePath::shaders() / "vulkan" / "background.vert.spv";
+	fs::path shaderPath = ResourcePath::shaders() / "Vulkan" / "background.vert.spv";
 	std::ifstream vertFile(shaderPath, std::ios::binary | std::ios::ate);
 	if (!vertFile.is_open())
 	{
@@ -319,7 +319,7 @@ bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass rend
 	}
 	vertFile.close();
 
-	shaderPath = ResourcePath::shaders() / "vulkan" / "background.frag.spv";
+	shaderPath = ResourcePath::shaders() / "Vulkan" / "background.frag.spv";
 	std::ifstream fragFile(shaderPath, std::ios::binary | std::ios::ate);
 	if (!fragFile.is_open())
 	{

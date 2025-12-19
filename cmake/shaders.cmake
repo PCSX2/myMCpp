@@ -6,8 +6,8 @@
 # ============================================================================
 # Define shader paths
 # ============================================================================
-set(SHADER_SOURCE_DIR ${CMAKE_SOURCE_DIR}/resources/shaders/vulkan)
-set(SHADER_OUTPUT_DIR ${CMAKE_BINARY_DIR}/shaders/vulkan)
+set(SHADER_SOURCE_DIR ${CMAKE_SOURCE_DIR}/resources/shaders/Vulkan)
+set(SHADER_OUTPUT_DIR ${CMAKE_BINARY_DIR}/shaders/Vulkan)
 
 file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
 
@@ -75,16 +75,16 @@ endif()
 add_custom_command(TARGET CompileShaders POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${SHADER_OUTPUT_DIR}/icon.vert.spv
-        ${CMAKE_SOURCE_DIR}/resources/shaders/vulkan/icon.vert.spv
+        ${CMAKE_SOURCE_DIR}/resources/shaders/Vulkan/icon.vert.spv
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${SHADER_OUTPUT_DIR}/icon.frag.spv
-        ${CMAKE_SOURCE_DIR}/resources/shaders/vulkan/icon.frag.spv
+        ${CMAKE_SOURCE_DIR}/resources/shaders/Vulkan/icon.frag.spv
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${SHADER_OUTPUT_DIR}/background.vert.spv
-        ${CMAKE_SOURCE_DIR}/resources/shaders/vulkan/background.vert.spv
+        ${CMAKE_SOURCE_DIR}/resources/shaders/Vulkan/background.vert.spv
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${SHADER_OUTPUT_DIR}/background.frag.spv
-        ${CMAKE_SOURCE_DIR}/resources/shaders/vulkan/background.frag.spv
+        ${CMAKE_SOURCE_DIR}/resources/shaders/Vulkan/background.frag.spv
     COMMENT "Copying compiled shaders to resources directory..."
     VERBATIM
 )

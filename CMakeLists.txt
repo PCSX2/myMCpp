@@ -283,6 +283,15 @@ if(WIN32)
     )
 endif()
 
+if(UNIX AND NOT APPLE)
+    add_custom_command(TARGET myMCpp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/resources
+            $<TARGET_FILE_DIR:myMCpp>/resources
+        COMMENT "Copying resources folder to output directory..."
+    )
+endif()
+
 # Add compiler warnings
 if(MSVC)
     target_compile_options(myMCpp_core PRIVATE /W4)

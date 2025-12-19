@@ -130,19 +130,17 @@ int main(int argc, char* argv[])
 		qWarning("Failed to load config, using defaults");
 	}
 
-#ifdef _WIN32
-	config.setResourcesPath("resources");
-#elif defined(__APPLE__)
+#ifdef __APPLE__
 	if (auto bundlePath = CocoaTools::GetResourcePath())
 	{
 		config.setResourcesPath(*bundlePath);
 	}
 	else
 	{
-		config.setResourcesPath(config_path.parent_path() / "resources");
+		config.setResourcesPath("resources");
 	}
 #else
-	config.setResourcesPath(config_path.parent_path() / "resources");
+	config.setResourcesPath("resources");
 #endif
 	ResourcePath::set(config.getResourcesPath());
 	Logger::info("[main] Resources path: {}", ResourcePath::get().string());

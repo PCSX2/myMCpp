@@ -99,8 +99,8 @@ GLuint OpenGLShader::linkProgram(GLuint vertexShader, GLuint fragmentShader)
 
 bool OpenGLShader::loadIconShaders()
 {
-	fs::path vertexShaderPath = ResourcePath::shaders() / "opengl" / "icon.vert";
-	fs::path fragmentShaderPath = ResourcePath::shaders() / "opengl" / "icon.frag";
+	fs::path vertexShaderPath = ResourcePath::shaders() / "OpenGL" / "icon.vert";
+	fs::path fragmentShaderPath = ResourcePath::shaders() / "OpenGL" / "icon.frag";
 
 	std::string vertSource = readShaderFile(vertexShaderPath.string());
 	std::string fragSource = readShaderFile(fragmentShaderPath.string());
@@ -145,8 +145,8 @@ bool OpenGLShader::loadIconShaders()
 
 bool OpenGLShader::loadBackgroundShaders()
 {
-	fs::path bgVertexShaderPath = ResourcePath::shaders() / "opengl" / "background.vert";
-	fs::path bgFragmentShaderPath = ResourcePath::shaders() / "opengl" / "background.frag";
+	fs::path bgVertexShaderPath = ResourcePath::shaders() / "OpenGL" / "background.vert";
+	fs::path bgFragmentShaderPath = ResourcePath::shaders() / "OpenGL" / "background.frag";
 
 	std::string bgVertSource = readShaderFile(bgVertexShaderPath.string());
 	std::string bgFragSource = readShaderFile(bgFragmentShaderPath.string());
