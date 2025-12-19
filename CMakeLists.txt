@@ -197,22 +197,15 @@ target_link_libraries(myMCpp PRIVATE
     myMCpp_core
     Qt6::Core 
     Qt6::Gui
+    Qt6::GuiPrivate
     Qt6::Widgets
 )
 
-if(UNIX AND NOT APPLE)
-    find_package(Qt6 REQUIRED COMPONENTS Gui)
-    find_package(Wayland REQUIRED)
-    target_include_directories(myMCpp_core PUBLIC ${WAYLAND_INCLUDE_DIR})
-    target_link_libraries(myMCpp_core PUBLIC ${WAYLAND_CLIENT_LIBRARIES})
-    
-    if(TARGET Qt6::GuiPrivate)
-        target_link_libraries(myMCpp PRIVATE Qt6::GuiPrivate)
-        target_compile_definitions(myMCpp PRIVATE HAS_QPA_HEADERS)
-    endif()
-endif()
+    find_package(Wayland REQUIRED COMPONENTS Client Egl)
+    target_link_libraries(myMCpp_core PUBLIC Wayland::Client Wayland::Egl)
 
 target_include_directories(myMCpp PRIVATE 
+    ${Qt6Gui_PRIVATE_INCLUDE_DIRS}
     ${CMAKE_SOURCE_DIR}/src/core
     ${CMAKE_SOURCE_DIR}/src/core/formats
     ${CMAKE_SOURCE_DIR}/src/common

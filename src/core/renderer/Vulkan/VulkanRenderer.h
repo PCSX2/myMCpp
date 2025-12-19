@@ -43,6 +43,9 @@ public:
 
 	void setRotation(float x, float y, float z) override;
 	void setZoom(float zoom) override;
+	void setCameraOffset(float x, float y, float z) override;
+	void resetCamera() override;
+
 	void setCameraMode(CameraMode mode) override;
 
 	void setLightingFromIconSys(class PS2IconSys* iconSys) override;

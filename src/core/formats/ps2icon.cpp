@@ -5,6 +5,7 @@
 #include <cstring>
 #include <stdexcept>
 #include <algorithm>
+#include "../../common/Logger.h"
 
 namespace PS2Icon
 {
@@ -63,13 +64,19 @@ namespace PS2Icon
 		const uint8_t* bytes = reinterpret_cast<const uint8_t*>(data.data());
 		size_t length = data.size();
 		size_t offset = 0;
+        
+        Logger::info("PS2Icon::load: Start loading. Length: {}", length);
 
 		try
 		{
 			offset = loadHeader(bytes, length, offset);
+			Logger::info("PS2Icon::load: Header loaded. Offset: {}", offset);
 			offset = loadVertexData(bytes, length, offset);
+			Logger::info("PS2Icon::load: VertexData loaded. Offset: {}", offset);
 			offset = loadAnimationData(bytes, length, offset);
+			Logger::info("PS2Icon::load: AnimationData loaded. Offset: {}", offset);
 			offset = loadTexture(bytes, length, offset);
+			Logger::info("PS2Icon::load: Texture loaded. Offset: {}", offset);
 
 			if (length > offset)
 			{
@@ -81,6 +88,7 @@ namespace PS2Icon
 		}
 		catch (const std::exception& e)
 		{
+			Logger::error("PS2Icon::load: Exception caught: {}", e.what());
 			setError(e.what());
 			return false;
 		}
@@ -260,6 +268,7 @@ namespace PS2Icon
 		}
 
 		uint32_t compressedSize = readLE<uint32_t>(data, offset);
+        Logger::info("PS2Icon: Compressed texture size: {}", compressedSize);
 		offset += 4;
 
 		if (length < offset + compressedSize)
@@ -302,14 +311,15 @@ namespace PS2Icon
 					texture[texOffset++] = readLE<uint16_t>(data, offset + rleOffset);
 					rleOffset += 2;
 				}
-			}
+            }
 			else
 			{
 				uint32_t rep = rleCode;
-
+                
 				if (compressedSize < rleOffset + 2)
 				{
-					throw std::runtime_error("Compressed texture data too short");
+                    Logger::warn("PS2Icon: Compressed texture data too short (Repeat).");
+					break;
 				}
 
 				if (texOffset + rep > texture.size())

@@ -9,9 +9,10 @@
 #include <QTimerEvent>
 #include <QDebug>
 #include <QGuiApplication>
-#if defined(__linux__) && defined(HAS_QPA_HEADERS)
+#if defined(__linux__)
 #include <qpa/qplatformnativeinterface.h>
 #endif
+#include <QWindow>
 #include <algorithm>
 #include <cctype>
 
@@ -60,24 +61,29 @@ static float getRefreshRate(QWidget* widget)
 	wi.type = WindowInfo::Type::Win32;
 	wi.window_handle = reinterpret_cast<void*>(widget->winId());
 #elif defined(__linux__)
-#ifdef HAS_QPA_HEADERS
-	QPlatformNativeInterface* native = QGuiApplication::platformNativeInterface();
 	if (QGuiApplication::platformName().startsWith("wayland", Qt::CaseInsensitive))
 	{
 		wi.type = WindowInfo::Type::Wayland;
-		wi.display_connection = native->nativeResourceForIntegration("wl_display");
-		wi.window_handle = native->nativeResourceForWindow("surface", widget->windowHandle());
+		if (widget->windowHandle())
+		{
+			QPlatformNativeInterface* pni = QGuiApplication::platformNativeInterface();
+			if (pni)
+			{
+				wi.display_connection = pni->nativeResourceForWindow("display", widget->windowHandle());
+				wi.window_handle = pni->nativeResourceForWindow("surface", widget->windowHandle());
+			}
+		}
 	}
 	else
 	{
 		wi.type = WindowInfo::Type::X11;
-		wi.display_connection = native->nativeResourceForIntegration("display");
+		auto* x11App = qApp->nativeInterface<QNativeInterface::QX11Application>();
+        if (x11App)
+        {
+            wi.display_connection = x11App->display();
+        }
 		wi.window_handle = reinterpret_cast<void*>(widget->winId());
 	}
-#else
-	wi.type = WindowInfo::Type::X11;
-	wi.window_handle = reinterpret_cast<void*>(widget->winId());
-#endif
 #endif
 
 	auto rate = WindowInfo::QueryRefreshRateForWindow(wi);
@@ -96,6 +102,7 @@ IconWidget::IconWidget(Config* config, QWidget* parent)
 	setAttribute(Qt::WA_PaintOnScreen);
 	setAttribute(Qt::WA_DontCreateNativeAncestors, true);
 	setFocusPolicy(Qt::NoFocus);
+	printPlatformInfo();
 }
 
 IconWidget::~IconWidget()
@@ -106,6 +113,12 @@ IconWidget::~IconWidget()
 		m_renderer->shutdown();
 		m_renderer.reset();
 	}
+}
+
+void IconWidget::printPlatformInfo()
+{
+	QString platform = QGuiApplication::platformName();
+	qInfo() << "IconWidget: Platform:" << platform;
 }
 
 bool IconWidget::loadIcon(const std::vector<uint8_t>& iconData)
@@ -295,24 +308,27 @@ void IconWidget::ensureRenderer()
 		wi.type = WindowInfo::Type::Win32;
 		wi.window_handle = reinterpret_cast<void*>(winId());
 #elif defined(__linux__)
-#ifdef HAS_QPA_HEADERS
-		QPlatformNativeInterface* native = QGuiApplication::platformNativeInterface();
 		if (QGuiApplication::platformName().startsWith("wayland", Qt::CaseInsensitive))
 		{
 			wi.type = WindowInfo::Type::Wayland;
-			wi.display_connection = native->nativeResourceForIntegration("wl_display");
-			wi.window_handle = native->nativeResourceForWindow("surface", windowHandle());
+			QPlatformNativeInterface* pni = QGuiApplication::platformNativeInterface();
+			if (pni)
+			{
+				wi.display_connection = pni->nativeResourceForWindow("display", windowHandle());
+				wi.window_handle = pni->nativeResourceForWindow("surface", windowHandle());
+			}
 		}
-		else
+		else if (QGuiApplication::platformName().startsWith("xcb", Qt::CaseInsensitive))
 		{
 			wi.type = WindowInfo::Type::X11;
-			wi.display_connection = native->nativeResourceForIntegration("display");
+			            
+            auto* x11App = qApp->nativeInterface<QNativeInterface::QX11Application>();
+            if (x11App)
+            {
+                wi.display_connection = x11App->display();
+            }
 			wi.window_handle = reinterpret_cast<void*>(winId());
 		}
-#else
-		wi.type = WindowInfo::Type::X11;
-		wi.window_handle = reinterpret_cast<void*>(winId());
-#endif
 #endif
 
 		if (rendererType == "opengl")

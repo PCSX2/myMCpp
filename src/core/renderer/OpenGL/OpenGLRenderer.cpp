@@ -310,6 +310,16 @@ void OpenGLRenderer::setZoom(float zoom)
 	m_camera.setZoom(zoom);
 }
 
+void OpenGLRenderer::setCameraOffset(float x, float y, float z)
+{
+	m_camera.setOffset(x, y, z);
+}
+
+void OpenGLRenderer::resetCamera()
+{
+	m_camera.reset();
+}
+
 void OpenGLRenderer::setCameraMode(CameraMode mode)
 {
 	m_camera.mode = mode;

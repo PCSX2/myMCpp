@@ -11,14 +11,12 @@ fragment float4 PSMain(
     sampler texSampler               [[sampler(0)]]
 )
 {
-    // Texture toggle
     float4 texColor = (push.useTexture != 0)
         ? tex.sample(texSampler, in.fragTexCoord)
         : float4(1.0);
 
     float3 baseColor = in.fragColor.rgb * texColor.rgb;
 
-    // Lighting: ambient + diffuse
     float3 normal = normalize(in.fragNormal);
     float3 color  = baseColor * scene.ambientLight.rgb;
 
@@ -29,7 +27,6 @@ fragment float4 PSMain(
         color += lambert * scene.lightColor[i].rgb * baseColor;
     }
 
-    // Alpha handling
     float alpha = in.fragColor.a;
 
     if (push.enableAlpha != 0)

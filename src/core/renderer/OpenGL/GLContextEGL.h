@@ -34,6 +34,7 @@ protected:
 	EGLContext m_context;
 	EGLSurface m_surface;
 	EGLConfig m_config;
+	struct wl_egl_window* m_waylandWindow = nullptr;
 
 	bool initializeDisplay();
 	bool chooseConfig();

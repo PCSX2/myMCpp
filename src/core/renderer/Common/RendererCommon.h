@@ -43,6 +43,8 @@ struct CameraState
 	void applyMode();
 	void setRotation(float x, float y, float z);
 	void setZoom(float zoom);
+	void setOffset(float x, float y, float z);
+	void reset();
 };
 
 struct BackgroundState

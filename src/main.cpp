@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
 		config.setResourcesPath("resources");
 	}
 #else
-	config.setResourcesPath("resources");
+	config.setResourcesPath((fs::path(QCoreApplication::applicationDirPath().toStdString()) / "resources").string());
 #endif
 	ResourcePath::set(config.getResourcesPath());
 	Logger::info("[main] Resources path: {}", ResourcePath::get().string());

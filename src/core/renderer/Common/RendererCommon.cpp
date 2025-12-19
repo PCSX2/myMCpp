@@ -160,6 +160,18 @@ void CameraState::setZoom(float z)
 	zoom = glm::clamp(z, 0.1f, 10.0f);
 }
 
+void CameraState::setOffset(float x, float y, float z)
+{
+	cameraOffset = glm::vec3(x, y, z);
+}
+
+void CameraState::reset()
+{
+	rotation = glm::vec3(0.0f);
+	zoom = 1.0f;
+	applyMode();
+}
+
 BackgroundState::BackgroundState()
 	: alpha(1.0f)
 	, shouldRender(false)

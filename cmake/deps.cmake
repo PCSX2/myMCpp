@@ -126,6 +126,9 @@ endif()
 # Find system packages
 # ============================================================================
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+if (Qt6_VERSION VERSION_GREATER_EQUAL 6.10.0)
+	find_package(Qt6 COMPONENTS CorePrivate GuiPrivate WidgetsPrivate REQUIRED)
+endif()
 find_package(Vulkan REQUIRED)
 if(UNIX AND NOT APPLE)
     find_package(OpenGL REQUIRED COMPONENTS EGL)

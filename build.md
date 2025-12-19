@@ -71,7 +71,16 @@
 2.  **Build**:
     ```bash
     mkdir build && cd build
-    cmake .. -DCMAKE_BUILD_TYPE=Release
+    ```
+    ```bash
+    cmake .. \
+    -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=clang \
+    -DCMAKE_CXX_COMPILER=clang++
+    ```
+    
+    ```bash
     cmake --build . --parallel --config Release
     ```
 

@@ -254,6 +254,8 @@ void MetalRenderer::resize(uint32_t width, uint32_t height)
 
 void MetalRenderer::setRotation(float x, float y, float z) { m_camera.setRotation(x, y, z); }
 void MetalRenderer::setZoom(float zoom) { m_camera.setZoom(zoom); }
+void MetalRenderer::setCameraOffset(float x, float y, float z) { m_camera.setOffset(x, y, z); }
+void MetalRenderer::resetCamera() { m_camera.reset(); }
 void MetalRenderer::setCameraMode(CameraMode mode) {
     m_camera.mode = mode;
     m_camera.applyMode();

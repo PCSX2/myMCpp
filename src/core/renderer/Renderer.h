@@ -49,6 +49,8 @@ public:
 
 	virtual void setRotation(float x, float y, float z) = 0;
 	virtual void setZoom(float zoom) = 0;
+	virtual void setCameraOffset(float x, float y, float z) = 0;
+	virtual void resetCamera() = 0;
 
 	virtual void setCameraMode(CameraMode mode) = 0;
 	virtual void setLightingFromIconSys(PS2IconSys* iconSys) = 0;

@@ -165,6 +165,16 @@ void VulkanRenderer::setZoom(float zoom)
 	m_camera.setZoom(zoom);
 }
 
+void VulkanRenderer::setCameraOffset(float x, float y, float z)
+{
+	m_camera.setOffset(x, y, z);
+}
+
+void VulkanRenderer::resetCamera()
+{
+	m_camera.reset();
+}
+
 void VulkanRenderer::setCameraMode(CameraMode mode)
 {
 	m_camera.mode = mode;

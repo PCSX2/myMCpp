@@ -49,6 +49,7 @@ protected:
 	QPaintEngine* paintEngine() const override;
 
 private:
+	void printPlatformInfo();
 	void ensureRenderer();
 	void recreateRenderer();
 	void renderFrame();

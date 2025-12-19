@@ -6,6 +6,8 @@
 #include "GLContextEGL.h"
 
 #include <EGL/egl.h>
+#include <wayland-egl.h>
+#include <wayland-client.h>
 #include "../../../common/Logger.h"
 #include <cstring>
 
@@ -136,8 +138,21 @@ bool GLContextEGL::createSurface()
 		return false;
 	}
 
-	m_surface = eglCreateWindowSurface(m_display, m_config,
-		reinterpret_cast<EGLNativeWindowType>(m_windowInfo.window_handle), nullptr);
+	EGLNativeWindowType nativeWindow = reinterpret_cast<EGLNativeWindowType>(m_windowInfo.window_handle);
+
+	if (m_windowInfo.type == WindowInfo::Type::Wayland)
+	{
+		struct wl_surface* surf = reinterpret_cast<struct wl_surface*>(m_windowInfo.window_handle);
+		m_waylandWindow = wl_egl_window_create(surf, m_width, m_height);
+		if (!m_waylandWindow)
+		{
+			Logger::error("GL: Failed to create wl_egl_window");
+			return false;
+		}
+		nativeWindow = reinterpret_cast<EGLNativeWindowType>(m_waylandWindow);
+	}
+
+	m_surface = eglCreateWindowSurface(m_display, m_config, nativeWindow, nullptr);
 
 	if (m_surface == EGL_NO_SURFACE)
 	{
@@ -208,6 +223,10 @@ void GLContextEGL::resize(uint32_t width, uint32_t height)
 {
 	m_width = width;
 	m_height = height;
+	if (m_waylandWindow)
+	{
+		wl_egl_window_resize(m_waylandWindow, width, height, 0, 0);
+	}
 }
 
 void* GLContextEGL::getProcAddress(const char* name)
@@ -235,6 +254,12 @@ void GLContextEGL::cleanup()
 
 		eglTerminate(m_display);
 		m_display = EGL_NO_DISPLAY;
+	}
+
+	if (m_waylandWindow)
+	{
+		wl_egl_window_destroy(m_waylandWindow);
+		m_waylandWindow = nullptr;
 	}
 
 	m_initialized = false;
