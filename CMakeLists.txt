@@ -14,8 +14,9 @@ set(CMAKE_AUTOUIC ON)
 # Include dependencies
 include(${CMAKE_SOURCE_DIR}/cmake/deps.cmake)
 
-# Include shader compilation
-include(${CMAKE_SOURCE_DIR}/cmake/shaders.cmake)
+if(ENABLE_VULKAN)
+    include(${CMAKE_SOURCE_DIR}/cmake/shaders.cmake)
+endif()
 
 # Core library sources
 set(CORE_SOURCES
@@ -33,11 +34,6 @@ set(CORE_SOURCES
     src/core/Config.cpp
     src/core/renderer/Renderer.cpp
     src/core/renderer/Common/RendererCommon.cpp
-    src/core/renderer/Vulkan/VulkanRenderer.cpp
-    src/core/renderer/Vulkan/VulkanDevice.cpp
-    src/core/renderer/Vulkan/VulkanSwapchain.cpp
-    src/core/renderer/Vulkan/VulkanPipeline.cpp
-    src/core/renderer/Vulkan/VulkanResources.cpp
     src/core/renderer/OpenGL/OpenGLRenderer.cpp
     src/core/renderer/OpenGL/OpenGLShader.cpp
     src/core/renderer/OpenGL/OpenGLResources.cpp
@@ -46,12 +42,23 @@ set(CORE_SOURCES
     src/core/renderer/OpenGL/GLContextEGL.cpp
 )
 
+if(ENABLE_VULKAN)
+    list(APPEND CORE_SOURCES
+        src/core/renderer/Vulkan/VulkanRenderer.cpp
+        src/core/renderer/Vulkan/VulkanDevice.cpp
+        src/core/renderer/Vulkan/VulkanSwapchain.cpp
+        src/core/renderer/Vulkan/VulkanPipeline.cpp
+        src/core/renderer/Vulkan/VulkanResources.cpp
+    )
+endif()
+
 if(APPLE)
     list(APPEND CORE_SOURCES 
         src/core/renderer/Metal/MetalRenderer.mm
         src/core/renderer/Metal/MetalDevice.mm
         src/core/renderer/Metal/MetalPipeline.mm
         src/core/renderer/Metal/MetalResources.mm
+        src/core/renderer/OpenGL/GLContextAGL.mm
         src/common/CocoaTools.mm
     )
 endif()
@@ -73,11 +80,6 @@ set(CORE_HEADERS
     src/core/Config.h
     src/core/renderer/Renderer.h
     src/core/renderer/Common/RendererCommon.h
-    src/core/renderer/Vulkan/VulkanRenderer.h
-    src/core/renderer/Vulkan/VulkanDevice.h
-    src/core/renderer/Vulkan/VulkanSwapchain.h
-    src/core/renderer/Vulkan/VulkanPipeline.h
-    src/core/renderer/Vulkan/VulkanResources.h
     src/core/renderer/OpenGL/OpenGLRenderer.h
     src/core/renderer/OpenGL/OpenGLShader.h
     src/core/renderer/OpenGL/OpenGLResources.h
@@ -85,6 +87,16 @@ set(CORE_HEADERS
     src/core/renderer/OpenGL/GLContextWGL.h
     src/core/renderer/OpenGL/GLContextEGL.h
 )
+
+if(ENABLE_VULKAN)
+    list(APPEND CORE_HEADERS
+        src/core/renderer/Vulkan/VulkanRenderer.h
+        src/core/renderer/Vulkan/VulkanDevice.h
+        src/core/renderer/Vulkan/VulkanSwapchain.h
+        src/core/renderer/Vulkan/VulkanPipeline.h
+        src/core/renderer/Vulkan/VulkanResources.h
+    )
+endif()
 
 if(APPLE)
     list(APPEND CORE_HEADERS
@@ -106,7 +118,9 @@ target_include_directories(myMCpp_core PUBLIC
 )
 
 # Link Vulkan headers for renderer in core
-target_include_directories(myMCpp_core PUBLIC ${vulkan-headers_SOURCE_DIR}/include)
+if(ENABLE_VULKAN)
+    target_include_directories(myMCpp_core PUBLIC ${vulkan-headers_SOURCE_DIR}/include)
+endif()
 
 # Link GLM headers
 target_include_directories(myMCpp_core PUBLIC ${glm_SOURCE_DIR})
@@ -129,7 +143,10 @@ endif()
 target_link_libraries(myMCpp_core PUBLIC nlohmann_json::nlohmann_json spdlog::spdlog)
 
 # Link Vulkan and OpenGL
-target_link_libraries(myMCpp_core PUBLIC Vulkan::Vulkan OpenGL::GL)
+if(ENABLE_VULKAN)
+    target_link_libraries(myMCpp_core PUBLIC Vulkan::Vulkan)
+endif()
+target_link_libraries(myMCpp_core PUBLIC OpenGL::GL)
 
 if(UNIX AND NOT APPLE)
     target_link_libraries(myMCpp_core PUBLIC OpenGL::EGL)
@@ -139,12 +156,79 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if(APPLE)
+    find_library(METAL_LIBRARY Metal)
+    find_library(METALKIT_LIBRARY MetalKit)
+    find_library(COCOA_LIBRARY Cocoa)
+    find_library(QUARTZCORE_LIBRARY QuartzCore)
+    find_library(ICONV_LIBRARY iconv)
     target_link_libraries(myMCpp_core PUBLIC 
-        "-framework Metal"
-        "-framework MetalKit"
-        "-framework Cocoa"
-        "-framework QuartzCore"
+        ${METAL_LIBRARY}
+        ${METALKIT_LIBRARY}
+        ${COCOA_LIBRARY}
+        ${QUARTZCORE_LIBRARY}
+        ${ICONV_LIBRARY}
     )
+    # Enable ARC for Objective-C++ files
+    set_source_files_properties(
+        src/core/renderer/Metal/MetalRenderer.mm
+        src/core/renderer/Metal/MetalDevice.mm
+        src/core/renderer/Metal/MetalPipeline.mm
+        src/core/renderer/Metal/MetalResources.mm
+        src/core/renderer/OpenGL/GLContextAGL.mm
+        src/common/CocoaTools.mm
+        PROPERTIES COMPILE_FLAGS "-fobjc-arc"
+    )
+    
+    # Metal shaders
+    set(METAL_SHADERS
+        ${CMAKE_SOURCE_DIR}/resources/shaders/Metal/IconShared.metal
+        ${CMAKE_SOURCE_DIR}/resources/shaders/Metal/background_ps.metal
+        ${CMAKE_SOURCE_DIR}/resources/shaders/Metal/background_vs.metal
+        ${CMAKE_SOURCE_DIR}/resources/shaders/Metal/icon_ps.metal
+        ${CMAKE_SOURCE_DIR}/resources/shaders/Metal/icon_vs.metal
+    )
+    
+    if(CMAKE_GENERATOR MATCHES "Xcode")
+        # Xcode handles Metal shaders natively with code completion
+        set_target_properties(myMCpp_core PROPERTIES
+            XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO INCLUDE_SOURCE
+        )
+        foreach(shader IN LISTS METAL_SHADERS)
+            target_sources(myMCpp_core PRIVATE ${shader})
+            set_source_files_properties(${shader} PROPERTIES LANGUAGE METAL)
+        endforeach()
+    else()
+        # For non-Xcode generators (Ninja, Make), compile Metal shaders manually
+        set(METAL_AIR_FILES)
+        set(METALLIB_OUTPUT ${CMAKE_BINARY_DIR}/default.metallib)
+        
+        foreach(shader IN LISTS METAL_SHADERS)
+            get_filename_component(shader_name ${shader} NAME_WE)
+            set(air_file ${CMAKE_BINARY_DIR}/Metal/${shader_name}.air)
+            list(APPEND METAL_AIR_FILES ${air_file})
+            
+            add_custom_command(
+                OUTPUT ${air_file}
+                COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/Metal
+                COMMAND xcrun metal -ffast-math -std=macos-metal2.0 -target air64-apple-macos10.13
+                    $<$<NOT:$<CONFIG:Release,MinSizeRel>>:-gline-tables-only>
+                    -I ${CMAKE_SOURCE_DIR}/resources/shaders/Metal
+                    -o ${air_file} -c ${shader}
+                DEPENDS ${shader} ${CMAKE_SOURCE_DIR}/resources/shaders/Metal/IconShared.metal
+                COMMENT "Compiling Metal shader ${shader_name}"
+            )
+        endforeach()
+        
+        add_custom_command(
+            OUTPUT ${METALLIB_OUTPUT}
+            COMMAND xcrun metallib -o ${METALLIB_OUTPUT} ${METAL_AIR_FILES}
+            DEPENDS ${METAL_AIR_FILES}
+            COMMENT "Linking Metal library"
+        )
+        
+        add_custom_target(CompileMetalShaders DEPENDS ${METALLIB_OUTPUT})
+        add_dependencies(myMCpp_core CompileMetalShaders)
+    endif()
 endif()
 
 # Enable exception handling for Windows
@@ -189,8 +273,9 @@ set(GUI_HEADERS
 # Create GUI executable
 add_executable(myMCpp WIN32 ${GUI_SOURCES} ${GUI_HEADERS})
 
-# Ensure shaders are compiled before building the GUI
-add_dependencies(myMCpp CompileShaders)
+if(ENABLE_VULKAN)
+    add_dependencies(myMCpp CompileShaders)
+endif()
 
 # Link libraries
 target_link_libraries(myMCpp PRIVATE 
@@ -201,8 +286,10 @@ target_link_libraries(myMCpp PRIVATE
     Qt6::Widgets
 )
 
+if(UNIX AND NOT APPLE)
     find_package(Wayland REQUIRED COMPONENTS Client Egl)
     target_link_libraries(myMCpp_core PUBLIC Wayland::Client Wayland::Egl)
+endif()
 
 target_include_directories(myMCpp PRIVATE 
     ${Qt6Gui_PRIVATE_INCLUDE_DIRS}
@@ -214,7 +301,9 @@ target_include_directories(myMCpp PRIVATE
     ${CMAKE_SOURCE_DIR}/src/ui/widgets
     ${CMAKE_SOURCE_DIR}/src/ui/dialogs
 )
-target_include_directories(myMCpp PRIVATE ${vulkan-headers_SOURCE_DIR}/include)
+if(ENABLE_VULKAN)
+    target_include_directories(myMCpp PRIVATE ${vulkan-headers_SOURCE_DIR}/include)
+endif()
 
 foreach(_t 
     zlib zlibstatic
@@ -282,6 +371,59 @@ if(UNIX AND NOT APPLE)
             ${CMAKE_SOURCE_DIR}/resources
             $<TARGET_FILE_DIR:myMCpp>/resources
         COMMENT "Copying resources folder to output directory..."
+    )
+endif()
+
+if(APPLE)
+    set_target_properties(myMCpp PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/resources/Info.plist.in"
+        OUTPUT_NAME myMCpp
+    )
+    
+    set(MACOS_ICON "${CMAKE_SOURCE_DIR}/resources/icons/AppIcon.icns")
+    target_sources(myMCpp PRIVATE ${MACOS_ICON})
+    set_source_files_properties(${MACOS_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources/icons)
+    
+    get_target_property(_qt_core_loc Qt6::Core LOCATION)
+    get_filename_component(_qt_framework_dir "${_qt_core_loc}" DIRECTORY)
+    get_filename_component(_qt_lib_dir "${_qt_framework_dir}/../../.." ABSOLUTE)
+    
+    set_target_properties(myMCpp PROPERTIES
+        BUILD_RPATH "${_qt_lib_dir};/opt/homebrew/lib"
+        INSTALL_RPATH "@executable_path/../Frameworks"
+        BUILD_WITH_INSTALL_RPATH FALSE
+    )
+    
+    if(NOT CMAKE_GENERATOR MATCHES "Xcode" AND TARGET CompileMetalShaders)
+        add_dependencies(myMCpp CompileMetalShaders)
+        add_custom_command(TARGET myMCpp POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${CMAKE_BINARY_DIR}/default.metallib
+                $<TARGET_FILE_DIR:myMCpp>/../Resources/shaders/Metal/default.metallib
+            COMMENT "Copying Metal library to bundle..."
+        )
+    endif()
+    
+    option(SKIP_POSTPROCESS_BUNDLE "Skip running macdeployqt" OFF)
+    if(NOT SKIP_POSTPROCESS_BUNDLE)
+        get_target_property(QT_QMAKE_LOCATION Qt6::qmake IMPORTED_LOCATION)
+        get_filename_component(QT_BIN_DIR "${QT_QMAKE_LOCATION}" DIRECTORY)
+        get_filename_component(QT_LIB_DIR "${QT_BIN_DIR}/../lib" ABSOLUTE)
+        
+        add_custom_target(myMCpp-postprocess-bundle ALL
+            COMMAND Qt6::macdeployqt "$<TARGET_FILE_DIR:myMCpp>/../.." -no-strip -always-overwrite -libpath=${QT_LIB_DIR}
+            COMMAND codesign --force --deep --sign - "$<TARGET_FILE_DIR:myMCpp>/../.."
+            COMMENT "Running macdeployqt and signing bundle..."
+        )
+        add_dependencies(myMCpp-postprocess-bundle myMCpp)
+    endif()
+    
+    add_custom_command(TARGET myMCpp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/resources
+            $<TARGET_FILE_DIR:myMCpp>/../Resources
+        COMMENT "Copying resources to app bundle..."
     )
 endif()
 

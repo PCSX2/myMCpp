@@ -13,37 +13,39 @@ FetchContent_Declare(
     GIT_SHALLOW TRUE
 )
 
-# ============================================================================
-# Vulkan - Vulkan header files and API registry
-# ============================================================================
-FetchContent_Declare(
-    Vulkan-Headers
-    GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
-    GIT_TAG v1.4.336
-    GIT_SHALLOW TRUE
-)
+if(ENABLE_VULKAN)
+    # ============================================================================
+    # Vulkan - Vulkan header files and API registry
+    # ============================================================================
+    FetchContent_Declare(
+        Vulkan-Headers
+        GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
+        GIT_TAG v1.4.336
+        GIT_SHALLOW TRUE
+    )
 
-# ============================================================================
-# SPIRV - SPIRV-Headers
-# ============================================================================
-FetchContent_Declare(
-    SPIRV-Headers
-    GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Headers.git
-    GIT_TAG vulkan-sdk-1.4.335.0
-    GIT_SHALLOW TRUE
-)
+    # ============================================================================
+    # SPIRV - SPIRV-Headers
+    # ============================================================================
+    FetchContent_Declare(
+        SPIRV-Headers
+        GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Headers.git
+        GIT_TAG vulkan-sdk-1.4.335.0
+        GIT_SHALLOW TRUE
+    )
 
-FetchContent_Declare(
-    SPIRV-Tools
-    GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Tools.git
-    GIT_TAG vulkan-sdk-1.4.335.0
-    GIT_SHALLOW TRUE
-)
+    FetchContent_Declare(
+        SPIRV-Tools
+        GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Tools.git
+        GIT_TAG vulkan-sdk-1.4.335.0
+        GIT_SHALLOW TRUE
+    )
 
-set(SPIRV_SKIP_EXECUTABLES OFF CACHE BOOL "" FORCE)
-set(SPIRV_SKIP_TESTS ON CACHE BOOL "" FORCE)
-set(SPIRV_WERROR OFF CACHE BOOL "" FORCE)
-set(SPIRV_WARN_EVERYTHING OFF CACHE BOOL "" FORCE)
+    set(SPIRV_SKIP_EXECUTABLES OFF CACHE BOOL "" FORCE)
+    set(SPIRV_SKIP_TESTS ON CACHE BOOL "" FORCE)
+    set(SPIRV_WERROR OFF CACHE BOOL "" FORCE)
+    set(SPIRV_WARN_EVERYTHING OFF CACHE BOOL "" FORCE)
+endif()
 
 # ============================================================================
 # GLM - OpenGL Mathematics (GLM)
@@ -105,7 +107,12 @@ set(ZLIB_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(ZLIB_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(SKIP_BUILD_EXAMPLES ON CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(zlib Vulkan-Headers SPIRV-Headers SPIRV-Tools glm glfw glad nlohmann_json spdlog)
+set(VULKAN_DEPS)
+if(ENABLE_VULKAN)
+    list(APPEND VULKAN_DEPS Vulkan-Headers SPIRV-Headers SPIRV-Tools)
+endif()
+
+FetchContent_MakeAvailable(zlib ${VULKAN_DEPS} glm glfw glad nlohmann_json spdlog)
 
 # Disable zlib example and test targets
 if(TARGET example)
@@ -129,7 +136,17 @@ find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 if (Qt6_VERSION VERSION_GREATER_EQUAL 6.10.0)
 	find_package(Qt6 COMPONENTS CorePrivate GuiPrivate WidgetsPrivate REQUIRED)
 endif()
-find_package(Vulkan REQUIRED)
+
+if(APPLE)
+    option(ENABLE_VULKAN "Enable Vulkan renderer" OFF)
+else()
+    option(ENABLE_VULKAN "Enable Vulkan renderer" ON)
+endif()
+
+if(ENABLE_VULKAN)
+    find_package(Vulkan REQUIRED)
+endif()
+
 if(UNIX AND NOT APPLE)
     find_package(OpenGL REQUIRED COMPONENTS EGL)
 else()
