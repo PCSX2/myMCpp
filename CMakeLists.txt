@@ -20,6 +20,11 @@ endif()
 
 # Core library sources
 set(CORE_SOURCES
+    src/common/sjis.cpp
+    src/common/lzari.cpp
+    src/common/Logger.cpp
+    src/common/TranslationManager.cpp
+    src/common/WindowInfo.cpp
     src/core/formats/ps2mc_dir.cpp
     src/core/formats/ps2mc_ecc.cpp
     src/core/formats/ps2mc.cpp
@@ -27,10 +32,6 @@ set(CORE_SOURCES
     src/core/formats/ps2iconsys.cpp
     src/core/formats/ps2icon.cpp
     src/cli/ps2mc_cli.cpp
-    src/common/sjis.cpp
-    src/common/lzari.cpp
-    src/common/Logger.cpp
-    src/common/WindowInfo.cpp
     src/core/Config.cpp
     src/core/renderer/Renderer.cpp
     src/core/renderer/Common/RendererCommon.cpp
@@ -66,6 +67,11 @@ endif()
 set(CORE_HEADERS
     src/common/round.h
     src/common/version.h
+    src/common/sjis.h
+    src/common/lzari.h
+    src/common/Logger.h
+    src/common/TranslationManager.h
+    src/common/WindowInfo.h
     src/core/formats/ps2mc_dir.h
     src/core/formats/ps2mc_ecc.h
     src/core/formats/ps2mc.h
@@ -73,10 +79,6 @@ set(CORE_HEADERS
     src/core/formats/ps2iconsys.h
     src/core/formats/ps2icon.h
     src/cli/ps2mc_cli.h
-    src/common/sjis.h
-    src/common/lzari.h
-    src/common/Logger.h
-    src/common/WindowInfo.h
     src/core/Config.h
     src/core/renderer/Renderer.h
     src/core/renderer/Common/RendererCommon.h
@@ -111,9 +113,9 @@ endif()
 # Create core library
 add_library(myMCpp_core STATIC ${CORE_SOURCES} ${CORE_HEADERS})
 target_include_directories(myMCpp_core PUBLIC 
+    ${CMAKE_SOURCE_DIR}/src/common
     ${CMAKE_SOURCE_DIR}/src/core
     ${CMAKE_SOURCE_DIR}/src/core/formats
-    ${CMAKE_SOURCE_DIR}/src/common
     ${CMAKE_SOURCE_DIR}/src/cli
 )
 
@@ -139,8 +141,13 @@ if(WIN32)
     )
 endif()
 
-# Link nlohmann/json
-target_link_libraries(myMCpp_core PUBLIC nlohmann_json::nlohmann_json spdlog::spdlog)
+# Link nlohmann/json and Qt
+target_link_libraries(myMCpp_core PUBLIC 
+    nlohmann_json::nlohmann_json 
+    spdlog::spdlog
+    Qt6::Core
+    Qt6::Widgets
+)
 
 # Link Vulkan and OpenGL
 if(ENABLE_VULKAN)
@@ -286,6 +293,12 @@ target_link_libraries(myMCpp PRIVATE
     Qt6::Widgets
 )
 
+qt6_add_translations(myMCpp
+    TS_FILES src/ui/Translations/myMCpp_en.ts
+    LUPDATE_OPTIONS -locations relative
+    RESOURCE_PREFIX "/translations"
+)
+
 if(UNIX AND NOT APPLE)
     find_package(Wayland REQUIRED COMPONENTS Client Egl)
     target_link_libraries(myMCpp_core PUBLIC Wayland::Client Wayland::Egl)
@@ -325,6 +338,11 @@ set_target_properties(myMCpp PROPERTIES
 # Installation
 install(TARGETS myMCpp DESTINATION bin)
 install(FILES README.txt DESTINATION .)
+
+# Translations
+if(WIN32 OR UNIX)
+    install(DIRECTORY src/ui/Translations DESTINATION resources/translations)
+endif()
 
 # Platform-specific settings
 if(WIN32)

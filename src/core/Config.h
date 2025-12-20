@@ -57,6 +57,9 @@ public:
 	int getThumbnailSize() const;
 	void setThumbnailSize(int size);
 
+	std::string getLanguage() const;
+	void setLanguage(const std::string& lang);
+
 	bool getWarnOnDelete() const;
 	void setWarnOnDelete(bool enabled);
 

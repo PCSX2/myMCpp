@@ -4,7 +4,7 @@
 #include "VulkanRenderer.h"
 #include "ps2icon.h"
 #include "ps2iconsys.h"
-#include "../../../common/Logger.h"
+#include "Logger.h"
 #include <cstring>
 #include <algorithm>
 #include <fstream>

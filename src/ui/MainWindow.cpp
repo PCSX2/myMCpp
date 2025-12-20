@@ -91,6 +91,16 @@ MainWindow::~MainWindow()
 {
 }
 
+void MainWindow::changeEvent(QEvent* event)
+{
+	if (event->type() == QEvent::LanguageChange)
+	{
+		ui->retranslateUi(this);
+		updateStatusBar();
+	}
+	QMainWindow::changeEvent(event);
+}
+
 void MainWindow::onOpenMemoryCard()
 {
 	QString filename = QFileDialog::getOpenFileName(

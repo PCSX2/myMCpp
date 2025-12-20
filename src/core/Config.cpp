@@ -309,6 +309,23 @@ void Config::setThumbnailSize(int size)
 	m_config["ui"]["thumbnail_size"] = size;
 }
 
+std::string Config::getLanguage() const
+{
+	try
+	{
+		return m_config["ui"]["language"].get<std::string>();
+	}
+	catch (...)
+	{
+		return "en";
+	}
+}
+
+void Config::setLanguage(const std::string& lang)
+{
+	m_config["ui"]["language"] = lang;
+}
+
 bool Config::getWarnOnDelete() const
 {
 	try
@@ -495,7 +512,8 @@ void Config::createDefaults()
 					   {"resizable", true}}},
 		{"ui", {{"dark_mode", true},
 				   {"thumbnail_size", 64},
-				   {"ascii_mode", false}}},
+				   {"ascii_mode", false},
+				   {"language", "en"}}},
 		{"behavior", {{"warn_on_delete", true},
 						 {"confirm_shutdown", true},
 						 {"hide_to_tray", false},
@@ -554,6 +572,8 @@ void Config::ensureKeys()
 		m_config["ui"]["thumbnail_size"] = 64;
 	if (!m_config["ui"].contains("ascii_mode"))
 		m_config["ui"]["ascii_mode"] = false;
+	if (!m_config["ui"].contains("language"))
+		m_config["ui"]["language"] = "en";
 
 	if (!m_config["behavior"].contains("warn_on_delete"))
 		m_config["behavior"]["warn_on_delete"] = true;

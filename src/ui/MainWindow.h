@@ -24,6 +24,9 @@ public:
 	explicit MainWindow(Config* config, QWidget* parent = nullptr);
 	~MainWindow();
 
+protected:
+	void changeEvent(QEvent* event) override;
+
 private slots:
 	void onOpenMemoryCard();
 	void onCreateMemoryCard();

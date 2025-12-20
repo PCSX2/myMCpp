@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "VulkanDevice.h"
-#include "../../common/WindowInfo.h"
+#include "WindowInfo.h"
 
 #if defined(_WIN32)
 #include <windows.h>

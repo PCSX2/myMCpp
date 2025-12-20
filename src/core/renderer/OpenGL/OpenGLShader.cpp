@@ -13,8 +13,8 @@
 #endif
 #include <fstream>
 #include <sstream>
-#include "../../../common/Logger.h"
-#include "../../../common/ResourcePath.h"
+#include "Logger.h"
+#include "ResourcePath.h"
 #include <filesystem>
 
 namespace fs = std::filesystem;

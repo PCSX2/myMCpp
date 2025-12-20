@@ -19,13 +19,13 @@ std::unique_ptr<Renderer> RendererFactory::createRenderer(
 		case RendererType::Vulkan:
 #if !defined(__APPLE__)
 			return createVulkanRenderer(windowInfo);
-#else
-			return nullptr;
 #endif
 		case RendererType::OpenGL:
 			return createOpenGLRenderer(windowInfo);
 		case RendererType::Metal:
+#if defined(__APPLE__)
 			return createMetalRenderer(windowInfo);
+#endif
 		default:
 			return nullptr;
 	}
@@ -40,9 +40,6 @@ std::unique_ptr<Renderer> RendererFactory::createVulkanRenderer(const WindowInfo
 		return nullptr;
 	}
 	return renderer;
-#else
-	(void)windowInfo;
-	return nullptr;
 #endif
 }
 

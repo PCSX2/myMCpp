@@ -6,6 +6,7 @@
 #include "Config.h"
 #include "ps2mc.h"
 #include "ps2iconsys.h"
+#include "TranslationManager.h"
 #include <QVBoxLayout>
 #include <QGroupBox>
 #include <QFrame>
@@ -29,17 +30,16 @@ SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)
 {
 	ui->setupUi(this);
 
-	// The UI file creates a placeholder iconContainer. We will use the layout to place our IconWidget.
-	// Ideally we would promote the widget in Designer but IconWidget takes custom constructor args (config).
-	// So we will replace the placeholder or add to layout.
-
-	// Let's remove the placeholder
 	if (ui->iconContainer)
 	{
 		ui->iconLayout->removeWidget(ui->iconContainer);
 		delete ui->iconContainer;
 		ui->iconContainer = nullptr;
 	}
+
+	connect(&TranslationManager::instance(), &TranslationManager::languageChanged, this, [this]() {
+		ui->retranslateUi(this);
+	});
 }
 
 void SaveDetailsPanel::setConfig(Config* config)

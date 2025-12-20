@@ -4,7 +4,7 @@
 #pragma once
 
 #include "../Renderer.h"
-#include "../../common/WindowInfo.h"
+#include "WindowInfo.h"
 #include "../Common/RendererCommon.h"
 #include "VulkanDevice.h"
 #include "VulkanSwapchain.h"

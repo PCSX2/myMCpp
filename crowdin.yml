@@ -1,0 +1,5 @@
+pull_request_title: 'translations: sync Crowdin translations'
+commit_message: '[ci skip]'
+files:
+  - source: /src/ui/Translations/myMCpp_en.ts
+    translation: /src/ui/Translations/myMCpp_%locale%.ts
