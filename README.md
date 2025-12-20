@@ -1,5 +1,7 @@
 # myMCpp
 
+[![Crowdin](https://badges.crowdin.net/mymcpp/localized.svg)](https://crowdin.com/project/mymcpp)
+
 **myMCpp** is a PlayStation 2 memory card manager rewritten from the ground up. It supports `.ps2` images (used by PCSX2) and `.mc2` files (used by the MemCard PRO2).
 
 This is a complete C++ rewrite of the original python-based [mymc++](https://github.com/Adubbz/mymcplusplus), featuring a Qt GUI for better usability.
@@ -63,4 +65,4 @@ myMCpp is released under the **GPLv3**. It is **not** Public Domain.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to open an issue or submit a pull request.
+Contributions are welcome! Please feel free to open an issue, submit a pull request, or contribute on [Crowdin](https://crowdin.com/project/mymcpp).

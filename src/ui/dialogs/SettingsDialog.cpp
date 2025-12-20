@@ -1,6 +1,10 @@
+// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-License-Identifier: GPL-3.0+
+
 #include "SettingsDialog.h"
 #include "Config.h"
-#include "../../common/Logger.h"
+#include "Logger.h"
+#include "TranslationManager.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QCheckBox>
@@ -47,7 +51,18 @@ void SettingsDialog::loadCurrentSettings()
 		return;
 
 	ui->darkModeCheck->setChecked(m_config->getDarkMode());
+	ui->darkModeCheck->setChecked(m_config->getDarkMode());
 	ui->thumbnailSizeSpinner->setValue(m_config->getThumbnailSize());
+
+	// Load languages
+	ui->languageCombo->clear();
+	ui->languageCombo->addItem("English", "en");
+	// We will add more languages as translations become available
+
+	const QString currentLang = QString::fromStdString(m_config->getLanguage());
+	int langIndex = ui->languageCombo->findData(currentLang);
+	if (langIndex >= 0)
+		ui->languageCombo->setCurrentIndex(langIndex);
 
 	std::string renderer_str = m_config->getRenderer();
 	QString rendererKey = QString::fromStdString(renderer_str).toLower();
@@ -105,7 +120,9 @@ void SettingsDialog::onAccepted()
 	}
 
 	m_config->setDarkMode(ui->darkModeCheck->isChecked());
+	m_config->setDarkMode(ui->darkModeCheck->isChecked());
 	m_config->setThumbnailSize(ui->thumbnailSizeSpinner->value());
+	m_config->setLanguage(ui->languageCombo->currentData().toString().toStdString());
 
 	QString renderer = ui->rendererCombo->currentData().toString();
 	m_config->setRenderer(renderer.toLower().toStdString());
@@ -120,6 +137,8 @@ void SettingsDialog::onAccepted()
 	m_config->setDebugLogging(ui->enableDebugLogCheck->isChecked());
 
 	m_config->save();
+
+	TranslationManager::instance().loadLanguage(m_config->getLanguage());
 }
 
 void SettingsDialog::onBrowseMemoryCardPath()

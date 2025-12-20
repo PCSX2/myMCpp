@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "RendererCommon.h"
-#include "../../formats/ps2icon.h"
-#include "../../formats/ps2iconsys.h"
+#include "ps2icon.h"
+#include "ps2iconsys.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "Logger.h"
 #include <cmath>

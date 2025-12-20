@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
-#include "../../common/WindowInfo.h"
+#include "WindowInfo.h"
 
 namespace PS2Icon
 {

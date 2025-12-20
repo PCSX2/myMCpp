@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "MetalPipeline.h"
-#include "../../common/Logger.h"
-#include "../../common/ResourcePath.h"
+#include "Logger.h"
+#include "ResourcePath.h"
 
 MetalPipeline::MetalPipeline()
 {

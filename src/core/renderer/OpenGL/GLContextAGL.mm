@@ -11,7 +11,7 @@
 #import <OpenGL/gl3.h>
 #include <dlfcn.h>
 
-#include "../../../common/Logger.h"
+#include "Logger.h"
 
 GLContextAGL::GLContextAGL(const WindowInfo& windowInfo)
 	: GLContext(windowInfo)

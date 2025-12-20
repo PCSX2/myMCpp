@@ -14,6 +14,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
+#include <QTranslator>
+#include <QLibraryInfo>
+#include "TranslationManager.h"
 
 #if defined(_WIN32)
 #include <Windows.h>
@@ -159,6 +162,17 @@ int main(int argc, char* argv[])
 		qWarning("Failed to create Vulkan instance");
 	}
 #endif
+
+	// Load translations
+	TranslationManager::instance().init(&app, &config);
+	TranslationManager::instance().loadLanguage(config.getLanguage());
+
+	QTranslator qtTranslator;
+	if (qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
+	{
+		app.installTranslator(&qtTranslator);
+	}
+
 
 	MainWindow window(&config);
 	window.show();
