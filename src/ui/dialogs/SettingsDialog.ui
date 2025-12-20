@@ -105,6 +105,9 @@
                  <property name="text">
                   <string>Language:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>languageCombo</cstring>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -113,7 +116,7 @@
                <item>
                 <spacer name="horizontalSpacer_lang">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -131,6 +134,9 @@
                 <widget class="QLabel" name="label_1">
                  <property name="text">
                   <string>Thumbnail Size:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>thumbnailSizeSpinner</cstring>
                  </property>
                 </widget>
                </item>
@@ -155,12 +161,15 @@
                  <property name="text">
                   <string>pixels</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>thumbnailSizeSpinner</cstring>
+                 </property>
                 </widget>
                </item>
                <item>
                 <spacer name="horizontalSpacer">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -188,6 +197,9 @@
                  <property name="text">
                   <string>Renderer:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>rendererCombo</cstring>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -207,7 +219,7 @@
                <item>
                 <spacer name="horizontalSpacer_2">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -232,6 +244,9 @@
                 <widget class="QLabel" name="label_4">
                  <property name="text">
                   <string>Lighting:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>lightingCombo</cstring>
                  </property>
                 </widget>
                </item>
@@ -262,7 +277,7 @@
                <item>
                 <spacer name="horizontalSpacer_3">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -280,6 +295,9 @@
                 <widget class="QLabel" name="label_5">
                  <property name="text">
                   <string>Camera:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>cameraCombo</cstring>
                  </property>
                 </widget>
                </item>
@@ -310,7 +328,7 @@
                <item>
                 <spacer name="horizontalSpacer_4">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -328,7 +346,7 @@
           <item>
            <spacer name="verticalSpacer_1">
             <property name="orientation">
-             <enum>Qt::Vertical</enum>
+             <enum>Qt::Orientation::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -391,7 +409,7 @@
           <item>
            <spacer name="verticalSpacer_2">
             <property name="orientation">
-             <enum>Qt::Vertical</enum>
+             <enum>Qt::Orientation::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -432,6 +450,9 @@
                <property name="text">
                 <string>Memory Card Folder:</string>
                </property>
+               <property name="buddy">
+                <cstring>memoryCardPathEdit</cstring>
+               </property>
               </widget>
              </item>
              <item>
@@ -458,7 +479,7 @@
           <item>
            <spacer name="verticalSpacer_3">
             <property name="orientation">
-             <enum>Qt::Vertical</enum>
+             <enum>Qt::Orientation::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -507,7 +528,7 @@
           <item>
            <spacer name="verticalSpacer_4">
             <property name="orientation">
-             <enum>Qt::Vertical</enum>
+             <enum>Qt::Orientation::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -527,10 +548,10 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>
@@ -545,8 +566,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>254</x>
+     <y>493</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -561,8 +582,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>322</x>
+     <y>493</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
