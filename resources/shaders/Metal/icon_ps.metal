@@ -3,7 +3,7 @@
 
 #include "IconShared.metal"
 
-fragment float4 PSMain(
+fragment float4 IconPSMain(
     VSOutput in                      [[stage_in]],
     constant SceneCB& scene          [[buffer(0)]],
     constant PushCB& push            [[buffer(1)]],

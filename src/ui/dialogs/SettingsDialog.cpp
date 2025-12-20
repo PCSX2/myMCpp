@@ -54,8 +54,14 @@ void SettingsDialog::loadCurrentSettings()
 
 	int rendererIndex = ui->rendererCombo->findText(rendererKey, Qt::MatchFixedString); // Omitting Qt::MatchCaseSensitive implies case insensitivity
 
-	ui->rendererCombo->setItemData(0, "vulkan");
-	ui->rendererCombo->setItemData(1, "opengl");
+	ui->rendererCombo->clear();
+#if !defined(__APPLE__)
+	ui->rendererCombo->addItem("Vulkan", "vulkan");
+#endif
+	ui->rendererCombo->addItem("OpenGL", "opengl");
+#if defined(__APPLE__)
+	ui->rendererCombo->addItem("Metal", "metal");
+#endif
 
 	ui->lightingCombo->setItemData(0, "icon");
 	ui->lightingCombo->setItemData(1, "off");

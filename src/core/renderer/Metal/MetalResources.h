@@ -4,6 +4,7 @@
 #pragma once
 
 #include <Metal/Metal.h>
+#include <dispatch/dispatch.h>
 #include <vector>
 #include <cstdint>
 #include <array>
@@ -25,7 +26,7 @@ public:
     bool createDepthTexture(id<MTLDevice> device, uint32_t width, uint32_t height);
     id<MTLTexture> getDepthTexture() const { return m_depthTexture; }
     
-    id<MTLSemaphore> getSemaphore(uint32_t index) const { return m_renderSemaphores[index]; }
+    dispatch_semaphore_t getSemaphore(uint32_t index) const { return m_renderSemaphores[index]; }
     
     struct FrameResources {
         id<MTLBuffer> vertexBuffer;
@@ -39,6 +40,6 @@ private:
     id<MTLTexture> m_texture = nil;
     id<MTLTexture> m_depthTexture = nil;
     
-    std::array<id<MTLSemaphore>, kMaxFramesInFlight> m_renderSemaphores;
+    std::array<dispatch_semaphore_t, kMaxFramesInFlight> m_renderSemaphores;
     std::array<FrameResources, kMaxFramesInFlight> m_frames;
 };

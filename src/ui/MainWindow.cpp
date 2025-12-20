@@ -36,10 +36,8 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	ui->detailsPanel->setConfig(config);
 	actionHandler = std::make_unique<CardActionHandler>(this);
 
-	// Set window icon programmatically if not handled by .ui (it handles it, but good to ensure)
 	setWindowIcon(QIcon(":/icons/AppIcon.png"));
 
-	// Connect Actions
 	connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::onOpenMemoryCard);
 	connect(ui->actionCreate, &QAction::triggered, this, &MainWindow::onCreateMemoryCard);
 	connect(ui->actionClose, &QAction::triggered, this, &MainWindow::onCloseMemoryCard);
@@ -52,12 +50,15 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->actionFormat, &QAction::triggered, this, &MainWindow::onFormatCard);
 	connect(ui->actionEccTool, &QAction::triggered, this, &MainWindow::onEccTool);
 
-	// Checkable actions
 	ui->actionAscii->setChecked(m_config ? m_config->getAsciiMode() : false);
 	connect(ui->actionAscii, &QAction::triggered, this, &MainWindow::onToggleAscii);
 
 	ui->actionForceImport->setChecked(m_config ? m_config->getForceImport() : false);
 	connect(ui->actionForceImport, &QAction::triggered, this, &MainWindow::onToggleForceImport);
+
+	ui->actionAbout->setMenuRole(QAction::AboutRole);
+	ui->actionPreferences->setMenuRole(QAction::PreferencesRole);
+	ui->actionAboutQt->setMenuRole(QAction::AboutQtRole);
 
 	connect(ui->actionPreferences, &QAction::triggered, this, &MainWindow::onPreferences);
 	connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::onAbout);
@@ -67,7 +68,6 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->actionCheckUpdates, &QAction::triggered, this, &MainWindow::onCheckForUpdates);
 	connect(ui->actionAboutQt, &QAction::triggered, this, &MainWindow::onAboutQt);
 
-	// Widget connections
 	connect(ui->cardBrowser, &QTreeWidget::itemClicked,
 		this, &MainWindow::onCardItemSelected);
 	connect(ui->cardBrowser, &QTreeWidget::itemDoubleClicked,
@@ -307,7 +307,7 @@ void MainWindow::onDocumentation()
 void MainWindow::onDiscordServer()
 {
 	// Replace TBD with actual invite code when I figure what I'm going to do here
-	QDesktopServices::openUrl(QUrl("https://discord.gg/TBD"));
+	QDesktopServices::openUrl(QUrl("https://discord.gg"));
 }
 
 void MainWindow::onCheckForUpdates()

@@ -6,6 +6,8 @@
 
 #if defined(_WIN32)
 #include "GLContextWGL.h"
+#elif defined(__APPLE__)
+#include "GLContextAGL.h"
 #elif defined(__linux__)
 #include "GLContextEGL.h"
 #endif
@@ -35,6 +37,8 @@ std::unique_ptr<GLContext> GLContext::Create(const WindowInfo& windowInfo, std::
 
 #if defined(_WIN32)
 	context = GLContextWGL::Create(windowInfo, error);
+#elif defined(__APPLE__)
+	context = GLContextAGL::Create(windowInfo, error);
 #elif defined(__linux__)
 	context = GLContextEGL::Create(windowInfo, error);
 #else

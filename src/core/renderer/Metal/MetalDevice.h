@@ -3,8 +3,6 @@
 
 #pragma once
 
-#pragma once
-
 #include <Metal/Metal.h>
 
 class MetalDevice
@@ -22,5 +20,4 @@ public:
 private:
     id<MTLDevice> m_device = nil;
     id<MTLCommandQueue> m_commandQueue = nil;
-};
 };

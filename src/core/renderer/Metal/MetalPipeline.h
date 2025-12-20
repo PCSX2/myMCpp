@@ -22,6 +22,7 @@ public:
     id<MTLDepthStencilState> getBackgroundDepthStencilState() const { return m_bgDepthStencilState; }
     
 private:
+    id<MTLLibrary> m_library = nil;
     id<MTLRenderPipelineState> m_pipelineState = nil;
     id<MTLRenderPipelineState> m_bgPipelineState = nil;
     id<MTLDepthStencilState> m_depthStencilState = nil;
