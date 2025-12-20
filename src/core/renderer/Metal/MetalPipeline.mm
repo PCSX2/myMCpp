@@ -4,8 +4,6 @@
 #include "MetalPipeline.h"
 #include "../../common/Logger.h"
 #include "../../common/ResourcePath.h"
-#include <fstream>
-#include <sstream>
 
 MetalPipeline::MetalPipeline()
 {
@@ -16,58 +14,28 @@ MetalPipeline::~MetalPipeline()
     shutdown();
 }
 
-static std::string LoadShaderFile(const std::string& path)
-{
-    std::ifstream file(path);
-    if (!file.is_open())
-    {
-        return "";
-    }
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    return buffer.str();
-}
-
 bool MetalPipeline::initialize(id<MTLDevice> device)
 {
     fs::path resourcePath = ResourcePath::get();
+    fs::path metallibPath = resourcePath / "shaders" / "Metal" / "default.metallib";
     
-    // Load shader sources
-    std::string sharedSrc = LoadShaderFile((resourcePath / "shaders" / "Metal" / "IconShared.metal").string());
-    std::string vsSrc = LoadShaderFile((resourcePath / "shaders" / "Metal" / "icon_vs.metal").string());
-    std::string psSrc = LoadShaderFile((resourcePath / "shaders" / "Metal" / "icon_ps.metal").string());
-
-    if (sharedSrc.empty() || vsSrc.empty() || psSrc.empty()) {
-        Logger::error("MTL: Failed to load Metal shader files from {}", (resourcePath / "shaders" / "Metal").string());
-        return false;
-    }
-    
-    auto StripInclude = [](std::string& src) {
-        std::string search = "#include \"IconShared.metal\"";
-        size_t pos = src.find(search);
-        if (pos != std::string::npos) {
-            src.replace(pos, search.length(), "");
-        }
-    };
-    
-    StripInclude(vsSrc);
-    StripInclude(psSrc);
-    
-    std::string fullSource = sharedSrc + "\n" + vsSrc + "\n" + psSrc;
-
     NSError* error = nil;
-    NSString* shaderSrc = [NSString stringWithUTF8String:fullSource.c_str()];
-    id<MTLLibrary> library = [device newLibraryWithSource:shaderSrc options:nil error:&error];
+    NSString* path = [NSString stringWithUTF8String:metallibPath.string().c_str()];
+    NSURL* url = [NSURL fileURLWithPath:path];
+    id<MTLLibrary> library = [device newLibraryWithURL:url error:&error];
+    
     if (!library) {
-        Logger::error("MTL: Failed to compile Metal shaders: {}", [[error description] UTF8String]);
+        Logger::error("MTL: Failed to load metallib from {}: {}", 
+                      metallibPath.string(), 
+                      [[error description] UTF8String]);
         return false;
     }
     
-    id<MTLFunction> vertexFunc = [library newFunctionWithName:@"VSMain"];
-    id<MTLFunction> fragmentFunc = [library newFunctionWithName:@"PSMain"];
+    id<MTLFunction> vertexFunc = [library newFunctionWithName:@"IconVSMain"];
+    id<MTLFunction> fragmentFunc = [library newFunctionWithName:@"IconPSMain"];
     
     if (!vertexFunc || !fragmentFunc) {
-        Logger::error("MTL: Failed to find shader entry points VSMain/PSMain");
+        Logger::error("MTL: Failed to find shader entry points IconVSMain/IconPSMain");
         return false;
     }
 
@@ -76,6 +44,14 @@ bool MetalPipeline::initialize(id<MTLDevice> device)
     psoDesc.fragmentFunction = fragmentFunc;
     psoDesc.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
     psoDesc.depthAttachmentPixelFormat = MTLPixelFormatDepth32Float;
+    
+    psoDesc.colorAttachments[0].blendingEnabled = YES;
+    psoDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+    psoDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+    psoDesc.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
+    psoDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
+    psoDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+    psoDesc.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
     
     MTLVertexDescriptor* vertexDesc = [[MTLVertexDescriptor alloc] init];
     
@@ -95,9 +71,9 @@ bool MetalPipeline::initialize(id<MTLDevice> device)
     vertexDesc.attributes[3].offset = 32;
     vertexDesc.attributes[3].bufferIndex = 2;
     
-    vertexDesc.layouts[0].stride = 36;
-    vertexDesc.layouts[0].stepRate = 1;
-    vertexDesc.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
+    vertexDesc.layouts[2].stride = 36;
+    vertexDesc.layouts[2].stepRate = 1;
+    vertexDesc.layouts[2].stepFunction = MTLVertexStepFunctionPerVertex;
     
     psoDesc.vertexDescriptor = vertexDesc;
     
@@ -112,35 +88,25 @@ bool MetalPipeline::initialize(id<MTLDevice> device)
     depthDesc.depthWriteEnabled = YES;
     m_depthStencilState = [device newDepthStencilStateWithDescriptor:depthDesc];
     
+    m_library = library;
+    
     return true;
 }
 
 bool MetalPipeline::createBackgroundPipeline(id<MTLDevice> device)
 {
-    fs::path resourcePath = ResourcePath::get();
-    
-    std::string vsSrc = LoadShaderFile((resourcePath / "shaders" / "Metal" / "background_vs.metal").string());
-    std::string psSrc = LoadShaderFile((resourcePath / "shaders" / "Metal" / "background_ps.metal").string());
-    
-    if (vsSrc.empty() || psSrc.empty()) {
-        Logger::error("MTL: Failed to load Metal background shader files");
+    if (!m_library) {
+        Logger::error("MTL: No library loaded - call initialize first");
         return false;
     }
     
-    std::string fullSource = vsSrc + "\n" + psSrc;
+    id<MTLFunction> vertexFunc = [m_library newFunctionWithName:@"BackgroundVSMain"];
+    id<MTLFunction> fragmentFunc = [m_library newFunctionWithName:@"BackgroundPSMain"];
     
-    NSError* error = nil;
-    NSString* shaderSrc = [NSString stringWithUTF8String:fullSource.c_str()];
-    id<MTLLibrary> library = [device newLibraryWithSource:shaderSrc options:nil error:&error];
-    if (!library) {
-        Logger::error("MTL: Failed to compile Metal background shaders: {}", [[error description] UTF8String]);
+    if (!vertexFunc || !fragmentFunc) {
+        Logger::error("MTL: Failed to find background shader entry points");
         return false;
     }
-    
-    id<MTLFunction> vertexFunc = [library newFunctionWithName:@"VSMain"];
-    id<MTLFunction> fragmentFunc = [library newFunctionWithName:@"PSMain"];
-    
-    if (!vertexFunc || !fragmentFunc) return false;
     
     MTLRenderPipelineDescriptor* psoDesc = [[MTLRenderPipelineDescriptor alloc] init];
     psoDesc.vertexFunction = vertexFunc;
@@ -164,6 +130,7 @@ bool MetalPipeline::createBackgroundPipeline(id<MTLDevice> device)
     
     psoDesc.vertexDescriptor = vertexDesc;
     
+    NSError* error = nil;
     m_bgPipelineState = [device newRenderPipelineStateWithDescriptor:psoDesc error:&error];
     
     MTLDepthStencilDescriptor* depthDesc = [[MTLDepthStencilDescriptor alloc] init];
@@ -180,4 +147,5 @@ void MetalPipeline::shutdown()
     m_bgPipelineState = nil;
     m_depthStencilState = nil;
     m_bgDepthStencilState = nil;
+    m_library = nil;
 }

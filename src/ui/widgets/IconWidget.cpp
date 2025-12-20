@@ -322,14 +322,25 @@ void IconWidget::ensureRenderer()
 	const QSize s = size().isEmpty() ? QSize(256, 256) : size();
 	try
 	{
+#if defined(__APPLE__)
+		const std::string rendererType = m_config ? m_config->getRenderer() : "metal";
+#else
 		const std::string rendererType = m_config ? m_config->getRenderer() : "vulkan";
+#endif
 
 		WindowInfo wi{};
-		wi.surface_width = static_cast<uint32_t>(s.width());
-		wi.surface_height = static_cast<uint32_t>(s.height());
-		wi.surface_scale = 1.0f;
+		const qreal dpr = devicePixelRatioF();
+		wi.surface_width = static_cast<uint32_t>(s.width() * dpr);
+		wi.surface_height = static_cast<uint32_t>(s.height() * dpr);
+		wi.surface_scale = static_cast<float>(dpr);
 
-#if defined(__linux__)
+#if defined(_WIN32)
+		wi.type = WindowInfo::Type::Win32;
+		wi.window_handle = reinterpret_cast<void*>(winId());
+#elif defined(__APPLE__)
+		wi.type = WindowInfo::Type::MacOS;
+		wi.window_handle = reinterpret_cast<void*>(winId());
+#elif defined(__linux__)
 		if (QGuiApplication::platformName().startsWith("wayland", Qt::CaseInsensitive))
 		{
 			wi.type = WindowInfo::Type::Wayland;
@@ -374,9 +385,19 @@ void IconWidget::ensureRenderer()
 		{
 			m_renderer = RendererFactory::createOpenGLRenderer(wi);
 		}
+#if defined(__APPLE__)
+		else if (rendererType == "metal")
+		{
+			m_renderer = RendererFactory::createMetalRenderer(wi);
+		}
+#endif
 		else
 		{
+#if !defined(__APPLE__)
 			m_renderer = RendererFactory::createVulkanRenderer(wi);
+#else
+			m_renderer = RendererFactory::createOpenGLRenderer(wi);
+#endif
 		}
 
 		if (!m_renderer)
@@ -459,7 +480,10 @@ void IconWidget::resizeEvent(QResizeEvent* event)
 
 	if (m_renderer)
 	{
-		m_renderer->resize(event->size().width(), event->size().height());
+		const qreal dpr = devicePixelRatioF();
+		m_renderer->resize(
+			static_cast<uint32_t>(event->size().width() * dpr),
+			static_cast<uint32_t>(event->size().height() * dpr));
 	}
 }
 

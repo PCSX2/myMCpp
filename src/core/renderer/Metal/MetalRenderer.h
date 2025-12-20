@@ -7,12 +7,6 @@
 #include "../../common/WindowInfo.h"
 #include "../Common/RendererCommon.h"
 
-#include <Metal/Metal.h>
-#include <QuartzCore/CAMetalLayer.h>
-#include "MetalDevice.h"
-#include "MetalPipeline.h"
-#include "MetalResources.h"
-
 #include <vector>
 #include <memory>
 #include <chrono>
@@ -21,6 +15,8 @@ namespace PS2Icon
 {
 	class Icon;
 }
+
+struct MetalRendererImpl;
 
 class MetalRenderer : public Renderer
 {
@@ -57,9 +53,6 @@ public:
 
 private:
 	void renderFrame();
-    void updateBackgroundData(const struct MetalResources::FrameResources& frameRes);
-    void updateVertexData(const struct MetalResources::FrameResources& frameRes);
-    void updateUniformData(const struct MetalResources::FrameResources& frameRes);
 
 	bool m_initialized = false;
 	WindowInfo m_windowInfo;
@@ -70,7 +63,7 @@ private:
 	std::shared_ptr<PS2Icon::Icon> m_icon;
 	bool m_animationEnabled = true;
 
-    bool m_iconChanged = false;
+	bool m_iconChanged = false;
 
 	std::chrono::steady_clock::time_point m_animStart;
 
@@ -78,9 +71,6 @@ private:
 	CameraState m_camera;
 	BackgroundState m_background;
 
-	MetalDevice m_device;
-    MetalPipeline m_pipeline;
-    MetalResources m_resources;
-    
-    CAMetalLayer* m_metalLayer = nil;
+	std::unique_ptr<MetalRendererImpl> m_impl;
 };
+

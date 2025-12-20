@@ -5,7 +5,9 @@
 #include "ps2mc_cli.h"
 #include "Config.h"
 #include <QApplication>
+#if !defined(__APPLE__)
 #include <QVulkanInstance>
+#endif
 #include <filesystem>
 #include "Logger.h"
 #include "ResourcePath.h"
@@ -13,11 +15,11 @@
 #include <cstring>
 #include <cstdio>
 
-#ifdef _WIN32
+#if defined(_WIN32)
 #include <Windows.h>
 #endif
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
 #include "CocoaTools.h"
 #endif
 
@@ -64,7 +66,7 @@ int main(int argc, char* argv[])
 
 	if (cliMode)
 	{
-#ifdef _WIN32
+#if defined(_WIN32)
 		if (AttachConsole(ATTACH_PARENT_PROCESS))
 		{
 			FILE* stream;
@@ -79,7 +81,9 @@ int main(int argc, char* argv[])
 
 	QApplication app(argc, argv);
 
+#if !defined(__APPLE__)
 	app.setStyle("Fusion");
+#endif
 	app.setApplicationName("myMCpp");
 	app.setApplicationVersion("1.0.0");
 	app.setOrganizationName("myMCpp");
@@ -87,7 +91,7 @@ int main(int argc, char* argv[])
 	Config config;
 	fs::path config_path;
 
-#ifdef _WIN32
+#if defined(_WIN32)
 	char* appdata = nullptr;
 	size_t len = 0;
 	if (_dupenv_s(&appdata, &len, "APPDATA") == 0 && appdata != nullptr)
@@ -130,7 +134,7 @@ int main(int argc, char* argv[])
 		qWarning("Failed to load config, using defaults");
 	}
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
 	if (auto bundlePath = CocoaTools::GetResourcePath())
 	{
 		config.setResourcesPath(*bundlePath);
@@ -145,14 +149,16 @@ int main(int argc, char* argv[])
 	ResourcePath::set(config.getResourcesPath());
 	Logger::info("[main] Resources path: {}", ResourcePath::get().string());
 
+#if !defined(__APPLE__)
 	QVulkanInstance vulkanInstance;
-#ifdef QT_DEBUG
+#if defined(QT_DEBUG)
 	vulkanInstance.setLayers({"VK_LAYER_KHRONOS_validation"});
 #endif
 	if (!vulkanInstance.create())
 	{
 		qWarning("Failed to create Vulkan instance");
 	}
+#endif
 
 	MainWindow window(&config);
 	window.show();

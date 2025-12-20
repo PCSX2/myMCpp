@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "Renderer.h"
+#if !defined(__APPLE__)
 #include "Vulkan/VulkanRenderer.h"
+#endif
 #include "OpenGL/OpenGLRenderer.h"
-#ifdef __APPLE__
+#if defined(__APPLE__)
 #include "Metal/MetalRenderer.h"
 #endif
 
@@ -15,7 +17,11 @@ std::unique_ptr<Renderer> RendererFactory::createRenderer(
 	switch (type)
 	{
 		case RendererType::Vulkan:
+#if !defined(__APPLE__)
 			return createVulkanRenderer(windowInfo);
+#else
+			return nullptr;
+#endif
 		case RendererType::OpenGL:
 			return createOpenGLRenderer(windowInfo);
 		case RendererType::Metal:
@@ -27,12 +33,17 @@ std::unique_ptr<Renderer> RendererFactory::createRenderer(
 
 std::unique_ptr<Renderer> RendererFactory::createVulkanRenderer(const WindowInfo& windowInfo)
 {
+#if !defined(__APPLE__)
 	auto renderer = std::make_unique<VulkanRenderer>(windowInfo);
 	if (!renderer->initialize())
 	{
 		return nullptr;
 	}
 	return renderer;
+#else
+	(void)windowInfo;
+	return nullptr;
+#endif
 }
 
 std::unique_ptr<Renderer> RendererFactory::createOpenGLRenderer(const WindowInfo& windowInfo)
@@ -47,7 +58,7 @@ std::unique_ptr<Renderer> RendererFactory::createOpenGLRenderer(const WindowInfo
 
 std::unique_ptr<Renderer> RendererFactory::createMetalRenderer(const WindowInfo& windowInfo)
 {
-#ifdef __APPLE__
+#if defined(__APPLE__)
 	auto renderer = std::make_unique<MetalRenderer>(windowInfo);
 	if (!renderer->initialize())
 	{
