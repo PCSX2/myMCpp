@@ -5,7 +5,7 @@
 #include <cstring>
 #include <stdexcept>
 #include <algorithm>
-#include "../../common/Logger.h"
+#include "Logger.h"
 
 namespace PS2Icon
 {

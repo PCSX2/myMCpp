@@ -6,7 +6,7 @@
 
 #include <algorithm>
 #include <array>
-#include "../../../common/Logger.h"
+#include "Logger.h"
 #include <vector>
 
 VulkanSwapchain::VulkanSwapchain() = default;

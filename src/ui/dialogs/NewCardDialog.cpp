@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-License-Identifier: GPL-3.0+
 
 #include "NewCardDialog.h"
 #include <QVBoxLayout>

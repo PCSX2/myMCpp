@@ -15,10 +15,10 @@
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-#include "../../../common/Logger.h"
+#include "Logger.h"
 #include <cstring>
 
-static const char* g_windowClassName = "GLContextWGL_Hidden";
+static const wchar_t* g_windowClassName = L"GLContextWGL_Hidden";
 
 static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -122,18 +122,18 @@ bool GLContextWGL::createWindow()
 			return true;
 		}
 
-		WNDCLASS wc = {};
+		WNDCLASSW wc = {};
 		wc.lpfnWndProc = WindowProc;
 		wc.hInstance = m_hinstance;
 		wc.lpszClassName = g_windowClassName;
 		wc.style = CS_OWNDC;
 
-		RegisterClass(&wc);
+		RegisterClassW(&wc);
 
-		m_hwnd = CreateWindowEx(
+		m_hwnd = CreateWindowExW(
 			0,
 			g_windowClassName,
-			"OpenGL Context",
+			L"OpenGL Context",
 			0,
 			0, 0,
 			m_width, m_height,

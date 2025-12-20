@@ -132,7 +132,7 @@ endif()
 # ============================================================================
 # Find system packages
 # ============================================================================
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets LinguistTools)
 if (Qt6_VERSION VERSION_GREATER_EQUAL 6.10.0)
 	find_package(Qt6 COMPONENTS CorePrivate GuiPrivate WidgetsPrivate REQUIRED)
 endif()

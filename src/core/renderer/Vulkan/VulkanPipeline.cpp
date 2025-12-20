@@ -5,8 +5,8 @@
 
 #include <array>
 #include <fstream>
-#include "../../../common/Logger.h"
-#include "../../../common/ResourcePath.h"
+#include "Logger.h"
+#include "ResourcePath.h"
 #include <vector>
 
 VulkanPipeline::VulkanPipeline() = default;

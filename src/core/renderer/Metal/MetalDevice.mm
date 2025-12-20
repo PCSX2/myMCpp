@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "MetalDevice.h"
-#include "../../common/Logger.h"
+#include "Logger.h"
 
 MetalDevice::MetalDevice()
 {

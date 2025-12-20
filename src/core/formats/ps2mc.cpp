@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
-#include "../../common/Logger.h"
+#include "Logger.h"
 #include "ps2mc.h"
 #include "ps2mc_ecc.h"
 #include "ps2mc_dir.h"

@@ -4,7 +4,7 @@
 #pragma once
 
 #include "../Renderer.h"
-#include "../../common/WindowInfo.h"
+#include "WindowInfo.h"
 #include "../Common/RendererCommon.h"
 
 #include <vector>
@@ -58,7 +58,7 @@ private:
 	WindowInfo m_windowInfo;
 	uint32_t m_vertexCount = 0;
 	uint32_t m_frameCount = 0;
-    uint32_t m_frameIndex = 0; // Ring buffer index
+    uint32_t m_frameIndex = 0;
 
 	std::shared_ptr<PS2Icon::Icon> m_icon;
 	bool m_animationEnabled = true;
@@ -73,4 +73,3 @@ private:
 
 	std::unique_ptr<MetalRendererImpl> m_impl;
 };
-

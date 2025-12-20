@@ -5,9 +5,9 @@
 #include "MetalDevice.h"
 #include "MetalPipeline.h"
 #include "MetalResources.h"
-#include "../../common/Logger.h"
-#include "../../common/CocoaTools.h"
-#include "../../core/formats/ps2icon.h"
+#include "Logger.h"
+#include "CocoaTools.h"
+#include "ps2icon.h"
 
 #import <Metal/Metal.h>
 #import <QuartzCore/CAMetalLayer.h>

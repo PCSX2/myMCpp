@@ -3,6 +3,7 @@
 
 #include "MemoryCardBrowser.h"
 #include "ps2mc.h"
+#include "TranslationManager.h"
 #include <QMessageBox>
 #include <QDateTime>
 #include <QDragEnterEvent>
@@ -15,6 +16,9 @@ MemoryCardBrowser::MemoryCardBrowser(QWidget* parent)
 	, ui(new Ui::MemoryCardBrowser)
 {
 	ui->setupUi(this);
+	connect(&TranslationManager::instance(), &TranslationManager::languageChanged, this, [this]() {
+		ui->retranslateUi(this);
+	});
 }
 
 void MemoryCardBrowser::clear()
