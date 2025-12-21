@@ -265,7 +265,7 @@
     <iconset theme="trash-fill"/>
    </property>
    <property name="text">
-    <string>&amp;Delete</string>
+    <string>&amp;Delete Save</string>
    </property>
    <property name="statusTip">
     <string>Delete the selected save</string>
