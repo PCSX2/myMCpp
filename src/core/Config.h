@@ -51,8 +51,8 @@ public:
 	int getAntialiasing() const;
 	void setAntialiasing(int samples);
 
-	bool getDarkMode() const;
-	void setDarkMode(bool enabled);
+	std::string getTheme() const;
+	void setTheme(const std::string& theme);
 
 	int getThumbnailSize() const;
 	void setThumbnailSize(int size);
@@ -63,8 +63,6 @@ public:
 	bool getWarnOnDelete() const;
 	void setWarnOnDelete(bool enabled);
 
-	bool getConfirmShutdown() const;
-	void setConfirmShutdown(bool enabled);
 
 	bool getHideToTrayOnClose() const;
 	void setHideToTrayOnClose(bool enabled);

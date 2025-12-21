@@ -78,5 +78,4 @@ resources/shaders/**/*.spv
 
 # will be uncommented when before release
 ico/
-docs/
 scripts/
