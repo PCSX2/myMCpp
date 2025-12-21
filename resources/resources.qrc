@@ -1,21 +1,6 @@
 <RCC>
 	<qresource>
 		<file>icons/AppIcon.png</file>
-		<file>icons/memcard-close.svg</file>
-		<file>icons/memcard-line.svg</file>
-		<file>icons/memcard-new.svg</file>
 		<file>icons/qt.svg</file>
-		<file>icons/remix/book-marked-fill.svg</file>
-		<file>icons/remix/close-circle-fill.svg</file>
-		<file>icons/remix/discord.svg</file>
-		<file>icons/remix/export-fill.svg</file>
-		<file>icons/remix/fire-fill.svg</file>
-		<file>icons/remix/github.svg</file>
-		<file>icons/remix/import-fill.svg</file>
-		<file>icons/remix/list-unordered.svg</file>
-		<file>icons/remix/refresh-fill.svg</file>
-		<file>icons/remix/save-fill.svg</file>
-		<file>icons/remix/settings-fill.svg</file>
-		<file>icons/remix/trash-fill.svg</file>
 	</qresource>
 </RCC>

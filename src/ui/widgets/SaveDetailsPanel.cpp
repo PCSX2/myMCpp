@@ -122,6 +122,8 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 		if (iconData.empty())
 		{
 			qDebug() << "SaveDetailsPanel: No icon data found for" << savePath;
+			if (iconWidget)
+				iconWidget->hide();
 		}
 		else
 		{
@@ -133,6 +135,7 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 			if (iconWidget->loadIcon(iconData))
 			{
 				qDebug() << "SaveDetailsPanel: Icon loaded successfully into widget";
+				iconWidget->show();
 				PS2IconSys* iconSys = card->getIconSys(savePath.toStdString());
 				if (iconSys)
 				{
@@ -155,16 +158,21 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 			else
 			{
 				qDebug() << "SaveDetailsPanel: IconWidget failed to load icon";
+				iconWidget->hide();
 			}
 		}
 	}
 	catch (const std::exception& e)
 	{
 		qDebug() << "SaveDetailsPanel: Exception loading icon:" << e.what();
+		if (iconWidget)
+			iconWidget->hide();
 	}
 	catch (...)
 	{
 		qDebug() << "SaveDetailsPanel: Unknown exception loading icon";
+		if (iconWidget)
+			iconWidget->hide();
 	}
 }
 
@@ -174,6 +182,8 @@ void SaveDetailsPanel::clear()
 		ui->titleLabel->setText("No save selected");
 	if (ui->detailsLabel)
 		ui->detailsLabel->setText("No details available");
+	if (iconWidget)
+		iconWidget->hide();
 	currentCard = nullptr;
 	currentSavePath.clear();
 }
@@ -187,7 +197,6 @@ void SaveDetailsPanel::createIconWidget()
 		iconWidget = nullptr;
 	}
 
-	// Only create if we have config, or create with nullptr if safely handled
 	iconWidget = new IconWidget(m_config, this);
 	if (m_config)
 		m_lastRendererType = m_config->getRenderer();
@@ -197,6 +206,7 @@ void SaveDetailsPanel::createIconWidget()
 	iconWidget->setMinimumSize(256, 256);
 	iconWidget->setMaximumSize(256, 256);
 	ui->iconLayout->addWidget(iconWidget);
+	iconWidget->hide();
 }
 
 void SaveDetailsPanel::refreshConfig()
@@ -205,6 +215,12 @@ void SaveDetailsPanel::refreshConfig()
 	if (!iconWidget || currentRenderer != m_lastRendererType)
 	{
 		createIconWidget();
+	}
+
+	if (!currentCard || currentSavePath.isEmpty())
+	{
+		if (iconWidget)
+			iconWidget->hide();
 	}
 
 	if (currentCard && !currentSavePath.isEmpty())
