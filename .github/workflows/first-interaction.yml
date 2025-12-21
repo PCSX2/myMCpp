@@ -1,0 +1,33 @@
+# Automatically triage new PRs and welcome first-time contributors
+# Based off: https://github.com/PCSX2/pcsx2/blob/master/.github/workflows/triage_pr.yml
+name: PR Management
+
+on:
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Apply labels based on file changes
+        uses: actions/labeler@v6.0.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Welcome first-time contributors
+        uses: xTVaser/first-interaction@d62d6eb3c1215eae9f9d6dbfabf12d6725834cb3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-message: |
+            ## Thank you for contributing to myMCpp
+
+            Thank you for opening your first pull request! We’re excited to have you contributing to myMCpp.
+
+            A maintainer will review your changes as soon as possible. Please note that, for security reasons, a maintainer must manually approve CI workflows before they run on your first pull request.
+            [You can find more information about this change here.](https://github.blog/2021-04-22-github-actions-update-helping-maintainers-combat-bad-actors/)
+
+            In the meantime, feel free to join the discussion and let us know if you have any questions!
