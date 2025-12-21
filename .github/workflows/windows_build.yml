@@ -1,0 +1,151 @@
+name: Windows Build Steps
+# Inspired by: https://github.com/PCSX2/pcsx2/blob/master/.github/workflows/windows_build_qt.yml
+
+on:
+  workflow_call:
+    inputs:
+      jobName:
+        required: true
+        type: string
+      artifactPrefixName:
+        required: true
+        type: string
+      os:
+        required: false
+        type: string
+        default: windows-latest
+      platform:
+        required: false
+        type: string
+        default: x64
+      compiler:
+        required: false
+        type: string
+        default: msvc
+      buildType:
+        required: false
+        type: string
+        default: Release
+      cmakeFlags:
+        required: false
+        type: string
+        default: ""
+      fetchTags:
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  build_windows:
+    name: ${{ inputs.jobName }}
+    runs-on: ${{ inputs.os }}
+    timeout-minutes: 60
+    env:
+      POWERSHELL_TELEMETRY_OPTOUT: 1
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      # actions/checkout elides tags, fetch them primarily for releases
+      - name: Fetch Tags
+        if: ${{ inputs.fetchTags }}
+        run: git fetch --tags --no-recurse-submodules
+
+      - name: Prepare Artifact Metadata
+        id: artifact-metadata
+        shell: bash
+        env:
+          PREFIX: ${{ inputs.artifactPrefixName }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUM: ${{ github.event.pull_request.number }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          ARTIFACT_NAME="${PREFIX}"
+          if [ "$EVENT_NAME" == "pull_request" ]; then
+            PR_SHA_SHORT="${PR_SHA:0:8}"
+            ARTIFACT_NAME="${PREFIX}-pr${PR_NUM}-${PR_SHA_SHORT}"
+          fi
+          echo "artifact-name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Setup MSVC Environment
+        uses: ilammy/msvc-dev-cmd@v1.13.0
+        with:
+          arch: ${{ inputs.platform }}
+
+      - name: Install Qt (x64)
+        if: inputs.platform == 'x64'
+        uses: jurplel/install-qt-action@v4.3.0
+        with:
+          version: '6.10.1'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2022_64'
+          modules: 'qtimageformats'
+          cache: true
+
+      - name: Install Qt (ARM64)
+        if: inputs.platform == 'ARM64'
+        uses: jurplel/install-qt-action@v4.3.0
+        with:
+          version: '6.10.1'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2022_arm64'
+          modules: 'qtimageformats'
+          cache: true
+
+      - name: Configure CMake (MSVC)
+        if: inputs.compiler == 'msvc'
+        shell: cmd
+        run: |
+          cmake -B build -G "Visual Studio 17 2022" -A ${{ inputs.platform }} ^
+            -DCMAKE_BUILD_TYPE=${{ inputs.buildType }} ^
+            ${{ inputs.cmakeFlags }}
+
+      - name: Configure CMake (Clang)
+        if: inputs.compiler == 'clang'
+        shell: cmd
+        run: |
+          cmake -B build -G Ninja ^
+            -DCMAKE_BUILD_TYPE=${{ inputs.buildType }} ^
+            -DCMAKE_C_COMPILER=clang ^
+            -DCMAKE_CXX_COMPILER=clang++ ^
+            -DCMAKE_LINKER=lld ^
+            ${{ inputs.cmakeFlags }}
+
+      - name: Build (MSVC)
+        if: inputs.compiler == 'msvc'
+        shell: cmd
+        run: cmake --build build --config ${{ inputs.buildType }} --parallel
+
+      - name: Build (Clang)
+        if: inputs.compiler == 'clang'
+        shell: cmd
+        working-directory: build
+        run: ninja
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ steps.artifact-metadata.outputs.artifact-name }}
+          path: |
+            ./build/bin/${{ inputs.buildType }}
+            !./build/bin/**/*.pdb
+            !./build/bin/**/*.lib
+            !./build/bin/**/*.exp
+            !./build/bin/**/*.ilk
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload symbols
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ steps.artifact-metadata.outputs.artifact-name }}-symbols
+          path: |
+            ./build/bin/${{ inputs.buildType }}/**/*.pdb
+          if-no-files-found: ignore
+          retention-days: 30
