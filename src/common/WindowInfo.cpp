@@ -34,6 +34,7 @@ static std::string GetWin32ErrorString(DWORD error)
 
 static std::optional<float> GetRefreshRateFromDisplayConfig(HWND hwnd)
 {
+	// Partially based on Chromium ui/display/win/display_config_helper.cc.
 	const HMONITOR monitor = MonitorFromWindow(hwnd, 0);
 	if (!monitor)
 	{
@@ -52,6 +53,7 @@ static std::optional<float> GetRefreshRateFromDisplayConfig(HWND hwnd)
 	std::vector<DISPLAYCONFIG_PATH_INFO> path_info;
 	std::vector<DISPLAYCONFIG_MODE_INFO> mode_info;
 
+	// I guess this could fail if it changes inbetween two calls... unlikely.
 	for (;;)
 	{
 		UINT32 path_size = 0, mode_size = 0;
@@ -145,6 +147,7 @@ std::optional<float> WindowInfo::QueryRefreshRateForWindow(const WindowInfo& wi)
 	if (wi.type != Type::Win32 || !wi.window_handle)
 		return ret;
 
+	// Try DWM first, then fall back to integer values.
 	const HWND hwnd = static_cast<HWND>(wi.window_handle);
 	ret = GetRefreshRateFromDisplayConfig(hwnd);
 	if (!ret.has_value())

@@ -275,21 +275,21 @@ void Config::setAntialiasing(int samples)
 	m_config["graphics"]["antialiasing"] = samples;
 }
 
-bool Config::getDarkMode() const
+std::string Config::getTheme() const
 {
 	try
 	{
-		return m_config["ui"]["dark_mode"].get<bool>();
+		return m_config["ui"]["theme"].get<std::string>();
 	}
 	catch (...)
 	{
-		return true;
+		return "dark";
 	}
 }
 
-void Config::setDarkMode(bool enabled)
+void Config::setTheme(const std::string& theme)
 {
-	m_config["ui"]["dark_mode"] = enabled;
+	m_config["ui"]["theme"] = theme;
 }
 
 int Config::getThumbnailSize() const
@@ -341,23 +341,6 @@ bool Config::getWarnOnDelete() const
 void Config::setWarnOnDelete(bool enabled)
 {
 	m_config["behavior"]["warn_on_delete"] = enabled;
-}
-
-bool Config::getConfirmShutdown() const
-{
-	try
-	{
-		return m_config["behavior"]["confirm_shutdown"].get<bool>();
-	}
-	catch (...)
-	{
-		return true;
-	}
-}
-
-void Config::setConfirmShutdown(bool enabled)
-{
-	m_config["behavior"]["confirm_shutdown"] = enabled;
 }
 
 bool Config::getHideToTrayOnClose() const
@@ -510,12 +493,11 @@ void Config::createDefaults()
 					   {"height", 720},
 					   {"fullscreen", false},
 					   {"resizable", true}}},
-		{"ui", {{"dark_mode", true},
+		{"ui", {{"theme", "dark"},
 				   {"thumbnail_size", 64},
 				   {"ascii_mode", false},
 				   {"language", "en"}}},
 		{"behavior", {{"warn_on_delete", true},
-						 {"confirm_shutdown", true},
 						 {"hide_to_tray", false},
 						 {"force_import", false}}},
 		{"paths", {{"memory_card_folder", "./memory_cards"}}},
@@ -566,8 +548,8 @@ void Config::ensureKeys()
 	if (!m_config["window"].contains("resizable"))
 		m_config["window"]["resizable"] = true;
 
-	if (!m_config["ui"].contains("dark_mode"))
-		m_config["ui"]["dark_mode"] = true;
+	if (!m_config["ui"].contains("theme"))
+		m_config["ui"]["theme"] = "dark";
 	if (!m_config["ui"].contains("thumbnail_size"))
 		m_config["ui"]["thumbnail_size"] = 64;
 	if (!m_config["ui"].contains("ascii_mode"))
@@ -577,8 +559,6 @@ void Config::ensureKeys()
 
 	if (!m_config["behavior"].contains("warn_on_delete"))
 		m_config["behavior"]["warn_on_delete"] = true;
-	if (!m_config["behavior"].contains("confirm_shutdown"))
-		m_config["behavior"]["confirm_shutdown"] = true;
 	if (!m_config["behavior"].contains("hide_to_tray"))
 		m_config["behavior"]["hide_to_tray"] = false;
 	if (!m_config["behavior"].contains("force_import"))

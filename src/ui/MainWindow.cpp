@@ -6,9 +6,11 @@
 #include "SaveDetailsPanel.h"
 #include "CardActionHandler.h"
 #include "NewCardDialog.h"
+#include "dialogs/AboutDialog.h"
 #include "ps2mc.h"
-#include "SettingsDialog.h"
+#include "Settings/SettingsWindow.h"
 #include "Config.h"
+#include "Themes.h"
 #include <QApplication>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -31,6 +33,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	, ui(new Ui::MainWindow)
 	, memoryCard(nullptr)
 	, m_config(config)
+	, m_settingsWindow(nullptr)
 {
 	ui->setupUi(this);
 	ui->detailsPanel->setConfig(config);
@@ -57,6 +60,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->actionForceImport, &QAction::triggered, this, &MainWindow::onToggleForceImport);
 
 	ui->actionAbout->setMenuRole(QAction::AboutRole);
+	ui->actionPreferences->setText(tr("Settings..."));
 	ui->actionPreferences->setMenuRole(QAction::PreferencesRole);
 	ui->actionAboutQt->setMenuRole(QAction::AboutQtRole);
 
@@ -83,6 +87,10 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	});
 
 	actionHandler->setStatusBar(ui->statusBar);
+
+	if (m_config) {
+		Themes::UpdateApplicationTheme(m_config);
+	}
 
 	updateStatusBar();
 }
@@ -269,39 +277,40 @@ void MainWindow::onFormatCard()
 	updateCardView();
 }
 
+void MainWindow::onSettingsChanged()
+{
+	if (ui->detailsPanel)
+	{
+		ui->detailsPanel->refreshConfig();
+	}
+
+	updateForceImportWarning();
+	updateCardView();
+}
+
 void MainWindow::onPreferences()
 {
-	SettingsDialog dialog(m_config, this);
-	if (dialog.exec() == QDialog::Accepted)
+	if (!m_settingsWindow)
 	{
-		if (ui->detailsPanel)
-		{
-			ui->detailsPanel->refreshConfig();
-		}
-		updateForceImportWarning();
+		m_settingsWindow = new SettingsWindow(m_config, this);
+		
+		connect(m_settingsWindow, &SettingsWindow::applicationSettingsChanged, this, &MainWindow::onSettingsChanged);
+		
+		connect(m_settingsWindow, &QDialog::finished, m_settingsWindow, &QObject::deleteLater);
+		connect(m_settingsWindow, &QObject::destroyed, this, [this]() {
+			m_settingsWindow = nullptr;
+		});
 	}
+
+	m_settingsWindow->show();
+	m_settingsWindow->raise();
+	m_settingsWindow->activateWindow();
 }
 
 void MainWindow::onAbout()
 {
-	QPixmap icon(":/icons/AppIcon.png");
-	icon = icon.scaledToWidth(64, Qt::SmoothTransformation);
-
-	QMessageBox msgBox(this);
-	msgBox.setWindowTitle(tr("About myMCpp"));
-	msgBox.setIconPixmap(icon);
-	msgBox.setText(
-		"<h2>myMCpp v1.0.0</h2>"
-		"<p><b>A Modern PS2 Memory Card Manager</b></p>"
-		"<p>myMCpp is a utility for manipulating PlayStation 2 memory card images."
-		" This is a C++ rewrite of the original mymc++ utility.</p>"
-		"<p><b>Features:</b></p>"
-		"<ul>"
-		"<li>lorem ipsum dolor sit amet</li>"
-		"</ul>"
-		"<p><b>License:</b> GPLv3</p>"
-		"<p><b>Original Project:</b> mymc by Ross Ridge (Public Domain)</p>");
-	msgBox.exec();
+	AboutDialog dialog(this);
+	dialog.exec();
 }
 
 void MainWindow::onGitHubRepository()
@@ -512,11 +521,13 @@ void MainWindow::updateForceImportWarning()
 {
 	if (m_config && m_config->getForceImport())
 	{
-		ui->statusBar->setStyleSheet("QStatusBar { color: red; }");
+		QPalette palette = ui->statusBar->palette();
+		palette.setColor(QPalette::WindowText, Qt::red);
+		ui->statusBar->setPalette(palette);
 	}
 	else
 	{
-		ui->statusBar->setStyleSheet("");
+		ui->statusBar->setPalette(QApplication::palette());
 	}
 	updateStatusBar();
 }

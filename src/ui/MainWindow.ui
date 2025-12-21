@@ -132,8 +132,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/memcard-line.svg</normaloff>:/icons/memcard-line.svg</iconset>
+    <iconset theme="memcard-line"/>
    </property>
    <property name="text">
     <string>&amp;Open Memory Card...</string>
@@ -150,8 +149,7 @@
     <string>&amp;Create Memory Card...</string>
    </property>
    <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/memcard-new.svg</normaloff>:/icons/memcard-new.svg</iconset>
+    <iconset theme="memcard-new"/>
    </property>
    <property name="statusTip">
     <string>Create a new PS2 memory card image</string>
@@ -168,8 +166,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/memcard-close.svg</normaloff>:/icons/memcard-close.svg</iconset>
+    <iconset theme="memcard-close"/>
    </property>
    <property name="text">
     <string>&amp;Close Memory Card</string>
@@ -189,8 +186,7 @@
     <string>Save the memory card to a new file</string>
    </property>
    <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/remix/save-fill.svg</normaloff>:/icons/remix/save-fill.svg</iconset>
+    <iconset theme="save-fill"/>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -198,8 +194,7 @@
   </action>
   <action name="actionExit">
   <property name="icon">
-   <iconset resource="../../resources/resources.qrc">
-    <normaloff>:/icons/remix/close-circle-fill.svg</normaloff>:/icons/remix/close-circle-fill.svg</iconset>
+   <iconset theme="close-circle-fill"/>
   </property>
    <property name="text">
     <string>E&amp;xit</string>
@@ -219,8 +214,7 @@
     <string>Select &amp;All</string>
    </property>
    <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/remix/list-unordered.svg</normaloff>:/icons/remix/list-unordered.svg</iconset>
+    <iconset theme="list-unordered"/>
    </property>
    <property name="statusTip">
     <string>Select all saves</string>
@@ -234,8 +228,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/remix/import-fill.svg</normaloff>:/icons/remix/import-fill.svg</iconset>
+    <iconset theme="import-fill"/>
    </property>
    <property name="text">
     <string>&amp;Import Save...</string>
@@ -252,8 +245,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/remix/export-fill.svg</normaloff>:/icons/remix/export-fill.svg</iconset>
+    <iconset theme="export-fill"/>
    </property>
    <property name="text">
     <string>&amp;Export Save...</string>
@@ -270,8 +262,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/remix/trash-fill.svg</normaloff>:/icons/remix/trash-fill.svg</iconset>
+    <iconset theme="trash-fill"/>
    </property>
    <property name="text">
     <string>&amp;Delete</string>
@@ -288,8 +279,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/remix/fire-fill.svg</normaloff>:/icons/remix/fire-fill.svg</iconset>
+    <iconset theme="fire-fill"/>
    </property>
    <property name="text">
     <string>&amp;Format Card...</string>
@@ -303,8 +293,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/remix/save-fill.svg</normaloff>:/icons/remix/save-fill.svg</iconset>
+    <iconset theme="save-fill"/>
    </property>
    <property name="text">
     <string>Remove &amp;ECC and Save As...</string>
@@ -349,8 +338,7 @@
     <string>&amp;Preferences...</string>
    </property>
    <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/remix/settings-fill.svg</normaloff>:/icons/remix/settings-fill.svg</iconset>
+    <iconset theme="settings-fill"/>
    </property>
    <property name="statusTip">
     <string>Configure application settings</string>
@@ -358,8 +346,7 @@
   </action>
   <action name="actionDocumentation">
    <property name="icon">
-    <iconset>
-     <normaloff>:/icons/remix/book-marked-fill.svg</normaloff>:/icons/remix/book-marked-fill.svg</iconset>
+    <iconset theme="book-marked-fill"/>
    </property>
    <property name="text">
     <string>&amp;Documentation...</string>
@@ -370,8 +357,7 @@
   </action>
   <action name="actionGitHub">
    <property name="icon">
-    <iconset>
-     <normaloff>:/icons/remix/github.svg</normaloff>:/icons/remix/github.svg</iconset>
+    <iconset theme="github"/>
    </property>
    <property name="text">
     <string>&amp;GitHub Repository...</string>
@@ -382,8 +368,7 @@
   </action>
   <action name="actionDiscord">
    <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/remix/discord.svg</normaloff>:/icons/remix/discord.svg</iconset>
+    <iconset theme="discord"/>
    </property>
    <property name="text">
     <string>&amp;Discord Server...</string>
@@ -394,8 +379,7 @@
   </action>
   <action name="actionCheckUpdates">
    <property name="icon">
-    <iconset>
-     <normaloff>:/icons/remix/refresh-fill.svg</normaloff>:/icons/remix/refresh-fill.svg</iconset>
+    <iconset theme="refresh-fill"/>
    </property>
    <property name="text">
     <string>&amp;Check for Updates...</string>
