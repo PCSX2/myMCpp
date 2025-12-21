@@ -49,6 +49,7 @@ private slots:
 	void onAboutQt();
 	void onCardItemSelected();
 	void onCardItemDoubleClicked();
+	void onSettingsChanged();
 
 private:
 	void updateCardView();
@@ -64,4 +65,5 @@ private:
 	QString currentCardPath;
 
 	Config* m_config;
+	class SettingsWindow* m_settingsWindow;
 };

@@ -84,9 +84,6 @@ static int appMain(int argc, char* argv[])
 
 	QApplication app(argc, argv);
 
-#if !defined(__APPLE__)
-	app.setStyle("Fusion");
-#endif
 	app.setApplicationName("myMCpp");
 	app.setApplicationVersion("1.0.0");
 	app.setOrganizationName("myMCpp");

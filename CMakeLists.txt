@@ -254,12 +254,19 @@ target_link_libraries(myMCpp_core PUBLIC glfw)
 set(GUI_SOURCES
     src/main.cpp
     src/ui/MainWindow.cpp
+    src/ui/Themes.cpp
     src/ui/widgets/MemoryCardBrowser.cpp
     src/ui/widgets/SaveDetailsPanel.cpp
     src/ui/CardActionHandler.cpp
     src/ui/widgets/IconWidget.cpp
-    src/ui/dialogs/SettingsDialog.cpp
+    src/ui/settings/SettingsWindow.cpp
     src/ui/dialogs/NewCardDialog.cpp
+    src/ui/settings/SettingsWidget.cpp
+    src/ui/dialogs/AboutDialog.cpp
+    src/ui/settings/InterfaceSettingsWidget.cpp
+    src/ui/settings/BehaviorSettingsWidget.cpp
+    src/ui/settings/FilesSettingsWidget.cpp
+    src/ui/settings/AdvancedSettingsWidget.cpp
     resources/resources.qrc
 )
 
@@ -269,12 +276,19 @@ endif()
 
 set(GUI_HEADERS
     src/ui/MainWindow.h
+    src/ui/Themes.h
     src/ui/widgets/MemoryCardBrowser.h
     src/ui/widgets/SaveDetailsPanel.h
     src/ui/CardActionHandler.h
     src/ui/widgets/IconWidget.h
-    src/ui/dialogs/SettingsDialog.h
+    src/ui/settings/SettingsWindow.h
     src/ui/dialogs/NewCardDialog.h
+    src/ui/settings/SettingsWidget.h
+    src/ui/dialogs/AboutDialog.h
+    src/ui/settings/InterfaceSettingsWidget.h
+    src/ui/settings/BehaviorSettingsWidget.h
+    src/ui/settings/FilesSettingsWidget.h
+    src/ui/settings/AdvancedSettingsWidget.h
 )
 
 # Create GUI executable
@@ -313,6 +327,8 @@ target_include_directories(myMCpp PRIVATE
     ${CMAKE_SOURCE_DIR}/src/ui
     ${CMAKE_SOURCE_DIR}/src/ui/widgets
     ${CMAKE_SOURCE_DIR}/src/ui/dialogs
+    ${CMAKE_SOURCE_DIR}/src/ui/settings
+
 )
 if(ENABLE_VULKAN)
     target_include_directories(myMCpp PRIVATE ${vulkan-headers_SOURCE_DIR}/include)

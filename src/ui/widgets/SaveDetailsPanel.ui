@@ -50,9 +50,7 @@
           <height>40</height>
          </size>
         </property>
-        <property name="styleSheet">
-         <string notr="true">font-weight: bold; font-size: 12pt;</string>
-        </property>
+
         <property name="text">
          <string>No save selected</string>
         </property>
