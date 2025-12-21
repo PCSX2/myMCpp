@@ -390,12 +390,6 @@ void IconWidget::ensureRenderer()
 			m_renderer = RendererFactory::createMetalRenderer(wi);
 		}
 #endif
-#if defined(_WIN32)
-		else if (rendererType == "dx12")
-		{
-			m_renderer = RendererFactory::createDX12Renderer(wi);
-		}
-#endif
 		else
 		{
 #if !defined(__APPLE__)
