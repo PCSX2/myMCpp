@@ -90,8 +90,8 @@ void MemoryCardBrowser::loadCard(PS2MemoryCard* card)
 	}
 	catch (const std::exception& e)
 	{
-		QMessageBox::critical(nullptr, "Error",
-			QString("Failed to read memory card: %1").arg(e.what()));
+		QMessageBox::critical(nullptr, tr("Error"),
+			tr("Failed to read memory card: %1").arg(e.what()));
 	}
 }
 
