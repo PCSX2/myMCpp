@@ -1,0 +1,69 @@
+# Inspired by PCSX2 CI Matrixes
+
+name: 🔨 Build
+
+on:
+  push:
+    branches-ignore:
+      - "l10n_master"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build_linux_clang:
+    name: "🐧 Linux (Clang)"
+    uses: ./.github/workflows/linux_build.yml
+    with:
+      jobName: "Linux Clang Build"
+      artifactPrefixName: "myMCpp-linux-x64-clang"
+      compiler: clang
+    secrets: inherit
+
+  build_linux_gcc:
+    name: "🐧 Linux (GCC)"
+    uses: ./.github/workflows/linux_build.yml
+    with:
+      jobName: "Linux GCC Build"
+      artifactPrefixName: "myMCpp-linux-x64-gcc"
+      compiler: gcc
+    secrets: inherit
+
+  build_macos:
+    name: "🍎 macOS"
+    uses: ./.github/workflows/macos_build.yml
+    with:
+      jobName: "macOS Universal Build"
+      artifactPrefixName: "myMCpp-macos-universal"
+    secrets: inherit
+
+  build_windows_x64_msvc:
+    name: "🪟 Windows x64 (MSVC)"
+    uses: ./.github/workflows/windows_build.yml
+    with:
+      jobName: "Windows x64 MSVC Build"
+      artifactPrefixName: "myMCpp-windows-x64-msvc"
+      platform: x64
+      compiler: msvc
+    secrets: inherit
+
+  build_windows_x64_clang:
+    name: "🪟 Windows x64 (Clang)"
+    uses: ./.github/workflows/windows_build.yml
+    with:
+      jobName: "Windows x64 Clang Build"
+      artifactPrefixName: "myMCpp-windows-x64-clang"
+      platform: x64
+      compiler: clang
+    secrets: inherit
+
+  build_windows_arm64_msvc:
+    name: "🪟 Windows ARM64 (MSVC)"
+    uses: ./.github/workflows/windows_build.yml
+    with:
+      jobName: "Windows ARM64 MSVC Build"
+      artifactPrefixName: "myMCpp-windows-arm64-msvc"
+      os: windows-11-arm
+      platform: ARM64
+      compiler: msvc
+    secrets: inherit

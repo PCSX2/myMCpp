@@ -1,0 +1,164 @@
+# Inspired by: https://github.com/PCSX2/pcsx2/blob/master/.github/workflows/linux_build_qt.yml
+
+name: Linux Build Steps
+
+on:
+  workflow_call:
+    inputs:
+      jobName:
+        required: true
+        type: string
+      artifactPrefixName:
+        required: true
+        type: string
+      os:
+        required: false
+        type: string
+        default: ubuntu-24.04
+      platform:
+        required: false
+        type: string
+        default: x64
+      compiler:
+        required: false
+        type: string
+        default: clang
+      buildType:
+        required: false
+        type: string
+        default: Release
+      cmakeFlags:
+        required: false
+        type: string
+        default: ""
+      fetchTags:
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  build_linux:
+    name: ${{ inputs.jobName }}
+    runs-on: ${{ inputs.os }}
+    timeout-minutes: 60
+    env:
+      CCACHE_BASEDIR: ${{ github.workspace }}
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      CCACHE_COMPRESS: true
+      CCACHE_COMPRESSLEVEL: 9
+      CCACHE_MAXSIZE: 100M
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      # actions/checkout elides tags, fetch them primarily for releases
+      - name: Fetch Tags
+        if: ${{ inputs.fetchTags }}
+        run: git fetch --tags --no-recurse-submodules
+
+      - name: Prepare Artifact Metadata
+        id: artifact-metadata
+        shell: bash
+        env:
+          PREFIX: ${{ inputs.artifactPrefixName }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUM: ${{ github.event.pull_request.number }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          ARTIFACT_NAME="${PREFIX}"
+          if [ "$EVENT_NAME" == "pull_request" ]; then
+            PR_SHA_SHORT="${PR_SHA:0:8}"
+            ARTIFACT_NAME="${PREFIX}-pr${PR_NUM}-${PR_SHA_SHORT}"
+          fi
+          echo "artifact-name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
+
+      # -- SETUP CCACHE - https://cristianadam.eu/20200113/speeding-up-c-plus-plus-github-actions-using-ccache/
+      - name: Prepare ccache timestamp
+        id: ccache_cache_timestamp
+        run: echo "timestamp=$(date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
+
+      - name: Cache ccache
+        uses: actions/cache@v5.0.1
+        with:
+          path: .ccache
+          key: ${{ inputs.os }} ${{ inputs.platform }} ${{ inputs.compiler }} ccache ${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+          restore-keys: ${{ inputs.os }} ${{ inputs.platform }} ${{ inputs.compiler }} ccache
+
+      - name: Install Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install \
+            build-essential \
+            ccache \
+            clang \
+            lld \
+            cmake \
+            ninja-build \
+            pkg-config \
+            glslc \
+            libvulkan-dev \
+            libgl1-mesa-dev \
+            libegl-dev \
+            libwayland-dev \
+            libx11-dev \
+            libx11-xcb-dev \
+            libxcb1-dev \
+            libxrandr-dev \
+            libxcursor-dev \
+            libxinerama-dev \
+            libxi-dev \
+            libxkbcommon-x11-dev
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4.3.0
+        with:
+          version: '6.10.1'
+          host: 'linux'
+          target: 'desktop'
+          arch: 'linux_gcc_64'
+          modules: 'qtimageformats'
+          cache: true
+
+      - name: Configure CMake (Clang)
+        if: inputs.compiler == 'clang'
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ inputs.buildType }} \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DCMAKE_EXE_LINKER_FLAGS_INIT="-fuse-ld=lld" \
+            -DCMAKE_MODULE_LINKER_FLAGS_INIT="-fuse-ld=lld" \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            ${{ inputs.cmakeFlags }}
+
+      - name: Configure CMake (GCC)
+        if: inputs.compiler == 'gcc'
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ inputs.buildType }} \
+            -DCMAKE_C_COMPILER=gcc \
+            -DCMAKE_CXX_COMPILER=g++ \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            ${{ inputs.cmakeFlags }}
+
+      - name: Build
+        working-directory: build
+        run: |
+          ccache -p
+          ccache -z
+          ninja
+          ccache -s
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ steps.artifact-metadata.outputs.artifact-name }}
+          path: build/bin/${{ inputs.buildType }}/
+          if-no-files-found: error
+          retention-days: 30
