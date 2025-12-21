@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+<!--
+SPDX-FileCopyrightText: 2002-2025 PCSX2 Dev Team
+SPDX-License-Identifier: GPL-3.0+
+Portions of this file are adapted from PCSX2
+https://github.com/PCSX2/pcsx2
+-->
  <class>BehaviorSettingsWidget</class>
  <widget class="QWidget" name="BehaviorSettingsWidget">
   <property name="geometry">
