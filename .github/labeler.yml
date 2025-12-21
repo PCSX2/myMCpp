@@ -1,0 +1,27 @@
+# Configuration for actions/labeler
+
+Qt:
+  - src/ui/**/*
+
+Core:
+  - src/core/**/*
+
+Build:
+  - CMakeLists.txt
+  - cmake/**/*
+  - .github/**/*
+
+Linux:
+  - any: ['**/*EGL*', '**/*linux*', '**/*Wayland*', '**/*X11*']
+
+Windows:
+  - any: ['**/*WGL*', '**/*win32*', 'resources/myMCpp.rc']
+
+macOS:
+  - any: ['src/core/renderer/Metal/**/*', '**/*AGL*', '**/*.mm', '**/*Cocoa*']
+
+Documentation:
+  - docs/**/*
+  - README.md
+  - LICENSE.md
+  - build.md
