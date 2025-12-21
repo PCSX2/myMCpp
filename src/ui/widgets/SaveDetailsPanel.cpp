@@ -89,7 +89,7 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 
 	ui->titleLabel->setText(fullTitle);
 
-	QString details = QString("Size: %1\nModified: %2").arg(size, modified);
+	QString details = tr("Size: %1\nModified: %2").arg(size, modified);
 
 	try
 	{
@@ -106,7 +106,7 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 
 		if (fileCount > 0)
 		{
-			details += QString("\nFiles: %1").arg(fileCount);
+			details += tr("\nFiles: %1").arg(fileCount);
 		}
 	}
 	catch (...)
@@ -179,9 +179,9 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 void SaveDetailsPanel::clear()
 {
 	if (ui->titleLabel)
-		ui->titleLabel->setText("No save selected");
+		ui->titleLabel->setText(tr("No save selected"));
 	if (ui->detailsLabel)
-		ui->detailsLabel->setText("No details available");
+		ui->detailsLabel->setText(tr("No details available"));
 	if (iconWidget)
 		iconWidget->hide();
 	currentCard = nullptr;
