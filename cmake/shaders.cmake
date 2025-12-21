@@ -13,62 +13,50 @@ if(ENABLE_VULKAN)
     file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
 
     # ============================================================================
-    # Find glslc compiler
+    # Use glslangValidator from our built glslang dependency
     # ============================================================================
-    find_program(GLSLC_EXECUTABLE glslc)
+    set(GLSLANG_VALIDATOR $<TARGET_FILE:glslang-standalone>)
 
-    # ============================================================================
-    # Compile shaders if glslc is available
-    # ============================================================================
-    if(GLSLC_EXECUTABLE)
-        message(STATUS "Found glslc: ${GLSLC_EXECUTABLE}")
-        
-        # Compile vertex shader
-        add_custom_command(
-            OUTPUT ${SHADER_OUTPUT_DIR}/icon.vert.spv
-            COMMAND ${GLSLC_EXECUTABLE} -fshader-stage=vertex ${SHADER_SOURCE_DIR}/icon.vert.glsl -o ${SHADER_OUTPUT_DIR}/icon.vert.spv
-            DEPENDS ${SHADER_SOURCE_DIR}/icon.vert.glsl
-            COMMENT "Compiling vertex shader: icon.vert.glsl"
-            VERBATIM
-        )
-        
-        # Compile fragment shader
-        add_custom_command(
-            OUTPUT ${SHADER_OUTPUT_DIR}/icon.frag.spv
-            COMMAND ${GLSLC_EXECUTABLE} -fshader-stage=fragment ${SHADER_SOURCE_DIR}/icon.frag.glsl -o ${SHADER_OUTPUT_DIR}/icon.frag.spv
-            DEPENDS ${SHADER_SOURCE_DIR}/icon.frag.glsl
-            COMMENT "Compiling fragment shader: icon.frag.glsl"
-            VERBATIM
-        )
+    # Compile vertex shader
+    add_custom_command(
+        OUTPUT ${SHADER_OUTPUT_DIR}/icon.vert.spv
+        COMMAND ${GLSLANG_VALIDATOR} -V -S vert ${SHADER_SOURCE_DIR}/icon.vert.glsl -o ${SHADER_OUTPUT_DIR}/icon.vert.spv
+        DEPENDS ${SHADER_SOURCE_DIR}/icon.vert.glsl glslang-standalone
+        COMMENT "Compiling vertex shader: icon.vert.glsl"
+        VERBATIM
+    )
+    
+    # Compile fragment shader
+    add_custom_command(
+        OUTPUT ${SHADER_OUTPUT_DIR}/icon.frag.spv
+        COMMAND ${GLSLANG_VALIDATOR} -V -S frag ${SHADER_SOURCE_DIR}/icon.frag.glsl -o ${SHADER_OUTPUT_DIR}/icon.frag.spv
+        DEPENDS ${SHADER_SOURCE_DIR}/icon.frag.glsl glslang-standalone
+        COMMENT "Compiling fragment shader: icon.frag.glsl"
+        VERBATIM
+    )
 
-        # Compile background vertex shader
-        add_custom_command(
-            OUTPUT ${SHADER_OUTPUT_DIR}/background.vert.spv
-            COMMAND ${GLSLC_EXECUTABLE} -fshader-stage=vertex ${SHADER_SOURCE_DIR}/background.vert.glsl -o ${SHADER_OUTPUT_DIR}/background.vert.spv
-            DEPENDS ${SHADER_SOURCE_DIR}/background.vert.glsl
-            COMMENT "Compiling vertex shader: background.vert.glsl"
-            VERBATIM
-        )
+    # Compile background vertex shader
+    add_custom_command(
+        OUTPUT ${SHADER_OUTPUT_DIR}/background.vert.spv
+        COMMAND ${GLSLANG_VALIDATOR} -V -S vert ${SHADER_SOURCE_DIR}/background.vert.glsl -o ${SHADER_OUTPUT_DIR}/background.vert.spv
+        DEPENDS ${SHADER_SOURCE_DIR}/background.vert.glsl glslang-standalone
+        COMMENT "Compiling vertex shader: background.vert.glsl"
+        VERBATIM
+    )
 
-        # Compile background fragment shader
-        add_custom_command(
-            OUTPUT ${SHADER_OUTPUT_DIR}/background.frag.spv
-            COMMAND ${GLSLC_EXECUTABLE} -fshader-stage=fragment ${SHADER_SOURCE_DIR}/background.frag.glsl -o ${SHADER_OUTPUT_DIR}/background.frag.spv
-            DEPENDS ${SHADER_SOURCE_DIR}/background.frag.glsl
-            COMMENT "Compiling fragment shader: background.frag.glsl"
-            VERBATIM
-        )
-        
-        # Create custom target for shaders
-        add_custom_target(CompileShaders ALL
-            DEPENDS ${SHADER_OUTPUT_DIR}/icon.vert.spv ${SHADER_OUTPUT_DIR}/icon.frag.spv ${SHADER_OUTPUT_DIR}/background.vert.spv ${SHADER_OUTPUT_DIR}/background.frag.spv
-        )
-    else()
-        message(WARNING "glslc not found. Shaders will not be compiled. Install Vulkan SDK for shader compilation support.")
-        
-        # Create dummy target
-        add_custom_target(CompileShaders ALL)
-    endif()
+    # Compile background fragment shader
+    add_custom_command(
+        OUTPUT ${SHADER_OUTPUT_DIR}/background.frag.spv
+        COMMAND ${GLSLANG_VALIDATOR} -V -S frag ${SHADER_SOURCE_DIR}/background.frag.glsl -o ${SHADER_OUTPUT_DIR}/background.frag.spv
+        DEPENDS ${SHADER_SOURCE_DIR}/background.frag.glsl glslang-standalone
+        COMMENT "Compiling fragment shader: background.frag.glsl"
+        VERBATIM
+    )
+    
+    # Create custom target for shaders
+    add_custom_target(CompileShaders ALL
+        DEPENDS ${SHADER_OUTPUT_DIR}/icon.vert.spv ${SHADER_OUTPUT_DIR}/icon.frag.spv ${SHADER_OUTPUT_DIR}/background.vert.spv ${SHADER_OUTPUT_DIR}/background.frag.spv
+    )
 
     # ============================================================================
     # Copy compiled shaders to resources directory for embedding

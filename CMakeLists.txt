@@ -259,14 +259,14 @@ set(GUI_SOURCES
     src/ui/widgets/SaveDetailsPanel.cpp
     src/ui/CardActionHandler.cpp
     src/ui/widgets/IconWidget.cpp
-    src/ui/settings/SettingsWindow.cpp
+    src/ui/Settings/SettingsWindow.cpp
     src/ui/dialogs/NewCardDialog.cpp
-    src/ui/settings/SettingsWidget.cpp
+    src/ui/Settings/SettingsWidget.cpp
     src/ui/dialogs/AboutDialog.cpp
-    src/ui/settings/InterfaceSettingsWidget.cpp
-    src/ui/settings/BehaviorSettingsWidget.cpp
-    src/ui/settings/FilesSettingsWidget.cpp
-    src/ui/settings/AdvancedSettingsWidget.cpp
+    src/ui/Settings/InterfaceSettingsWidget.cpp
+    src/ui/Settings/BehaviorSettingsWidget.cpp
+    src/ui/Settings/FilesSettingsWidget.cpp
+    src/ui/Settings/AdvancedSettingsWidget.cpp
     resources/resources.qrc
 )
 
@@ -281,14 +281,14 @@ set(GUI_HEADERS
     src/ui/widgets/SaveDetailsPanel.h
     src/ui/CardActionHandler.h
     src/ui/widgets/IconWidget.h
-    src/ui/settings/SettingsWindow.h
+    src/ui/Settings/SettingsWindow.h
     src/ui/dialogs/NewCardDialog.h
-    src/ui/settings/SettingsWidget.h
+    src/ui/Settings/SettingsWidget.h
     src/ui/dialogs/AboutDialog.h
-    src/ui/settings/InterfaceSettingsWidget.h
-    src/ui/settings/BehaviorSettingsWidget.h
-    src/ui/settings/FilesSettingsWidget.h
-    src/ui/settings/AdvancedSettingsWidget.h
+    src/ui/Settings/InterfaceSettingsWidget.h
+    src/ui/Settings/BehaviorSettingsWidget.h
+    src/ui/Settings/FilesSettingsWidget.h
+    src/ui/Settings/AdvancedSettingsWidget.h
 )
 
 # Create GUI executable
@@ -327,7 +327,7 @@ target_include_directories(myMCpp PRIVATE
     ${CMAKE_SOURCE_DIR}/src/ui
     ${CMAKE_SOURCE_DIR}/src/ui/widgets
     ${CMAKE_SOURCE_DIR}/src/ui/dialogs
-    ${CMAKE_SOURCE_DIR}/src/ui/settings
+    ${CMAKE_SOURCE_DIR}/src/ui/Settings
 
 )
 if(ENABLE_VULKAN)
