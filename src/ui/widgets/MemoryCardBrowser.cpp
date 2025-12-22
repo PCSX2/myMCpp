@@ -43,6 +43,9 @@ void MemoryCardBrowser::loadCard(PS2MemoryCard* card)
 		{
 			if (entry.mode & DF_DIR && !(entry.mode & DF_HIDDEN))
 			{
+				if (entry.name == "." || entry.name == "..")
+					continue;
+
 				QTreeWidgetItem* item = new QTreeWidgetItem(this);
 
 				QString savePath = "/" + QString::fromStdString(entry.name);
@@ -140,7 +143,8 @@ void MemoryCardBrowser::dragEnterEvent(QDragEnterEvent* event)
 				file.endsWith(".max", Qt::CaseInsensitive) ||
 				file.endsWith(".sps", Qt::CaseInsensitive) ||
 				file.endsWith(".cbs", Qt::CaseInsensitive) ||
-				file.endsWith(".xps", Qt::CaseInsensitive))
+				file.endsWith(".xps", Qt::CaseInsensitive) ||
+				file.endsWith(".psv", Qt::CaseInsensitive))
 			{
 				event->acceptProposedAction();
 				return;

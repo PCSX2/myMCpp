@@ -72,7 +72,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->actionCheckUpdates, &QAction::triggered, this, &MainWindow::onCheckForUpdates);
 	connect(ui->actionAboutQt, &QAction::triggered, this, &MainWindow::onAboutQt);
 
-	connect(ui->cardBrowser, &QTreeWidget::itemClicked,
+	connect(ui->cardBrowser, &QTreeWidget::currentItemChanged,
 		this, &MainWindow::onCardItemSelected);
 	connect(ui->cardBrowser, &QTreeWidget::itemDoubleClicked,
 		this, &MainWindow::onCardItemDoubleClicked);
@@ -388,8 +388,10 @@ void MainWindow::updateStatusBar()
 		try
 		{
 			uint32_t freeSpace = memoryCard->getFreeSpace();
+			uint32_t allocatable = memoryCard->getAllocatableSpace();
 			double freeMB = freeSpace / (1024.0 * 1024.0);
-			ui->statusBar->showMessage(tr("Free space: %1 MB").arg(freeMB, 0, 'f', 2));
+			double totalMB = allocatable / (1024.0 * 1024.0);
+			ui->statusBar->showMessage(tr("%1 MB / %2 MB Free").arg(totalMB, 0, 'f', 2).arg(freeMB, 0, 'f', 2));
 		}
 		catch (...)
 		{
