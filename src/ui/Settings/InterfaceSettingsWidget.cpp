@@ -29,18 +29,22 @@ InterfaceSettingsWidget::InterfaceSettingsWidget(SettingsWindow* dialog, QWidget
 	registerHelp(ui->cameraCombo, tr("Camera Angle"), tr("Change the camera angle used to view the 3D icons."));
 	registerHelp(ui->lightingCombo, tr("Lighting Mode"), tr("Select how the icons are lit."));
 	registerHelp(ui->animateIconsCheck, tr("Animate Icons"), tr("Enable rotating animations for the 3D icons."));
-	
+
 	ui->languageCombo->clear();
 	ui->languageCombo->addItem("English (US)", "en");
-	
+
 	ui->themeCombo->clear();
 	ui->themeCombo->addItem(tr("None"), "none");
 	ui->themeCombo->addItem(tr("Dark (Default)"), "dark");
 	ui->themeCombo->addItem(tr("Light"), "light");
+	ui->themeCombo->addItem(tr("Pizza Brown [Light]"), "pizzabrown");
+	ui->themeCombo->addItem(tr("Grey Matter [Dark]"), "greymatter");
+	ui->themeCombo->addItem(tr("Cobalt Sky [Dark]"), "cobaltsky");
+	ui->themeCombo->addItem(tr("AMOLED [Black]"), "amoled");
 	#ifdef _WIN32
 	ui->themeCombo->addItem(tr("Windows Vista"), "windowsvista");
 	#endif
-	
+
 	ui->rendererCombo->clear();
 #if !defined(__APPLE__)
 	ui->rendererCombo->addItem("Vulkan", "vulkan");
@@ -64,7 +68,7 @@ InterfaceSettingsWidget::InterfaceSettingsWidget(SettingsWindow* dialog, QWidget
 	ui->lightingCombo->addItem(tr("Lighting Off"), "off");
 	ui->lightingCombo->addItem(tr("Alternate 1"), "alt1");
 	ui->lightingCombo->addItem(tr("Alternate 2"), "alt2");
-	
+
 	connect(ui->themeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SettingsWidget::settingChanged);
 	connect(ui->languageCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SettingsWidget::settingChanged);
 	connect(ui->thumbnailSizeSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this, &SettingsWidget::settingChanged);
@@ -115,7 +119,7 @@ void InterfaceSettingsWidget::saveSettings()
 	config->setLanguage(ui->languageCombo->currentData().toString().toStdString());
 	config->setTheme(ui->themeCombo->currentData().toString().toStdString());
 	config->setThumbnailSize(ui->thumbnailSizeSpinner->value());
-	
+
 	config->setRenderer(ui->rendererCombo->currentData().toString().toStdString());
 	config->setCameraMode(ui->cameraCombo->currentData().toString().toStdString());
 	config->setLightingMode(ui->lightingCombo->currentData().toString().toStdString());
@@ -126,14 +130,12 @@ void InterfaceSettingsWidget::restoreDefaults()
 {
 	int enIndex = ui->languageCombo->findData("en");
 	if (enIndex >= 0) ui->languageCombo->setCurrentIndex(enIndex);
-	
+
 	int darkIndex = ui->themeCombo->findData("dark");
 	if (darkIndex >= 0) ui->themeCombo->setCurrentIndex(darkIndex);
 	ui->thumbnailSizeSpinner->setValue(64);
-	
+
 	ui->cameraCombo->setCurrentIndex(0); // Default
 	ui->lightingCombo->setCurrentIndex(0); // Icon
 	ui->animateIconsCheck->setChecked(true);
 }
-
-
