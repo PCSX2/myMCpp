@@ -151,10 +151,7 @@ namespace PS2Icon
 			colorData[i].b = data[offset + 14];
 			colorData[i].a = data[offset + 15];
 
-			if (colorData[i].a > 0)
-			{
-				enableAlpha = true;
-			}
+			// Alpha detection removed - reference uses alpha = 1.0 always
 
 			offset += NORMAL_UV_COLOR_SIZE;
 		}
@@ -225,20 +222,34 @@ namespace PS2Icon
 
 	size_t Icon::loadTexture(const uint8_t* data, size_t length, size_t offset)
 	{
-		if (offset == length)
+		// Check if texture data exists (bit 2 = 0x04)
+		if (!(textureFlags & 0x04))
 		{
+			Logger::info("PS2Icon: No texture data (textureFlags=0x{:02X})", textureFlags);
 			texture.resize(1);
 			texture[0] = 0xFFFF;
 			return offset;
 		}
 
-		if (textureFlags == 0x07)
+		if (offset >= length)
 		{
-			return loadTextureUncompressed(data, length, offset);
+			Logger::warn("PS2Icon: Texture flag set but no data remaining");
+			texture.resize(1);
+			texture[0] = 0xFFFF;
+			return offset;
+		}
+
+		// Check if texture is compressed (bit 3 = 0x08)
+		bool isCompressed = (textureFlags & 0x08) != 0;
+		Logger::info("PS2Icon: textureFlags=0x{:02X}, compressed={}", textureFlags, isCompressed);
+
+		if (isCompressed)
+		{
+			return loadTextureCompressed(data, length, offset);
 		}
 		else
 		{
-			return loadTextureCompressed(data, length, offset);
+			return loadTextureUncompressed(data, length, offset);
 		}
 	}
 

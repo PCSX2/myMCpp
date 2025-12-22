@@ -114,6 +114,7 @@ public:
 			lightColors[i].a = static_cast<float>(ptr[offset + 12]) / 128.0f;
 		}
 
+		// Ambient light at offset 0xB0 (176)
 		ambientLight.r = static_cast<float>(ptr[0xB0 + 0]) / 128.0f;
 		ambientLight.g = static_cast<float>(ptr[0xB0 + 4]) / 128.0f;
 		ambientLight.b = static_cast<float>(ptr[0xB0 + 8]) / 128.0f;

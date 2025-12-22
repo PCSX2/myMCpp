@@ -271,7 +271,8 @@ void VulkanRenderer::render()
 	}
 
 	updateUniformBuffer();
-	Logger::debug("VK: Uniform buffer updated, submitting frame...");
+	// this spams logs so if you need it uncomment it
+	// Logger::debug("VK: Uniform buffer updated, submitting frame...");
 	submitFrame();
 }
 
@@ -663,7 +664,7 @@ bool VulkanRenderer::uploadTexture()
 
 	uint32_t texWidth = m_icon->getTextureWidth();
 	uint32_t texHeight = m_icon->getTextureHeight();
-	const VkFormat textureFormat = VK_FORMAT_R8G8B8A8_UNORM;
+	const VkFormat textureFormat = VK_FORMAT_R8G8B8A8_SRGB;
 
 	if (texWidth == 0 || texHeight == 0)
 	{
@@ -672,6 +673,7 @@ bool VulkanRenderer::uploadTexture()
 	}
 
 	auto rgba = TextureUtils::convertPS2TextureToRGBA(textureData, texWidth, texHeight);
+	Logger::debug("VK: Texture converted to RGBA, size={} bytes", rgba.size());
 	VkDeviceSize imageSize = rgba.size();
 
 	VkBuffer stagingBuffer = VK_NULL_HANDLE;
@@ -730,16 +732,19 @@ bool VulkanRenderer::uploadTexture()
 			VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			m_textureImage, m_textureMemory))
 	{
+		Logger::error("VK: Failed to create texture image");
 		vkDestroyBuffer(device, stagingBuffer, nullptr);
 		vkFreeMemory(device, stagingBufferMemory, nullptr);
 		return false;
 	}
+	Logger::debug("VK: Texture image created {}x{}", texWidth, texHeight);
 
 	m_vulkanResources.transitionImageLayout(device, queue, m_textureImage, textureFormat,
 		VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 	m_vulkanResources.copyBufferToImage(device, queue, stagingBuffer, m_textureImage, texWidth, texHeight);
 	m_vulkanResources.transitionImageLayout(device, queue, m_textureImage, textureFormat,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	Logger::debug("VK: Texture data uploaded and transitioned to shader-readable");
 
 	VkImageViewCreateInfo viewInfo{};
 	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -759,12 +764,13 @@ bool VulkanRenderer::uploadTexture()
 		vkFreeMemory(device, stagingBufferMemory, nullptr);
 		return false;
 	}
+	Logger::debug("VK: Texture image view created, calling updateUniformBuffer");
 
 	updateUniformBuffer();
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
-
+	Logger::debug("VK: Texture upload complete");
 	return true;
 }
 
@@ -875,18 +881,16 @@ bool VulkanRenderer::createCommandBuffers()
 					m_vulkanPipeline.getPipelineLayout(), 0, 1, &m_descriptorSet, 0, nullptr);
 			}
 
-			struct PushConstants
-			{
-				int useTexture;
-				int enableAlpha;
+			struct PushConstants {
+				int32_t useTexture;
+				int32_t enableAlpha;
 				float alphaOverride;
-			} pc{};
+			} pc;
 			pc.useTexture = 1;
-			pc.enableAlpha = m_icon && m_icon->hasAlpha() ? 1 : 0;
+			pc.enableAlpha = (m_icon && m_icon->hasAlpha()) ? 1 : 0;
 			pc.alphaOverride = 1.0f;
-
 			vkCmdPushConstants(m_commandBuffers[i], m_vulkanPipeline.getPipelineLayout(),
-				VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstants), &pc);
+				VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pc), &pc);
 
 			vkCmdDraw(m_commandBuffers[i], m_vertexCount, 1, 0, 0);
 		}
@@ -940,7 +944,8 @@ void VulkanRenderer::submitFrame()
 			return;
 		}
 
-		Logger::debug("VK: Acquired image {}, submitting command buffer", imageIndex);
+		// This spams logs so if you need it uncomment it
+		// Logger::debug("VK: Acquired image {}, submitting command buffer", imageIndex);
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -980,8 +985,8 @@ void VulkanRenderer::submitFrame()
 		{
 			Logger::error("VK: Failed to present image: {}", static_cast<int>(result));
 		}
-
-		Logger::debug("VK: Frame presented successfully");
+		// This spams logs so if you need it uncomment it
+		// Logger::debug("VK: Frame presented successfully");
 	}
 	catch (const std::exception& e)
 	{
