@@ -195,7 +195,7 @@ void OpenGLResources::uploadTexture(const uint8_t* rgba, uint32_t width, uint32_
 	glTexImage2D(
 		GL_TEXTURE_2D,
 		0,
-		GL_RGBA8,
+		GL_SRGB8_ALPHA8,
 		width,
 		height,
 		0,

@@ -108,10 +108,32 @@ void LightingState::loadFromIconSys(PS2IconSys* iconSys)
 	}
 
 	iconSysAmbient = glm::vec3(ambient.r, ambient.g, ambient.b);
-	hasIconSysLighting = true;
+
+	bool allZero = (iconSysAmbient.r < 0.001f && iconSysAmbient.g < 0.001f && iconSysAmbient.b < 0.001f);
+	for (int i = 0; i < 3 && allZero; ++i)
+	{
+		if (iconSysLightColors[i].r > 0.001f || iconSysLightColors[i].g > 0.001f || iconSysLightColors[i].b > 0.001f)
+		{
+			allZero = false;
+		}
+	}
+	
+	if (allZero)
+	{
+		Logger::debug("LightingState: All-zero lighting detected, using default fallback");
+		hasIconSysLighting = false;  // Fall back to default lighting
+	}
+	else
+	{
+		hasIconSysLighting = true;
+	}
 	applyMode();
 
 	Logger::info("LightingState: Loaded lighting from icon.sys");
+	Logger::debug("LightingState: Ambient=({:.2f},{:.2f},{:.2f}), LightColor[0]=({:.2f},{:.2f},{:.2f}), fallback={}",
+		iconSysAmbient.r, iconSysAmbient.g, iconSysAmbient.b,
+		iconSysLightColors[0].r, iconSysLightColors[0].g, iconSysLightColors[0].b,
+		allZero ? "yes" : "no");
 }
 
 CameraState::CameraState()
@@ -198,12 +220,36 @@ bool BackgroundState::loadFromIconSys(PS2IconSys* iconSys)
 		// icon.sys loader already normalized to 0-1
 		alpha = glm::clamp(bgTransparency, 0.0f, 1.0f);
 
+		// Check if all background colors are zero
+		bool allZero = true;
 		for (size_t i = 0; i < 4 && i < bgColors.size(); ++i)
 		{
-			float r = glm::clamp(bgColors[i].r, 0.0f, 1.0f);
-			float g = glm::clamp(bgColors[i].g, 0.0f, 1.0f);
-			float b = glm::clamp(bgColors[i].b, 0.0f, 1.0f);
-			colors[i] = glm::vec4(r, g, b, alpha);
+			if (bgColors[i].r > 0.001f || bgColors[i].g > 0.001f || bgColors[i].b > 0.001f)
+			{
+				allZero = false;
+				break;
+			}
+		}
+
+		if (allZero)
+		{
+			const float gray = 0.31f;
+			for (int i = 0; i < 4; ++i)
+			{
+				colors[i] = glm::vec4(gray, gray, gray, 1.0f);
+			}
+			alpha = 1.0f;
+			Logger::debug("BackgroundState: All-zero colors detected, using gray fallback");
+		}
+		else
+		{
+			for (size_t i = 0; i < 4 && i < bgColors.size(); ++i)
+			{
+				float r = glm::clamp(bgColors[i].r, 0.0f, 1.0f);
+				float g = glm::clamp(bgColors[i].g, 0.0f, 1.0f);
+				float b = glm::clamp(bgColors[i].b, 0.0f, 1.0f);
+				colors[i] = glm::vec4(r, g, b, alpha);
+			}
 		}
 
 		shouldRender = true;
