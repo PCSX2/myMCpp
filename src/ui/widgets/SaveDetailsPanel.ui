@@ -60,6 +60,16 @@
        </widget>
       </item>
       <item>
+       <widget class="QLabel" name="dirNameLabel">
+        <property name="text">
+         <string></string>
+        </property>
+        <property name="styleSheet">
+         <string>color: gray; font-size: 11px;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="Line" name="line">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>

@@ -12,16 +12,6 @@
 #include <QFrame>
 #include <QWidget>
 
-#include "SaveDetailsPanel.h"
-#include "IconWidget.h"
-#include "Config.h"
-#include "ps2mc.h"
-#include "ps2iconsys.h"
-#include <QVBoxLayout>
-#include <QGroupBox>
-#include <QFrame>
-#include <QWidget>
-
 SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)
 	: QWidget(parent)
 	, m_config(nullptr)
@@ -88,6 +78,7 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 	}
 
 	ui->titleLabel->setText(fullTitle);
+	ui->dirNameLabel->setText(saveName);
 
 	QString details = tr("Size: %1\nModified: %2").arg(size, modified);
 
@@ -180,6 +171,8 @@ void SaveDetailsPanel::clear()
 {
 	if (ui->titleLabel)
 		ui->titleLabel->setText(tr("No save selected"));
+	if (ui->dirNameLabel)
+		ui->dirNameLabel->setText("");
 	if (ui->detailsLabel)
 		ui->detailsLabel->setText(tr("No details available"));
 	if (iconWidget)

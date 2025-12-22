@@ -112,6 +112,9 @@
    <property name="windowTitle">
     <string>Main Toolbar</string>
    </property>
+   <property name="contextMenuPolicy">
+    <enum>Qt::NoContextMenu</enum>
+   </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
    </property>
