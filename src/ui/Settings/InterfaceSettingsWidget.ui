@@ -225,6 +225,13 @@ https://github.com/PCSX2/pcsx2
         </property>
        </widget>
       </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QCheckBox" name="unlockFpsCheck">
+        <property name="text">
+         <string>Unlock FPS</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -251,6 +258,7 @@ https://github.com/PCSX2/pcsx2
   <tabstop>cameraCombo</tabstop>
   <tabstop>lightingCombo</tabstop>
   <tabstop>animateIconsCheck</tabstop>
+  <tabstop>unlockFpsCheck</tabstop>
  </tabstops>
  <resources/>
  <connections/>

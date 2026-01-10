@@ -56,8 +56,8 @@ private:
 	void updateStatusBar();
 	void updateForceImportWarning();
 	void closeCard();
+	void importFileToCard(const QString& savePath, const QString& hostFilePath);
 
-	// UI Structure
 	std::unique_ptr<Ui::MainWindow> ui;
 
 	std::unique_ptr<CardActionHandler> actionHandler;

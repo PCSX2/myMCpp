@@ -274,15 +274,19 @@ void IconWidget::startRendering()
 	Logger::info("IconWidget::startRendering {}", (void*)this);
 	m_renderLoopEnabled = true;
 
-	float rate = 60.0f;
-#if defined(__linux__)
-	rate = getRefreshRate(this);
-#else
-	rate = getRefreshRate(this);
-#endif
-
-	if (rate < 30.0f)
-		rate = 60.0f;
+	int maxFps = m_config ? m_config->getMaxFPS() : 30;
+	float rate;
+	
+	if (maxFps <= 0)
+	{
+		rate = getRefreshRate(this);
+		if (rate < 30.0f)
+			rate = 60.0f;
+	}
+	else
+	{
+		rate = static_cast<float>(maxFps);
+	}
 
 	int interval = static_cast<int>(1000.0f / rate);
 	if (interval <= 0)
