@@ -99,7 +99,18 @@ void LightingState::loadFromIconSys(PS2IconSys* iconSys)
 	for (int i = 0; i < 3 && i < static_cast<int>(dirs.size()); ++i)
 	{
 		glm::vec3 dir = glm::vec3(dirs[i].x, -dirs[i].y, -dirs[i].z);
-		iconSysLightDirs[i] = glm::normalize(dir);
+		float len = glm::length(dir);
+		if (len > 0.0001f)
+		{
+			iconSysLightDirs[i] = dir / len;
+		}
+		else
+		{
+			iconSysLightDirs[i] = glm::vec3(0.0f, 1.0f, 0.0f);
+		}
+		Logger::debug("LightingState: Light[{}] raw=({:.4f},{:.4f},{:.4f}), processed=({:.4f},{:.4f},{:.4f})",
+			i, dirs[i].x, dirs[i].y, dirs[i].z,
+			iconSysLightDirs[i].x, iconSysLightDirs[i].y, iconSysLightDirs[i].z);
 	}
 
 	for (int i = 0; i < 3 && i < static_cast<int>(colors.size()); ++i)
@@ -130,10 +141,14 @@ void LightingState::loadFromIconSys(PS2IconSys* iconSys)
 	applyMode();
 
 	Logger::info("LightingState: Loaded lighting from icon.sys");
-	Logger::debug("LightingState: Ambient=({:.2f},{:.2f},{:.2f}), LightColor[0]=({:.2f},{:.2f},{:.2f}), fallback={}",
+	Logger::debug("LightingState: Ambient=({:.2f},{:.2f},{:.2f}), fallback={}",
 		iconSysAmbient.r, iconSysAmbient.g, iconSysAmbient.b,
-		iconSysLightColors[0].r, iconSysLightColors[0].g, iconSysLightColors[0].b,
 		allZero ? "yes" : "no");
+	for (int i = 0; i < 3; ++i)
+	{
+		Logger::debug("LightingState: LightColor[{}]=({:.2f},{:.2f},{:.2f})",
+			i, iconSysLightColors[i].r, iconSysLightColors[i].g, iconSysLightColors[i].b);
+	}
 }
 
 CameraState::CameraState()
