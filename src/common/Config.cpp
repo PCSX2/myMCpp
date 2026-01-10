@@ -419,7 +419,7 @@ int Config::getMaxFPS() const
 	}
 	catch (...)
 	{
-		return 0;
+		return 30;
 	}
 }
 
@@ -503,7 +503,7 @@ void Config::createDefaults()
 		{"paths", {{"memory_card_folder", "./memory_cards"}}},
 		{"debug", {{"logging", false},
 					  {"verbose", false}}},
-		{"performance", {{"max_fps", 0},
+		{"performance", {{"max_fps", 30},
 							{"threaded_loading", true}}}};
 }
 
@@ -573,7 +573,7 @@ void Config::ensureKeys()
 		m_config["debug"]["verbose"] = false;
 
 	if (!m_config["performance"].contains("max_fps"))
-		m_config["performance"]["max_fps"] = 0;
+		m_config["performance"]["max_fps"] = 30;
 	if (!m_config["performance"].contains("threaded_loading"))
 		m_config["performance"]["threaded_loading"] = true;
 }
