@@ -25,6 +25,8 @@
 #include <QStyle>
 #include <QLabel>
 #include <QFileInfo>
+#include <QFile>
+#include <QInputDialog>
 
 #include "ui_MainWindow.h"
 
@@ -86,6 +88,113 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		}
 	});
 
+	connect(ui->cardBrowser, &MemoryCardBrowser::exportSaveRequested, this, [this](const QString& savePath) {
+		if (!memoryCard)
+			return;
+
+		QString filename = QFileDialog::getSaveFileName(
+			this,
+			tr("Export Save"),
+			"",
+			tr("EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)"));
+
+		if (!filename.isEmpty())
+		{
+			actionHandler->exportSave(memoryCard.get(), savePath, filename);
+		}
+	});
+
+	connect(ui->cardBrowser, &MemoryCardBrowser::exportFileRequested, this, [this](const QString& savePath, const QString& fileName) {
+		if (!memoryCard)
+			return;
+
+		QString filename = QFileDialog::getSaveFileName(
+			this,
+			tr("Export File"),
+			fileName,
+			tr("All Files (*.*)"));
+
+		if (!filename.isEmpty())
+		{
+			try
+			{
+				QString fullPath = savePath + "/" + fileName;
+				memoryCard->exportFile(fullPath.toStdString(), filename.toStdString());
+				ui->statusBar->showMessage(tr("Exported %1").arg(fileName), 5000);
+			}
+			catch (const std::exception& e)
+			{
+				QMessageBox::critical(this, tr("Error"),
+					tr("Failed to export file: %1").arg(e.what()));
+			}
+		}
+	});
+
+	connect(ui->cardBrowser, &MemoryCardBrowser::deleteSaveRequested, this, [this](const QString& savePath) {
+		if (!memoryCard)
+			return;
+
+		if (m_config && m_config->getWarnOnDelete())
+		{
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(this, tr("Delete Save"),
+				tr("Are you sure you want to delete '%1'?").arg(savePath),
+				QMessageBox::Yes | QMessageBox::No);
+
+			if (reply == QMessageBox::No)
+				return;
+		}
+
+		actionHandler->deleteSave(memoryCard.get(), savePath);
+		ui->statusBar->showMessage(tr("Deleted %1").arg(savePath), 5000);
+		updateCardView();
+		ui->detailsPanel->clear();
+	});
+
+	connect(ui->cardBrowser, &MemoryCardBrowser::importFileRequested, this, [this](const QString& savePath, const QString& hostFilePath) {
+		importFileToCard(savePath, hostFilePath);
+	});
+
+	connect(ui->cardBrowser, &MemoryCardBrowser::importArbitraryFileRequested, this, [this](const QString& targetDir) {
+		if (!memoryCard) return;
+		QString fileName = QFileDialog::getOpenFileName(this, tr("Import File"), "", tr("All Files (*.*)"));
+		if (!fileName.isEmpty())
+		{
+			importFileToCard(targetDir, fileName);
+		}
+	});
+
+	connect(ui->cardBrowser, &MemoryCardBrowser::createFolderRequested, this, [this](const QString& parentPath) {
+
+		if (!memoryCard)
+		{
+			return;
+		}
+
+		bool ok;
+		QString folderName = QInputDialog::getText(this, tr("New Folder"),
+			tr("Folder name:"), QLineEdit::Normal, "", &ok);
+
+
+
+		if (ok && !folderName.isEmpty())
+		{
+			try
+			{
+				QString fullPath = parentPath == "/" ? "/" + folderName : parentPath + "/" + folderName;
+				memoryCard->makeDir(fullPath.toStdString());
+				ui->statusBar->showMessage(tr("Created folder %1").arg(folderName), 5000);
+				ui->cardBrowser->navigateTo(parentPath);
+				updateCardView();
+			}
+			catch (const std::exception& e)
+			{
+				QMessageBox::critical(this, tr("Error"),
+					tr("Failed to create folder: %1").arg(e.what()));
+			}
+		}
+	});
+
 	actionHandler->setStatusBar(ui->statusBar);
 
 	if (m_config) {
@@ -115,7 +224,7 @@ void MainWindow::onOpenMemoryCard()
 		this,
 		tr("Open Memory Card"),
 		"",
-		tr("PS2 Memory Card (*.ps2 *.mc2 *.mcd *.bin *.mc);;All Files (*.*)"));
+		tr("All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd *.bin *.mc);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;Raw Memory Card (*.bin *.mc);;All Files (*.*)"));
 
 	if (filename.isEmpty())
 	{
@@ -239,20 +348,20 @@ void MainWindow::onExportSave()
 
 void MainWindow::onDeleteFile()
 {
-	if (!memoryCard || !ui->cardBrowser->hasSaveSelected())
+	QString savePath = ui->cardBrowser->getSelectedPath();
+	
+	if (savePath.isEmpty())
 	{
 		QMessageBox::information(this, tr("Delete"),
-			tr("Please select a save to delete"));
+			tr("Please select a file or folder to delete"));
 		return;
 	}
-
-	QString savePath = ui->cardBrowser->getCurrentSavePath();
 
 	if (m_config && m_config->getWarnOnDelete())
 	{
 		QMessageBox::StandardButton reply;
-		reply = QMessageBox::question(this, tr("Delete Save"),
-			tr("Are you sure you want to delete '%1'?").arg(savePath),
+		reply = QMessageBox::question(this, tr("Delete"),
+			tr("Are you sure you want to delete '%1'?\nThis action cannot be undone.").arg(savePath),
 			QMessageBox::Yes | QMessageBox::No);
 
 		if (reply == QMessageBox::No)
@@ -343,9 +452,13 @@ void MainWindow::onAboutQt()
 
 void MainWindow::onCardItemSelected()
 {
-	if (!memoryCard || !ui->cardBrowser->hasSaveSelected())
+	QString selectedPath = ui->cardBrowser->getSelectedPath();
+	if (!memoryCard || selectedPath.isEmpty())
 	{
-		ui->detailsPanel->clear();
+		if (!ui->cardBrowser->isInsideSave())
+		{
+			ui->detailsPanel->clear();
+		}
 		ui->actionDelete->setEnabled(false);
 		ui->actionExport->setEnabled(false);
 		return;
@@ -369,9 +482,24 @@ void MainWindow::onCardItemSelected()
 
 void MainWindow::onCardItemDoubleClicked()
 {
-	if (ui->cardBrowser->hasSaveSelected())
+	QTreeWidgetItem* item = ui->cardBrowser->currentItem();
+	if (!item)
+		return;
+
+	QString name = item->data(0, Qt::UserRole).toString();
+	bool isDir = item->data(0, Qt::UserRole + 1).toBool();
+
+	if (name == "..")
 	{
-		onExportSave();
+		ui->cardBrowser->navigateUp();
+		return;
+	}
+
+	if (isDir)
+	{
+		QString currentPath = ui->cardBrowser->getCurrentPath();
+		QString targetPath = currentPath == "/" ? "/" + name : currentPath + "/" + name;
+		ui->cardBrowser->navigateTo(targetPath);
 	}
 }
 
@@ -478,7 +606,7 @@ void MainWindow::onEccTool()
 		this,
 		dialogTitle,
 		defaultName,
-		tr("PS2 Memory Card (*.ps2 *.mc2 *.mcd);;All Files (*.*)"));
+		tr("All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)"));
 
 	if (filename.isEmpty())
 		return;
@@ -516,6 +644,41 @@ void MainWindow::onToggleForceImport()
 		ui->actionForceImport->setChecked(newValue);
 		m_config->save();
 		updateForceImportWarning();
+	}
+}
+
+void MainWindow::importFileToCard(const QString& savePath, const QString& hostFilePath)
+{
+	if (!memoryCard)
+		return;
+
+	try
+	{
+		QFile file(hostFilePath);
+		if (!file.open(QIODevice::ReadOnly))
+		{
+			QMessageBox::critical(this, tr("Error"),
+				tr("Failed to open file: %1").arg(hostFilePath));
+			return;
+		}
+
+		QByteArray data = file.readAll();
+		std::vector<uint8_t> fileData(data.begin(), data.end());
+
+		QFileInfo fileInfo(hostFilePath);
+		QString targetPath = savePath;
+		if (!targetPath.endsWith('/')) targetPath += "/";
+		targetPath += fileInfo.fileName();
+
+		memoryCard->writeFile(targetPath.toStdString(), fileData);
+		ui->statusBar->showMessage(tr("Imported %1").arg(fileInfo.fileName()), 5000);
+
+		ui->cardBrowser->navigateTo(savePath);
+	}
+	catch (const std::exception& e)
+	{
+		QMessageBox::critical(this, tr("Error"),
+			tr("Failed to import file: %1").arg(e.what()));
 	}
 }
 

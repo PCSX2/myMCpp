@@ -29,7 +29,8 @@ InterfaceSettingsWidget::InterfaceSettingsWidget(SettingsWindow* dialog, QWidget
 	registerHelp(ui->cameraCombo, tr("Camera Angle"), tr("Change the camera angle used to view the 3D icons."));
 	registerHelp(ui->lightingCombo, tr("Lighting Mode"), tr("Select how the icons are lit."));
 	registerHelp(ui->animateIconsCheck, tr("Animate Icons"), tr("Enable rotating animations for the 3D icons."));
-
+	registerHelp(ui->unlockFpsCheck, tr("Unlock FPS"), tr("Unlock the frame rate limit for the icon preview. When disabled, the preview runs at 30 FPS to save power."));
+	
 	ui->languageCombo->clear();
 	ui->languageCombo->addItem("English (US)", "en");
 
@@ -53,9 +54,6 @@ InterfaceSettingsWidget::InterfaceSettingsWidget(SettingsWindow* dialog, QWidget
 #if defined(__APPLE__)
 	ui->rendererCombo->addItem("Metal", "metal");
 #endif
-#if defined(_WIN32)
-	ui->rendererCombo->addItem("DirectX 12", "dx12");
-#endif
 
 	ui->cameraCombo->clear();
 	ui->cameraCombo->addItem(tr("Default"), "default");
@@ -76,6 +74,7 @@ InterfaceSettingsWidget::InterfaceSettingsWidget(SettingsWindow* dialog, QWidget
 	connect(ui->cameraCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SettingsWidget::settingChanged);
 	connect(ui->lightingCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SettingsWidget::settingChanged);
 	connect(ui->animateIconsCheck, &QCheckBox::toggled, this, &SettingsWidget::settingChanged);
+	connect(ui->unlockFpsCheck, &QCheckBox::toggled, this, &SettingsWidget::settingChanged);
 
 	addTab(tr("Interface"), container);
 	loadSettings();
@@ -109,6 +108,7 @@ void InterfaceSettingsWidget::loadSettings()
 	if (lIdx >= 0) ui->lightingCombo->setCurrentIndex(lIdx);
 
 	ui->animateIconsCheck->setChecked(config->getAnimateIcons());
+	ui->unlockFpsCheck->setChecked(config->getMaxFPS() <= 0);
 }
 
 void InterfaceSettingsWidget::saveSettings()
@@ -124,6 +124,7 @@ void InterfaceSettingsWidget::saveSettings()
 	config->setCameraMode(ui->cameraCombo->currentData().toString().toStdString());
 	config->setLightingMode(ui->lightingCombo->currentData().toString().toStdString());
 	config->setAnimateIcons(ui->animateIconsCheck->isChecked());
+	config->setMaxFPS(ui->unlockFpsCheck->isChecked() ? 0 : 30);
 }
 
 void InterfaceSettingsWidget::restoreDefaults()
@@ -138,4 +139,5 @@ void InterfaceSettingsWidget::restoreDefaults()
 	ui->cameraCombo->setCurrentIndex(0); // Default
 	ui->lightingCombo->setCurrentIndex(0); // Icon
 	ui->animateIconsCheck->setChecked(true);
+	ui->unlockFpsCheck->setChecked(false);
 }

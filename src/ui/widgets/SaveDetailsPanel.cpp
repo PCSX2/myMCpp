@@ -112,32 +112,27 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 
 		if (iconData.empty())
 		{
-			qDebug() << "SaveDetailsPanel: No icon data found for" << savePath;
 			if (iconWidget)
 				iconWidget->hide();
 		}
 		else
 		{
-			qDebug() << "SaveDetailsPanel: Icon data found, size:" << iconData.size();
 		}
 
 		if (!iconData.empty() && iconWidget)
 		{
 			if (iconWidget->loadIcon(iconData))
 			{
-				qDebug() << "SaveDetailsPanel: Icon loaded successfully into widget";
 				iconWidget->show();
 				PS2IconSys* iconSys = card->getIconSys(savePath.toStdString());
 				if (iconSys)
 				{
 					iconWidget->applyConfigToRenderer(iconSys);
 					iconWidget->setBackgroundFromIconSys(iconSys);
-					qDebug() << "SaveDetailsPanel: Lighting and background configured from icon.sys";
 					delete iconSys; // Clean up the pointer after use
 				}
 				else
 				{
-					qDebug() << "SaveDetailsPanel: No icon.sys found, using defaults";
 					iconWidget->applyConfigToRenderer(nullptr);
 					iconWidget->setBackgroundFromIconSys(nullptr);
 				}
@@ -148,20 +143,17 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 			}
 			else
 			{
-				qDebug() << "SaveDetailsPanel: IconWidget failed to load icon";
 				iconWidget->hide();
 			}
 		}
 	}
 	catch (const std::exception& e)
 	{
-		qDebug() << "SaveDetailsPanel: Exception loading icon:" << e.what();
 		if (iconWidget)
 			iconWidget->hide();
 	}
 	catch (...)
 	{
-		qDebug() << "SaveDetailsPanel: Unknown exception loading icon";
 		if (iconWidget)
 			iconWidget->hide();
 	}
