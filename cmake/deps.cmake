@@ -17,6 +17,7 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/madler/zlib.git
     GIT_TAG v1.3.1
     GIT_SHALLOW TRUE
+    GIT_DEPTH 1
 )
 
 if(ENABLE_VULKAN)
@@ -29,6 +30,7 @@ if(ENABLE_VULKAN)
         GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Loader.git
         GIT_TAG v1.4.337
         GIT_SHALLOW TRUE
+        GIT_DEPTH 1
     )
 
     # ============================================================================
@@ -39,6 +41,7 @@ if(ENABLE_VULKAN)
         GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
         GIT_TAG v1.4.337
         GIT_SHALLOW TRUE
+        GIT_DEPTH 1
     )
 
     # ============================================================================
@@ -49,6 +52,7 @@ if(ENABLE_VULKAN)
         GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Headers.git
         GIT_TAG main
         GIT_SHALLOW TRUE
+        GIT_DEPTH 1
     )
 
     FetchContent_Declare(
@@ -56,6 +60,7 @@ if(ENABLE_VULKAN)
         GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Tools.git
         GIT_TAG v2025.5
         GIT_SHALLOW TRUE
+        GIT_DEPTH 1
     )
 
     # ============================================================================
@@ -66,6 +71,7 @@ if(ENABLE_VULKAN)
         GIT_REPOSITORY https://github.com/KhronosGroup/glslang.git
         GIT_TAG 16.1.0
         GIT_SHALLOW TRUE
+        GIT_DEPTH 1
     )
 
     set(SPIRV_SKIP_EXECUTABLES OFF CACHE BOOL "" FORCE)
@@ -76,7 +82,7 @@ if(ENABLE_VULKAN)
     # glslang options
     set(ENABLE_GLSLANG_BINARIES ON CACHE BOOL "" FORCE)
     set(ENABLE_SPVREMAPPER OFF CACHE BOOL "" FORCE)
-    set(ENABLE_HLSL OFF CACHE BOOL "" FORCE)
+    set(ENABLE_HLSL ON CACHE BOOL "" FORCE)
     set(ENABLE_OPT ON CACHE BOOL "" FORCE)
     set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
     set(SKIP_GLSLANG_INSTALL ON CACHE BOOL "" FORCE)
@@ -88,8 +94,9 @@ endif()
 FetchContent_Declare(
     glm
     GIT_REPOSITORY https://github.com/g-truc/glm.git
-    GIT_TAG 1.0.2
+    GIT_TAG 1.0.3
     GIT_SHALLOW TRUE
+    GIT_DEPTH 1
 )
 
 # ============================================================================
@@ -100,6 +107,7 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/glfw/glfw.git
     GIT_TAG master
     GIT_SHALLOW TRUE
+    GIT_DEPTH 1
 )
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -115,6 +123,7 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/Dav1dde/glad.git
     GIT_TAG glad2
     GIT_SHALLOW TRUE
+    GIT_DEPTH 1
 )
 
 # ============================================================================
@@ -125,6 +134,7 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/nlohmann/json.git
     GIT_TAG v3.12.0
     GIT_SHALLOW TRUE
+    GIT_DEPTH 1
 )
 
 # ============================================================================
@@ -133,8 +143,9 @@ FetchContent_Declare(
 FetchContent_Declare(
     spdlog
     GIT_REPOSITORY https://github.com/gabime/spdlog.git
-    GIT_TAG v1.16.0
+    GIT_TAG v1.17.0
     GIT_SHALLOW TRUE
+    GIT_DEPTH 1
 )
 
 # Disable zlib examples/tests
@@ -165,7 +176,7 @@ if(MSVC AND TARGET SPIRV-Tools-opt)
 endif()
 
 # ============================================================================
-# Find system packages
+# Find system packages (OpenGL, Vulkan)
 # ============================================================================
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets LinguistTools)
 if (Qt6_VERSION VERSION_GREATER_EQUAL 6.10.0)
@@ -203,3 +214,4 @@ if(UNIX AND NOT APPLE)
 else()
     find_package(OpenGL REQUIRED)
 endif()
+message(STATUS "Found OpenGL")

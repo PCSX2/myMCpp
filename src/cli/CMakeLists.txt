@@ -1,0 +1,25 @@
+set(CLI_SOURCES
+    ps2mc_cli.cpp
+)
+
+set(CLI_HEADERS
+    ps2mc_cli.h
+)
+
+add_library(myMCpp_cli STATIC ${CLI_SOURCES} ${CLI_HEADERS})
+
+target_include_directories(myMCpp_cli PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(myMCpp_cli PUBLIC
+    myMCpp_common
+    myMCpp_core
+    Qt6::Core
+)
+
+if(MSVC)
+    target_compile_options(myMCpp_cli PRIVATE /W4)
+else()
+    target_compile_options(myMCpp_cli PRIVATE -Wall -Wextra -pedantic)
+endif()
