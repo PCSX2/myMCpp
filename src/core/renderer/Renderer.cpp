@@ -31,17 +31,17 @@ std::unique_ptr<Renderer> RendererFactory::createRenderer(
 	}
 }
 
+#if !defined(__APPLE__)
 std::unique_ptr<Renderer> RendererFactory::createVulkanRenderer(const WindowInfo& windowInfo)
 {
-#if !defined(__APPLE__)
 	auto renderer = std::make_unique<VulkanRenderer>(windowInfo);
 	if (!renderer->initialize())
 	{
 		return nullptr;
 	}
 	return renderer;
-#endif
 }
+#endif
 
 std::unique_ptr<Renderer> RendererFactory::createOpenGLRenderer(const WindowInfo& windowInfo)
 {
@@ -53,17 +53,14 @@ std::unique_ptr<Renderer> RendererFactory::createOpenGLRenderer(const WindowInfo
 	return renderer;
 }
 
+#if defined(__APPLE__)
 std::unique_ptr<Renderer> RendererFactory::createMetalRenderer(const WindowInfo& windowInfo)
 {
-#if defined(__APPLE__)
 	auto renderer = std::make_unique<MetalRenderer>(windowInfo);
 	if (!renderer->initialize())
 	{
 		return nullptr;
 	}
 	return renderer;
-#else
-	(void)windowInfo;
-	return nullptr;
-#endif
 }
+#endif

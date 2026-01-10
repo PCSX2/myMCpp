@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 PCSX2 Dev Team
+// SPDX-FileCopyrightText: 2002-2025 PCSX2 Dev Team
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "WindowInfo.h"
@@ -101,7 +101,7 @@ static std::optional<float> GetRefreshRateFromDisplayConfig(HWND hwnd)
 	return std::nullopt;
 }
 
-static std::optional<float> GetRefreshRateFromDWM(HWND hwnd)
+static std::optional<float> GetRefreshRateFromDWM([[maybe_unused]] HWND hwnd)
 {
 	BOOL composition_enabled;
 	if (FAILED(DwmIsCompositionEnabled(&composition_enabled)))

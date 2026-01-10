@@ -470,7 +470,7 @@ void OpenGLRenderer::render()
 		glUniform1f(m_shader.getAlphaOverrideLocation(), 1.0f);
 
 		glBindVertexArray(m_resources.getIconVAO());
-		glDisable(GL_CULL_FACE);
+		glEnable(GL_CULL_FACE);
 		glDrawArrays(GL_TRIANGLES, 0, m_vertexCount);
 		glBindVertexArray(0);
 
