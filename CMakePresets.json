@@ -1,0 +1,180 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "win-rel",
+            "displayName": "Windows Release",
+            "description": "Release build for Windows with MSVC",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/win-rel",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "ENABLE_VULKAN": "ON"
+            }
+        },
+        {
+            "name": "win-dbg",
+            "displayName": "Windows Debug",
+            "description": "Debug build for Windows with MSVC",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/win-dbg",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "ENABLE_VULKAN": "ON"
+            }
+        },
+        {
+            "name": "win-rel-no-vk",
+            "displayName": "Windows Release (No Vulkan)",
+            "description": "Release build for Windows without Vulkan renderer",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/win-rel-no-vk",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "ENABLE_VULKAN": "OFF"
+            }
+        },
+        {
+            "name": "win-clang-rel",
+            "displayName": "Windows Clang Release",
+            "description": "Release build for Windows with Clang and Ninja",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/win-clang-rel",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "ENABLE_VULKAN": "ON"
+            }
+        },
+        {
+            "name": "linux-rel",
+            "displayName": "Linux Release",
+            "description": "Release build for Linux with Clang and Ninja",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux-rel",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "ENABLE_VULKAN": "ON"
+            }
+        },
+        {
+            "name": "linux-dbg",
+            "displayName": "Linux Debug",
+            "description": "Debug build for Linux with Clang and Ninja",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux-dbg",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "ENABLE_VULKAN": "ON"
+            }
+        },
+        {
+            "name": "linux-rel-no-vk",
+            "displayName": "Linux Release (No Vulkan)",
+            "description": "Release build for Linux without Vulkan renderer",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux-rel-no-vk",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "ENABLE_VULKAN": "OFF"
+            }
+        },
+        {
+            "name": "linux-gcc-rel",
+            "displayName": "Linux GCC Release",
+            "description": "Release build for Linux with GCC and Ninja",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux-gcc-rel",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "ENABLE_VULKAN": "ON"
+            }
+        },
+        {
+            "name": "macos-rel",
+            "displayName": "macOS Release",
+            "description": "Release build for macOS (Metal renderer only)",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/macos-rel",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "ENABLE_VULKAN": "OFF"
+            }
+        },
+        {
+            "name": "macos-dbg",
+            "displayName": "macOS Debug",
+            "description": "Debug build for macOS (Metal renderer only)",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/macos-dbg",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "ENABLE_VULKAN": "OFF"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "win-rel",
+            "configurePreset": "win-rel",
+            "configuration": "Release",
+            "jobs": 0
+        },
+        {
+            "name": "win-dbg",
+            "configurePreset": "win-dbg",
+            "configuration": "Debug",
+            "jobs": 0
+        },
+        {
+            "name": "win-rel-no-vk",
+            "configurePreset": "win-rel-no-vk",
+            "configuration": "Release",
+            "jobs": 0
+        },
+        {
+            "name": "win-clang-rel",
+            "configurePreset": "win-clang-rel",
+            "jobs": 0
+        },
+        {
+            "name": "linux-rel",
+            "configurePreset": "linux-rel",
+            "jobs": 0
+        },
+        {
+            "name": "linux-dbg",
+            "configurePreset": "linux-dbg",
+            "jobs": 0
+        },
+        {
+            "name": "linux-rel-no-vk",
+            "configurePreset": "linux-rel-no-vk",
+            "jobs": 0
+        },
+        {
+            "name": "linux-gcc-rel",
+            "configurePreset": "linux-gcc-rel",
+            "jobs": 0
+        },
+        {
+            "name": "macos-rel",
+            "configurePreset": "macos-rel",
+            "jobs": 0
+        },
+        {
+            "name": "macos-dbg",
+            "configurePreset": "macos-dbg",
+            "jobs": 0
+        }
+    ]
+}
