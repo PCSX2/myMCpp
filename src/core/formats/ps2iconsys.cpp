@@ -9,17 +9,17 @@
 namespace
 {
 
-	uint32_t readBEu32(const uint8_t* ptr)
+	uint32_t readLEu32(const uint8_t* ptr)
 	{
-		return (static_cast<uint32_t>(ptr[0]) << 24) |
-		       (static_cast<uint32_t>(ptr[1]) << 16) |
-		       (static_cast<uint32_t>(ptr[2]) << 8) |
-		       (static_cast<uint32_t>(ptr[3]));
+		return (static_cast<uint32_t>(ptr[3]) << 24) |
+		       (static_cast<uint32_t>(ptr[2]) << 16) |
+		       (static_cast<uint32_t>(ptr[1]) << 8) |
+		       (static_cast<uint32_t>(ptr[0]));
 	}
 
-	float readBEf32(const uint8_t* ptr)
+	float readLEf32(const uint8_t* ptr)
 	{
-		uint32_t v = readBEu32(ptr);
+		uint32_t v = readLEu32(ptr);
 		float f;
 		std::memcpy(&f, &v, sizeof(float));
 		return f;
@@ -99,26 +99,26 @@ public:
 		for (int i = 0; i < 3; ++i)
 		{
 			size_t offset = 0x50 + (i * 16);
-			lightDirs[i].x = readBEf32(ptr + offset + 0);
-			lightDirs[i].y = readBEf32(ptr + offset + 4);
-			lightDirs[i].z = readBEf32(ptr + offset + 8);
-			lightDirs[i].w = readBEf32(ptr + offset + 12);
+			lightDirs[i].x = readLEf32(ptr + offset + 0);
+			lightDirs[i].y = readLEf32(ptr + offset + 4);
+			lightDirs[i].z = readLEf32(ptr + offset + 8);
+			lightDirs[i].w = readLEf32(ptr + offset + 12);
 		}
 
 		for (int i = 0; i < 3; ++i)
 		{
 			size_t offset = 0x80 + (i * 16);
-			lightColors[i].r = static_cast<float>(ptr[offset + 0]) / 128.0f;
-			lightColors[i].g = static_cast<float>(ptr[offset + 4]) / 128.0f;
-			lightColors[i].b = static_cast<float>(ptr[offset + 8]) / 128.0f;
-			lightColors[i].a = static_cast<float>(ptr[offset + 12]) / 128.0f;
+			lightColors[i].r = readLEf32(ptr + offset + 0);
+			lightColors[i].g = readLEf32(ptr + offset + 4);
+			lightColors[i].b = readLEf32(ptr + offset + 8);
+			lightColors[i].a = readLEf32(ptr + offset + 12);
 		}
 
 		// Ambient light at offset 0xB0 (176)
-		ambientLight.r = static_cast<float>(ptr[0xB0 + 0]) / 128.0f;
-		ambientLight.g = static_cast<float>(ptr[0xB0 + 4]) / 128.0f;
-		ambientLight.b = static_cast<float>(ptr[0xB0 + 8]) / 128.0f;
-		ambientLight.a = static_cast<float>(ptr[0xB0 + 12]) / 128.0f;
+		ambientLight.r = readLEf32(ptr + 0xB0 + 0);
+		ambientLight.g = readLEf32(ptr + 0xB0 + 4);
+		ambientLight.b = readLEf32(ptr + 0xB0 + 8);
+		ambientLight.a = readLEf32(ptr + 0xB0 + 12);
 
 		std::string titleSjis;
 		for (size_t i = 0; i < 68 && ptr[0xC0 + i] != 0; ++i)

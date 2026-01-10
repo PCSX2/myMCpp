@@ -717,8 +717,9 @@ void PS2SaveFile::Impl::saveMaxDrive(std::ofstream& file)
 		const auto& data = e.data;
 		uint32_t len = static_cast<uint32_t>(data.size());
 		char name[32] = {0};
-		std::strncpy(name, ent.name.c_str(), sizeof(name) - 1);
-		name[sizeof(name) - 1] = '\0';
+		const size_t copyLen = std::min(ent.name.size(), sizeof(name) - 1);
+		std::memcpy(name, ent.name.c_str(), copyLen);
+		name[copyLen] = '\0';
 		size_t cur = blob.size();
 		blob.resize(cur + 36 + len);
 		std::memcpy(blob.data() + cur, &len, 4);
@@ -733,8 +734,9 @@ void PS2SaveFile::Impl::saveMaxDrive(std::ofstream& file)
 	char dirname[32] = {0};
 	if (!entries.empty())
 	{
-		std::strncpy(dirname, entries[0].dirEntry.name.c_str(), sizeof(dirname) - 1);
-		dirname[sizeof(dirname) - 1] = '\0';
+		const size_t copyLen = std::min(entries[0].dirEntry.name.size(), sizeof(dirname) - 1);
+		std::memcpy(dirname, entries[0].dirEntry.name.c_str(), copyLen);
+		dirname[copyLen] = '\0';
 	}
 	char iconsys[32] = {0};
 	uint32_t clen = static_cast<uint32_t>(compressed.size()) + 4; // include CRC field itself
