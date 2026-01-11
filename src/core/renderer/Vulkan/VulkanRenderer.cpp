@@ -69,12 +69,14 @@ bool VulkanRenderer::initialize()
 		return false;
 
 	VkRenderPass renderPass = m_vulkanSwapchain.getRenderPass();
-	VkExtent2D extent = m_vulkanSwapchain.getExtent();
 
-	if (!m_vulkanPipeline.createMainPipeline(m_vulkanDevice.getDevice(), renderPass, extent))
+	if (!m_vulkanPipeline.createPipelineCache(m_vulkanDevice.getDevice()))
 		return false;
 
-	if (!m_vulkanPipeline.createBackgroundPipeline(m_vulkanDevice.getDevice(), renderPass, extent))
+	if (!m_vulkanPipeline.createMainPipeline(m_vulkanDevice.getDevice(), renderPass))
+		return false;
+
+	if (!m_vulkanPipeline.createBackgroundPipeline(m_vulkanDevice.getDevice(), renderPass))
 		return false;
 
 	if (!m_vulkanResources.createCommandPool(m_vulkanDevice.getDevice(), m_vulkanDevice.getGraphicsQueueFamily()))
@@ -88,6 +90,8 @@ bool VulkanRenderer::initialize()
 
 	if (!createCommandBuffers())
 		return false;
+
+	m_imagesInFlight.resize(m_vulkanSwapchain.getImages().size(), VK_NULL_HANDLE);
 
 	m_initialized = true;
 	Logger::info("VK: VulkanRenderer initialized successfully");
@@ -228,6 +232,8 @@ void VulkanRenderer::render()
 	if (m_iconChanged)
 	{
 		Logger::debug("VK: Processing icon change");
+		// Wait for GPU to finish using old resources before destroying them
+		vkDeviceWaitIdle(device);
 		prepareVertexData();
 		uploadTexture();
 		createCommandBuffers();
@@ -295,28 +301,14 @@ void VulkanRenderer::resize(uint32_t width, uint32_t height)
 		m_commandBuffers.clear();
 	}
 
-	m_vulkanPipeline.destroy(device);
-
 	if (!m_vulkanSwapchain.recreate(m_vulkanDevice, width, height))
 	{
 		Logger::error("VK: Failed to recreate swapchain");
 		return;
 	}
 
-	VkRenderPass renderPass = m_vulkanSwapchain.getRenderPass();
-	VkExtent2D extent = m_vulkanSwapchain.getExtent();
-
-	if (!m_vulkanPipeline.createMainPipeline(device, renderPass, extent))
-	{
-		Logger::error("VK: Failed to recreate main pipeline");
-		return;
-	}
-
-	if (!m_vulkanPipeline.createBackgroundPipeline(device, renderPass, extent))
-	{
-		Logger::error("VK: Failed to recreate background pipeline");
-		return;
-	}
+	m_imagesInFlight.clear();
+	m_imagesInFlight.resize(m_vulkanSwapchain.getImages().size(), VK_NULL_HANDLE);
 
 	if (!createCommandBuffers())
 	{
@@ -325,7 +317,7 @@ void VulkanRenderer::resize(uint32_t width, uint32_t height)
 	}
 
 	m_iconChanged = true;
-	render();
+	Logger::info("VK: Resize complete (pipelines preserved with dynamic state)");
 }
 
 uint32_t VulkanRenderer::getVertexCount() const
@@ -828,6 +820,18 @@ bool VulkanRenderer::createCommandBuffers()
 
 	m_commandBuffers.resize(swapchainImages.size());
 
+	VkViewport viewport{};
+	viewport.x = 0.0f;
+	viewport.y = 0.0f;
+	viewport.width = static_cast<float>(extent.width);
+	viewport.height = static_cast<float>(extent.height);
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+
+	VkRect2D scissor{};
+	scissor.offset = {0, 0};
+	scissor.extent = extent;
+
 	for (size_t i = 0; i < m_commandBuffers.size(); ++i)
 	{
 		if (vkAllocateCommandBuffers(device, &allocInfo, &m_commandBuffers[i]) != VK_SUCCESS)
@@ -863,11 +867,15 @@ bool VulkanRenderer::createCommandBuffers()
 			VkBuffer bgBuffers[] = {bgBuffer};
 			VkDeviceSize bgOffsets[] = {0};
 			vkCmdBindPipeline(m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_vulkanPipeline.getBackgroundPipeline());
+			vkCmdSetViewport(m_commandBuffers[i], 0, 1, &viewport);
+			vkCmdSetScissor(m_commandBuffers[i], 0, 1, &scissor);
 			vkCmdBindVertexBuffers(m_commandBuffers[i], 0, 1, bgBuffers, bgOffsets);
 			vkCmdDraw(m_commandBuffers[i], 4, 1, 0, 0);
 		}
 
 		vkCmdBindPipeline(m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_vulkanPipeline.getGraphicsPipeline());
+		vkCmdSetViewport(m_commandBuffers[i], 0, 1, &viewport);
+		vkCmdSetScissor(m_commandBuffers[i], 0, 1, &scissor);
 
 		if (m_vertexBuffer != VK_NULL_HANDLE && m_vertexCount > 0)
 		{
@@ -922,12 +930,10 @@ void VulkanRenderer::submitFrame()
 			return;
 		}
 
-		VkFence fence = m_vulkanResources.getInFlightFence();
-		VkSemaphore imageAvailable = m_vulkanResources.getImageAvailableSemaphore();
-		VkSemaphore renderFinished = m_vulkanResources.getRenderFinishedSemaphore();
-
+		VkFence fence = m_vulkanResources.getInFlightFence(m_currentFrame);
+		VkSemaphore imageAvailable = m_vulkanResources.getImageAvailableSemaphore(m_currentFrame);
+		VkSemaphore renderFinished = m_vulkanResources.getRenderFinishedSemaphore(m_currentFrame);
 		vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
-		vkResetFences(device, 1, &fence);
 
 		uint32_t imageIndex;
 		VkResult result = vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, imageAvailable, VK_NULL_HANDLE, &imageIndex);
@@ -944,8 +950,13 @@ void VulkanRenderer::submitFrame()
 			return;
 		}
 
-		// This spams logs so if you need it uncomment it
-		// Logger::debug("VK: Acquired image {}, submitting command buffer", imageIndex);
+		if (m_imagesInFlight[imageIndex] != VK_NULL_HANDLE)
+		{
+			vkWaitForFences(device, 1, &m_imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+		}
+		m_imagesInFlight[imageIndex] = fence;
+
+		vkResetFences(device, 1, &fence);
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -985,8 +996,8 @@ void VulkanRenderer::submitFrame()
 		{
 			Logger::error("VK: Failed to present image: {}", static_cast<int>(result));
 		}
-		// This spams logs so if you need it uncomment it
-		// Logger::debug("VK: Frame presented successfully");
+
+		m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 	}
 	catch (const std::exception& e)
 	{

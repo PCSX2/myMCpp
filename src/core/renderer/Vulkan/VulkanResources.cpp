@@ -37,14 +37,28 @@ bool VulkanResources::createSyncObjects(VkDevice device)
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-	if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_imageAvailableSemaphore) != VK_SUCCESS ||
-		vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_renderFinishedSemaphore) != VK_SUCCESS ||
-		vkCreateFence(device, &fenceInfo, nullptr, &m_inFlightFence) != VK_SUCCESS)
+	for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 	{
-		Logger::error("VK: Failed to create synchronization objects");
+		if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS ||
+			vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_renderFinishedSemaphores[i]) != VK_SUCCESS ||
+			vkCreateFence(device, &fenceInfo, nullptr, &m_inFlightFences[i]) != VK_SUCCESS)
+		{
+			Logger::error("VK: Failed to create synchronization objects for frame {}", i);
+			return false;
+		}
+	}
+
+	VkFenceCreateInfo singleTimeFenceInfo{};
+	singleTimeFenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	singleTimeFenceInfo.flags = 0; // Not signaled
+
+	if (vkCreateFence(device, &singleTimeFenceInfo, nullptr, &m_singleTimeFence) != VK_SUCCESS)
+	{
+		Logger::error("VK: Failed to create single-time command fence");
 		return false;
 	}
 
+	Logger::info("VK: Created sync objects for {} frames in flight", MAX_FRAMES_IN_FLIGHT);
 	return true;
 }
 
@@ -52,21 +66,31 @@ void VulkanResources::destroy(VkDevice device)
 {
 	destroyBackgroundVertexBuffer(device);
 
-	if (m_inFlightFence != VK_NULL_HANDLE)
+	if (m_singleTimeFence != VK_NULL_HANDLE)
 	{
-		vkDestroyFence(device, m_inFlightFence, nullptr);
-		m_inFlightFence = VK_NULL_HANDLE;
+		vkDestroyFence(device, m_singleTimeFence, nullptr);
+		m_singleTimeFence = VK_NULL_HANDLE;
 	}
-	if (m_renderFinishedSemaphore != VK_NULL_HANDLE)
+
+	for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 	{
-		vkDestroySemaphore(device, m_renderFinishedSemaphore, nullptr);
-		m_renderFinishedSemaphore = VK_NULL_HANDLE;
+		if (m_inFlightFences[i] != VK_NULL_HANDLE)
+		{
+			vkDestroyFence(device, m_inFlightFences[i], nullptr);
+			m_inFlightFences[i] = VK_NULL_HANDLE;
+		}
+		if (m_renderFinishedSemaphores[i] != VK_NULL_HANDLE)
+		{
+			vkDestroySemaphore(device, m_renderFinishedSemaphores[i], nullptr);
+			m_renderFinishedSemaphores[i] = VK_NULL_HANDLE;
+		}
+		if (m_imageAvailableSemaphores[i] != VK_NULL_HANDLE)
+		{
+			vkDestroySemaphore(device, m_imageAvailableSemaphores[i], nullptr);
+			m_imageAvailableSemaphores[i] = VK_NULL_HANDLE;
+		}
 	}
-	if (m_imageAvailableSemaphore != VK_NULL_HANDLE)
-	{
-		vkDestroySemaphore(device, m_imageAvailableSemaphore, nullptr);
-		m_imageAvailableSemaphore = VK_NULL_HANDLE;
-	}
+
 	if (m_commandPool != VK_NULL_HANDLE)
 	{
 		vkDestroyCommandPool(device, m_commandPool, nullptr);
@@ -102,8 +126,9 @@ void VulkanResources::endSingleTimeCommands(VkDevice device, VkQueue queue, VkCo
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &commandBuffer;
 
-	vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
-	vkQueueWaitIdle(queue);
+	vkResetFences(device, 1, &m_singleTimeFence);
+	vkQueueSubmit(queue, 1, &submitInfo, m_singleTimeFence);
+	vkWaitForFences(device, 1, &m_singleTimeFence, VK_TRUE, UINT64_MAX);
 
 	vkFreeCommandBuffers(device, m_commandPool, 1, &commandBuffer);
 }

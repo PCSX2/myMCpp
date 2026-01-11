@@ -72,6 +72,9 @@ private:
 
 	std::vector<VkCommandBuffer> m_commandBuffers;
 
+	uint32_t m_currentFrame = 0;
+	std::vector<VkFence> m_imagesInFlight;
+
 	std::shared_ptr<PS2Icon::Icon> m_icon;
 	VkBuffer m_vertexBuffer;
 	VkDeviceMemory m_vertexMemory;

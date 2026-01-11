@@ -64,6 +64,17 @@ if(ENABLE_VULKAN)
     )
 
     # ============================================================================
+    # VulkanMemoryAllocator - Easy to integrate Vulkan memory allocation library
+    # ============================================================================
+    FetchContent_Declare(
+        VulkanMemoryAllocator
+        GIT_REPOSITORY https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
+        GIT_TAG v3.3.0
+        GIT_SHALLOW TRUE
+        GIT_DEPTH 1
+    )
+
+    # ============================================================================
     # glslang - Khronos-reference front end for GLSL/ESSL, partial front end for HLSL, and a SPIR-V generator.
     # ============================================================================
     FetchContent_Declare(
@@ -155,7 +166,7 @@ set(SKIP_BUILD_EXAMPLES ON CACHE BOOL "" FORCE)
 
 set(VULKAN_DEPS)
 if(ENABLE_VULKAN)
-    list(APPEND VULKAN_DEPS Vulkan-Loader Vulkan-Headers SPIRV-Headers SPIRV-Tools glslang)
+    list(APPEND VULKAN_DEPS Vulkan-Loader Vulkan-Headers SPIRV-Headers SPIRV-Tools glslang VulkanMemoryAllocator)
 endif()
 
 FetchContent_MakeAvailable(zlib ${VULKAN_DEPS} glm glfw glad nlohmann_json spdlog)

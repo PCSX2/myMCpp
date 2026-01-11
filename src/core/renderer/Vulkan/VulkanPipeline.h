@@ -34,8 +34,9 @@ public:
 	VulkanPipeline(const VulkanPipeline&) = delete;
 	VulkanPipeline& operator=(const VulkanPipeline&) = delete;
 
-	bool createMainPipeline(VkDevice device, VkRenderPass renderPass, VkExtent2D extent);
-	bool createBackgroundPipeline(VkDevice device, VkRenderPass renderPass, VkExtent2D extent);
+	bool createPipelineCache(VkDevice device);
+	bool createMainPipeline(VkDevice device, VkRenderPass renderPass);
+	bool createBackgroundPipeline(VkDevice device, VkRenderPass renderPass);
 	void destroy(VkDevice device);
 
 	VkPipeline getGraphicsPipeline() const { return m_graphicsPipeline; }
@@ -48,6 +49,7 @@ private:
 	bool createShaderModules(VkDevice device);
 	VkShaderModule createShaderModule(VkDevice device, const std::vector<char>& code);
 
+	VkPipelineCache m_pipelineCache = VK_NULL_HANDLE;
 	VkShaderModule m_vertexShader = VK_NULL_HANDLE;
 	VkShaderModule m_fragmentShader = VK_NULL_HANDLE;
 	VkDescriptorSetLayout m_descriptorSetLayout = VK_NULL_HANDLE;

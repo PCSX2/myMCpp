@@ -6,9 +6,30 @@
 #include <vulkan/vulkan.h>
 #include <cstdint>
 #include <vector>
+#include <array>
+#include "Logger.h"
 
 class VulkanDevice;
 struct VulkanBGVertex;
+
+static constexpr uint32_t MAX_FRAMES_IN_FLIGHT = 2;
+
+#define VK_CHECK(call) \
+	do { \
+		VkResult result = call; \
+		if (result != VK_SUCCESS) { \
+			Logger::error("VK: {} failed with error {} at {}:{}", #call, static_cast<int>(result), __FILE__, __LINE__); \
+		} \
+	} while(0)
+
+#define VK_CHECK_RETURN(call) \
+	do { \
+		VkResult result = call; \
+		if (result != VK_SUCCESS) { \
+			Logger::error("VK: {} failed with error {} at {}:{}", #call, static_cast<int>(result), __FILE__, __LINE__); \
+			return false; \
+		} \
+	} while(0)
 
 class VulkanResources
 {
@@ -39,16 +60,17 @@ public:
 	void destroyBackgroundVertexBuffer(VkDevice device);
 
 	VkCommandPool getCommandPool() const { return m_commandPool; }
-	VkSemaphore getImageAvailableSemaphore() const { return m_imageAvailableSemaphore; }
-	VkSemaphore getRenderFinishedSemaphore() const { return m_renderFinishedSemaphore; }
-	VkFence getInFlightFence() const { return m_inFlightFence; }
+	VkSemaphore getImageAvailableSemaphore(uint32_t frameIndex) const { return m_imageAvailableSemaphores[frameIndex]; }
+	VkSemaphore getRenderFinishedSemaphore(uint32_t frameIndex) const { return m_renderFinishedSemaphores[frameIndex]; }
+	VkFence getInFlightFence(uint32_t frameIndex) const { return m_inFlightFences[frameIndex]; }
 	VkBuffer getBackgroundVertexBuffer() const { return m_bgVertexBuffer; }
 
 private:
 	VkCommandPool m_commandPool = VK_NULL_HANDLE;
-	VkSemaphore m_imageAvailableSemaphore = VK_NULL_HANDLE;
-	VkSemaphore m_renderFinishedSemaphore = VK_NULL_HANDLE;
-	VkFence m_inFlightFence = VK_NULL_HANDLE;
+	std::array<VkSemaphore, MAX_FRAMES_IN_FLIGHT> m_imageAvailableSemaphores{};
+	std::array<VkSemaphore, MAX_FRAMES_IN_FLIGHT> m_renderFinishedSemaphores{};
+	std::array<VkFence, MAX_FRAMES_IN_FLIGHT> m_inFlightFences{};
+	VkFence m_singleTimeFence = VK_NULL_HANDLE;
 
 	VkBuffer m_bgVertexBuffer = VK_NULL_HANDLE;
 	VkDeviceMemory m_bgVertexMemory = VK_NULL_HANDLE;

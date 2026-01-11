@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2025 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
+#define VMA_IMPLEMENTATION
+#include <vk_mem_alloc.h>
 #include "VulkanDevice.h"
 #include "WindowInfo.h"
 
@@ -40,6 +42,11 @@ bool VulkanDevice::create(const WindowInfo& windowInfo)
 
 void VulkanDevice::destroy()
 {
+	if (m_allocator != VK_NULL_HANDLE)
+	{
+		vmaDestroyAllocator(m_allocator);
+		m_allocator = VK_NULL_HANDLE;
+	}
 	if (m_device != VK_NULL_HANDLE)
 	{
 		vkDestroyDevice(m_device, nullptr);
@@ -275,6 +282,20 @@ bool VulkanDevice::createLogicalDevice()
 	}
 
 	vkGetDeviceQueue(m_device, m_graphicsQueueFamily, 0, &m_graphicsQueue);
+
+	VmaAllocatorCreateInfo allocatorInfo{};
+	allocatorInfo.physicalDevice = m_physicalDevice;
+	allocatorInfo.device = m_device;
+	allocatorInfo.instance = m_instance;
+	allocatorInfo.vulkanApiVersion = VK_API_VERSION_1_3;
+
+	if (vmaCreateAllocator(&allocatorInfo, &m_allocator) != VK_SUCCESS)
+	{
+		Logger::error("VK: Failed to create VMA allocator");
+		return false;
+	}
+
+	Logger::info("VK: VMA allocator created successfully");
 	return true;
 }
 
