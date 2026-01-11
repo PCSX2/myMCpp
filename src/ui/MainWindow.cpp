@@ -224,7 +224,12 @@ void MainWindow::onOpenMemoryCard()
 		this,
 		tr("Open Memory Card"),
 		"",
-		tr("All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd *.bin *.mc);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;Raw Memory Card (*.bin *.mc);;All Files (*.*)"));
+		tr("All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd *.bin *.mc);;"
+		   "PCSX2 Memory Card (*.ps2);;"
+		   "PS3 Virtual Memory Card (*.vm2 *.vmc);;"
+		   "MemCard PRO2 (*.mc2 *.mcd);;"
+		   "Raw Memory Card (*.bin *.mc);;"
+		   "All Files (*.*)"));
 
 	if (filename.isEmpty())
 	{

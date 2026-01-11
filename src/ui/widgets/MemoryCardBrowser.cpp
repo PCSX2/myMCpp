@@ -21,6 +21,10 @@ MemoryCardBrowser::MemoryCardBrowser(QWidget* parent)
 	connect(&TranslationManager::instance(), &TranslationManager::languageChanged, this, [this]() {
 		ui->retranslateUi(this);
 	});
+
+	header()->setSectionResizeMode(0, QHeaderView::Stretch);
+	header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+	header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
 }
 
 void MemoryCardBrowser::clear()
