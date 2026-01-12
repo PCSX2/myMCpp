@@ -432,11 +432,18 @@ namespace UniformBufferUtils
 namespace AnimationUtils
 {
 
-	float computeAnimationTime(double elapsedSeconds, float frameLength)
+	float computeAnimationTime(double elapsedSeconds, float frameLength, float speed)
 	{
 		if (frameLength <= 0.0f)
 			return 0.0f;
-		return std::fmod(static_cast<float>(elapsedSeconds * 8.0f), frameLength);
+		
+		float finalSpeed = speed;
+		if (finalSpeed <= 0.0001f)
+			finalSpeed = 1.0f;
+
+		float unitsPerSecond = finalSpeed * 60.0f;
+		
+		return std::fmod(static_cast<float>(elapsedSeconds) * unitsPerSecond, frameLength);
 	}
 
 	std::unordered_map<uint32_t, float> computeShapeWeights(

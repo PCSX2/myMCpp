@@ -245,7 +245,7 @@ void VulkanRenderer::render()
 	{
 		double elapsed = std::chrono::duration<double>(std::chrono::steady_clock::now() - m_animStart).count();
 		float duration = static_cast<float>(m_icon->getFrameLength());
-		float animTime = AnimationUtils::computeAnimationTime(elapsed, duration);
+		float animTime = AnimationUtils::computeAnimationTime(elapsed, duration, m_icon->getAnimSpeed());
 
 		auto shapeWeights = AnimationUtils::computeShapeWeights(m_icon.get(), animTime, duration);
 		auto blendedVerts = AnimationUtils::blendVertices(m_icon.get(), shapeWeights, m_vertexCount);
