@@ -96,7 +96,6 @@
     <addaction name="actionDocumentation"/>
     <addaction name="separator"/>
     <addaction name="actionGitHub"/>
-    <addaction name="actionDiscord"/>
     <addaction name="separator"/>
     <addaction name="actionCheckUpdates"/>
     <addaction name="separator"/>
@@ -367,17 +366,6 @@
    </property>
    <property name="statusTip">
     <string>Visit myMCpp on GitHub</string>
-   </property>
-  </action>
-  <action name="actionDiscord">
-   <property name="icon">
-    <iconset theme="discord"/>
-   </property>
-   <property name="text">
-    <string>&amp;Discord Server...</string>
-   </property>
-   <property name="statusTip">
-    <string>Join the Discord community</string>
    </property>
   </action>
   <action name="actionCheckUpdates">

@@ -70,7 +70,6 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::onAbout);
 	connect(ui->actionGitHub, &QAction::triggered, this, &MainWindow::onGitHubRepository);
 	connect(ui->actionDocumentation, &QAction::triggered, this, &MainWindow::onDocumentation);
-	connect(ui->actionDiscord, &QAction::triggered, this, &MainWindow::onDiscordServer);
 	connect(ui->actionCheckUpdates, &QAction::triggered, this, &MainWindow::onCheckForUpdates);
 	connect(ui->actionAboutQt, &QAction::triggered, this, &MainWindow::onAboutQt);
 
@@ -435,12 +434,6 @@ void MainWindow::onGitHubRepository()
 void MainWindow::onDocumentation()
 {
 	QDesktopServices::openUrl(QUrl("https://github.com/SternXD/myMCpp/wiki"));
-}
-
-void MainWindow::onDiscordServer()
-{
-	// Replace TBD with actual invite code when I figure what I'm going to do here
-	QDesktopServices::openUrl(QUrl("https://discord.gg"));
 }
 
 void MainWindow::onCheckForUpdates()

@@ -44,7 +44,6 @@ private slots:
 	void onAbout();
 	void onGitHubRepository();
 	void onDocumentation();
-	void onDiscordServer();
 	void onCheckForUpdates();
 	void onAboutQt();
 	void onCardItemSelected();
