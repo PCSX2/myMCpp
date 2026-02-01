@@ -9,6 +9,10 @@ else()
     option(ENABLE_VULKAN "Enable Vulkan renderer" ON)
 endif()
 
+if(WIN32)
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_WARNINGS)
+endif()
+
 # ============================================================================
 # zlib - A massively spiffy yet delicately unobtrusive compression library.
 # ============================================================================
@@ -28,7 +32,7 @@ if(ENABLE_VULKAN)
     FetchContent_Declare(
         Vulkan-Loader
         GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Loader.git
-        GIT_TAG v1.4.337
+        GIT_TAG v1.4.342
         GIT_SHALLOW TRUE
         GIT_DEPTH 1
     )
@@ -39,7 +43,7 @@ if(ENABLE_VULKAN)
     FetchContent_Declare(
         Vulkan-Headers
         GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
-        GIT_TAG v1.4.337
+        GIT_TAG v1.4.342
         GIT_SHALLOW TRUE
         GIT_DEPTH 1
     )
@@ -58,7 +62,7 @@ if(ENABLE_VULKAN)
     FetchContent_Declare(
         SPIRV-Tools
         GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Tools.git
-        GIT_TAG v2025.5
+        GIT_TAG v2026.1
         GIT_SHALLOW TRUE
         GIT_DEPTH 1
     )
@@ -80,7 +84,7 @@ if(ENABLE_VULKAN)
     FetchContent_Declare(
         glslang
         GIT_REPOSITORY https://github.com/KhronosGroup/glslang.git
-        GIT_TAG 16.1.0
+        GIT_TAG 16.2.0
         GIT_SHALLOW TRUE
         GIT_DEPTH 1
     )
@@ -167,9 +171,21 @@ set(SKIP_BUILD_EXAMPLES ON CACHE BOOL "" FORCE)
 set(VULKAN_DEPS)
 if(ENABLE_VULKAN)
     list(APPEND VULKAN_DEPS Vulkan-Loader Vulkan-Headers SPIRV-Headers SPIRV-Tools glslang VulkanMemoryAllocator)
+
+    if(WIN32 AND (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID MATCHES "Clang"))
+        set(USE_MASM OFF CACHE BOOL "" FORCE)
+        set(USE_GAS ON CACHE BOOL "" FORCE)
+    endif()
 endif()
 
 FetchContent_MakeAvailable(zlib ${VULKAN_DEPS} glm glfw glad nlohmann_json spdlog)
+
+if(TARGET VulkanMemoryAllocator)
+    get_target_property(VMA_INCLUDE_DIRS VulkanMemoryAllocator INTERFACE_INCLUDE_DIRECTORIES)
+    if(VMA_INCLUDE_DIRS)
+        set_target_properties(VulkanMemoryAllocator PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${VMA_INCLUDE_DIRS}")
+    endif()
+endif()
 
 # Disable zlib example and test targets
 if(TARGET example)
@@ -191,6 +207,7 @@ endif()
 # ============================================================================
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets LinguistTools)
 if (Qt6_VERSION VERSION_GREATER_EQUAL 6.10.0)
+    set(QT_NO_PRIVATE_MODULE_WARNING ON)
 	find_package(Qt6 COMPONENTS CorePrivate GuiPrivate WidgetsPrivate REQUIRED)
 endif()
 

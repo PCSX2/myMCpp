@@ -2,36 +2,47 @@
     "version": 3,
     "configurePresets": [
         {
-            "name": "win-rel",
+            "name": "win-rel-2026",
             "displayName": "Windows Release",
             "description": "Release build for Windows with MSVC",
-            "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build/win-rel",
+            "generator": "Visual Studio 18 2026",
+            "binaryDir": "${sourceDir}/build/win-rel-2026",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_BUILD_TYPE": "ReleaseMinSizeRel",
                 "ENABLE_VULKAN": "ON"
             }
         },
         {
-            "name": "win-dbg",
+            "name": "win-dbg-2026",
             "displayName": "Windows Debug",
             "description": "Debug build for Windows with MSVC",
-            "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build/win-dbg",
+            "generator": "Visual Studio 18 2026",
+            "binaryDir": "${sourceDir}/build/win-dbg-2026",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "ENABLE_VULKAN": "ON"
             }
         },
         {
-            "name": "win-rel-no-vk",
-            "displayName": "Windows Release (No Vulkan)",
-            "description": "Release build for Windows without Vulkan renderer",
+            "name": "win-rel-2022",
+            "displayName": "Windows Release",
+            "description": "Release build for Windows with MSVC",
             "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build/win-rel-no-vk",
+            "binaryDir": "${sourceDir}/build/win-rel-2022",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "ENABLE_VULKAN": "OFF"
+                "CMAKE_BUILD_TYPE": "MinSizeRel",
+                "ENABLE_VULKAN": "ON"
+            }
+        },
+        {
+            "name": "win-dbg-2022",
+            "displayName": "Windows Debug",
+            "description": "Debug build for Windows with MSVC",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/win-dbg-2022",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "ENABLE_VULKAN": "ON"
             }
         },
         {
@@ -41,7 +52,7 @@
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/win-clang-rel",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_BUILD_TYPE": "MinSizeRel",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
                 "ENABLE_VULKAN": "ON"
@@ -54,7 +65,7 @@
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/linux-rel",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_BUILD_TYPE": "MinSizeRel",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
                 "ENABLE_VULKAN": "ON"
@@ -74,26 +85,13 @@
             }
         },
         {
-            "name": "linux-rel-no-vk",
-            "displayName": "Linux Release (No Vulkan)",
-            "description": "Release build for Linux without Vulkan renderer",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/linux-rel-no-vk",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
-                "ENABLE_VULKAN": "OFF"
-            }
-        },
-        {
             "name": "linux-gcc-rel",
             "displayName": "Linux GCC Release",
             "description": "Release build for Linux with GCC and Ninja",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/linux-gcc-rel",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_BUILD_TYPE": "MinSizeRel",
                 "CMAKE_C_COMPILER": "gcc",
                 "CMAKE_CXX_COMPILER": "g++",
                 "ENABLE_VULKAN": "ON"
@@ -106,7 +104,7 @@
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/macos-rel",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_BUILD_TYPE": "MinSizeRel",
                 "ENABLE_VULKAN": "OFF"
             }
         },
@@ -124,21 +122,27 @@
     ],
     "buildPresets": [
         {
-            "name": "win-rel",
-            "configurePreset": "win-rel",
-            "configuration": "Release",
+            "name": "win-rel-2026",
+            "configurePreset": "win-rel-2026",
+            "configuration": "MinSizeRel",
             "jobs": 0
         },
         {
-            "name": "win-dbg",
-            "configurePreset": "win-dbg",
+            "name": "win-dbg-2026",
+            "configurePreset": "win-dbg-2026",
             "configuration": "Debug",
             "jobs": 0
         },
         {
-            "name": "win-rel-no-vk",
-            "configurePreset": "win-rel-no-vk",
-            "configuration": "Release",
+            "name": "win-rel-2022",
+            "configurePreset": "win-rel-2022",
+            "configuration": "MinSizeRel",
+            "jobs": 0
+        },
+        {
+            "name": "win-dbg-2022",
+            "configurePreset": "win-dbg-2022",
+            "configuration": "Debug",
             "jobs": 0
         },
         {
@@ -154,11 +158,6 @@
         {
             "name": "linux-dbg",
             "configurePreset": "linux-dbg",
-            "jobs": 0
-        },
-        {
-            "name": "linux-rel-no-vk",
-            "configurePreset": "linux-rel-no-vk",
             "jobs": 0
         },
         {
