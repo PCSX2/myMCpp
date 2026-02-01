@@ -125,12 +125,12 @@ static int appMain(int argc, char* argv[])
 	fs::path log_path = config_path.parent_path() / "myMCpp.log";
 	Logger::init(log_path.string());
 
-	Logger::info("[main] Using config path: {}", fs::absolute(config_path).string());
-	Logger::info("[main] Log file path: {}", fs::absolute(log_path).string());
+	Logger::info("Main: Using config path: {}", fs::absolute(config_path).string());
+	Logger::info("Main: Log file path: {}", fs::absolute(log_path).string());
 
 	if (!config.initialize(config_path))
 	{
-		qWarning("Failed to load config, using defaults");
+		Logger::info("Main: Failed to load config, using defaults");
 	}
 
 #if defined(__APPLE__)
@@ -146,7 +146,7 @@ static int appMain(int argc, char* argv[])
 	config.setResourcesPath((fs::path(QCoreApplication::applicationDirPath().toStdString()) / "resources").string());
 #endif
 	ResourcePath::set(config.getResourcesPath());
-	Logger::info("[main] Resources path: {}", ResourcePath::get().string());
+	Logger::info("Main: Resources path: {}", ResourcePath::get().string());
 
 #if !defined(__APPLE__)
 	QVulkanInstance vulkanInstance;
@@ -155,7 +155,7 @@ static int appMain(int argc, char* argv[])
 #endif
 	if (!vulkanInstance.create())
 	{
-		qWarning("Failed to create Vulkan instance");
+		Logger::info("Main: Failed to create Vulkan instance");
 	}
 #endif
 

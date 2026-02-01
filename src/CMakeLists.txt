@@ -26,8 +26,9 @@ target_link_libraries(myMCpp PRIVATE
     Qt6::Widgets
 )
 
+file(GLOB TS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/ui/Translations/*.ts")
 qt6_add_translations(myMCpp
-    TS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ui/Translations/myMCpp_en.ts
+    TS_FILES ${TS_FILES}
     LUPDATE_OPTIONS -locations relative
     RESOURCE_PREFIX "/translations"
 )
@@ -38,12 +39,6 @@ target_include_directories(myMCpp PRIVATE
     ${CMAKE_SOURCE_DIR}/src/core/formats
     ${CMAKE_SOURCE_DIR}/src/common
     ${CMAKE_SOURCE_DIR}/src/cli
-    ${CMAKE_SOURCE_DIR}/src/ui
-    ${CMAKE_SOURCE_DIR}/src/ui/widgets
-    ${CMAKE_SOURCE_DIR}/src/ui/dialogs
-    ${CMAKE_SOURCE_DIR}/src/ui/Settings
-    ${CMAKE_BINARY_DIR}/src/ui
-    ${CMAKE_BINARY_DIR}/src/ui/myMCpp_ui_autogen/include
 )
 
 if(ENABLE_VULKAN)

@@ -20,8 +20,10 @@ MemoryCardBrowser::MemoryCardBrowser(QWidget* parent)
 	});
 
 	header()->setSectionResizeMode(0, QHeaderView::Stretch);
-	header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-	header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+	header()->setSectionResizeMode(1, QHeaderView::Interactive);
+	header()->setSectionResizeMode(2, QHeaderView::Interactive);
+	header()->resizeSection(1, 100);
+	header()->resizeSection(2, 140);
 }
 
 void MemoryCardBrowser::clear()
@@ -126,6 +128,8 @@ void MemoryCardBrowser::loadRootDirectory()
 		}
 
 		expandAll();
+		clearSelection();
+		setCurrentItem(nullptr);
 	}
 	catch (const std::exception& e)
 	{

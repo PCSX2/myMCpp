@@ -21,6 +21,7 @@ public:
 
 	void init(QApplication* app, Config* config);
 	void loadLanguage(const std::string& lang);
+	std::vector<std::pair<QString, QString>> getAvailableLanguages();
 
 signals:
 	void languageChanged();

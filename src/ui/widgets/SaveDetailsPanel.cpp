@@ -26,6 +26,8 @@ SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)
 	connect(&TranslationManager::instance(), &TranslationManager::languageChanged, this, [this]() {
 		ui->retranslateUi(this);
 	});
+
+	this->hide();
 }
 
 void SaveDetailsPanel::setConfig(Config* config)
@@ -42,6 +44,8 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 		clear();
 		return;
 	}
+
+	this->show();
 
 	currentCard = card;
 	currentSavePath = savePath;
@@ -167,6 +171,7 @@ void SaveDetailsPanel::clear()
 		iconWidget->hide();
 	currentCard = nullptr;
 	currentSavePath.clear();
+	this->hide();
 }
 
 void SaveDetailsPanel::createIconWidget()

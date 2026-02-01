@@ -505,7 +505,7 @@ void MainWindow::updateStatusBar()
 			uint32_t allocatable = memoryCard->getAllocatableSpace();
 			double freeMB = freeSpace / (1024.0 * 1024.0);
 			double totalMB = allocatable / (1024.0 * 1024.0);
-			ui->statusBar->showMessage(tr("%1 MB / %2 MB Free").arg(totalMB, 0, 'f', 2).arg(freeMB, 0, 'f', 2));
+			ui->statusBar->showMessage(tr("Free: %2 MB / Total: %1 MB").arg(totalMB, 0, 'f', 2).arg(freeMB, 0, 'f', 2));
 		}
 		catch (...)
 		{

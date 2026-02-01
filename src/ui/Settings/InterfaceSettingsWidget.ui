@@ -46,13 +46,7 @@ https://github.com/PCSX2/pcsx2
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="languageCombo">
-        <item>
-         <property name="text">
-          <string>English (US)</string>
-         </property>
-        </item>
-       </widget>
+       <widget class="QComboBox" name="languageCombo"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="themeLabel">

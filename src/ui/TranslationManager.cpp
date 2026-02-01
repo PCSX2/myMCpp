@@ -36,21 +36,23 @@ void TranslationManager::loadLanguage(const std::string& lang)
     if (m_translator)
     {
         m_app->removeTranslator(m_translator.get());
+        m_translator.reset();
     }
 
     QString langStr = QString::fromStdString(lang);
     Logger::info("Loading language: {}", lang);
 
+    m_translator = std::make_unique<QTranslator>();
     bool loaded = false;
     
     QString externalPath = QString::fromStdString((m_config->getResourcesPath() / "translations").string());
     if (m_translator->load("myMCpp_" + langStr, externalPath))
     {
         loaded = true;
-        Logger::info("Loaded translation from external folder");
+        Logger::info("Loaded translation from external folder: {}", externalPath.toStdString());
     }
     // Try resource path
-    else if (m_translator->load(":/translations/myMCpp_" + langStr))
+    else if (m_translator->load(":/translations/myMCpp_" + langStr + ".qm"))
     {
         loaded = true;
         Logger::info("Loaded translation from resource");
@@ -63,6 +65,38 @@ void TranslationManager::loadLanguage(const std::string& lang)
     if (loaded)
     {
         m_app->installTranslator(m_translator.get());
+        Logger::info("Translator installed successfully");
+        QEvent* event = new QEvent(QEvent::LanguageChange);
+        QApplication::postEvent(m_app, event);
         emit languageChanged();
     }
+}
+
+std::vector<std::pair<QString, QString>> TranslationManager::getAvailableLanguages()
+{
+	std::vector<std::pair<QString, QString>> languages;
+	languages.push_back({ "English (US)", "en" });
+
+	QDir dir(":/translations");
+	QStringList filters;
+	filters << "myMCpp_*.qm";
+	dir.setNameFilters(filters);
+
+	for (const QString& filename : dir.entryList())
+	{
+		QString code = filename.mid(7, filename.length() - 10);
+		if (code == "en") continue;
+
+		QLocale locale(code);
+		QString name = QLocale::languageToString(locale.language());
+		if (locale.territory() != QLocale::AnyCountry)
+		{
+			name += " (" + QLocale::territoryToString(locale.territory()) + ")";
+		}
+		
+		if (name.isEmpty() || name == "C") name = code;
+		languages.push_back({ name, code });
+	}
+
+	return languages;
 }
