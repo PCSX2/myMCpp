@@ -8,7 +8,6 @@
 #include <fstream>
 #include <cstring>
 #include <algorithm>
-#include <stdexcept>
 #include <cctype>
 #include <ctime>
 #include <zlib.h>

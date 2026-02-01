@@ -5,7 +5,6 @@
 
 #include <QWidget>
 #include <QBasicTimer>
-#include <memory>
 #include "../core/formats/ps2icon.h"
 #include "../core/renderer/Renderer.h"
 

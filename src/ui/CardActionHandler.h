@@ -5,7 +5,6 @@
 
 #include <QString>
 #include <QObject>
-#include <memory>
 
 class PS2MemoryCard;
 class QWidget;

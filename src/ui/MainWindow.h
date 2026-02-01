@@ -6,6 +6,8 @@
 #include <QMainWindow>
 #include <memory>
 
+#include "ui_MainWindow.h"
+
 class PS2MemoryCard;
 class MemoryCardBrowser;
 class SaveDetailsPanel;
@@ -13,8 +15,6 @@ class CardActionHandler;
 class QStatusBar;
 class QLabel;
 class Config;
-
-#include "ui_MainWindow.h"
 
 class MainWindow : public QMainWindow
 {

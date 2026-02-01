@@ -13,11 +13,6 @@
 #include "FilesSettingsWidget.h"
 #include "AdvancedSettingsWidget.h"
 
-#include <QListWidget>
-#include <QStackedWidget>
-#include <QPushButton>
-#include <QLabel>
-#include <QTextEdit>
 #include <QTimer>
 
 SettingsWindow::SettingsWindow(Config* config, QWidget* parent)

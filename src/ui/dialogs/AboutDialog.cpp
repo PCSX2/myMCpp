@@ -5,8 +5,6 @@
 #include "ui_AboutDialog.h"
 #include "ResourcePath.h"
 #include <QDesktopServices>
-#include <QUrl>
-#include <QVBoxLayout>
 #include <QTextBrowser>
 #include <QDialogButtonBox>
 

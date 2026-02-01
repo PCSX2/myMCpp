@@ -2,12 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "Logger.h"
-#include <fstream>
 #include <sstream>
-#include <filesystem>
 #include <chrono>
-#include <unordered_map>
-#include <cmath>
 #include <cstdint>
 
 #ifdef _WIN32
@@ -26,8 +22,6 @@
 #include "OpenGLRenderer.h"
 #include "ps2iconsys.h"
 #include "ps2icon.h"
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 namespace fs = std::filesystem;
 

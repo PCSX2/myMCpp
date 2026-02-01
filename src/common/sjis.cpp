@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "sjis.h"
-#include <cstring>
-#include <stdexcept>
 
 #ifdef _WIN32
 #include <windows.h>

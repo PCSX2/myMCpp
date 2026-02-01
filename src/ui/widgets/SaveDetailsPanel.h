@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include <QWidget>
-#include <QLabel>
 #include <memory>
 
 class PS2MemoryCard;

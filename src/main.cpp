@@ -4,7 +4,6 @@
 #include "MainWindow.h"
 #include "ps2mc_cli.h"
 #include "Config.h"
-#include <QApplication>
 #if !defined(__APPLE__)
 #include <QVulkanInstance>
 #endif

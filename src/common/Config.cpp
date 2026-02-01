@@ -4,7 +4,6 @@
 #include "Config.h"
 #include <fstream>
 #include "Logger.h"
-#include <vector>
 
 Config::Config()
 {

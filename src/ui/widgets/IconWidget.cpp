@@ -6,14 +6,9 @@
 #include "../../common/Logger.h"
 #include "../common/WindowInfo.h"
 #include <QResizeEvent>
-#include <QShowEvent>
-#include <QTimerEvent>
-#include <QDebug>
-#include <QGuiApplication>
 #if defined(__linux__)
 #include <qpa/qplatformnativeinterface.h>
 #endif
-#include <QWindow>
 #include <algorithm>
 #include <cctype>
 

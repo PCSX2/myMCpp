@@ -5,9 +5,6 @@
 #include "SettingsWindow.h"
 #include "ui_BehaviorSettingsWidget.h"
 #include "Config.h"
-#include <QVBoxLayout>
-#include <QCheckBox>
-#include <QGroupBox>
 
 BehaviorSettingsWidget::BehaviorSettingsWidget(SettingsWindow* dialog, QWidget* parent)
 	: SettingsWidget(dialog, parent)

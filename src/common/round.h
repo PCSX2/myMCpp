@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include <cstdint>
-
 inline int divRoundUp(int a, int b)
 {
 	return (a + b - 1) / b;

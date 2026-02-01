@@ -6,7 +6,6 @@
 #include "ps2mc_dir.h"
 #include <string>
 #include <vector>
-#include <map>
 #include <memory>
 #include <stdexcept>
 

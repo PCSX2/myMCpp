@@ -4,9 +4,7 @@
 #pragma once
 
 #include <cstdint>
-#include <cstdint>
 #include <memory>
-#include <string>
 #include "WindowInfo.h"
 
 namespace PS2Icon

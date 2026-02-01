@@ -7,11 +7,8 @@
 #include <QMessageBox>
 #include <QDateTime>
 #include <QDragEnterEvent>
-#include <QDropEvent>
 #include <QMimeData>
-#include <QHeaderView>
 #include <QMenu>
-#include <QAction>
 
 MemoryCardBrowser::MemoryCardBrowser(QWidget* parent)
 	: QTreeWidget(parent)

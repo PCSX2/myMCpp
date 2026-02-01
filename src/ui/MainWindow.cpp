@@ -11,21 +11,9 @@
 #include "Settings/SettingsWindow.h"
 #include "Config.h"
 #include "Themes.h"
-#include <QApplication>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QSplitter>
-#include <QStatusBar>
-#include <QToolBar>
-#include <QMenuBar>
 #include <QDesktopServices>
-#include <QUrl>
-#include <QStyle>
-#include <QLabel>
-#include <QFileInfo>
-#include <QFile>
 #include <QInputDialog>
 
 #include "ui_MainWindow.h"

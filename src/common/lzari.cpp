@@ -4,8 +4,6 @@
 #include "lzari.h"
 #include <algorithm>
 #include <array>
-#include <cstring>
-#include <stdexcept>
 
 const int ARITH_BITS = 15;
 const int QUADRANT1 = 1 << ARITH_BITS;

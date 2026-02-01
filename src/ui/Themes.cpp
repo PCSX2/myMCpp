@@ -3,7 +3,6 @@
 
 #include "Themes.h"
 #include "Config.h"
-#include "Logger.h"
 #include "ResourcePath.h"
 
 #include <QtCore/QFile>

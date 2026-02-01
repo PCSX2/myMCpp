@@ -9,9 +9,7 @@
 #include "GLContext.h"
 #include "OpenGLShader.h"
 #include "OpenGLResources.h"
-#include <glm/glm.hpp>
 #include <cstdint>
-#include <vector>
 #include <memory>
 #include <chrono>
 

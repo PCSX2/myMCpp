@@ -11,7 +11,6 @@
 #include "VulkanPipeline.h"
 #include "VulkanResources.h"
 #include <vulkan/vulkan.h>
-#include <glm/glm.hpp>
 #include <memory>
 #include <vector>
 #include <cstdint>

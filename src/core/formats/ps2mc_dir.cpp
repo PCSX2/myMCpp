@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "ps2mc_dir.h"
-#include <cstring>
 #include <algorithm>
 #include <ctime>
 

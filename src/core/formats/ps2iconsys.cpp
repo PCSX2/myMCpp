@@ -4,7 +4,6 @@
 #include "ps2iconsys.h"
 #include "sjis.h"
 #include <cstring>
-#include <stdexcept>
 
 namespace
 {

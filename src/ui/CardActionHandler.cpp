@@ -6,7 +6,6 @@
 #include "ps2save.h"
 #include <QMessageBox>
 #include <QStatusBar>
-#include <QWidget>
 #include <QFileInfo>
 
 CardActionHandler::CardActionHandler(QWidget* parent)

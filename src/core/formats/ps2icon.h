@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#include <memory>
 
 // PS2 3D icon file format (.icn)
 

@@ -4,7 +4,6 @@
 #include "WindowInfo.h"
 #include "Logger.h"
 #include <vector>
-#include <cstring>
 
 #if defined(_WIN32)
 

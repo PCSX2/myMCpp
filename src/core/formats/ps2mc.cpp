@@ -17,7 +17,6 @@
 #include <memory>
 #include <algorithm>
 #include <ctime>
-#include <cstdio>
 
 #ifdef _WIN32
 #define NOMINMAX

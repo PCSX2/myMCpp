@@ -12,7 +12,6 @@
 #pragma clang diagnostic pop
 #endif
 #include "Logger.h"
-#include <cstring>
 
 OpenGLResources::OpenGLResources() = default;
 

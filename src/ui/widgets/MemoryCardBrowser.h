@@ -4,13 +4,12 @@
 #pragma once
 
 #include <QTreeWidget>
-#include <QDateTime>
 #include <QString>
 #include <memory>
 
-class PS2MemoryCard;
-
 #include "ui_MemoryCardBrowser.h"
+
+class PS2MemoryCard;
 
 class MemoryCardBrowser : public QTreeWidget
 {

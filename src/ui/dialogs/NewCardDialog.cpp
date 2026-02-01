@@ -2,11 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "NewCardDialog.h"
-#include <QVBoxLayout>
-#include <QGroupBox>
-#include <QRadioButton>
-#include <QCheckBox>
-#include <QDialogButtonBox>
 #include <QButtonGroup>
 
 NewCardDialog::NewCardDialog(QWidget* parent)

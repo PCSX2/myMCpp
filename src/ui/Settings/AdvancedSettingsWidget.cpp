@@ -5,9 +5,6 @@
 #include "SettingsWindow.h"
 #include "ui_AdvancedSettingsWidget.h"
 #include "Config.h"
-#include <QVBoxLayout>
-#include <QCheckBox>
-#include <QGroupBox>
 
 AdvancedSettingsWidget::AdvancedSettingsWidget(SettingsWindow* dialog, QWidget* parent)
 	: SettingsWidget(dialog, parent)

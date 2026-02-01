@@ -4,7 +4,7 @@
 #pragma once
 
 #include <cstdint>
-#include <vector>
+#include <cstddef>
 
 typedef unsigned int GLuint;
 typedef int GLint;

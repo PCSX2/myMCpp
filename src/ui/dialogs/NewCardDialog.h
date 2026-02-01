@@ -5,12 +5,12 @@
 
 #include <QDialog>
 
-class QRadioButton;
 #include <memory>
 
-class QButtonGroup;
-
 #include "ui_NewCardDialog.h"
+
+class QRadioButton;
+class QButtonGroup;
 
 class NewCardDialog : public QDialog
 {

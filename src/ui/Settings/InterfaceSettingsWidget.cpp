@@ -6,14 +6,6 @@
 #include "ui_InterfaceSettingsWidget.h"
 #include "Config.h"
 #include "TranslationManager.h"
-#include "../Themes.h"
-#include <QVBoxLayout>
-#include <QGroupBox>
-#include <QLabel>
-#include <QComboBox>
-#include <QCheckBox>
-#include <QSpinBox>
-#include <QFormLayout>
 
 InterfaceSettingsWidget::InterfaceSettingsWidget(SettingsWindow* dialog, QWidget* parent)
 	: SettingsWidget(dialog, parent)

@@ -7,10 +7,6 @@
 #include "ps2mc.h"
 #include "ps2iconsys.h"
 #include "TranslationManager.h"
-#include <QVBoxLayout>
-#include <QGroupBox>
-#include <QFrame>
-#include <QWidget>
 
 SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)
 	: QWidget(parent)

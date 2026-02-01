@@ -3,11 +3,9 @@
 
 #pragma once
 
-#include <QIcon>
 #include <QDialog>
 #include <memory>
 #include <vector>
-#include <QMap>
 
 class Config;
 class QListWidget;

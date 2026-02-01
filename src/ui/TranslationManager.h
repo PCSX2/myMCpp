@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <QObject>
 #include <QTranslator>
 #include <QString>
 #include <memory>
@@ -10,8 +11,6 @@
 
 class QApplication;
 class Config;
-
-#include <QObject>
 
 class TranslationManager : public QObject
 {

@@ -5,7 +5,6 @@
 
 #include <vulkan/vulkan.h>
 #include <cstdint>
-#include <vector>
 #include <array>
 #include "Logger.h"
 
