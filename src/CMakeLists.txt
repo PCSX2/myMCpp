@@ -64,25 +64,28 @@ if(WIN32)
     
     if(WINDEPLOYQT_EXECUTABLE)
         add_custom_command(TARGET myMCpp POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E echo "Running windeployqt to deploy Qt dependencies..."
             COMMAND "${WINDEPLOYQT_EXECUTABLE}"
                 --no-compiler-runtime
                 "$<TARGET_FILE:myMCpp>"
-            COMMENT "Running windeployqt to deploy Qt dependencies..."
+            VERBATIM
         )
     endif()
     
     add_custom_command(TARGET myMCpp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E echo "Copying zlib DLL to output directory..."
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_FILE:zlib>
             $<TARGET_FILE_DIR:myMCpp>
-        COMMENT "Copying zlib DLL to output directory..."
+        VERBATIM
     )
     
     add_custom_command(TARGET myMCpp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E echo "Copying resources folder to output directory..."
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/resources
             $<TARGET_FILE_DIR:myMCpp>/resources
-        COMMENT "Copying resources folder to output directory..."
+        VERBATIM
     )
 endif()
 

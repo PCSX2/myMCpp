@@ -99,12 +99,8 @@ if(WIN32)
 endif()
 
 if(ENABLE_VULKAN)
-    target_include_directories(myMCpp_core PUBLIC 
-        ${vulkan-headers_SOURCE_DIR}/include
-        ${VulkanMemoryAllocator_SOURCE_DIR}/include
-    )
-    
-    target_link_libraries(myMCpp_core PUBLIC 
+    target_link_libraries(myMCpp_core PUBLIC
+        Vulkan::Headers
         Vulkan::Vulkan
         GPUOpen::VulkanMemoryAllocator
     )

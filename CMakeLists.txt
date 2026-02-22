@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.16...3.24)
 project(myMCpp VERSION 1.0.0 LANGUAGES C CXX)
 
 if(APPLE)
@@ -17,15 +17,6 @@ endif()
 
 # make myMCpp
 add_subdirectory(src)
-
-foreach(_t 
-    zlib zlibstatic
-    spirv-as spirv-cfg spirv-diff spirv-dis spirv-lint spirv-objdump spirv-opt spirv-reduce spirv-val
-)
-    if(TARGET ${_t})
-        set_target_properties(${_t} PROPERTIES AUTOMOC OFF AUTOUIC OFF AUTORCC OFF)
-    endif()
-endforeach()
 
 # Installation
 install(TARGETS myMCpp DESTINATION bin)
