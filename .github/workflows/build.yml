@@ -37,6 +37,16 @@ jobs:
       artifactPrefixName: "myMCpp-macos-universal"
     secrets: inherit
 
+  build_windows_x64_clang:
+    name: "🪟 Windows x64 (Clang)"
+    uses: ./.github/workflows/windows_build.yml
+    with:
+      jobName: "Windows x64 Clang Build"
+      artifactPrefixName: "myMCpp-windows-x64-clang"
+      platform: x64
+      compiler: clang
+    secrets: inherit
+
   build_windows_x64_msvc:
     name: "🪟 Windows x64 (MSVC)"
     uses: ./.github/workflows/windows_build.yml
@@ -47,13 +57,14 @@ jobs:
       compiler: msvc
     secrets: inherit
 
-  build_windows_x64_clang:
-    name: "🪟 Windows x64 (Clang)"
+  build_windows_arm64_clang:
+    name: "🪟 Windows ARM64 (Clang)"
     uses: ./.github/workflows/windows_build.yml
     with:
-      jobName: "Windows x64 Clang Build"
-      artifactPrefixName: "myMCpp-windows-x64-clang"
-      platform: x64
+      jobName: "Windows ARM64 Clang Build"
+      artifactPrefixName: "myMCpp-windows-arm64-clang"
+      os: windows-11-arm
+      platform: ARM64
       compiler: clang
     secrets: inherit
 

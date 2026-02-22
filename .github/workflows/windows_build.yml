@@ -21,7 +21,7 @@ on:
       compiler:
         required: false
         type: string
-        default: msvc
+        default: clang
       buildType:
         required: false
         type: string
@@ -94,8 +94,7 @@ jobs:
           version: '6.10.2'
           host: 'windows'
           target: 'desktop'
-          arch: 'win64_msvc2022_arm64'
-          modules: 'qtimageformats'
+          arch: 'win64_msvc2022_arm64_cross_compiled'
           cache: true
 
       - name: Configure CMake (MSVC)
