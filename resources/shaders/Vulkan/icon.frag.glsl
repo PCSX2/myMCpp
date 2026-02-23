@@ -29,9 +29,9 @@ layout(push_constant) uniform PushConstants {
 layout(location = 0) out vec4 outColor;
 
 void main() {
-    vec4 texColor = texture(texSampler, fragTexCoord);
-    vec3 vertColor = fragColor.rgb * 2.0;
-    vec3 baseColor = vertColor * texColor.rgb;
+    vec4 texColor = (pc.useTexture != 0) ? texture(texSampler, fragTexCoord) : vec4(1.0);
+    vec3 vertColor = fragColor.rgb;
+    vec3 baseColor = (pc.useTexture != 0) ? (vertColor * texColor.rgb) : vertColor;
 
     vec3 normal = normalize(fragNormal);
     vec3 color = baseColor * ubo.ambientLight.rgb;

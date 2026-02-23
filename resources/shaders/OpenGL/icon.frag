@@ -29,9 +29,9 @@ uniform float alphaOverride;
 out vec4 outColor;
 
 void main() {
-    vec4 texColor = texture(texSampler, fs_in.texCoord);
-    vec3 vertColor = fs_in.color.rgb * 2.0;
-    vec3 baseColor = vertColor * texColor.rgb;
+    vec4 texColor = (useTexture != 0) ? texture(texSampler, fs_in.texCoord) : vec4(1.0);
+    vec3 vertColor = fs_in.color.rgb;
+    vec3 baseColor = (useTexture != 0) ? (vertColor * texColor.rgb) : vertColor;
 
     vec3 normal = normalize(fs_in.normal);
     vec3 color = baseColor * ubo.ambientLight.rgb;
