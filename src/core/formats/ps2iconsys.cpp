@@ -16,14 +16,6 @@ namespace
 		       (static_cast<uint32_t>(ptr[0]));
 	}
 
-	float readLEf32(const uint8_t* ptr)
-	{
-		uint32_t v = readLEu32(ptr);
-		float f;
-		std::memcpy(&f, &v, sizeof(float));
-		return f;
-	}
-
 } // namespace
 
 struct IconSysHeader
@@ -98,26 +90,26 @@ public:
 		for (int i = 0; i < 3; ++i)
 		{
 			size_t offset = 0x50 + (i * 16);
-			lightDirs[i].x = readLEf32(ptr + offset + 0);
-			lightDirs[i].y = readLEf32(ptr + offset + 4);
-			lightDirs[i].z = readLEf32(ptr + offset + 8);
-			lightDirs[i].w = readLEf32(ptr + offset + 12);
+			lightDirs[i].x = (static_cast<float>(ptr[offset + 0]) / 64.0f) - 1.0f;
+			lightDirs[i].y = (static_cast<float>(ptr[offset + 4]) / 64.0f) - 1.0f;
+			lightDirs[i].z = (static_cast<float>(ptr[offset + 8]) / 64.0f) - 1.0f;
+			lightDirs[i].w = 0.0f;
 		}
 
 		for (int i = 0; i < 3; ++i)
 		{
 			size_t offset = 0x80 + (i * 16);
-			lightColors[i].r = readLEf32(ptr + offset + 0);
-			lightColors[i].g = readLEf32(ptr + offset + 4);
-			lightColors[i].b = readLEf32(ptr + offset + 8);
-			lightColors[i].a = readLEf32(ptr + offset + 12);
+			lightColors[i].r = static_cast<float>(ptr[offset + 0]) / 128.0f;
+			lightColors[i].g = static_cast<float>(ptr[offset + 4]) / 128.0f;
+			lightColors[i].b = static_cast<float>(ptr[offset + 8]) / 128.0f;
+			lightColors[i].a = 1.0f;
 		}
 
 		// Ambient light at offset 0xB0 (176)
-		ambientLight.r = readLEf32(ptr + 0xB0 + 0);
-		ambientLight.g = readLEf32(ptr + 0xB0 + 4);
-		ambientLight.b = readLEf32(ptr + 0xB0 + 8);
-		ambientLight.a = readLEf32(ptr + 0xB0 + 12);
+		ambientLight.r = static_cast<float>(ptr[0xB0 + 0]) / 128.0f;
+		ambientLight.g = static_cast<float>(ptr[0xB0 + 4]) / 128.0f;
+		ambientLight.b = static_cast<float>(ptr[0xB0 + 8]) / 128.0f;
+		ambientLight.a = 1.0f;
 
 		std::string titleSjis;
 		for (size_t i = 0; i < 68 && ptr[0xC0 + i] != 0; ++i)

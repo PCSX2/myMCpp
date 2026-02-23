@@ -15,7 +15,7 @@ fragment float4 IconPSMain(
         ? tex.sample(texSampler, in.fragTexCoord)
         : float4(1.0);
 
-    float3 baseColor = in.fragColor.rgb * texColor.rgb;
+    float3 baseColor = (push.useTexture != 0) ? (in.fragColor.rgb * texColor.rgb) : in.fragColor.rgb;
 
     float3 normal = normalize(in.fragNormal);
     float3 color  = baseColor * scene.ambientLight.rgb;

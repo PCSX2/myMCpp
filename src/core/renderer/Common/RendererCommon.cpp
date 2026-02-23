@@ -32,9 +32,9 @@ void LightingState::applyMode()
 			lightDirs[0] = glm::vec3(0.0f);
 			lightDirs[1] = glm::vec3(0.0f);
 			lightDirs[2] = glm::vec3(0.0f);
-			lightColors[0] = glm::vec3(0.0f);
-			lightColors[1] = glm::vec3(0.0f);
-			lightColors[2] = glm::vec3(0.0f);
+			lightColors[0] = glm::vec3(1.0f);
+			lightColors[1] = glm::vec3(1.0f);
+			lightColors[2] = glm::vec3(1.0f);
 			ambientLight = glm::vec3(1.0f);
 			break;
 
@@ -71,9 +71,9 @@ void LightingState::applyMode()
 			}
 			else
 			{
-				lightDirs[0] = glm::vec3(2.0f, 2.0f, 2.0f);
-				lightDirs[1] = glm::vec3(-2.0f, 2.0f, 2.0f);
-				lightDirs[2] = glm::vec3(0.0f, -2.0f, 2.0f);
+				lightDirs[0] = glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f));
+				lightDirs[1] = glm::normalize(glm::vec3(-1.0f, 1.0f, 1.0f));
+				lightDirs[2] = glm::normalize(glm::vec3(0.0f, -1.0f, 1.0f));
 				lightColors[0] = glm::vec3(1.0f);
 				lightColors[1] = glm::vec3(1.0f);
 				lightColors[2] = glm::vec3(1.0f);
@@ -119,16 +119,20 @@ void LightingState::loadFromIconSys(PS2IconSys* iconSys)
 	}
 
 	iconSysAmbient = glm::vec3(ambient.r, ambient.g, ambient.b);
+	const float MIN_AMBIENT = 0.3f;
+	iconSysAmbient.r = glm::max(iconSysAmbient.r, MIN_AMBIENT);
+	iconSysAmbient.g = glm::max(iconSysAmbient.g, MIN_AMBIENT);
+	iconSysAmbient.b = glm::max(iconSysAmbient.b, MIN_AMBIENT);
 
-	bool allZero = (iconSysAmbient.r < 0.001f && iconSysAmbient.g < 0.001f && iconSysAmbient.b < 0.001f);
+	bool allZero = true;
 	for (int i = 0; i < 3 && allZero; ++i)
 	{
-		if (iconSysLightColors[i].r > 0.001f || iconSysLightColors[i].g > 0.001f || iconSysLightColors[i].b > 0.001f)
+		if (iconSysLightColors[i].r > 0.1f || iconSysLightColors[i].g > 0.1f || iconSysLightColors[i].b > 0.1f)
 		{
 			allZero = false;
 		}
 	}
-	
+
 	if (allZero)
 	{
 		Logger::debug("LightingState: All-zero lighting detected, using default fallback");
@@ -335,9 +339,9 @@ namespace LightingPresets
 	glm::vec3 getDefaultLightDir(int index)
 	{
 		static const glm::vec3 dirs[3] = {
-			glm::vec3(2.0f, 2.0f, 2.0f),
-			glm::vec3(-2.0f, 2.0f, 2.0f),
-			glm::vec3(0.0f, -2.0f, 2.0f)};
+			glm::vec3(1.0f, 1.0f, 1.0f),
+			glm::vec3(-1.0f, 1.0f, 1.0f),
+			glm::vec3(0.0f, -1.0f, 1.0f)};
 		return dirs[index % 3];
 	}
 
@@ -353,13 +357,13 @@ namespace TextureUtils
 		for (size_t i = 0; i < width * height; ++i)
 		{
 			uint16_t pixel = textureData[i];
-			uint8_t r5 = static_cast<uint8_t>(pixel & 0x1F);
-			uint8_t g5 = static_cast<uint8_t>((pixel >> 5) & 0x1F);
-			uint8_t b5 = static_cast<uint8_t>((pixel >> 10) & 0x1F);
-			rgba[i * 4 + 0] = r5 << 3;
-			rgba[i * 4 + 1] = g5 << 3;
-			rgba[i * 4 + 2] = b5 << 3;
-			rgba[i * 4 + 3] = 255;
+			uint8_t r5 = static_cast<uint8_t>((pixel >> 0) & 0x1F); // Red (bits 0-4)
+			uint8_t g5 = static_cast<uint8_t>((pixel >> 5) & 0x1F); // Green (bits 5-9)
+			uint8_t b5 = static_cast<uint8_t>((pixel >> 10) & 0x1F); // Blue (bits 10-14)
+			rgba[i * 4 + 0] = (r5 << 3) | (r5 >> 2); // Red
+			rgba[i * 4 + 1] = (g5 << 3) | (g5 >> 2); // Green
+			rgba[i * 4 + 2] = (b5 << 3) | (b5 >> 2); // Blue
+			rgba[i * 4 + 3] = 0xFF; // Alpha
 		}
 
 		return rgba;
@@ -436,13 +440,13 @@ namespace AnimationUtils
 	{
 		if (frameLength <= 0.0f)
 			return 0.0f;
-		
+
 		float finalSpeed = speed;
 		if (finalSpeed <= 0.0001f)
 			finalSpeed = 1.0f;
 
 		float unitsPerSecond = finalSpeed * 60.0f;
-		
+
 		return std::fmod(static_cast<float>(elapsedSeconds) * unitsPerSecond, frameLength);
 	}
 
