@@ -22,10 +22,11 @@
 #include "OpenGLRenderer.h"
 #include "ps2iconsys.h"
 #include "ps2icon.h"
+#include "../../../common/Config.h"
 
 namespace fs = std::filesystem;
 
-OpenGLRenderer::OpenGLRenderer(const WindowInfo& windowInfo)
+OpenGLRenderer::OpenGLRenderer(const WindowInfo& windowInfo, Config* config)
 	: m_initialized(false)
 	, m_width(windowInfo.surface_width)
 	, m_height(windowInfo.surface_height)
@@ -35,13 +36,16 @@ OpenGLRenderer::OpenGLRenderer(const WindowInfo& windowInfo)
 	, m_animationEnabled(true)
 	, m_animStart(std::chrono::steady_clock::now())
 	, m_windowInfo(windowInfo)
+	, m_config(config)
 {
 	m_camera.applyMode();
 	m_lighting.applyMode();
+	RendererFactory::registerRenderer(this);
 }
 
 OpenGLRenderer::~OpenGLRenderer()
 {
+	RendererFactory::unregisterRenderer(this);
 	shutdown();
 }
 
@@ -127,6 +131,13 @@ bool OpenGLRenderer::initialize()
 		}
 
 		m_context->releaseCurrent();
+
+		if (m_config)
+		{
+			m_context->makeCurrent();
+			m_context->setVSync(m_config->getVSync());
+			m_context->releaseCurrent();
+		}
 
 		m_initialized = true;
 		Logger::info("GL: Renderer initialized successfully");
@@ -485,4 +496,18 @@ void OpenGLRenderer::resize(uint32_t width, uint32_t height)
 {
 	m_width = width;
 	m_height = height;
+}
+
+void OpenGLRenderer::setVSync(bool enabled)
+{
+	if (m_context && m_context->makeCurrent())
+	{
+		m_context->setVSync(enabled);
+		m_context->releaseCurrent();
+
+		if (m_config)
+		{
+			m_config->setVSync(enabled);
+		}
+	}
 }
