@@ -76,6 +76,9 @@ public:
 	std::string getMemoryCardFolder() const;
 	void setMemoryCardFolder(const std::string& path);
 
+	std::string getImportExportFolder() const;
+	void setImportExportFolder(const std::string& path);
+
 	int getMaxFPS() const;
 	void setMaxFPS(int fps);
 
@@ -87,6 +90,10 @@ public:
 
 	bool getVerboseLogging() const;
 	void setVerboseLogging(bool enabled);
+
+	std::vector<std::string> getRecentFiles() const;
+	void addRecentFile(const std::string& path);
+	void clearRecentFiles();
 
 	const json& getJson() const { return m_config; }
 	json& getJson() { return m_config; }

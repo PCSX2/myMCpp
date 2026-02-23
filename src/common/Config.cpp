@@ -410,6 +410,23 @@ void Config::setMemoryCardFolder(const std::string& path)
 	m_config["paths"]["memory_card_folder"] = path;
 }
 
+std::string Config::getImportExportFolder() const
+{
+	try
+	{
+		return m_config["paths"]["import_export_folder"].get<std::string>();
+	}
+	catch (...)
+	{
+		return "";
+	}
+}
+
+void Config::setImportExportFolder(const std::string& path)
+{
+	m_config["paths"]["import_export_folder"] = path;
+}
+
 int Config::getMaxFPS() const
 {
 	try
@@ -476,6 +493,58 @@ bool Config::getDebugLogging() const
 void Config::setDebugLogging(bool enabled)
 {
 	m_config["debug"]["logging"] = enabled;
+}
+
+std::vector<std::string> Config::getRecentFiles() const
+{
+	std::vector<std::string> files;
+	try
+	{
+		if (m_config.contains("recent_files") && m_config["recent_files"].is_array())
+		{
+			for (const auto& file : m_config["recent_files"])
+			{
+				files.push_back(file.get<std::string>());
+			}
+		}
+	}
+	catch (...)
+	{
+	}
+	return files;
+}
+
+void Config::addRecentFile(const std::string& path)
+{
+	if (!m_config.contains("recent_files") || !m_config["recent_files"].is_array())
+	{
+		m_config["recent_files"] = json::array();
+	}
+
+	// Remove if already exists (to move it to front)
+	auto& recent = m_config["recent_files"];
+	for (auto it = recent.begin(); it != recent.end(); ++it)
+	{
+		if (it->get<std::string>() == path)
+		{
+			recent.erase(it);
+			break;
+		}
+	}
+
+	// Add to front
+	recent.insert(recent.begin(), path);
+
+	// Keep only last 10
+	while (recent.size() > 10)
+	{
+		recent.erase(recent.end() - 1);
+	}
+}
+
+void Config::clearRecentFiles()
+{
+	m_config["recent_files"] = json::array();
 }
 
 void Config::createDefaults()
