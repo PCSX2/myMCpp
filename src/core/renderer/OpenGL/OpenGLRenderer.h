@@ -13,6 +13,8 @@
 #include <memory>
 #include <chrono>
 
+class Config;
+
 namespace PS2Icon
 {
 	class Icon;
@@ -21,12 +23,14 @@ namespace PS2Icon
 class OpenGLRenderer : public Renderer
 {
 public:
-	explicit OpenGLRenderer(const WindowInfo& windowInfo);
+	explicit OpenGLRenderer(const WindowInfo& windowInfo, Config* config = nullptr);
 	~OpenGLRenderer();
 
 	bool initialize() override;
 	void shutdown() override;
 	bool isInitialized() const override { return m_initialized; }
+
+	void setVSync(bool enabled);
 
 	void setIcon(std::shared_ptr<PS2Icon::Icon> icon) override;
 	bool hasValidIcon() const override { return m_icon != nullptr; }
@@ -72,4 +76,5 @@ private:
 	OpenGLResources m_resources;
 	std::unique_ptr<GLContext> m_context;
 	WindowInfo m_windowInfo;
+	Config* m_config;
 };
