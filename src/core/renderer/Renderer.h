@@ -5,7 +5,10 @@
 
 #include <cstdint>
 #include <memory>
+#include <vector>
 #include "WindowInfo.h"
+
+class Config;
 
 namespace PS2Icon
 {
@@ -58,6 +61,7 @@ public:
 
 	virtual void render() = 0;
 	virtual void resize(uint32_t width, uint32_t height) = 0;
+	virtual void setVSync(bool enabled) { (void)enabled; }
 
 	virtual uint32_t getVertexCount() const = 0;
 	virtual uint32_t getFrameCount() const = 0;
@@ -75,14 +79,25 @@ public:
 
 	static std::unique_ptr<Renderer> createRenderer(
 		RendererType type,
-		const WindowInfo& windowInfo);
+		const WindowInfo& windowInfo,
+		Config* config = nullptr);
 
 	static std::unique_ptr<Renderer> createVulkanRenderer(
-		const WindowInfo& windowInfo);
+		const WindowInfo& windowInfo,
+		Config* config = nullptr);
 
 	static std::unique_ptr<Renderer> createOpenGLRenderer(
-		const WindowInfo& windowInfo);
+		const WindowInfo& windowInfo,
+		Config* config = nullptr);
 
 	static std::unique_ptr<Renderer> createMetalRenderer(
-		const WindowInfo& windowInfo);
+		const WindowInfo& windowInfo,
+		Config* config = nullptr);
+
+	static void registerRenderer(Renderer* renderer);
+	static void unregisterRenderer(Renderer* renderer);
+	static void applyVSyncToAll(bool enabled);
+
+private:
+	static std::vector<Renderer*> s_activeRenderers;
 };
