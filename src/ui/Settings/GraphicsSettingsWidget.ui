@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+<!--
+SPDX-FileCopyrightText: 2002-2026 PCSX2 Dev Team
+SPDX-License-Identifier: GPL-3.0+
+Portions of this file are adapted from PCSX2
+https://github.com/PCSX2/pcsx2
+-->
+ <class>GraphicsSettingsWidget</class>
+ <widget class="QWidget" name="GraphicsSettingsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="renderingGroup">
+     <property name="title">
+      <string>Rendering</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="rendererLabel">
+        <property name="text">
+         <string>Renderer:</string>
+        </property>
+        <property name="buddy">
+         <cstring>rendererCombo</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="rendererCombo"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="cameraLabel">
+        <property name="text">
+         <string>Camera Angle:</string>
+        </property>
+        <property name="buddy">
+         <cstring>cameraCombo</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="cameraCombo"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="lightingLabel">
+        <property name="text">
+         <string>Lighting Mode:</string>
+        </property>
+        <property name="buddy">
+         <cstring>lightingCombo</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="lightingCombo"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="performanceGroup">
+     <property name="title">
+      <string>Performance</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="thumbnailSizeLabel">
+        <property name="text">
+         <string>Thumbnail Size:</string>
+        </property>
+        <property name="buddy">
+         <cstring>thumbnailSizeSpinner</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QSpinBox" name="thumbnailSizeSpinner">
+          <property name="minimum">
+           <number>32</number>
+          </property>
+          <property name="maximum">
+           <number>256</number>
+          </property>
+          <property name="singleStep">
+           <number>16</number>
+          </property>
+          <property name="value">
+           <number>64</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="pixelsLabel">
+          <property name="text">
+           <string>pixels</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="antialiasingLabel">
+        <property name="text">
+         <string>Antialiasing:</string>
+        </property>
+        <property name="buddy">
+         <cstring>antialiasingCombo</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="antialiasingCombo"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="fpsLimitLabel">
+        <property name="text">
+         <string>FPS Limit:</string>
+        </property>
+        <property name="buddy">
+         <cstring>fpsLimitSpinner</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout2">
+        <item>
+         <widget class="QSpinBox" name="fpsLimitSpinner">
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>240</number>
+          </property>
+          <property name="singleStep">
+           <number>5</number>
+          </property>
+          <property name="specialValueText">
+           <string>Unlimited</string>
+          </property>
+          <property name="value">
+           <number>30</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="fpsLabel">
+          <property name="text">
+           <string>FPS</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer2">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="optionsGroup">
+     <property name="title">
+      <string>Options</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout2">
+      <item>
+       <widget class="QCheckBox" name="animateIconsCheck">
+        <property name="text">
+         <string>Animate Icons</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="vsyncCheck">
+        <property name="text">
+         <string>Enable VSync</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>rendererCombo</tabstop>
+  <tabstop>cameraCombo</tabstop>
+  <tabstop>lightingCombo</tabstop>
+  <tabstop>thumbnailSizeSpinner</tabstop>
+  <tabstop>antialiasingCombo</tabstop>
+  <tabstop>fpsLimitSpinner</tabstop>
+  <tabstop>animateIconsCheck</tabstop>
+  <tabstop>vsyncCheck</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
