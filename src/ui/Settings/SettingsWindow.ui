@@ -86,7 +86,7 @@ https://github.com/PCSX2/pcsx2
      <item>
       <widget class="QPushButton" name="restoreDefaultsButton">
        <property name="text">
-        <string>Restore Defaults</string>
+        <string>Restore Category Defaults</string>
        </property>
       </widget>
      </item>

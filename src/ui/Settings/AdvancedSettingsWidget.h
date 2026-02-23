@@ -6,9 +6,13 @@
 #include "SettingsWidget.h"
 
 class QCheckBox;
+class QPushButton;
 
 class SettingsWindow;
-namespace Ui { class AdvancedSettingsWidget; }
+namespace Ui
+{
+	class AdvancedSettingsWidget;
+}
 
 class AdvancedSettingsWidget : public SettingsWidget
 {
@@ -22,7 +26,10 @@ public:
 	void loadSettings() override;
 	void restoreDefaults() override;
 
-private:
+private slots:
+	void onExportSettings();
+	void onImportSettings();
+
 private:
 	std::unique_ptr<Ui::AdvancedSettingsWidget> ui;
 };

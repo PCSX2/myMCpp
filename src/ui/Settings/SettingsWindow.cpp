@@ -8,8 +8,8 @@
 #include "TranslationManager.h"
 #include "ui_SettingsWindow.h"
 
-#include "InterfaceSettingsWidget.h"
-#include "BehaviorSettingsWidget.h"
+#include "GeneralSettingsWidget.h"
+#include "GraphicsSettingsWidget.h"
 #include "FilesSettingsWidget.h"
 #include "AdvancedSettingsWidget.h"
 
@@ -22,25 +22,25 @@ SettingsWindow::SettingsWindow(Config* config, QWidget* parent)
 {
 	ui->setupUi(this);
 
-	while(ui->settingsContainer->count() > 0)
+	while (ui->settingsContainer->count() > 0)
 		ui->settingsContainer->removeWidget(ui->settingsContainer->widget(0));
 	ui->settingsCategory->clear();
 
-	addSettingsWidget(new InterfaceSettingsWidget(this), tr("Interface"), 
-		QIcon::fromTheme("computer-line"), 
-		tr("<strong>Interface Settings</strong><hr>These options control how the software looks throughout the application."));
+	addSettingsWidget(new GeneralSettingsWidget(this), tr("General"),
+		QIcon::fromTheme("settings-fill"),
+		tr("<strong>General Settings</strong><hr>Configure language, theme, and application behavior."));
 
-	addSettingsWidget(new BehaviorSettingsWidget(this), tr("Behavior"), 
-		QIcon::fromTheme("tools-line"), 
-		tr("<strong>Behavior Settings</strong><hr>Configure how the application behaves, including warnings and shutdown confirmations."));
+	addSettingsWidget(new GraphicsSettingsWidget(this), tr("Graphics"),
+		QIcon::fromTheme("computer-line"),
+		tr("<strong>Graphics Settings</strong><hr>Configure rendering options, camera, lighting, and visual effects."));
 
-	addSettingsWidget(new FilesSettingsWidget(this), tr("Files"), 
-		QIcon::fromTheme("folder-open-line"), 
-		tr("<strong>File Settings</strong><hr>Manage default paths for memory cards and other resources."));
+	addSettingsWidget(new FilesSettingsWidget(this), tr("Files"),
+		QIcon::fromTheme("folder-open-line"),
+		tr("<strong>File Settings</strong><hr>Manage default paths for memory cards, import/export settings, and recent files."));
 
-	addSettingsWidget(new AdvancedSettingsWidget(this), tr("Advanced"), 
-		QIcon::fromTheme("equalizer-line"), 
-		tr("<strong>Advanced Settings</strong><hr>Advanced options for debugging and developer tools."));
+	addSettingsWidget(new AdvancedSettingsWidget(this), tr("Advanced"),
+		QIcon::fromTheme("equalizer-line"),
+		tr("<strong>Advanced Settings</strong><hr>Advanced options for window behavior, debugging, and developer tools."));
 
 	ui->settingsCategory->setCurrentRow(0);
 	updateDescription(0);
@@ -61,7 +61,8 @@ SettingsWindow::~SettingsWindow()
 
 void SettingsWindow::onSettingChanged()
 {
-	for(auto* widget : m_settingsWidgets) {
+	for (auto* widget : m_settingsWidgets)
+	{
 		widget->saveSettings();
 	}
 	if (m_config)
@@ -75,7 +76,8 @@ void SettingsWindow::onSettingChanged()
 
 void SettingsWindow::saveToDisk()
 {
-	if (m_config) {
+	if (m_config)
+	{
 		m_config->save();
 		TranslationManager::instance().loadLanguage(m_config->getLanguage());
 	}
@@ -94,7 +96,8 @@ void SettingsWindow::addSettingsWidget(SettingsWidget* widget, const QString& na
 
 void SettingsWindow::onCategorySelected(int row)
 {
-	if (row >= 0 && row < ui->settingsContainer->count()) {
+	if (row >= 0 && row < ui->settingsContainer->count())
+	{
 		ui->settingsContainer->setCurrentIndex(row);
 		updateDescription(row);
 	}
@@ -102,7 +105,8 @@ void SettingsWindow::onCategorySelected(int row)
 
 void SettingsWindow::updateDescription(int index)
 {
-	if (index >= 0 && index < static_cast<int>(m_descriptions.size())) {
+	if (index >= 0 && index < static_cast<int>(m_descriptions.size()))
+	{
 		m_currentCategoryDescription = m_descriptions[index];
 		ui->helpText->setHtml(m_descriptions[index]);
 	}
@@ -110,9 +114,10 @@ void SettingsWindow::updateDescription(int index)
 
 void SettingsWindow::registerWidgetHelp(QObject* widget, const QString& title, const QString& description)
 {
-	if (!widget) return;
-	
-	m_helpMap[widget] = { title, description };
+	if (!widget)
+		return;
+
+	m_helpMap[widget] = {title, description};
 	widget->installEventFilter(this);
 }
 
@@ -134,17 +139,19 @@ bool SettingsWindow::eventFilter(QObject* watched, QEvent* event)
 			ui->helpText->setHtml(m_currentCategoryDescription);
 		}
 	}
-	
+
 	return QDialog::eventFilter(watched, event);
 }
 
 void SettingsWindow::onClose()
 {
-	for(auto* widget : m_settingsWidgets) {
+	for (auto* widget : m_settingsWidgets)
+	{
 		widget->saveSettings();
 	}
-	
-	if (m_config) {
+
+	if (m_config)
+	{
 		m_config->save();
 		TranslationManager::instance().loadLanguage(m_config->getLanguage());
 	}
@@ -154,7 +161,10 @@ void SettingsWindow::onClose()
 
 void SettingsWindow::onRestoreDefaults()
 {
-	for(auto* widget : m_settingsWidgets) {
-		widget->restoreDefaults();
+	int currentRow = ui->settingsCategory->currentRow();
+	if (currentRow >= 0 && currentRow < static_cast<int>(m_settingsWidgets.size()))
+	{
+		m_settingsWidgets[currentRow]->restoreDefaults();
+		onSettingChanged();
 	}
 }
