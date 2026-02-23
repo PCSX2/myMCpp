@@ -11,6 +11,8 @@
 #include <memory>
 #include <chrono>
 
+class Config;
+
 namespace PS2Icon
 {
 	class Icon;
@@ -21,12 +23,14 @@ struct MetalRendererImpl;
 class MetalRenderer : public Renderer
 {
 public:
-	explicit MetalRenderer(const WindowInfo& windowInfo);
+	explicit MetalRenderer(const WindowInfo& windowInfo, Config* config = nullptr);
 	~MetalRenderer();
 
 	bool initialize() override;
 	void shutdown() override;
 	bool isInitialized() const override { return m_initialized; }
+
+	void setVSync(bool enabled) override;
 
 	void setIcon(std::shared_ptr<PS2Icon::Icon> icon) override;
 	bool hasValidIcon() const override { return m_icon != nullptr; }
@@ -70,6 +74,7 @@ private:
 	LightingState m_lighting;
 	CameraState m_camera;
 	BackgroundState m_background;
+	Config* m_config;
 
 	std::unique_ptr<MetalRendererImpl> m_impl;
 };

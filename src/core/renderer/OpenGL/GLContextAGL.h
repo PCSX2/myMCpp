@@ -31,6 +31,7 @@ public:
 	bool isValid() const override;
 	void resize(uint32_t width, uint32_t height) override;
 	void* getProcAddress(const char* name) override;
+	void setVSync(bool enabled) override;
 
 private:
 	GLContextAGL(const WindowInfo& windowInfo);
