@@ -890,7 +890,7 @@ bool VulkanRenderer::createCommandBuffers()
 				int32_t enableAlpha;
 				float alphaOverride;
 			} pc;
-			pc.useTexture = 1;
+			pc.useTexture = (m_icon && m_icon->hasTexture()) ? 1 : 0;
 			pc.enableAlpha = (m_icon && m_icon->hasAlpha()) ? 1 : 0;
 			pc.alphaOverride = 1.0f;
 			vkCmdPushConstants(m_commandBuffers[i], m_vulkanPipeline.getPipelineLayout(),

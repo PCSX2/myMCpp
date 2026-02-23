@@ -456,7 +456,8 @@ void OpenGLRenderer::render()
 		glBindTexture(GL_TEXTURE_2D, m_resources.getTextureID());
 		glUniform1i(m_shader.getTexSamplerLocation(), 0);
 
-		glUniform1i(m_shader.getUseTextureLocation(), 1);
+		int useTexture = (m_icon && m_icon->hasTexture()) ? 1 : 0;
+		glUniform1i(m_shader.getUseTextureLocation(), useTexture);
 
 		int hasAlpha = (m_icon && m_icon->hasAlpha()) ? 1 : 0;
 		glUniform1i(m_shader.getEnableAlphaLocation(), hasAlpha);
