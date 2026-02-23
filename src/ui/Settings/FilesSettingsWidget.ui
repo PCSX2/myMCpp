@@ -13,7 +13,7 @@ https://github.com/PCSX2/pcsx2
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>200</height>
+    <height>500</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -32,10 +32,10 @@ https://github.com/PCSX2/pcsx2
    <item>
     <widget class="QGroupBox" name="filesGroup">
      <property name="title">
-      <string>Directory Paths</string>
+      <string>Default Directories</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
        <widget class="QLabel" name="memCardLabel">
         <property name="text">
          <string>Memory Card Directory:</string>
@@ -45,7 +45,7 @@ https://github.com/PCSX2/pcsx2
         </property>
        </widget>
       </item>
-      <item>
+      <item row="0" column="1">
        <layout class="QHBoxLayout" name="pathLayout">
         <item>
          <widget class="QLineEdit" name="memoryCardPathEdit">
@@ -62,6 +62,53 @@ https://github.com/PCSX2/pcsx2
          </widget>
         </item>
        </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="importExportLabel">
+        <property name="text">
+         <string>Import/Export Directory:</string>
+        </property>
+        <property name="buddy">
+         <cstring>importExportPathEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="importExportLayout">
+        <item>
+         <widget class="QLineEdit" name="importExportPathEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="browseImportExportButton">
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="recentFilesGroup">
+     <property name="title">
+      <string>Recent Files</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout2">
+      <item>
+       <widget class="QListWidget" name="recentFilesList"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="clearRecentButton">
+        <property name="text">
+         <string>Clear Recent Files</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -84,6 +131,10 @@ https://github.com/PCSX2/pcsx2
  <tabstops>
   <tabstop>memoryCardPathEdit</tabstop>
   <tabstop>browseButton</tabstop>
+  <tabstop>importExportPathEdit</tabstop>
+  <tabstop>browseImportExportButton</tabstop>
+  <tabstop>recentFilesList</tabstop>
+  <tabstop>clearRecentButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>
