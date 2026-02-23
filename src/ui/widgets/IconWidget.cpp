@@ -381,20 +381,20 @@ void IconWidget::ensureRenderer()
 
 		if (rendererType == "opengl")
 		{
-			m_renderer = RendererFactory::createOpenGLRenderer(wi);
+			m_renderer = RendererFactory::createOpenGLRenderer(wi, m_config);
 		}
 #if defined(__APPLE__)
 		else if (rendererType == "metal")
 		{
-			m_renderer = RendererFactory::createMetalRenderer(wi);
+			m_renderer = RendererFactory::createMetalRenderer(wi, m_config);
 		}
 #endif
 		else
 		{
-#if !defined(__APPLE__)
-			m_renderer = RendererFactory::createVulkanRenderer(wi);
+#if defined(ENABLE_VULKAN) && !defined(__APPLE__)
+			m_renderer = RendererFactory::createVulkanRenderer(wi, m_config);
 #else
-			m_renderer = RendererFactory::createOpenGLRenderer(wi);
+			m_renderer = RendererFactory::createOpenGLRenderer(wi, m_config);
 #endif
 		}
 

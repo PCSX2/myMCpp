@@ -37,6 +37,8 @@ public:
 	void startRendering();
 	void stopRendering();
 
+	Renderer* getRenderer() const { return m_renderer.get(); }
+
 signals:
 	void iconLoaded();
 	void iconLoadFailed(const QString& error);
