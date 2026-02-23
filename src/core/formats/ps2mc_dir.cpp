@@ -1,8 +1,7 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "ps2mc_dir.h"
-#include <cstring>
 #include <algorithm>
 #include <ctime>
 

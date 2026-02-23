@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "Logger.h"
@@ -17,7 +17,6 @@
 #include <memory>
 #include <algorithm>
 #include <ctime>
-#include <cstdio>
 
 #ifdef _WIN32
 #define NOMINMAX

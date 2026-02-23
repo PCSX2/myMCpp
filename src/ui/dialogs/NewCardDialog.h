@@ -1,16 +1,16 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #pragma once
 
 #include <QDialog>
 
-class QRadioButton;
 #include <memory>
 
-class QButtonGroup;
-
 #include "ui_NewCardDialog.h"
+
+class QRadioButton;
+class QButtonGroup;
 
 class NewCardDialog : public QDialog
 {

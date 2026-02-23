@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "OpenGLResources.h"
@@ -12,7 +12,6 @@
 #pragma clang diagnostic pop
 #endif
 #include "Logger.h"
-#include <cstring>
 
 OpenGLResources::OpenGLResources() = default;
 

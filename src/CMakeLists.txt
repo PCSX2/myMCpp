@@ -26,8 +26,9 @@ target_link_libraries(myMCpp PRIVATE
     Qt6::Widgets
 )
 
+file(GLOB TS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/ui/Translations/*.ts")
 qt6_add_translations(myMCpp
-    TS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ui/Translations/myMCpp_en.ts
+    TS_FILES ${TS_FILES}
     LUPDATE_OPTIONS -locations relative
     RESOURCE_PREFIX "/translations"
 )
@@ -38,12 +39,6 @@ target_include_directories(myMCpp PRIVATE
     ${CMAKE_SOURCE_DIR}/src/core/formats
     ${CMAKE_SOURCE_DIR}/src/common
     ${CMAKE_SOURCE_DIR}/src/cli
-    ${CMAKE_SOURCE_DIR}/src/ui
-    ${CMAKE_SOURCE_DIR}/src/ui/widgets
-    ${CMAKE_SOURCE_DIR}/src/ui/dialogs
-    ${CMAKE_SOURCE_DIR}/src/ui/Settings
-    ${CMAKE_BINARY_DIR}/src/ui
-    ${CMAKE_BINARY_DIR}/src/ui/myMCpp_ui_autogen/include
 )
 
 if(ENABLE_VULKAN)
@@ -69,25 +64,28 @@ if(WIN32)
     
     if(WINDEPLOYQT_EXECUTABLE)
         add_custom_command(TARGET myMCpp POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E echo "Running windeployqt to deploy Qt dependencies..."
             COMMAND "${WINDEPLOYQT_EXECUTABLE}"
                 --no-compiler-runtime
                 "$<TARGET_FILE:myMCpp>"
-            COMMENT "Running windeployqt to deploy Qt dependencies..."
+            VERBATIM
         )
     endif()
     
     add_custom_command(TARGET myMCpp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E echo "Copying zlib DLL to output directory..."
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_FILE:zlib>
             $<TARGET_FILE_DIR:myMCpp>
-        COMMENT "Copying zlib DLL to output directory..."
+        VERBATIM
     )
     
     add_custom_command(TARGET myMCpp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E echo "Copying resources folder to output directory..."
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/resources
             $<TARGET_FILE_DIR:myMCpp>/resources
-        COMMENT "Copying resources folder to output directory..."
+        VERBATIM
     )
 endif()
 

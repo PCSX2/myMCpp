@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "SaveDetailsPanel.h"
@@ -7,10 +7,6 @@
 #include "ps2mc.h"
 #include "ps2iconsys.h"
 #include "TranslationManager.h"
-#include <QVBoxLayout>
-#include <QGroupBox>
-#include <QFrame>
-#include <QWidget>
 
 SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)
 	: QWidget(parent)
@@ -30,6 +26,8 @@ SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)
 	connect(&TranslationManager::instance(), &TranslationManager::languageChanged, this, [this]() {
 		ui->retranslateUi(this);
 	});
+
+	this->hide();
 }
 
 void SaveDetailsPanel::setConfig(Config* config)
@@ -46,6 +44,8 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 		clear();
 		return;
 	}
+
+	this->show();
 
 	currentCard = card;
 	currentSavePath = savePath;
@@ -171,6 +171,7 @@ void SaveDetailsPanel::clear()
 		iconWidget->hide();
 	currentCard = nullptr;
 	currentSavePath.clear();
+	this->hide();
 }
 
 void SaveDetailsPanel::createIconWidget()

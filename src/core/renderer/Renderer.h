@@ -1,12 +1,10 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #pragma once
 
 #include <cstdint>
-#include <cstdint>
 #include <memory>
-#include <string>
 #include "WindowInfo.h"
 
 namespace PS2Icon

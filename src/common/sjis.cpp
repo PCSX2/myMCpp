@@ -1,9 +1,7 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "sjis.h"
-#include <cstring>
-#include <stdexcept>
 
 #ifdef _WIN32
 #include <windows.h>

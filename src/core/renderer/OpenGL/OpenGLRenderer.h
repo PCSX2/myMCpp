@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #pragma once
@@ -9,9 +9,7 @@
 #include "GLContext.h"
 #include "OpenGLShader.h"
 #include "OpenGLResources.h"
-#include <glm/glm.hpp>
 #include <cstdint>
-#include <vector>
 #include <memory>
 #include <chrono>
 

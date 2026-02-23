@@ -1,16 +1,15 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #pragma once
 
 #include <QTreeWidget>
-#include <QDateTime>
 #include <QString>
 #include <memory>
 
-class PS2MemoryCard;
-
 #include "ui_MemoryCardBrowser.h"
+
+class PS2MemoryCard;
 
 class MemoryCardBrowser : public QTreeWidget
 {

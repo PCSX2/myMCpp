@@ -1,8 +1,9 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #pragma once
 
+#include <QObject>
 #include <QTranslator>
 #include <QString>
 #include <memory>
@@ -10,8 +11,6 @@
 
 class QApplication;
 class Config;
-
-#include <QObject>
 
 class TranslationManager : public QObject
 {
@@ -22,6 +21,7 @@ public:
 
 	void init(QApplication* app, Config* config);
 	void loadLanguage(const std::string& lang);
+	std::vector<std::pair<QString, QString>> getAvailableLanguages();
 
 signals:
 	void languageChanged();

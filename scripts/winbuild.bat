@@ -5,7 +5,7 @@ echo myMCpp Build Script
 echo.
 
 REM Check if Qt path is set
-if "%QT_DIR%"=="C:/Qt/6.10.1/msvc2022_64" (
+if "%QT_DIR%"=="C:/Qt/6.10.2/msvc2022_64" (
     echo ERROR: QT_DIR environment variable is not set.
     echo Please set it to your Qt installation directory.
     echo Example: set QT_DIR=C:\Qt\6.5.0\msvc2019_64

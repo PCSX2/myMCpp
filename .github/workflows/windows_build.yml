@@ -21,7 +21,7 @@ on:
       compiler:
         required: false
         type: string
-        default: msvc
+        default: clang
       buildType:
         required: false
         type: string
@@ -74,13 +74,13 @@ jobs:
       - name: Setup MSVC Environment
         uses: ilammy/msvc-dev-cmd@v1.13.0
         with:
-          arch: ${{ inputs.platform }}
+          arch: ${{ inputs.platform == 'ARM64' && 'arm64' || inputs.platform }}
 
       - name: Install Qt (x64)
         if: inputs.platform == 'x64'
         uses: jurplel/install-qt-action@v4.3.0
         with:
-          version: '6.10.1'
+          version: '6.10.2'
           host: 'windows'
           target: 'desktop'
           arch: 'win64_msvc2022_64'
@@ -91,12 +91,13 @@ jobs:
         if: inputs.platform == 'ARM64'
         uses: jurplel/install-qt-action@v4.3.0
         with:
-          version: '6.10.1'
-          host: 'windows'
+          version: '6.10.2'
+          host: 'windows_arm64'
           target: 'desktop'
           arch: 'win64_msvc2022_arm64'
           modules: 'qtimageformats'
           cache: true
+          aqtsource: 'git+https://github.com/miurahr/aqtinstall.git'
 
       - name: Configure CMake (MSVC)
         if: inputs.compiler == 'msvc'
@@ -110,11 +111,17 @@ jobs:
         if: inputs.compiler == 'clang'
         shell: cmd
         run: |
+          if "${{ inputs.platform }}" == "ARM64" (
+            set CLANG_FLAGS=-march=armv8-a
+          ) else (
+            set CLANG_FLAGS=
+          )
           cmake -B build -G Ninja ^
             -DCMAKE_BUILD_TYPE=${{ inputs.buildType }} ^
             -DCMAKE_C_COMPILER=clang ^
             -DCMAKE_CXX_COMPILER=clang++ ^
             -DCMAKE_LINKER=lld ^
+            -DCMAKE_CXX_FLAGS=%CLANG_FLAGS% ^
             ${{ inputs.cmakeFlags }}
 
       - name: Build (MSVC)
@@ -140,6 +147,7 @@ jobs:
             !./build/bin/**/*.ilk
           if-no-files-found: error
           retention-days: 30
+          overwrite: true
 
       - name: Upload symbols
         uses: actions/upload-artifact@v6
@@ -149,3 +157,4 @@ jobs:
             ./build/bin/${{ inputs.buildType }}/**/*.pdb
           if-no-files-found: ignore
           retention-days: 30
+          overwrite: true

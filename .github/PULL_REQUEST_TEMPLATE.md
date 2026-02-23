@@ -1,50 +1,14 @@
+### Description of Changes
+<!-- Brief description or overview on what was changed in the PR -->
 
-## Summary
-<!--
-Briefly describe what this PR changes.
--->
+### Rationale behind Changes
+<!-- Why were these changes made?  What problem does it solve / area does it improve? -->
 
-## Motivation
-<!--
-Why is this change needed?
-What problem does it solve or what improvement does it make?
--->
+### Suggested Testing Steps
+<!-- If applicable, including examples you've already tested with / recommendations for how to test further is very helpful! -->
 
-## Changes Made
-<!--
-High-level list of changes.
-Example:
-- Updated dependency version
-- Fixed crash in XYZ
-- Refactored ABC for clarity
--->
+### Related Issues / Links
+<!-- List any related issues, pull requests, or external links (e.g., Closes #123, Depends on #456, Docs: https://example.com) -->
 
-## Testing
-<!--
-Describe how this was tested.
-If not tested, explain why.
--->
-
-## Platform Impact
-<!--
-List affected platforms (if applicable):
-- Windows
-- Linux
-- macOS
-- Android
-- iOS
-- Xbox/UWP
--->
-
-## Notes for Reviewers
-<!--
-Anything reviewers should pay attention to?
-Potential risks, follow-ups, or known limitations.
--->
-
-## AI Assistance
-<!--
-Did you use AI to help find, test, or implement this change?
-Answer yes or no.
-If yes, briefly describe how.
--->
+### Did you use AI to help find, test, or implement this issue or feature?
+<!-- Answer yes or no. If you answer yes, please provide a brief explanation how. -->

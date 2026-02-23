@@ -1,11 +1,10 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #pragma once
 
 #include <QWidget>
 #include <QBasicTimer>
-#include <memory>
 #include "../core/formats/ps2icon.h"
 #include "../core/renderer/Renderer.h"
 

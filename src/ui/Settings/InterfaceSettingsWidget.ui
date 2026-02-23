@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
 <!--
-SPDX-FileCopyrightText: 2002-2025 PCSX2 Dev Team
+SPDX-FileCopyrightText: 2002-2026 PCSX2 Dev Team
 SPDX-License-Identifier: GPL-3.0+
 Portions of this file are adapted from PCSX2
 https://github.com/PCSX2/pcsx2
@@ -46,13 +46,7 @@ https://github.com/PCSX2/pcsx2
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="languageCombo">
-        <item>
-         <property name="text">
-          <string>English (US)</string>
-         </property>
-        </item>
-       </widget>
+       <widget class="QComboBox" name="languageCombo"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="themeLabel">

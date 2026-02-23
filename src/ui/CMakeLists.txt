@@ -52,8 +52,14 @@ target_include_directories(myMCpp_ui PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/dialogs
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/myMCpp_ui_autogen/include
 )
+
+get_property(is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if(is_multi_config)
+    target_include_directories(myMCpp_ui PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/myMCpp_ui_autogen/include_$<CONFIG>)
+else()
+    target_include_directories(myMCpp_ui PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/myMCpp_ui_autogen/include)
+endif()
 
 target_link_libraries(myMCpp_ui PUBLIC
     myMCpp_common

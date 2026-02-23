@@ -1,10 +1,12 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #pragma once
 
 #include <QMainWindow>
 #include <memory>
+
+#include "ui_MainWindow.h"
 
 class PS2MemoryCard;
 class MemoryCardBrowser;
@@ -13,8 +15,6 @@ class CardActionHandler;
 class QStatusBar;
 class QLabel;
 class Config;
-
-#include "ui_MainWindow.h"
 
 class MainWindow : public QMainWindow
 {
@@ -44,7 +44,6 @@ private slots:
 	void onAbout();
 	void onGitHubRepository();
 	void onDocumentation();
-	void onDiscordServer();
 	void onCheckForUpdates();
 	void onAboutQt();
 	void onCardItemSelected();

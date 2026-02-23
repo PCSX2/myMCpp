@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "InterfaceSettingsWidget.h"
@@ -6,14 +6,6 @@
 #include "ui_InterfaceSettingsWidget.h"
 #include "Config.h"
 #include "TranslationManager.h"
-#include "../Themes.h"
-#include <QVBoxLayout>
-#include <QGroupBox>
-#include <QLabel>
-#include <QComboBox>
-#include <QCheckBox>
-#include <QSpinBox>
-#include <QFormLayout>
 
 InterfaceSettingsWidget::InterfaceSettingsWidget(SettingsWindow* dialog, QWidget* parent)
 	: SettingsWidget(dialog, parent)
@@ -32,7 +24,11 @@ InterfaceSettingsWidget::InterfaceSettingsWidget(SettingsWindow* dialog, QWidget
 	registerHelp(ui->unlockFpsCheck, tr("Unlock FPS"), tr("Unlock the frame rate limit for the icon preview. When disabled, the preview runs at 30 FPS to save power."));
 	
 	ui->languageCombo->clear();
-	ui->languageCombo->addItem("English (US)", "en");
+	auto languages = TranslationManager::instance().getAvailableLanguages();
+	for (const auto& lang : languages)
+	{
+		ui->languageCombo->addItem(lang.first, lang.second);
+	}
 
 	ui->themeCombo->clear();
 	ui->themeCombo->addItem(tr("None"), "none");
