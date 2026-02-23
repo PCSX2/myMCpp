@@ -234,6 +234,33 @@ void* GLContextEGL::getProcAddress(const char* name)
 	return reinterpret_cast<void*>(eglGetProcAddress(name));
 }
 
+void GLContextEGL::setVSync(bool enabled)
+{
+	try
+	{
+		if (m_display != EGL_NO_DISPLAY && m_surface != EGL_NO_SURFACE)
+		{
+			EGLint interval = enabled ? 1 : 0;
+			if (eglSwapInterval(m_display, interval))
+			{
+				Logger::info("GL: VSync {}", enabled ? "enabled" : "disabled");
+			}
+			else
+			{
+				Logger::error("GL: Failed to set VSync interval: {}", eglGetError());
+			}
+		}
+		else
+		{
+			Logger::warn("GL: Cannot set VSync display or surface not available");
+		}
+	}
+	catch (const std::exception& e)
+	{
+		Logger::error("GL: Exception setting VSync: {}", e.what());
+	}
+}
+
 void GLContextEGL::cleanup()
 {
 	releaseCurrent();

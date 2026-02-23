@@ -18,6 +18,12 @@
 #include "Logger.h"
 #include <cstring>
 
+extern "C" {
+typedef BOOL(WINAPI* PFNWGLSWAPINTERVALEXTPROC)(int);
+}
+
+static PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
+
 static const wchar_t* g_windowClassName = L"GLContextWGL_Hidden";
 
 static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -208,6 +214,26 @@ bool GLContextWGL::createContext()
 			return false;
 		}
 
+		if (!wglMakeCurrent(m_hdc, m_hglrc))
+		{
+			Logger::error("GL: Failed to make context current for VSync setup: {}", GetLastError());
+			return false;
+		}
+
+		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
+
+		if (wglSwapIntervalEXT)
+		{
+			wglSwapIntervalEXT(1);
+			Logger::info("GL: VSync enabled by default");
+		}
+		else
+		{
+			Logger::warn("GL: VSync not supported (wglSwapIntervalEXT not available)");
+		}
+
+		wglMakeCurrent(nullptr, nullptr);
+
 		Logger::info("GL: GL context created successfully");
 		return true;
 	}
@@ -287,6 +313,34 @@ void* GLContextWGL::getProcAddress(const char* name)
 		return reinterpret_cast<void*>(GetProcAddress(opengl32, name));
 
 	return nullptr;
+}
+
+void GLContextWGL::setVSync(bool enabled)
+{
+	try
+	{
+		if (wglSwapIntervalEXT)
+		{
+			if (wglMakeCurrent(m_hdc, m_hglrc))
+			{
+				wglSwapIntervalEXT(enabled ? 1 : 0);
+				Logger::info("GL: VSync {}", enabled ? "enabled" : "disabled");
+				wglMakeCurrent(nullptr, nullptr);
+			}
+			else
+			{
+				Logger::error("GL: Failed to make context current for VSync change: {}", GetLastError());
+			}
+		}
+		else
+		{
+			Logger::warn("GL: Cannot set VSync - wglSwapIntervalEXT not available");
+		}
+	}
+	catch (const std::exception& e)
+	{
+		Logger::error("GL: Exception setting VSync: {}", e.what());
+	}
 }
 
 void GLContextWGL::cleanup()

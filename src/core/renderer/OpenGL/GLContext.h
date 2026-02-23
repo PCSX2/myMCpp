@@ -28,6 +28,7 @@ public:
 	virtual bool isValid() const = 0;
 	virtual void resize(uint32_t width, uint32_t height) = 0;
 	virtual void* getProcAddress(const char* name) = 0;
+	virtual void setVSync(bool enabled) = 0;
 
 	uint32_t getWidth() const { return m_width; }
 	uint32_t getHeight() const { return m_height; }

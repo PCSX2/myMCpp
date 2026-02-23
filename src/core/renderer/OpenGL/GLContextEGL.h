@@ -26,6 +26,7 @@ public:
 	bool isValid() const override { return m_context != EGL_NO_CONTEXT; }
 	void resize(uint32_t width, uint32_t height) override;
 	void* getProcAddress(const char* name) override;
+	void setVSync(bool enabled) override;
 
 protected:
 	GLContextEGL(const WindowInfo& windowInfo);
