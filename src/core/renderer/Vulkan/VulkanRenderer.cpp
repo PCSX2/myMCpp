@@ -5,6 +5,7 @@
 #include "ps2icon.h"
 #include "ps2iconsys.h"
 #include "Logger.h"
+#include "../../../common/Config.h"
 #include <cstring>
 #include <algorithm>
 #include <chrono>
@@ -18,7 +19,7 @@
 #include <vulkan/vulkan_win32.h>
 #endif
 
-VulkanRenderer::VulkanRenderer(const WindowInfo& windowInfo)
+VulkanRenderer::VulkanRenderer(const WindowInfo& windowInfo, Config* config)
 	: m_windowInfo(windowInfo)
 	, m_width(windowInfo.surface_width)
 	, m_height(windowInfo.surface_height)
@@ -37,13 +38,16 @@ VulkanRenderer::VulkanRenderer(const WindowInfo& windowInfo)
 	, m_animationEnabled(false)
 	, m_animStart(std::chrono::steady_clock::now())
 	, m_vertexCount(0)
+	, m_config(config)
 {
 	m_camera.applyMode();
 	m_lighting.applyMode();
+	RendererFactory::registerRenderer(this);
 }
 
 VulkanRenderer::~VulkanRenderer()
 {
+	RendererFactory::unregisterRenderer(this);
 	shutdown();
 }
 
@@ -998,5 +1002,18 @@ void VulkanRenderer::submitFrame()
 	catch (const std::exception& e)
 	{
 		Logger::error("VK: Exception: {}", e.what());
+	}
+}
+
+void VulkanRenderer::setVSync(bool enabled)
+{
+	if (m_vulkanDevice.getDevice() != VK_NULL_HANDLE)
+	{
+		m_vulkanSwapchain.setVSync(m_vulkanDevice, enabled);
+
+		if (m_config)
+		{
+			m_config->setVSync(enabled);
+		}
 	}
 }

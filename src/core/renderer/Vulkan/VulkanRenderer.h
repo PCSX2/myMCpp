@@ -16,6 +16,8 @@
 #include <cstdint>
 #include <chrono>
 
+class Config;
+
 namespace PS2Icon
 {
 	class Icon;
@@ -27,12 +29,14 @@ namespace PS2Icon
 class VulkanRenderer : public Renderer
 {
 public:
-	explicit VulkanRenderer(const WindowInfo& windowInfo);
+	explicit VulkanRenderer(const WindowInfo& windowInfo, Config* config = nullptr);
 	virtual ~VulkanRenderer();
 
 	bool initialize() override;
 	void shutdown() override;
 	bool isInitialized() const override { return m_initialized; }
+
+	void setVSync(bool enabled) override;
 
 	void setIcon(std::shared_ptr<PS2Icon::Icon> icon) override;
 	bool hasValidIcon() const override;
@@ -97,6 +101,7 @@ private:
 	LightingState m_lighting;
 	CameraState m_camera;
 	BackgroundState m_background;
+	Config* m_config;
 
 	bool createCommandBuffers();
 	bool uploadTexture();
