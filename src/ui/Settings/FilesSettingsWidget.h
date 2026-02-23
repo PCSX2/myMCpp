@@ -7,9 +7,14 @@
 
 class QLineEdit;
 class QPushButton;
+class QListWidget;
+class QGroupBox;
 
 class SettingsWindow;
-namespace Ui { class FilesSettingsWidget; }
+namespace Ui
+{
+	class FilesSettingsWidget;
+}
 
 class FilesSettingsWidget : public SettingsWidget
 {
@@ -25,6 +30,8 @@ public:
 
 private slots:
 	void onBrowseMemoryCardPath();
+	void onClearRecentFiles();
+	void onBrowseImportExportPath();
 
 private:
 	std::unique_ptr<Ui::FilesSettingsWidget> ui;

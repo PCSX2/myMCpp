@@ -9,8 +9,8 @@ set(UI_SOURCES
     dialogs/NewCardDialog.cpp
     Settings/SettingsWidget.cpp
     dialogs/AboutDialog.cpp
-    Settings/InterfaceSettingsWidget.cpp
-    Settings/BehaviorSettingsWidget.cpp
+    Settings/GeneralSettingsWidget.cpp
+    Settings/GraphicsSettingsWidget.cpp
     Settings/FilesSettingsWidget.cpp
     Settings/AdvancedSettingsWidget.cpp
     TranslationManager.cpp
@@ -27,8 +27,8 @@ set(UI_HEADERS
     dialogs/NewCardDialog.h
     Settings/SettingsWidget.h
     dialogs/AboutDialog.h
-    Settings/InterfaceSettingsWidget.h
-    Settings/BehaviorSettingsWidget.h
+    Settings/GeneralSettingsWidget.h
+    Settings/GraphicsSettingsWidget.h
     Settings/FilesSettingsWidget.h
     Settings/AdvancedSettingsWidget.h
     TranslationManager.h
