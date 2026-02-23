@@ -9,22 +9,26 @@
 #if defined(__APPLE__)
 #include "Metal/MetalRenderer.h"
 #endif
+#include "../../common/Config.h"
+
+std::vector<Renderer*> RendererFactory::s_activeRenderers;
 
 std::unique_ptr<Renderer> RendererFactory::createRenderer(
 	RendererType type,
-	const WindowInfo& windowInfo)
+	const WindowInfo& windowInfo,
+	Config* config)
 {
 	switch (type)
 	{
 		case RendererType::Vulkan:
 #if !defined(__APPLE__)
-			return createVulkanRenderer(windowInfo);
+			return createVulkanRenderer(windowInfo, config);
 #endif
 		case RendererType::OpenGL:
-			return createOpenGLRenderer(windowInfo);
+			return createOpenGLRenderer(windowInfo, config);
 		case RendererType::Metal:
 #if defined(__APPLE__)
-			return createMetalRenderer(windowInfo);
+			return createMetalRenderer(windowInfo, config);
 #endif
 		default:
 			return nullptr;
@@ -32,9 +36,9 @@ std::unique_ptr<Renderer> RendererFactory::createRenderer(
 }
 
 #if !defined(__APPLE__)
-std::unique_ptr<Renderer> RendererFactory::createVulkanRenderer(const WindowInfo& windowInfo)
+std::unique_ptr<Renderer> RendererFactory::createVulkanRenderer(const WindowInfo& windowInfo, Config* config)
 {
-	auto renderer = std::make_unique<VulkanRenderer>(windowInfo);
+	auto renderer = std::make_unique<VulkanRenderer>(windowInfo, config);
 	if (!renderer->initialize())
 	{
 		return nullptr;
@@ -43,9 +47,9 @@ std::unique_ptr<Renderer> RendererFactory::createVulkanRenderer(const WindowInfo
 }
 #endif
 
-std::unique_ptr<Renderer> RendererFactory::createOpenGLRenderer(const WindowInfo& windowInfo)
+std::unique_ptr<Renderer> RendererFactory::createOpenGLRenderer(const WindowInfo& windowInfo, Config* config)
 {
-	auto renderer = std::make_unique<OpenGLRenderer>(windowInfo);
+	auto renderer = std::make_unique<OpenGLRenderer>(windowInfo, config);
 	if (!renderer->initialize())
 	{
 		return nullptr;
@@ -54,9 +58,9 @@ std::unique_ptr<Renderer> RendererFactory::createOpenGLRenderer(const WindowInfo
 }
 
 #if defined(__APPLE__)
-std::unique_ptr<Renderer> RendererFactory::createMetalRenderer(const WindowInfo& windowInfo)
+std::unique_ptr<Renderer> RendererFactory::createMetalRenderer(const WindowInfo& windowInfo, Config* config)
 {
-	auto renderer = std::make_unique<MetalRenderer>(windowInfo);
+	auto renderer = std::make_unique<MetalRenderer>(windowInfo, config);
 	if (!renderer->initialize())
 	{
 		return nullptr;
@@ -64,3 +68,31 @@ std::unique_ptr<Renderer> RendererFactory::createMetalRenderer(const WindowInfo&
 	return renderer;
 }
 #endif
+
+void RendererFactory::registerRenderer(Renderer* renderer)
+{
+	if (renderer && std::find(s_activeRenderers.begin(), s_activeRenderers.end(), renderer) == s_activeRenderers.end())
+	{
+		s_activeRenderers.push_back(renderer);
+	}
+}
+
+void RendererFactory::unregisterRenderer(Renderer* renderer)
+{
+	auto it = std::find(s_activeRenderers.begin(), s_activeRenderers.end(), renderer);
+	if (it != s_activeRenderers.end())
+	{
+		s_activeRenderers.erase(it);
+	}
+}
+
+void RendererFactory::applyVSyncToAll(bool enabled)
+{
+	for (Renderer* renderer : s_activeRenderers)
+	{
+		if (renderer)
+		{
+			renderer->setVSync(enabled);
+		}
+	}
+}

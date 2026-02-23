@@ -68,6 +68,10 @@ endif()
 
 add_library(myMCpp_core STATIC ${CORE_SOURCES} ${CORE_HEADERS})
 
+if(ENABLE_VULKAN)
+    target_compile_definitions(myMCpp_core PUBLIC ENABLE_VULKAN)
+endif()
+
 target_include_directories(myMCpp_core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/formats
