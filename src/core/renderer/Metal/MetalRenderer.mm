@@ -7,6 +7,7 @@
 #include "MetalResources.h"
 #include "Logger.h"
 #include "CocoaTools.h"
+#include "../../../common/Config.h"
 #include "ps2icon.h"
 
 #import <Metal/Metal.h>
@@ -107,13 +108,21 @@ void MetalRendererImpl::updateUniformData(const MetalResources::FrameResources& 
     [frameRes.uniformBuffer didModifyRange:NSMakeRange(0, sizeof(ubo))];
 }
 
-MetalRenderer::MetalRenderer(const WindowInfo& windowInfo)
-	: m_windowInfo(windowInfo)
-    , m_animStart(std::chrono::steady_clock::now())
-    , m_impl(std::make_unique<MetalRendererImpl>())
+MetalRenderer::MetalRenderer(const WindowInfo& windowInfo, Config* config)
+	: m_initialized(false)
+	, m_windowInfo(windowInfo)
+	, m_vertexCount(0)
+	, m_frameCount(0)
+	, m_frameIndex(0)
+	, m_icon(nullptr)
+	, m_animationEnabled(true)
+	, m_iconChanged(false)
+	, m_animStart(std::chrono::steady_clock::now())
+	, m_config(config)
 {
-    m_camera.applyMode();
-    m_lighting.applyMode();
+	m_camera.applyMode();
+	m_lighting.applyMode();
+	RendererFactory::registerRenderer(this);
 }
 
 MetalRenderer::~MetalRenderer()
@@ -295,3 +304,21 @@ void MetalRenderer::setLightingMode(LightingMode mode) {
 }
 void MetalRenderer::setBackgroundFromIconSys(PS2IconSys* iconSys) { m_background.loadFromIconSys(iconSys); }
 void MetalRenderer::setBackgroundColor(float r, float g, float b, float a) { m_background.setColor(r, g, b, a); }
+
+void MetalRenderer::setVSync(bool enabled)
+{
+	if (m_impl->metalLayer && [m_impl->metalLayer respondsToSelector:@selector(setDisplaySyncEnabled:)])
+	{
+		[m_impl->metalLayer setDisplaySyncEnabled:YES];
+		Logger::info("MTL: VSync set to {}", "enabled");
+		
+		if (m_config)
+		{
+			m_config->setVSync(enabled);
+		}
+	}
+	else
+	{
+		Logger::warn("MTL: Cannot set VSync displaySyncEnabled not available");
+	}
+}

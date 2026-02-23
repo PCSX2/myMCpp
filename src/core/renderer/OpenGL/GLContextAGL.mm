@@ -136,4 +136,13 @@ void* GLContextAGL::getProcAddress(const char* name)
 	return nullptr;
 }
 
+void GLContextAGL::setVSync(bool enabled)
+{
+	if (m_context)
+	{
+		GLint swapInterval = enabled ? 1 : 0;
+		[m_context setValues:&swapInterval forParameter:NSOpenGLContextParameterSwapInterval];
+	}
+}
+
 #endif // __APPLE__
