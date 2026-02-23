@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #pragma once
@@ -6,7 +6,6 @@
 #include "ps2mc_dir.h"
 #include <string>
 #include <vector>
-#include <map>
 #include <memory>
 #include <stdexcept>
 

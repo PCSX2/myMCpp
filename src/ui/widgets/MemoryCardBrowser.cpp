@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "MemoryCardBrowser.h"
@@ -7,11 +7,8 @@
 #include <QMessageBox>
 #include <QDateTime>
 #include <QDragEnterEvent>
-#include <QDropEvent>
 #include <QMimeData>
-#include <QHeaderView>
 #include <QMenu>
-#include <QAction>
 
 MemoryCardBrowser::MemoryCardBrowser(QWidget* parent)
 	: QTreeWidget(parent)
@@ -21,6 +18,12 @@ MemoryCardBrowser::MemoryCardBrowser(QWidget* parent)
 	connect(&TranslationManager::instance(), &TranslationManager::languageChanged, this, [this]() {
 		ui->retranslateUi(this);
 	});
+
+	header()->setSectionResizeMode(0, QHeaderView::Stretch);
+	header()->setSectionResizeMode(1, QHeaderView::Interactive);
+	header()->setSectionResizeMode(2, QHeaderView::Interactive);
+	header()->resizeSection(1, 100);
+	header()->resizeSection(2, 140);
 }
 
 void MemoryCardBrowser::clear()
@@ -125,6 +128,8 @@ void MemoryCardBrowser::loadRootDirectory()
 		}
 
 		expandAll();
+		clearSelection();
+		setCurrentItem(nullptr);
 	}
 	catch (const std::exception& e)
 	{

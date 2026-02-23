@@ -1,7 +1,43 @@
 # Configuration for actions/labeler
 
-Qt:
+GUI/Qt:
   - src/ui/**/*
+
+Core:
+  - src/core/**/*
+
+Build | Project System:
+  - CMakeLists.txt
+  - cmake/**/*
+  - .github/**/*
+  - scripts/**/*
+
+Linux:
+  - any: ['**/*EGL*', '**/*linux*', '**/*Wayland*', '**/*X11*']
+
+Windows:
+  - any: ['**/*WGL*', '**/*win32*', 'resources/myMCpp.rc']
+
+macOS:
+  - any: ['src/core/renderer/Metal/**/*', '**/*AGL*', '**/*.mm', '**/*Cocoa*']
+
+CLI:
+  - src/cli/**/*
+
+Vulkan:
+  - any: ['**/vulkan*', '**/Vulkan*', 'src/core/renderer/Vulkan/**/*']
+
+OpenGL:
+  - any: ['**/opengl*', '**/OpenGL*', 'src/core/renderer/OpenGL/**/*']
+
+Metal:
+  - any: ['**/metal*', '**/Metal*', 'src/core/renderer/Metal/**/*']
+
+Documentation:
+  - docs/**/*
+  - README.md
+  - LICENSE.md
+  - build.md
 
 Core:
   - src/core/**/*

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "SettingsWindow.h"
@@ -13,11 +13,6 @@
 #include "FilesSettingsWidget.h"
 #include "AdvancedSettingsWidget.h"
 
-#include <QListWidget>
-#include <QStackedWidget>
-#include <QPushButton>
-#include <QLabel>
-#include <QTextEdit>
 #include <QTimer>
 
 SettingsWindow::SettingsWindow(Config* config, QWidget* parent)

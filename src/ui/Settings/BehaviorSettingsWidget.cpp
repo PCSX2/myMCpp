@@ -1,13 +1,10 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "BehaviorSettingsWidget.h"
 #include "SettingsWindow.h"
 #include "ui_BehaviorSettingsWidget.h"
 #include "Config.h"
-#include <QVBoxLayout>
-#include <QCheckBox>
-#include <QGroupBox>
 
 BehaviorSettingsWidget::BehaviorSettingsWidget(SettingsWindow* dialog, QWidget* parent)
 	: SettingsWidget(dialog, parent)

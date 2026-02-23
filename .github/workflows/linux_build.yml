@@ -14,11 +14,7 @@ on:
       os:
         required: false
         type: string
-        default: ubuntu-latest
-      platform:
-        required: false
-        type: string
-        default: x64
+        default: ubuntu-22.04
       compiler:
         required: false
         type: string
@@ -99,7 +95,6 @@ jobs:
             cmake \
             ninja-build \
             pkg-config \
-            glslc \
             libvulkan-dev \
             libgl1-mesa-dev \
             libegl-dev \
@@ -119,7 +114,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4.3.0
         with:
-          version: '6.10.1'
+          version: '6.10.2'
           host: 'linux'
           target: 'desktop'
           arch: 'linux_gcc_64'
@@ -172,25 +167,32 @@ jobs:
             exit 1
           fi
           
-          LINUXDEPLOY=./linuxdeploy-x86_64.AppImage
-          LINUXDEPLOY_PLUGIN_QT=./linuxdeploy-plugin-qt-x86_64.AppImage
-          APPIMAGETOOL=./appimagetool-x86_64.AppImage
+          export ARCH=$(uname -m)
+          if [ "$ARCH" = "aarch64" ]; then
+            APPIMAGE_ARCH="aarch64"
+          else
+            APPIMAGE_ARCH="x86_64"
+          fi
+          
+          LINUXDEPLOY=./linuxdeploy-${APPIMAGE_ARCH}.AppImage
+          LINUXDEPLOY_PLUGIN_QT=./linuxdeploy-plugin-qt-${APPIMAGE_ARCH}.AppImage
+          APPIMAGETOOL=./appimagetool-${APPIMAGE_ARCH}.AppImage
           
           echo "Downloading linuxdeploy..."
           if [ ! -f "$LINUXDEPLOY" ]; then
-            wget -q -O "$LINUXDEPLOY" https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+            wget -q -O "$LINUXDEPLOY" https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-${APPIMAGE_ARCH}.AppImage
             chmod +x "$LINUXDEPLOY"
           fi
           
           echo "Downloading linuxdeploy Qt plugin..."
           if [ ! -f "$LINUXDEPLOY_PLUGIN_QT" ]; then
-            wget -q -O "$LINUXDEPLOY_PLUGIN_QT" https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+            wget -q -O "$LINUXDEPLOY_PLUGIN_QT" https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-${APPIMAGE_ARCH}.AppImage
             chmod +x "$LINUXDEPLOY_PLUGIN_QT"
           fi
           
           echo "Downloading appimagetool..."
           if [ ! -f "$APPIMAGETOOL" ]; then
-            wget -q -O "$APPIMAGETOOL" https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+            wget -q -O "$APPIMAGETOOL" https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${APPIMAGE_ARCH}.AppImage
             chmod +x "$APPIMAGETOOL"
           fi
           

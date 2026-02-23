@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "IconWidget.h"
@@ -6,14 +6,9 @@
 #include "../../common/Logger.h"
 #include "../common/WindowInfo.h"
 #include <QResizeEvent>
-#include <QShowEvent>
-#include <QTimerEvent>
-#include <QDebug>
-#include <QGuiApplication>
 #if defined(__linux__)
 #include <qpa/qplatformnativeinterface.h>
 #endif
-#include <QWindow>
 #include <algorithm>
 #include <cctype>
 

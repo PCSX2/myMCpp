@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #pragma once
@@ -155,5 +155,5 @@ namespace AnimationUtils
 		const std::unordered_map<uint32_t, float>& shapeWeights,
 		uint32_t vertexCount);
 
-	float computeAnimationTime(double elapsedSeconds, float frameLength);
+	float computeAnimationTime(double elapsedSeconds, float frameLength, float speed = 1.0f);
 } // namespace AnimationUtils

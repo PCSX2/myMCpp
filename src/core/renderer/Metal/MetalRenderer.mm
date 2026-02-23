@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "MetalRenderer.h"
@@ -66,7 +66,8 @@ void MetalRendererImpl::updateVertexData(const MetalResources::FrameResources& f
 {
     float time = AnimationUtils::computeAnimationTime(
         std::chrono::duration<double>(std::chrono::steady_clock::now() - animStart).count(),
-        icon ? static_cast<float>(icon->getFrameLength()) : 1.0f);
+        icon ? static_cast<float>(icon->getFrameLength()) : 1.0f,
+        icon ? icon->getAnimSpeed() : 1.0f);
 
     std::unordered_map<uint32_t, float> weights;
     if (icon && animationEnabled) {

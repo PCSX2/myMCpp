@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #pragma once
@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <fstream>
 #include <stdexcept>
 
 class PS2SaveFile;

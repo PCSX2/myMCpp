@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "ps2mc_cli.h"
@@ -9,9 +9,6 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-#include <cstdlib>
-#include <ctime>
-#include <cstring>
 #include <filesystem>
 
 namespace fs = std::filesystem;

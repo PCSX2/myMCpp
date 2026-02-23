@@ -9,12 +9,6 @@ This is a complete C++ rewrite of the original python-based [mymc++](https://git
 <!-- TODO: Make screenshot before release
 ![Screenshot](docs/screenshot.png) -->
 
-## Installation
-
-Since this is a C++ project, you'll generally need to build it from source unless you've downloaded a pre-built release.
-
-Please refer to **[build.md](docs/build.md)** for detailed compilation instructions for Windows, macOS, and Linux (Android/iOS/UWP ports planned).
-
 ## Usage
 
 ### Graphical Interface

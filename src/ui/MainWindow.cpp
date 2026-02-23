@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "MainWindow.h"
@@ -11,21 +11,9 @@
 #include "Settings/SettingsWindow.h"
 #include "Config.h"
 #include "Themes.h"
-#include <QApplication>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QSplitter>
-#include <QStatusBar>
-#include <QToolBar>
-#include <QMenuBar>
 #include <QDesktopServices>
-#include <QUrl>
-#include <QStyle>
-#include <QLabel>
-#include <QFileInfo>
-#include <QFile>
 #include <QInputDialog>
 
 #include "ui_MainWindow.h"
@@ -70,7 +58,6 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::onAbout);
 	connect(ui->actionGitHub, &QAction::triggered, this, &MainWindow::onGitHubRepository);
 	connect(ui->actionDocumentation, &QAction::triggered, this, &MainWindow::onDocumentation);
-	connect(ui->actionDiscord, &QAction::triggered, this, &MainWindow::onDiscordServer);
 	connect(ui->actionCheckUpdates, &QAction::triggered, this, &MainWindow::onCheckForUpdates);
 	connect(ui->actionAboutQt, &QAction::triggered, this, &MainWindow::onAboutQt);
 
@@ -224,7 +211,12 @@ void MainWindow::onOpenMemoryCard()
 		this,
 		tr("Open Memory Card"),
 		"",
-		tr("All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd *.bin *.mc);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;Raw Memory Card (*.bin *.mc);;All Files (*.*)"));
+		tr("All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd *.bin *.mc);;"
+		   "PCSX2 Memory Card (*.ps2);;"
+		   "PS3 Virtual Memory Card (*.vm2 *.vmc);;"
+		   "MemCard PRO2 (*.mc2 *.mcd);;"
+		   "Raw Memory Card (*.bin *.mc);;"
+		   "All Files (*.*)"));
 
 	if (filename.isEmpty())
 	{
@@ -432,12 +424,6 @@ void MainWindow::onDocumentation()
 	QDesktopServices::openUrl(QUrl("https://github.com/SternXD/myMCpp/wiki"));
 }
 
-void MainWindow::onDiscordServer()
-{
-	// Replace TBD with actual invite code when I figure what I'm going to do here
-	QDesktopServices::openUrl(QUrl("https://discord.gg"));
-}
-
 void MainWindow::onCheckForUpdates()
 {
 	QMessageBox::information(this, tr("Check for Updates"),
@@ -519,7 +505,7 @@ void MainWindow::updateStatusBar()
 			uint32_t allocatable = memoryCard->getAllocatableSpace();
 			double freeMB = freeSpace / (1024.0 * 1024.0);
 			double totalMB = allocatable / (1024.0 * 1024.0);
-			ui->statusBar->showMessage(tr("%1 MB / %2 MB Free").arg(totalMB, 0, 'f', 2).arg(freeMB, 0, 'f', 2));
+			ui->statusBar->showMessage(tr("Free: %2 MB / Total: %1 MB").arg(totalMB, 0, 'f', 2).arg(freeMB, 0, 'f', 2));
 		}
 		catch (...)
 		{

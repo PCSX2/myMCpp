@@ -1,13 +1,11 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #pragma once
 
-#include <QIcon>
 #include <QDialog>
 #include <memory>
 #include <vector>
-#include <QMap>
 
 class Config;
 class QListWidget;

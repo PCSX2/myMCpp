@@ -1,16 +1,10 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "FilesSettingsWidget.h"
 #include "SettingsWindow.h"
 #include "ui_FilesSettingsWidget.h"
 #include "Config.h"
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGroupBox>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
 #include <QFileDialog>
 
 FilesSettingsWidget::FilesSettingsWidget(SettingsWindow* dialog, QWidget* parent)

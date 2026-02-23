@@ -1,13 +1,10 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "AdvancedSettingsWidget.h"
 #include "SettingsWindow.h"
 #include "ui_AdvancedSettingsWidget.h"
 #include "Config.h"
-#include <QVBoxLayout>
-#include <QCheckBox>
-#include <QGroupBox>
 
 AdvancedSettingsWidget::AdvancedSettingsWidget(SettingsWindow* dialog, QWidget* parent)
 	: SettingsWidget(dialog, parent)

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "CardActionHandler.h"
@@ -6,7 +6,6 @@
 #include "ps2save.h"
 #include <QMessageBox>
 #include <QStatusBar>
-#include <QWidget>
 #include <QFileInfo>
 
 CardActionHandler::CardActionHandler(QWidget* parent)

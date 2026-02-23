@@ -1,10 +1,8 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #pragma once
 
-#include <QWidget>
-#include <QLabel>
 #include <memory>
 
 class PS2MemoryCard;

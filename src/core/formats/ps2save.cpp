@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "ps2save.h"
@@ -8,7 +8,6 @@
 #include <fstream>
 #include <cstring>
 #include <algorithm>
-#include <stdexcept>
 #include <cctype>
 #include <ctime>
 #include <zlib.h>

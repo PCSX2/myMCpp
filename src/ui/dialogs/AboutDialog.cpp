@@ -1,12 +1,10 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "AboutDialog.h"
 #include "ui_AboutDialog.h"
 #include "ResourcePath.h"
 #include <QDesktopServices>
-#include <QUrl>
-#include <QVBoxLayout>
 #include <QTextBrowser>
 #include <QDialogButtonBox>
 

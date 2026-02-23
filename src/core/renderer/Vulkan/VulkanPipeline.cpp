@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "VulkanPipeline.h"
@@ -50,6 +50,28 @@ void VulkanPipeline::destroy(VkDevice device)
 		vkDestroyShaderModule(device, m_vertexShader, nullptr);
 		m_vertexShader = VK_NULL_HANDLE;
 	}
+	if (m_pipelineCache != VK_NULL_HANDLE)
+	{
+		vkDestroyPipelineCache(device, m_pipelineCache, nullptr);
+		m_pipelineCache = VK_NULL_HANDLE;
+	}
+}
+
+bool VulkanPipeline::createPipelineCache(VkDevice device)
+{
+	VkPipelineCacheCreateInfo cacheInfo{};
+	cacheInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+	cacheInfo.initialDataSize = 0;
+	cacheInfo.pInitialData = nullptr;
+
+	if (vkCreatePipelineCache(device, &cacheInfo, nullptr, &m_pipelineCache) != VK_SUCCESS)
+	{
+		Logger::error("VK: Failed to create pipeline cache");
+		return false;
+	}
+
+	Logger::info("VK: Pipeline cache created");
+	return true;
 }
 
 VkShaderModule VulkanPipeline::createShaderModule(VkDevice device, const std::vector<char>& code)
@@ -120,7 +142,7 @@ bool VulkanPipeline::createShaderModules(VkDevice device)
 	return true;
 }
 
-bool VulkanPipeline::createMainPipeline(VkDevice device, VkRenderPass renderPass, VkExtent2D extent)
+bool VulkanPipeline::createMainPipeline(VkDevice device, VkRenderPass renderPass)
 {
 	if (!createShaderModules(device))
 		return false;
@@ -174,24 +196,12 @@ bool VulkanPipeline::createMainPipeline(VkDevice device, VkRenderPass renderPass
 	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 	inputAssembly.primitiveRestartEnable = VK_FALSE;
 
-	VkViewport viewport{};
-	viewport.x = 0.0f;
-	viewport.y = 0.0f;
-	viewport.width = static_cast<float>(extent.width);
-	viewport.height = static_cast<float>(extent.height);
-	viewport.minDepth = 0.0f;
-	viewport.maxDepth = 1.0f;
-
-	VkRect2D scissor{};
-	scissor.offset = {0, 0};
-	scissor.extent = extent;
-
 	VkPipelineViewportStateCreateInfo viewportState{};
 	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	viewportState.viewportCount = 1;
-	viewportState.pViewports = &viewport;
+	viewportState.pViewports = nullptr;
 	viewportState.scissorCount = 1;
-	viewportState.pScissors = &scissor;
+	viewportState.pScissors = nullptr;
 
 	VkPipelineRasterizationStateCreateInfo rasterizer{};
 	rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
@@ -275,6 +285,16 @@ bool VulkanPipeline::createMainPipeline(VkDevice device, VkRenderPass renderPass
 	depthStencil.depthBoundsTestEnable = VK_FALSE;
 	depthStencil.stencilTestEnable = VK_FALSE;
 
+	std::array<VkDynamicState, 2> dynamicStates = {
+		VK_DYNAMIC_STATE_VIEWPORT,
+		VK_DYNAMIC_STATE_SCISSOR
+	};
+
+	VkPipelineDynamicStateCreateInfo dynamicState{};
+	dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+	dynamicState.pDynamicStates = dynamicStates.data();
+
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipelineInfo.stageCount = 2;
@@ -286,21 +306,22 @@ bool VulkanPipeline::createMainPipeline(VkDevice device, VkRenderPass renderPass
 	pipelineInfo.pMultisampleState = &multisampling;
 	pipelineInfo.pDepthStencilState = &depthStencil;
 	pipelineInfo.pColorBlendState = &colorBlending;
+	pipelineInfo.pDynamicState = &dynamicState;
 	pipelineInfo.layout = m_pipelineLayout;
 	pipelineInfo.renderPass = renderPass;
 	pipelineInfo.subpass = 0;
 
-	if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(device, m_pipelineCache, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) != VK_SUCCESS)
 	{
 		Logger::error("VK: Failed to create graphics pipeline");
 		return false;
 	}
 
-	Logger::info("VK: Graphics pipeline created successfully");
+	Logger::info("VK: Graphics pipeline created with dynamic viewport/scissor");
 	return true;
 }
 
-bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass renderPass, VkExtent2D extent)
+bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass renderPass)
 {
 	fs::path shaderPath = ResourcePath::shaders() / "Vulkan" / "background.vert.spv";
 	std::ifstream vertFile(shaderPath, std::ios::binary | std::ios::ate);
@@ -381,24 +402,12 @@ bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass rend
 	ia.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
 	ia.primitiveRestartEnable = VK_FALSE;
 
-	VkViewport viewport{};
-	viewport.x = 0.0f;
-	viewport.y = 0.0f;
-	viewport.width = static_cast<float>(extent.width);
-	viewport.height = static_cast<float>(extent.height);
-	viewport.minDepth = 0.0f;
-	viewport.maxDepth = 1.0f;
-
-	VkRect2D scissor{};
-	scissor.offset = {0, 0};
-	scissor.extent = extent;
-
 	VkPipelineViewportStateCreateInfo vp{};
 	vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	vp.viewportCount = 1;
-	vp.pViewports = &viewport;
+	vp.pViewports = nullptr;
 	vp.scissorCount = 1;
-	vp.pScissors = &scissor;
+	vp.pScissors = nullptr;
 
 	VkPipelineRasterizationStateCreateInfo rs{};
 	rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
@@ -454,6 +463,16 @@ bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass rend
 	bgDepth.depthBoundsTestEnable = VK_FALSE;
 	bgDepth.stencilTestEnable = VK_FALSE;
 
+	std::array<VkDynamicState, 2> dynamicStates = {
+		VK_DYNAMIC_STATE_VIEWPORT,
+		VK_DYNAMIC_STATE_SCISSOR
+	};
+
+	VkPipelineDynamicStateCreateInfo dynamicState{};
+	dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+	dynamicState.pDynamicStates = dynamicStates.data();
+
 	VkGraphicsPipelineCreateInfo pi{};
 	pi.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pi.stageCount = 2;
@@ -465,11 +484,12 @@ bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass rend
 	pi.pMultisampleState = &ms;
 	pi.pDepthStencilState = &bgDepth;
 	pi.pColorBlendState = &cb;
+	pi.pDynamicState = &dynamicState;
 	pi.layout = m_bgPipelineLayout;
 	pi.renderPass = renderPass;
 	pi.subpass = 0;
 
-	if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pi, nullptr, &m_bgPipeline) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(device, m_pipelineCache, 1, &pi, nullptr, &m_bgPipeline) != VK_SUCCESS)
 	{
 		Logger::error("VK: Failed to create background pipeline");
 		vkDestroyPipelineLayout(device, m_bgPipelineLayout, nullptr);
@@ -481,5 +501,6 @@ bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass rend
 
 	vkDestroyShaderModule(device, bgVert, nullptr);
 	vkDestroyShaderModule(device, bgFrag, nullptr);
+	Logger::info("VK: Background pipeline created with dynamic viewport/scissor");
 	return true;
 }

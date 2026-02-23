@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "ps2icon.h"
@@ -180,31 +180,44 @@ namespace PS2Icon
 			throw std::runtime_error("Invalid animation ID tag");
 		}
 
+
+		if (static_cast<size_t>(frameCount) > (length - offset) / FRAME_DATA_SIZE)
+		{
+			throw std::runtime_error("Icon file too small for animation frames");
+		}
+
+
 		frames.resize(frameCount);
+		
+		uint32_t loadedFrames = 0;
 
 		for (uint32_t i = 0; i < frameCount; ++i)
 		{
 			if (length < offset + FRAME_DATA_SIZE)
 			{
-				throw std::runtime_error("Icon file too small for frame data");
+				Logger::warn("PS2Icon: EOF reached reading frame header {}/{}, stopping.", i, frameCount);
+				break;
 			}
 
-			frames[i].shapeId = readLE<uint32_t>(data, offset);
-			uint32_t keyCount = readLE<uint32_t>(data, offset + 4);
+			uint32_t shapeId = readLE<uint32_t>(data, offset);
+			uint32_t rawKeyCount = readLE<uint32_t>(data, offset + 4);
 
-			keyCount -= 1;
+			uint32_t keyCount = (rawKeyCount > 0) ? (rawKeyCount - 1) : 0;
+
+			if (static_cast<size_t>(keyCount) > (length - (offset + FRAME_DATA_SIZE)) / FRAME_KEY_SIZE)
+			{
+				Logger::warn("PS2Icon: Invalid key count {} at frame {}/{} (avail bytes: {}). Truncating animation.", 
+					keyCount, i, frameCount, length - (offset + FRAME_DATA_SIZE));
+				break;
+			}
 
 			offset += FRAME_DATA_SIZE;
 
+			frames[i].shapeId = shapeId;
 			frames[i].keys.resize(keyCount);
 
 			for (uint32_t k = 0; k < keyCount; ++k)
 			{
-				if (length < offset + FRAME_KEY_SIZE)
-				{
-					throw std::runtime_error("Icon file too small for frame keys");
-				}
-
 				uint32_t timeBits = readLE<uint32_t>(data, offset);
 				uint32_t valueBits = readLE<uint32_t>(data, offset + 4);
 
@@ -213,6 +226,14 @@ namespace PS2Icon
 
 				offset += FRAME_KEY_SIZE;
 			}
+			
+			loadedFrames++;
+		}
+		
+		if (loadedFrames < frameCount)
+		{
+			frames.resize(loadedFrames);
+			Logger::info("PS2Icon: Loaded {}/{} frames", loadedFrames, frameCount);
 		}
 
 		return offset;
@@ -253,20 +274,27 @@ namespace PS2Icon
 
 	size_t Icon::loadTextureUncompressed(const uint8_t* data, size_t length, size_t offset)
 	{
-		if (length < offset + TEXTURE_SIZE)
+		size_t avail = (length > offset) ? length - offset : 0;
+		if (avail < TEXTURE_SIZE)
 		{
-			throw std::runtime_error("Icon file too small for uncompressed texture");
+			Logger::warn("PS2Icon: Texture truncated. Expected {} bytes, got {}. Padding with zeros.", TEXTURE_SIZE, avail);
 		}
 
 		texture.resize(TEXTURE_WIDTH * TEXTURE_HEIGHT);
 
-		// Copy 16 bit texture data
-		for (int i = 0; i < TEXTURE_WIDTH * TEXTURE_HEIGHT; ++i)
+		size_t pixelsToRead = std::min(avail, static_cast<size_t>(TEXTURE_SIZE)) / 2;
+
+		for (size_t i = 0; i < pixelsToRead; ++i)
 		{
 			texture[i] = readLE<uint16_t>(data, offset + i * 2);
 		}
 
-		return offset + TEXTURE_SIZE;
+		for (size_t i = pixelsToRead; i < TEXTURE_WIDTH * TEXTURE_HEIGHT; ++i)
+		{
+			texture[i] = 0;
+		}
+
+		return std::min(length, offset + TEXTURE_SIZE);
 	}
 
 	size_t Icon::loadTextureCompressed(const uint8_t* data, size_t length, size_t offset)

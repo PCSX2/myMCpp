@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
 #pragma once
@@ -11,7 +11,6 @@
 #include "VulkanPipeline.h"
 #include "VulkanResources.h"
 #include <vulkan/vulkan.h>
-#include <glm/glm.hpp>
 #include <memory>
 #include <vector>
 #include <cstdint>
@@ -71,6 +70,9 @@ private:
 	VulkanResources m_vulkanResources;
 
 	std::vector<VkCommandBuffer> m_commandBuffers;
+
+	uint32_t m_currentFrame = 0;
+	std::vector<VkFence> m_imagesInFlight;
 
 	std::shared_ptr<PS2Icon::Icon> m_icon;
 	VkBuffer m_vertexBuffer;

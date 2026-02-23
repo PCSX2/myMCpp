@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 SternXD
+// SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 // Based on code from PCSX2: (https://github.com/PCSX2/pcsx2/blob/master/pcsx2/GS/Renderers/OpenGL/GLContext.cpp)
 
