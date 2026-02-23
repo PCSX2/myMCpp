@@ -117,6 +117,8 @@ bool VulkanSwapchain::createSwapchain(VulkanDevice& device, uint32_t width, uint
 			break;
 		}
 	}
+	
+	m_presentMode = presentMode;
 
 	VkExtent2D extent = capabilities.currentExtent;
 	if (extent.width == UINT32_MAX)
@@ -367,4 +369,75 @@ bool VulkanSwapchain::createFramebuffers(VkDevice device)
 	}
 
 	return true;
+}
+
+void VulkanSwapchain::setVSync(VulkanDevice& device, bool enabled)
+{
+	VkPresentModeKHR newPresentMode = enabled ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_MAILBOX_KHR;
+
+	if (newPresentMode != m_presentMode && m_swapchain != VK_NULL_HANDLE)
+	{
+		Logger::info("VK: Recreating swapchain with VSync {}", enabled ? "enabled" : "disabled");
+
+		vkDeviceWaitIdle(device.getDevice());
+
+		VkSwapchainKHR oldSwapchain = m_swapchain;
+
+		VkSurfaceCapabilitiesKHR capabilities;
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device.getPhysicalDevice(), device.getSurface(), &capabilities);
+
+		VkSwapchainCreateInfoKHR createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+		createInfo.pNext = nullptr;
+		createInfo.surface = device.getSurface();
+		createInfo.minImageCount = capabilities.minImageCount + 1;
+		createInfo.imageFormat = m_format;
+		createInfo.imageColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+		createInfo.imageExtent = m_extent;
+		createInfo.imageArrayLayers = 1;
+		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+		createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		createInfo.preTransform = capabilities.currentTransform;
+		createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+		createInfo.presentMode = newPresentMode;
+		createInfo.clipped = VK_TRUE;
+		createInfo.oldSwapchain = oldSwapchain;
+
+		VkSwapchainKHR newSwapchain;
+		if (vkCreateSwapchainKHR(device.getDevice(), &createInfo, nullptr, &newSwapchain) != VK_SUCCESS)
+		{
+			Logger::error("VK: Failed to recreate swapchain for VSync change");
+			return;
+		}
+
+		m_swapchain = newSwapchain;
+		m_presentMode = newPresentMode;
+
+		for (auto imageView : m_imageViews)
+		{
+			vkDestroyImageView(device.getDevice(), imageView, nullptr);
+		}
+		m_imageViews.clear();
+
+		for (auto framebuffer : m_framebuffers)
+		{
+			vkDestroyFramebuffer(device.getDevice(), framebuffer, nullptr);
+		}
+		m_framebuffers.clear();
+
+		uint32_t imageCount;
+		vkGetSwapchainImagesKHR(device.getDevice(), m_swapchain, &imageCount, nullptr);
+		m_images.resize(imageCount);
+		vkGetSwapchainImagesKHR(device.getDevice(), m_swapchain, &imageCount, m_images.data());
+		if (!createImageViews(device.getDevice()) || !createFramebuffers(device.getDevice()))
+		{
+			Logger::error("VK: Failed to recreate swapchain resources for VSync change");
+			return;
+		}
+
+		if (oldSwapchain != VK_NULL_HANDLE)
+		{
+			vkDestroySwapchainKHR(device.getDevice(), oldSwapchain, nullptr);
+		}
+	}
 }

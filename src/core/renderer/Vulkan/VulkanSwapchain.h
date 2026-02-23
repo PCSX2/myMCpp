@@ -31,6 +31,8 @@ public:
 	const std::vector<VkFramebuffer>& getFramebuffers() const { return m_framebuffers; }
 	VkFormat getDepthFormat() const { return m_depthFormat; }
 
+	void setVSync(VulkanDevice& device, bool enabled);
+
 private:
 	bool createSwapchain(VulkanDevice& device, uint32_t width, uint32_t height);
 	bool createImageViews(VkDevice device);
@@ -52,4 +54,6 @@ private:
 
 	VkRenderPass m_renderPass = VK_NULL_HANDLE;
 	std::vector<VkFramebuffer> m_framebuffers;
+	
+	VkPresentModeKHR m_presentMode = VK_PRESENT_MODE_FIFO_KHR;
 };
