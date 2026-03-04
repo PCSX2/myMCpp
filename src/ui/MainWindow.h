@@ -15,6 +15,7 @@ class CardActionHandler;
 class QStatusBar;
 class QLabel;
 class Config;
+class DiscordRPCManager;
 
 class MainWindow : public QMainWindow
 {
@@ -65,4 +66,5 @@ private:
 
 	Config* m_config;
 	class SettingsWindow* m_settingsWindow;
+	std::unique_ptr<DiscordRPCManager> m_discordRpc;
 };

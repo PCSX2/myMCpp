@@ -393,6 +393,23 @@ void Config::setForceImport(bool enabled)
 	m_config["behavior"]["force_import"] = enabled;
 }
 
+bool Config::getDiscordRPCEnabled() const
+{
+	try
+	{
+		return m_config["behavior"]["discord_rpc_enabled"].get<bool>();
+	}
+	catch (...)
+	{
+		return false;
+	}
+}
+
+void Config::setDiscordRPCEnabled(bool enabled)
+{
+	m_config["behavior"]["discord_rpc_enabled"] = enabled;
+}
+
 std::string Config::getMemoryCardFolder() const
 {
 	try
@@ -567,7 +584,8 @@ void Config::createDefaults()
 				   {"language", "en"}}},
 		{"behavior", {{"warn_on_delete", true},
 						 {"hide_to_tray", false},
-						 {"force_import", false}}},
+						 {"force_import", false},
+						 {"discord_rpc_enabled", true}}},
 		{"paths", {{"memory_card_folder", "./memory_cards"}}},
 		{"debug", {{"logging", false},
 					  {"verbose", false}}},
@@ -631,6 +649,8 @@ void Config::ensureKeys()
 		m_config["behavior"]["hide_to_tray"] = false;
 	if (!m_config["behavior"].contains("force_import"))
 		m_config["behavior"]["force_import"] = false;
+	if (!m_config["behavior"].contains("discord_rpc_enabled"))
+		m_config["behavior"]["discord_rpc_enabled"] = true;
 
 	if (!m_config["paths"].contains("memory_card_folder"))
 		m_config["paths"]["memory_card_folder"] = "./memory_cards";

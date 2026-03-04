@@ -9,6 +9,7 @@
 #include "dialogs/AboutDialog.h"
 #include "ps2mc.h"
 #include "Settings/SettingsWindow.h"
+#include "DiscordRPCManager.h"
 #include "Config.h"
 #include "Themes.h"
 #include <QFileDialog>
@@ -18,12 +19,40 @@
 
 #include "ui_MainWindow.h"
 
+namespace
+{
+	QString getCardTypeLabelFromPath(const QString& cardPath)
+	{
+		const QString ext = QFileInfo(cardPath).suffix().toLower();
+		if (ext == QStringLiteral("ps2"))
+			return QStringLiteral("PCSX2");
+		if (ext == QStringLiteral("mc2") || ext == QStringLiteral("mcd"))
+			return QStringLiteral("MemCard PRO2");
+		if (ext == QStringLiteral("vm2") || ext == QStringLiteral("vmc"))
+			return QStringLiteral("PS3 VMC");
+		if (ext == QStringLiteral("bin") || ext == QStringLiteral("mc"))
+			return QStringLiteral("Raw");
+		return QStringLiteral("Memory Card");
+	}
+
+	QString makeCardDisplayLabel(const QString& cardPath)
+	{
+		if (cardPath.isEmpty())
+			return QStringLiteral("Memory Card");
+
+		return QStringLiteral("%1 (%2)").arg(
+			QFileInfo(cardPath).fileName(),
+			getCardTypeLabelFromPath(cardPath));
+	}
+} // namespace
+
 MainWindow::MainWindow(Config* config, QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow)
 	, memoryCard(nullptr)
 	, m_config(config)
 	, m_settingsWindow(nullptr)
+	, m_discordRpc(std::make_unique<DiscordRPCManager>(this))
 {
 	ui->setupUi(this);
 	ui->detailsPanel->setConfig(config);
@@ -143,7 +172,8 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	});
 
 	connect(ui->cardBrowser, &MemoryCardBrowser::importArbitraryFileRequested, this, [this](const QString& targetDir) {
-		if (!memoryCard) return;
+		if (!memoryCard)
+			return;
 		QString fileName = QFileDialog::getOpenFileName(this, tr("Import File"), "", tr("All Files (*.*)"));
 		if (!fileName.isEmpty())
 		{
@@ -152,7 +182,6 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	});
 
 	connect(ui->cardBrowser, &MemoryCardBrowser::createFolderRequested, this, [this](const QString& parentPath) {
-
 		if (!memoryCard)
 		{
 			return;
@@ -184,8 +213,14 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 
 	actionHandler->setStatusBar(ui->statusBar);
 
-	if (m_config) {
+	if (m_config)
+	{
 		Themes::UpdateApplicationTheme(m_config);
+		m_discordRpc->setEnabled(m_config->getDiscordRPCEnabled());
+		if (m_discordRpc && !currentCardPath.isEmpty())
+		{
+			m_discordRpc->setCardOpenContext(makeCardDisplayLabel(currentCardPath));
+		}
 	}
 
 	updateStatusBar();
@@ -240,6 +275,11 @@ void MainWindow::onOpenMemoryCard()
 		ui->actionExport->setEnabled(true);
 		ui->actionFormat->setEnabled(true);
 		ui->actionSelectAll->setEnabled(true);
+
+		if (m_discordRpc)
+		{
+			m_discordRpc->setCardOpenContext(makeCardDisplayLabel(currentCardPath));
+		}
 	}
 }
 
@@ -283,6 +323,11 @@ void MainWindow::onCreateMemoryCard()
 		ui->actionFormat->setEnabled(true);
 		ui->actionSelectAll->setEnabled(true);
 
+		if (m_discordRpc)
+		{
+			m_discordRpc->setCardOpenContext(makeCardDisplayLabel(currentCardPath));
+		}
+
 		ui->statusBar->showMessage(tr("Created %1 MB memory card").arg(sizeMB), 5000);
 	}
 }
@@ -311,6 +356,12 @@ void MainWindow::onImportSave()
 	}
 
 	actionHandler->importSave(memoryCard.get(), filename);
+	if (m_discordRpc)
+	{
+		m_discordRpc->setTemporaryPresence(
+			tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
+			tr("Imported Save: %1").arg(QFileInfo(filename).fileName()));
+	}
 	updateCardView();
 }
 
@@ -336,12 +387,18 @@ void MainWindow::onExportSave()
 
 	QString savePath = ui->cardBrowser->getCurrentSavePath();
 	actionHandler->exportSave(memoryCard.get(), savePath, filename);
+	if (m_discordRpc)
+	{
+		m_discordRpc->setTemporaryPresence(
+			tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
+			tr("Exported Save: %1").arg(QFileInfo(filename).fileName()));
+	}
 }
 
 void MainWindow::onDeleteFile()
 {
 	QString savePath = ui->cardBrowser->getSelectedPath();
-	
+
 	if (savePath.isEmpty())
 	{
 		QMessageBox::information(this, tr("Delete"),
@@ -361,6 +418,12 @@ void MainWindow::onDeleteFile()
 	}
 
 	actionHandler->deleteSave(memoryCard.get(), savePath);
+	if (m_discordRpc)
+	{
+		m_discordRpc->setTemporaryPresence(
+			tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
+			tr("Deleted: %1").arg(QFileInfo(savePath).fileName()));
+	}
 	ui->statusBar->showMessage(tr("Deleted %1").arg(savePath), 5000);
 
 	updateCardView();
@@ -375,6 +438,12 @@ void MainWindow::onFormatCard()
 	}
 
 	actionHandler->formatCard(memoryCard.get(), currentCardPath);
+	if (m_discordRpc)
+	{
+		m_discordRpc->setTemporaryPresence(
+			tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
+			tr("Formatted Memory Card"));
+	}
 	updateCardView();
 }
 
@@ -387,6 +456,19 @@ void MainWindow::onSettingsChanged()
 
 	updateForceImportWarning();
 	updateCardView();
+
+	if (m_config && m_discordRpc)
+	{
+		m_discordRpc->setEnabled(m_config->getDiscordRPCEnabled());
+		if (!currentCardPath.isEmpty())
+		{
+			m_discordRpc->setCardOpenContext(makeCardDisplayLabel(currentCardPath));
+		}
+		else
+		{
+			m_discordRpc->resetToIdle();
+		}
+	}
 }
 
 void MainWindow::onPreferences()
@@ -394,9 +476,9 @@ void MainWindow::onPreferences()
 	if (!m_settingsWindow)
 	{
 		m_settingsWindow = new SettingsWindow(m_config, this);
-		
+
 		connect(m_settingsWindow, &SettingsWindow::applicationSettingsChanged, this, &MainWindow::onSettingsChanged);
-		
+
 		connect(m_settingsWindow, &QDialog::finished, m_settingsWindow, &QObject::deleteLater);
 		connect(m_settingsWindow, &QObject::destroyed, this, [this]() {
 			m_settingsWindow = nullptr;
@@ -438,6 +520,42 @@ void MainWindow::onAboutQt()
 
 void MainWindow::onCardItemSelected()
 {
+	auto getCurrentSaveDisplayName = [this]() -> QString {
+		QString currentSavePath = ui->cardBrowser->getCurrentPath();
+		if (currentSavePath.startsWith('/'))
+		{
+			currentSavePath.remove(0, 1);
+		}
+
+		QString fallback = currentSavePath.isEmpty() ? tr("Save") : currentSavePath;
+		if (!memoryCard || !ui->cardBrowser->isInsideSave())
+		{
+			return fallback;
+		}
+
+		try
+		{
+			const std::string savePath = ui->cardBrowser->getCurrentPath().toStdString();
+			const std::string title = memoryCard->getSaveTitle(savePath);
+			const std::string subtitle = memoryCard->getSaveSubtitle(savePath);
+
+			if (!title.empty())
+			{
+				QString display = QString::fromStdString(title);
+				if (!subtitle.empty())
+				{
+					display += QStringLiteral(" ") + QString::fromStdString(subtitle);
+				}
+				return display;
+			}
+		}
+		catch (...)
+		{
+		}
+
+		return fallback;
+	};
+
 	QString selectedPath = ui->cardBrowser->getSelectedPath();
 	if (!memoryCard || selectedPath.isEmpty())
 	{
@@ -447,6 +565,19 @@ void MainWindow::onCardItemSelected()
 		}
 		ui->actionDelete->setEnabled(false);
 		ui->actionExport->setEnabled(false);
+		if (m_discordRpc && !currentCardPath.isEmpty())
+		{
+			if (ui->cardBrowser->isInsideSave())
+			{
+				m_discordRpc->setPresenceText(
+					tr("Inside: %1").arg(getCurrentSaveDisplayName()),
+					tr("Browsing Files"));
+			}
+			else
+			{
+				m_discordRpc->setCardOpenContext(makeCardDisplayLabel(currentCardPath));
+			}
+		}
 		return;
 	}
 
@@ -461,6 +592,26 @@ void MainWindow::onCardItemSelected()
 	QString modified = item->text(2);
 
 	ui->detailsPanel->setSave(memoryCard.get(), savePath, size, modified);
+
+	if (m_discordRpc)
+	{
+		const QString highlighted = item->text(0).trimmed().isEmpty() ? item->data(0, Qt::UserRole).toString() : item->text(0);
+		const bool isDir = item->data(0, Qt::UserRole + 1).toBool();
+		if (ui->cardBrowser->isInsideSave())
+		{
+			const QString state = isDir ? tr("Selected Folder: %1").arg(highlighted) : tr("Selected File: %1").arg(highlighted);
+			m_discordRpc->setPresenceText(
+				tr("Inside: %1").arg(getCurrentSaveDisplayName()),
+				state);
+		}
+		else
+		{
+			const QString state = isDir ? tr("Highlighted Save: %1").arg(highlighted) : tr("Highlighted Item: %1").arg(highlighted);
+			m_discordRpc->setPresenceText(
+				tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
+				state);
+		}
+	}
 
 	ui->actionDelete->setEnabled(true);
 	ui->actionExport->setEnabled(true);
@@ -537,6 +688,11 @@ void MainWindow::closeCard()
 
 	actionHandler->closeCard();
 	updateStatusBar();
+
+	if (m_discordRpc)
+	{
+		m_discordRpc->resetToIdle();
+	}
 }
 
 void MainWindow::onSaveAs()
@@ -556,6 +712,12 @@ void MainWindow::onSaveAs()
 	try
 	{
 		memoryCard->saveAs(filename.toStdString(), true);
+		if (m_discordRpc)
+		{
+			m_discordRpc->setTemporaryPresence(
+				tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
+				tr("Saved As: %1").arg(QFileInfo(filename).fileName()));
+		}
 		ui->statusBar->showMessage(tr("Saved to %1").arg(filename), 5000);
 	}
 	catch (const std::exception& e)
@@ -600,6 +762,12 @@ void MainWindow::onEccTool()
 	try
 	{
 		memoryCard->saveAs(filename.toStdString(), !hasEcc);
+		if (m_discordRpc)
+		{
+			m_discordRpc->setTemporaryPresence(
+				tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
+				hasEcc ? tr("Removed ECC") : tr("Added ECC"));
+		}
 		ui->statusBar->showMessage(tr("Saved to %1").arg(filename), 5000);
 	}
 	catch (const std::exception& e)
@@ -653,10 +821,17 @@ void MainWindow::importFileToCard(const QString& savePath, const QString& hostFi
 
 		QFileInfo fileInfo(hostFilePath);
 		QString targetPath = savePath;
-		if (!targetPath.endsWith('/')) targetPath += "/";
+		if (!targetPath.endsWith('/'))
+			targetPath += "/";
 		targetPath += fileInfo.fileName();
 
 		memoryCard->writeFile(targetPath.toStdString(), fileData);
+		if (m_discordRpc)
+		{
+			m_discordRpc->setTemporaryPresence(
+				tr("Inside: %1").arg(savePath),
+				tr("Imported File: %1").arg(fileInfo.fileName()));
+		}
 		ui->statusBar->showMessage(tr("Imported %1").arg(fileInfo.fileName()), 5000);
 
 		ui->cardBrowser->navigateTo(savePath);

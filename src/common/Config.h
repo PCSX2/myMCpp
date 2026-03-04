@@ -72,6 +72,8 @@ public:
 
 	bool getForceImport() const;
 	void setForceImport(bool enabled);
+	bool getDiscordRPCEnabled() const;
+	void setDiscordRPCEnabled(bool enabled);
 
 	std::string getMemoryCardFolder() const;
 	void setMemoryCardFolder(const std::string& path);

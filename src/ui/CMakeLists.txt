@@ -1,5 +1,6 @@
 set(UI_SOURCES
     MainWindow.cpp
+    DiscordRPCManager.cpp
     Themes.cpp
     CardActionHandler.cpp
     widgets/MemoryCardBrowser.cpp
@@ -18,6 +19,7 @@ set(UI_SOURCES
 
 set(UI_HEADERS
     MainWindow.h
+    DiscordRPCManager.h
     Themes.h
     CardActionHandler.h
     widgets/MemoryCardBrowser.h

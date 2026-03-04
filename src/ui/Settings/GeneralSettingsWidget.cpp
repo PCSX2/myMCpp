@@ -20,6 +20,7 @@ GeneralSettingsWidget::GeneralSettingsWidget(SettingsWindow* dialog, QWidget* pa
 	registerHelp(ui->hideToTrayCheck, tr("Hide to System Tray"), tr("Minimize the application to the system tray instead of closing when you click the X button."));
 	registerHelp(ui->asciiModeCheck, tr("ASCII Mode"), tr("Use ASCII characters only for filenames when exporting. This helps with compatibility on some systems."));
 	registerHelp(ui->forceImportCheck, tr("Force Import"), tr("When importing files, overwrite existing files without prompting."));
+	registerHelp(ui->discordRpcCheck, tr("Enable Discord Rich Presence"), tr("Show your myMCpp activity in Discord while the GUI is open."));
 
 	ui->languageCombo->clear();
 	auto languages = TranslationManager::instance().getAvailableLanguages();
@@ -46,6 +47,7 @@ GeneralSettingsWidget::GeneralSettingsWidget(SettingsWindow* dialog, QWidget* pa
 	connect(ui->hideToTrayCheck, &QCheckBox::toggled, this, &SettingsWidget::settingChanged);
 	connect(ui->asciiModeCheck, &QCheckBox::toggled, this, &SettingsWidget::settingChanged);
 	connect(ui->forceImportCheck, &QCheckBox::toggled, this, &SettingsWidget::settingChanged);
+	connect(ui->discordRpcCheck, &QCheckBox::toggled, this, &SettingsWidget::settingChanged);
 
 	addTab(tr("General"), container);
 	loadSettings();
@@ -72,6 +74,7 @@ void GeneralSettingsWidget::loadSettings()
 	ui->hideToTrayCheck->setChecked(config->getHideToTrayOnClose());
 	ui->asciiModeCheck->setChecked(config->getAsciiMode());
 	ui->forceImportCheck->setChecked(config->getForceImport());
+	ui->discordRpcCheck->setChecked(config->getDiscordRPCEnabled());
 }
 
 void GeneralSettingsWidget::saveSettings()
@@ -86,6 +89,7 @@ void GeneralSettingsWidget::saveSettings()
 	config->setHideToTrayOnClose(ui->hideToTrayCheck->isChecked());
 	config->setAsciiMode(ui->asciiModeCheck->isChecked());
 	config->setForceImport(ui->forceImportCheck->isChecked());
+	config->setDiscordRPCEnabled(ui->discordRpcCheck->isChecked());
 }
 
 void GeneralSettingsWidget::restoreDefaults()
@@ -102,4 +106,5 @@ void GeneralSettingsWidget::restoreDefaults()
 	ui->hideToTrayCheck->setChecked(false);
 	ui->asciiModeCheck->setChecked(false);
 	ui->forceImportCheck->setChecked(false);
+	ui->discordRpcCheck->setChecked(false);
 }

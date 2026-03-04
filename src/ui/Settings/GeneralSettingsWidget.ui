@@ -114,6 +114,13 @@ https://github.com/PCSX2/pcsx2
         </property>
        </widget>
       </item>
+    <item>
+     <widget class="QCheckBox" name="discordRpcCheck">
+      <property name="text">
+       <string>Enable Discord Rich Presence</string>
+      </property>
+     </widget>
+    </item>
      </layout>
     </widget>
    </item>
@@ -139,6 +146,7 @@ https://github.com/PCSX2/pcsx2
   <tabstop>hideToTrayCheck</tabstop>
   <tabstop>asciiModeCheck</tabstop>
   <tabstop>forceImportCheck</tabstop>
+    <tabstop>discordRpcCheck</tabstop>
  </tabstops>
  <resources/>
  <connections/>

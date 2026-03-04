@@ -202,6 +202,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="DiscordRPCManager.cpp" />
     <ClCompile Include="Themes.cpp" />
     <ClCompile Include="CardActionHandler.cpp" />
     <ClCompile Include="widgets\MemoryCardBrowser.cpp" />
@@ -219,6 +220,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MainWindow.h" />
+    <QtMoc Include="DiscordRPCManager.h" />
     <ClInclude Include="Themes.h" />
     <QtMoc Include="CardActionHandler.h" />
     <QtMoc Include="widgets\MemoryCardBrowser.h" />
