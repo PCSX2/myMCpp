@@ -124,10 +124,13 @@ jobs:
       - name: Configure CMake (Clang)
         if: inputs.compiler == 'clang'
         run: |
-          cmake -B build -G Ninja \
-            -DCMAKE_BUILD_TYPE=${{ inputs.buildType }} \
-            -DCMAKE_C_COMPILER=clang \
-            -DCMAKE_CXX_COMPILER=clang++ \
+          if [ "${{ inputs.buildType }}" = "Debug" ]; then
+            PRESET="linux-dbg"
+          else
+            PRESET="linux-rel"
+          fi
+          echo "PRESET=$PRESET" >> $GITHUB_ENV
+          cmake --preset $PRESET \
             -DCMAKE_EXE_LINKER_FLAGS_INIT="-fuse-ld=lld" \
             -DCMAKE_MODULE_LINKER_FLAGS_INIT="-fuse-ld=lld" \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
@@ -137,20 +140,22 @@ jobs:
       - name: Configure CMake (GCC)
         if: inputs.compiler == 'gcc'
         run: |
-          cmake -B build -G Ninja \
-            -DCMAKE_BUILD_TYPE=${{ inputs.buildType }} \
-            -DCMAKE_C_COMPILER=gcc \
-            -DCMAKE_CXX_COMPILER=g++ \
+          if [ "${{ inputs.buildType }}" = "Debug" ]; then
+            PRESET="linux-gcc-dbg"
+          else
+            PRESET="linux-gcc-rel"
+          fi
+          echo "PRESET=$PRESET" >> $GITHUB_ENV
+          cmake --preset $PRESET \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             ${{ inputs.cmakeFlags }}
 
       - name: Build
-        working-directory: build
         run: |
           ccache -p
           ccache -z
-          ninja
+          cmake --build --preset ${{ env.PRESET }}
           ccache -s
 
       - name: Create AppImage
@@ -158,8 +163,13 @@ jobs:
         shell: bash
         run: |
           set -e
+          if [ "${{ inputs.buildType }}" = "Debug" ]; then
+            CONF="Debug"
+          else
+            CONF="MinSizeRel"
+          fi
           APPIMAGE_NAME="${{ steps.artifact-metadata.outputs.artifact-name }}.AppImage"
-          BUILD_DIR="build/bin/${{ inputs.buildType }}"
+          BUILD_DIR="build/${{ env.PRESET }}/bin/$CONF"
           APPDIRNAME="myMCpp.AppDir"
           
           if [ ! -f "${BUILD_DIR}/myMCpp" ]; then
@@ -252,7 +262,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: ${{ steps.artifact-metadata.outputs.artifact-name }}
-          path: build/bin/${{ inputs.buildType }}/
+          path: build/${{ env.PRESET }}/bin/*/
           if-no-files-found: error
           retention-days: 30
 
