@@ -38,15 +38,15 @@ file(GLOB_RECURSE UI_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.ui"
 )
 
-add_library(myMCpp_ui STATIC ${UI_SOURCES} ${UI_HEADERS} ${UI_FILES})
+add_library(myMCpp-qt STATIC ${UI_SOURCES} ${UI_HEADERS} ${UI_FILES})
 
-set_target_properties(myMCpp_ui PROPERTIES
+set_target_properties(myMCpp-qt PROPERTIES
     AUTOMOC ON
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_CURRENT_SOURCE_DIR}/widgets;${CMAKE_CURRENT_SOURCE_DIR}/dialogs;${CMAKE_CURRENT_SOURCE_DIR}/Settings"
 )
 
-target_include_directories(myMCpp_ui PUBLIC
+target_include_directories(myMCpp-qt PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/widgets
     ${CMAKE_CURRENT_SOURCE_DIR}/dialogs
@@ -56,14 +56,14 @@ target_include_directories(myMCpp_ui PUBLIC
 
 get_property(is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 if(is_multi_config)
-    target_include_directories(myMCpp_ui PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/myMCpp_ui_autogen/include_$<CONFIG>)
+    target_include_directories(myMCpp-qt PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/myMCpp-qt_autogen/include_$<CONFIG>)
 else()
-    target_include_directories(myMCpp_ui PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/myMCpp_ui_autogen/include)
+    target_include_directories(myMCpp-qt PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/myMCpp-qt_autogen/include)
 endif()
 
-target_link_libraries(myMCpp_ui PUBLIC
-    myMCpp_common
-    myMCpp_core
+target_link_libraries(myMCpp-qt PUBLIC
+    myMCpp-common
+    myMCpp-core
     Qt6::Core
     Qt6::Gui
     Qt6::GuiPrivate
@@ -71,7 +71,7 @@ target_link_libraries(myMCpp_ui PUBLIC
 )
 
 if(MSVC)
-    target_compile_options(myMCpp_ui PRIVATE /W4)
+    target_compile_options(myMCpp-qt PRIVATE /W4)
 else()
-    target_compile_options(myMCpp_ui PRIVATE -Wall -Wextra -pedantic)
+    target_compile_options(myMCpp-qt PRIVATE -Wall -Wextra -pedantic)
 endif()

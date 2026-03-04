@@ -17,9 +17,9 @@ if(ENABLE_VULKAN)
 endif()
 
 target_link_libraries(myMCpp PRIVATE
-    myMCpp_core
-    myMCpp_ui
-    myMCpp_cli
+    myMCpp-core
+    myMCpp-qt
+    myMCpp-cli
     Qt6::Core
     Qt6::Gui
     Qt6::GuiPrivate

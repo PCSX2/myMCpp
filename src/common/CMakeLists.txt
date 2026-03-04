@@ -21,21 +21,21 @@ if(APPLE)
     list(APPEND COMMON_HEADERS CocoaTools.h)
 endif()
 
-add_library(myMCpp_common STATIC ${COMMON_SOURCES} ${COMMON_HEADERS})
+add_library(myMCpp-common STATIC ${COMMON_SOURCES} ${COMMON_HEADERS})
 
-target_include_directories(myMCpp_common PUBLIC
+target_include_directories(myMCpp-common PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/core
 )
 
-target_link_libraries(myMCpp_common PUBLIC
+target_link_libraries(myMCpp-common PUBLIC
     spdlog::spdlog
     nlohmann_json::nlohmann_json
 )
 
 if(APPLE)
     find_library(ICONV_LIBRARY iconv)
-    target_link_libraries(myMCpp_common PUBLIC ${ICONV_LIBRARY})
+    target_link_libraries(myMCpp-common PUBLIC ${ICONV_LIBRARY})
     
     set_source_files_properties(
         CocoaTools.mm
@@ -45,12 +45,12 @@ endif()
 
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
-    target_include_directories(myMCpp_common PUBLIC ${X11_INCLUDE_DIR} ${X11_Xrandr_INCLUDE_PATH})
-    target_link_libraries(myMCpp_common PUBLIC ${X11_LIBRARIES} ${X11_Xrandr_LIB})
+    target_include_directories(myMCpp-common PUBLIC ${X11_INCLUDE_DIR} ${X11_Xrandr_INCLUDE_PATH})
+    target_link_libraries(myMCpp-common PUBLIC ${X11_LIBRARIES} ${X11_Xrandr_LIB})
 endif()
 
 if(MSVC)
-    target_compile_options(myMCpp_common PRIVATE /W4)
+    target_compile_options(myMCpp-common PRIVATE /W4)
 else()
-    target_compile_options(myMCpp_common PRIVATE -Wall -Wextra -pedantic)
+    target_compile_options(myMCpp-common PRIVATE -Wall -Wextra -pedantic)
 endif()
