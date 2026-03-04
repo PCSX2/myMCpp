@@ -66,19 +66,19 @@ if(APPLE)
     )
 endif()
 
-add_library(myMCpp_core STATIC ${CORE_SOURCES} ${CORE_HEADERS})
+add_library(myMCpp-core STATIC ${CORE_SOURCES} ${CORE_HEADERS})
 
 if(ENABLE_VULKAN)
-    target_compile_definitions(myMCpp_core PUBLIC ENABLE_VULKAN)
+    target_compile_definitions(myMCpp-core PUBLIC ENABLE_VULKAN)
 endif()
 
-target_include_directories(myMCpp_core PUBLIC
+target_include_directories(myMCpp-core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/formats
 )
 
-target_link_libraries(myMCpp_core PUBLIC
-    myMCpp_common
+target_link_libraries(myMCpp-core PUBLIC
+    myMCpp-common
     Qt6::Core
     Qt6::Widgets
     nlohmann_json::nlohmann_json
@@ -86,24 +86,24 @@ target_link_libraries(myMCpp_core PUBLIC
     glfw
 )
 
-target_include_directories(myMCpp_core PUBLIC
+target_include_directories(myMCpp-core PUBLIC
     ${glm_SOURCE_DIR}
     ${glfw_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/3rdparty/glad/include
 )
 
-target_sources(myMCpp_core PRIVATE
+target_sources(myMCpp-core PRIVATE
     ${CMAKE_SOURCE_DIR}/3rdparty/glad/src/gl.c
 )
 
 if(WIN32)
-    target_sources(myMCpp_core PRIVATE
+    target_sources(myMCpp-core PRIVATE
         ${CMAKE_SOURCE_DIR}/3rdparty/glad/src/wgl.c
     )
 endif()
 
 if(ENABLE_VULKAN)
-    target_link_libraries(myMCpp_core PUBLIC
+    target_link_libraries(myMCpp-core PUBLIC
         Vulkan::Headers
         Vulkan::Vulkan
         GPUOpen::VulkanMemoryAllocator
@@ -111,13 +111,13 @@ if(ENABLE_VULKAN)
 endif()
 
 if(UNIX AND NOT APPLE)
-    target_link_libraries(myMCpp_core PUBLIC OpenGL::EGL)
+    target_link_libraries(myMCpp-core PUBLIC OpenGL::EGL)
     find_package(X11 REQUIRED)
-    target_include_directories(myMCpp_core PUBLIC ${X11_INCLUDE_DIR} ${X11_Xrandr_INCLUDE_PATH})
-    target_link_libraries(myMCpp_core PUBLIC ${X11_LIBRARIES} ${X11_Xrandr_LIB})
+    target_include_directories(myMCpp-core PUBLIC ${X11_INCLUDE_DIR} ${X11_Xrandr_INCLUDE_PATH})
+    target_link_libraries(myMCpp-core PUBLIC ${X11_LIBRARIES} ${X11_Xrandr_LIB})
     
     find_package(Wayland REQUIRED COMPONENTS Client Egl)
-    target_link_libraries(myMCpp_core PUBLIC Wayland::Client Wayland::Egl)
+    target_link_libraries(myMCpp-core PUBLIC Wayland::Client Wayland::Egl)
 endif()
 
 if(APPLE)
@@ -125,7 +125,7 @@ if(APPLE)
     find_library(METALKIT_LIBRARY MetalKit)
     find_library(COCOA_LIBRARY Cocoa)
     find_library(QUARTZCORE_LIBRARY QuartzCore)
-    target_link_libraries(myMCpp_core PUBLIC
+    target_link_libraries(myMCpp-core PUBLIC
         ${METAL_LIBRARY}
         ${METALKIT_LIBRARY}
         ${COCOA_LIBRARY}
@@ -150,11 +150,11 @@ if(APPLE)
     )
     
     if(CMAKE_GENERATOR MATCHES "Xcode")
-        set_target_properties(myMCpp_core PROPERTIES
+        set_target_properties(myMCpp-core PROPERTIES
             XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO INCLUDE_SOURCE
         )
         foreach(shader IN LISTS METAL_SHADERS)
-            target_sources(myMCpp_core PRIVATE ${shader})
+            target_sources(myMCpp-core PRIVATE ${shader})
             set_source_files_properties(${shader} PROPERTIES LANGUAGE METAL)
         endforeach()
     else()
@@ -186,15 +186,15 @@ if(APPLE)
         )
         
         add_custom_target(CompileMetalShaders DEPENDS ${METALLIB_OUTPUT})
-        add_dependencies(myMCpp_core CompileMetalShaders)
+        add_dependencies(myMCpp-core CompileMetalShaders)
     endif()
 endif()
 
-target_link_libraries(myMCpp_core PRIVATE zlib)
-target_include_directories(myMCpp_core PRIVATE ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
+target_link_libraries(myMCpp-core PRIVATE zlib)
+target_include_directories(myMCpp-core PRIVATE ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
 
 if(MSVC)
-    target_compile_options(myMCpp_core PRIVATE /W4 /EHsc)
+    target_compile_options(myMCpp-core PRIVATE /W4 /EHsc)
 else()
-    target_compile_options(myMCpp_core PRIVATE -Wall -Wextra -pedantic)
+    target_compile_options(myMCpp-core PRIVATE -Wall -Wextra -pedantic)
 endif()
