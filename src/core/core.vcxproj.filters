@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="headers">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="src\formats">
+      <UniqueIdentifier>{A1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C5A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\renderer">
+      <UniqueIdentifier>{A1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C5B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\renderer\Common">
+      <UniqueIdentifier>{A1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C5C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\renderer\OpenGL">
+      <UniqueIdentifier>{A1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C5D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\renderer\Vulkan">
+      <UniqueIdentifier>{A1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C5E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\3rdparty">
+      <UniqueIdentifier>{A1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C5F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\formats">
+      <UniqueIdentifier>{A1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C6A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\renderer">
+      <UniqueIdentifier>{A1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C6B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\renderer\Common">
+      <UniqueIdentifier>{A1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C6C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\renderer\OpenGL">
+      <UniqueIdentifier>{A1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C6D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\renderer\Vulkan">
+      <UniqueIdentifier>{A1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C6E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="formats\ps2mc_dir.cpp"><Filter>src\formats</Filter></ClCompile>
+    <ClCompile Include="formats\ps2mc_ecc.cpp"><Filter>src\formats</Filter></ClCompile>
+    <ClCompile Include="formats\ps2mc.cpp"><Filter>src\formats</Filter></ClCompile>
+    <ClCompile Include="formats\ps2save.cpp"><Filter>src\formats</Filter></ClCompile>
+    <ClCompile Include="formats\ps2iconsys.cpp"><Filter>src\formats</Filter></ClCompile>
+    <ClCompile Include="formats\ps2icon.cpp"><Filter>src\formats</Filter></ClCompile>
+    <ClCompile Include="renderer\Renderer.cpp"><Filter>src\renderer</Filter></ClCompile>
+    <ClCompile Include="renderer\Common\RendererCommon.cpp"><Filter>src\renderer\Common</Filter></ClCompile>
+    <ClCompile Include="renderer\OpenGL\OpenGLRenderer.cpp"><Filter>src\renderer\OpenGL</Filter></ClCompile>
+    <ClCompile Include="renderer\OpenGL\OpenGLShader.cpp"><Filter>src\renderer\OpenGL</Filter></ClCompile>
+    <ClCompile Include="renderer\OpenGL\OpenGLResources.cpp"><Filter>src\renderer\OpenGL</Filter></ClCompile>
+    <ClCompile Include="renderer\OpenGL\GLContext.cpp"><Filter>src\renderer\OpenGL</Filter></ClCompile>
+    <ClCompile Include="renderer\OpenGL\GLContextWGL.cpp"><Filter>src\renderer\OpenGL</Filter></ClCompile>
+    <ClCompile Include="renderer\Vulkan\VulkanRenderer.cpp"><Filter>src\renderer\Vulkan</Filter></ClCompile>
+    <ClCompile Include="renderer\Vulkan\VulkanDevice.cpp"><Filter>src\renderer\Vulkan</Filter></ClCompile>
+    <ClCompile Include="renderer\Vulkan\VulkanSwapchain.cpp"><Filter>src\renderer\Vulkan</Filter></ClCompile>
+    <ClCompile Include="renderer\Vulkan\VulkanPipeline.cpp"><Filter>src\renderer\Vulkan</Filter></ClCompile>
+    <ClCompile Include="renderer\Vulkan\VulkanResources.cpp"><Filter>src\renderer\Vulkan</Filter></ClCompile>
+    <ClCompile Include="..\..\3rdparty\glad\src\gl.c"><Filter>src\3rdparty</Filter></ClCompile>
+    <ClCompile Include="..\..\3rdparty\glad\src\wgl.c"><Filter>src\3rdparty</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="formats\ps2mc_dir.h"><Filter>headers\formats</Filter></ClInclude>
+    <ClInclude Include="formats\ps2mc_ecc.h"><Filter>headers\formats</Filter></ClInclude>
+    <ClInclude Include="formats\ps2mc.h"><Filter>headers\formats</Filter></ClInclude>
+    <ClInclude Include="formats\ps2save.h"><Filter>headers\formats</Filter></ClInclude>
+    <ClInclude Include="formats\ps2iconsys.h"><Filter>headers\formats</Filter></ClInclude>
+    <ClInclude Include="formats\ps2icon.h"><Filter>headers\formats</Filter></ClInclude>
+    <ClInclude Include="renderer\Renderer.h"><Filter>headers\renderer</Filter></ClInclude>
+    <ClInclude Include="renderer\Common\RendererCommon.h"><Filter>headers\renderer\Common</Filter></ClInclude>
+    <ClInclude Include="renderer\OpenGL\OpenGLRenderer.h"><Filter>headers\renderer\OpenGL</Filter></ClInclude>
+    <ClInclude Include="renderer\OpenGL\OpenGLShader.h"><Filter>headers\renderer\OpenGL</Filter></ClInclude>
+    <ClInclude Include="renderer\OpenGL\OpenGLResources.h"><Filter>headers\renderer\OpenGL</Filter></ClInclude>
+    <ClInclude Include="renderer\OpenGL\GLContext.h"><Filter>headers\renderer\OpenGL</Filter></ClInclude>
+    <ClInclude Include="renderer\OpenGL\GLContextWGL.h"><Filter>headers\renderer\OpenGL</Filter></ClInclude>
+    <ClInclude Include="renderer\Vulkan\VulkanRenderer.h"><Filter>headers\renderer\Vulkan</Filter></ClInclude>
+    <ClInclude Include="renderer\Vulkan\VulkanDevice.h"><Filter>headers\renderer\Vulkan</Filter></ClInclude>
+    <ClInclude Include="renderer\Vulkan\VulkanSwapchain.h"><Filter>headers\renderer\Vulkan</Filter></ClInclude>
+    <ClInclude Include="renderer\Vulkan\VulkanPipeline.h"><Filter>headers\renderer\Vulkan</Filter></ClInclude>
+    <ClInclude Include="renderer\Vulkan\VulkanResources.h"><Filter>headers\renderer\Vulkan</Filter></ClInclude>
+  </ItemGroup>
+</Project>
