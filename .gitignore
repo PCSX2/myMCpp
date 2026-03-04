@@ -78,4 +78,4 @@ resources/shaders/**/*.spv
 
 # will be removed before release
 ico/
-scripts/
+/scripts/
