@@ -130,7 +130,7 @@
       <Message>Building 3rdparty dependencies via CMake...</Message>
     </PreBuildEvent>
     <ClCompile>
-      <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_LIB;UTF8PROC_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -141,6 +141,7 @@
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="WindowInfo.cpp" />
     <ClCompile Include="Config.cpp" />
+    <ClCompile Include="..\..\3rdparty\utf8proc\utf8proc.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="round.h" />

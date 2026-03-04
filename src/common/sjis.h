@@ -5,7 +5,6 @@
 
 #include <string>
 #include <cstdint>
-#include <unordered_map>
 
 class ShiftJIS
 {
@@ -21,12 +20,9 @@ public:
 	// Get Shift-JIS character length
 	static int charLength(const uint8_t* str);
 
-	// Normalize a UTF-8 string using the Shift-JIS normalization table
+	// Normalize a UTF-8 string using NFKC
 	static std::string normalize(const std::string& utf8);
 
 private:
 	ShiftJIS() = delete;
-
-	// Shift-JIS normalization table
-	static const std::unordered_map<char32_t, std::u32string>& getNormalizationTable();
 };
