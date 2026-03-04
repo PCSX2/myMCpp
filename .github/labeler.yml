@@ -1,40 +1,45 @@
 # Configuration for actions/labeler
 
-GUI/Qt:
-  - src/ui/**/*
+"GUI/Qt":
+  - any:
+    - 'src/ui/**/*'
 
-Core:
-  - src/core/**/*
+"Core":
+  - any:
+    - 'src/core/**/*'
 
-Build | Project System:
-  - CMakeLists.txt
-  - cmake/**/*
-  - .github/**/*
-  - scripts/**/*
+"Build | Project System":
+  - any:
+    - 'CMakeLists.txt'
+    - 'cmake/**/*'
+    - '.github/**/*'
+    - 'scripts/**/*'
 
-Linux:
+"Linux":
   - any: ['**/*EGL*', '**/*linux*', '**/*Wayland*', '**/*X11*']
 
-Windows:
+"Windows":
   - any: ['**/*WGL*', '**/*win32*', 'resources/myMCpp.rc']
 
-macOS:
+"macOS":
   - any: ['src/core/renderer/Metal/**/*', '**/*AGL*', '**/*.mm', '**/*Cocoa*']
 
-CLI:
-  - src/cli/**/*
+"CLI":
+  - any:
+    - 'src/cli/**/*'
 
-Vulkan:
+"Vulkan":
   - any: ['**/vulkan*', '**/Vulkan*', 'src/core/renderer/Vulkan/**/*']
 
-OpenGL:
+"OpenGL":
   - any: ['**/opengl*', '**/OpenGL*', 'src/core/renderer/OpenGL/**/*']
 
-Metal:
+"Metal":
   - any: ['**/metal*', '**/Metal*', 'src/core/renderer/Metal/**/*']
 
-Documentation:
-  - docs/**/*
-  - README.md
-  - LICENSE.md
-  - build.md
+"Documentation":
+  - any:
+    - 'docs/**/*'
+    - 'README.md'
+    - 'LICENSE.md'
+    - 'build.md'
