@@ -53,6 +53,7 @@ private slots:
 private:
 	void updateCardView();
 	void updateStatusBar();
+	void updateEccToolLabel();
 	void updateForceImportWarning();
 	void closeCard();
 	void importFileToCard(const QString& savePath, const QString& hostFilePath);

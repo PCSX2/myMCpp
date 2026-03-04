@@ -240,6 +240,7 @@ void MainWindow::onOpenMemoryCard()
 		ui->actionExport->setEnabled(true);
 		ui->actionFormat->setEnabled(true);
 		ui->actionSelectAll->setEnabled(true);
+		updateEccToolLabel();
 	}
 }
 
@@ -282,6 +283,7 @@ void MainWindow::onCreateMemoryCard()
 		ui->actionExport->setEnabled(true);
 		ui->actionFormat->setEnabled(true);
 		ui->actionSelectAll->setEnabled(true);
+		updateEccToolLabel();
 
 		ui->statusBar->showMessage(tr("Created %1 MB memory card").arg(sizeMB), 5000);
 	}
@@ -529,6 +531,7 @@ void MainWindow::closeCard()
 	ui->actionClose->setEnabled(false);
 	ui->actionSaveAs->setEnabled(false);
 	ui->actionEccTool->setEnabled(false);
+	ui->actionEccTool->setText(tr("Add/Remove &ECC and Save As..."));
 	ui->actionImport->setEnabled(false);
 	ui->actionExport->setEnabled(false);
 	ui->actionFormat->setEnabled(false);
@@ -607,6 +610,17 @@ void MainWindow::onEccTool()
 		QMessageBox::critical(this, tr("Error"),
 			tr("Failed to save: %1").arg(e.what()));
 	}
+}
+
+void MainWindow::updateEccToolLabel()
+{
+	if (!memoryCard)
+		return;
+
+	if (memoryCard->hasEcc())
+		ui->actionEccTool->setText(tr("Remove &ECC and Save As..."));
+	else
+		ui->actionEccTool->setText(tr("Add &ECC and Save As..."));
 }
 
 void MainWindow::onToggleAscii()

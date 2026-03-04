@@ -298,13 +298,13 @@
     <iconset theme="save-fill"/>
    </property>
    <property name="text">
-    <string>Remove &amp;ECC and Save As...</string>
+    <string>Add/Remove &amp;ECC and Save As...</string>
    </property>
    <property name="statusTip">
     <string>Add or remove ECC from the memory card and save to a new file</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
+    <string>Ctrl+Shift+E</string>
    </property>
   </action>
   <action name="actionAscii">
