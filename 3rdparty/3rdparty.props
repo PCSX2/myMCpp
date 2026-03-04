@@ -20,6 +20,7 @@
         $(ThirdPartyBuildDir)zlib;
         $(ThirdPartyDir)glad\include;
         $(ThirdPartyDir)SPIRV-Tools\include;
+        $(ThirdPartyDir)utf8proc;
         $(ThirdPartyDir);
         %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
