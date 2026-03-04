@@ -342,7 +342,7 @@ void PS2MemoryCard::Impl::read_superblock()
 
 	for (int i = 0; i < 32; ++i)
 	{
-		indirect_fat_cluster_list[i] = readLE<uint32_t>(sb_page, 76 + i * 4);
+		indirect_fat_cluster_list[i] = readLE<uint32_t>(sb_page, 80 + i * 4);
 	}
 
 	if (allocatable_cluster_end == 0 || allocatable_cluster_end > 1000000)
@@ -804,7 +804,7 @@ void PS2MemoryCard::Impl::write_superblock(uint32_t first_ifc, uint32_t indirect
 	}
 
 	sb[336] = 2;
-	sb[337] = 0x2B;
+	sb[337] = with_ecc ? 0x52 : 0x50;
 
 	write_page(0, sb);
 }
@@ -1780,7 +1780,10 @@ void PS2MemoryCard::saveAs(const std::string& filename, bool withEcc)
 
 			outFile.write(reinterpret_cast<const char*>(pageData.data()), pImpl->page_size);
 
-			auto spare = eccCalculatePage(pageData, static_cast<int>(pImpl->page_size));
+			uint32_t target_spare = divRoundUp(static_cast<int>(pImpl->page_size), 128) * 4;
+			auto ecc = eccCalculatePage(pageData, static_cast<int>(pImpl->page_size));
+			std::vector<uint8_t> spare(target_spare, 0);
+			std::copy(ecc.begin(), ecc.end(), spare.begin());
 			outFile.write(reinterpret_cast<const char*>(spare.data()), spare.size());
 		}
 	}
