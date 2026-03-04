@@ -76,7 +76,7 @@ if not exist "%BUILD_DIR%\CMakeCache.txt" (
 )
 
 echo 3rdparty: Building %CMAKE_CONFIG%...
-cmake --build "%BUILD_DIR%" --config %CMAKE_CONFIG% --parallel --target zlibstatic glm glfw spdlog vulkan glslang SPIRV GenericCodeGen MachineIndependent OSDependent glslang-default-resource-limits SPIRV-Tools-static SPIRV-Tools-opt
+cmake --build "%BUILD_DIR%" --config %CMAKE_CONFIG% --parallel --target zlibstatic glm glfw spdlog discord-rpc vulkan glslang SPIRV GenericCodeGen MachineIndependent OSDependent glslang-default-resource-limits SPIRV-Tools-static SPIRV-Tools-opt
 if errorlevel 1 (
     echo ERROR: CMake build failed.
     exit /b 1

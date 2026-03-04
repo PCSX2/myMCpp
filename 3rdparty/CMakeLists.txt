@@ -54,6 +54,9 @@ set(UTF8PROC_INSTALL OFF CACHE BOOL "" FORCE)
 set(UTF8PROC_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
 add_subdirectory(utf8proc)
 
+# discord-rpc
+add_subdirectory(discord-rpc)
+
 if(ENABLE_VULKAN)
     # Vulkan-Headers
     set(VULKAN_HEADERS_ENABLE_TESTS OFF CACHE BOOL "" FORCE)

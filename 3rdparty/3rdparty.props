@@ -21,6 +21,7 @@
         $(ThirdPartyDir)glad\include;
         $(ThirdPartyDir)SPIRV-Tools\include;
         $(ThirdPartyDir)utf8proc;
+        $(ThirdPartyDir)discord-rpc\include;
         $(ThirdPartyDir);
         %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
@@ -37,6 +38,7 @@
         $(ThirdPartyBuildDir)glslang\glslang\OSDependent\Windows\$(ThirdPartyCMakeConfig);
         $(ThirdPartyBuildDir)SPIRV-Tools\source\$(ThirdPartyCMakeConfig);
         $(ThirdPartyBuildDir)SPIRV-Tools\source\opt\$(ThirdPartyCMakeConfig);
+        $(ThirdPartyBuildDir)discord-rpc\$(ThirdPartyCMakeConfig);
         %(AdditionalLibraryDirectories)
       </AdditionalLibraryDirectories>
     </Link>
@@ -56,6 +58,7 @@
         SPIRVd.lib;
         SPIRV-Tools.lib;
         SPIRV-Tools-opt.lib;
+        discord-rpc.lib;
         %(AdditionalDependencies)
       </AdditionalDependencies>
     </Link>
@@ -75,6 +78,7 @@
         SPIRV.lib;
         SPIRV-Tools.lib;
         SPIRV-Tools-opt.lib;
+        discord-rpc.lib;
         %(AdditionalDependencies)
       </AdditionalDependencies>
     </Link>
