@@ -103,8 +103,13 @@ jobs:
         if: inputs.compiler == 'msvc'
         shell: cmd
         run: |
-          cmake -B build -G "Visual Studio 17 2022" -A ${{ inputs.platform }} ^
-            -DCMAKE_BUILD_TYPE=${{ inputs.buildType }} ^
+          if "${{ inputs.buildType }}" == "Debug" (
+            set PRESET=win-dbg-2022
+          ) else (
+            set PRESET=win-rel-2022
+          )
+          echo PRESET=%PRESET%>> %GITHUB_ENV%
+          cmake --preset %PRESET% ^
             ${{ inputs.cmakeFlags }}
 
       - name: Configure CMake (Clang)
@@ -116,35 +121,36 @@ jobs:
           ) else (
             set CLANG_FLAGS=
           )
-          cmake -B build -G Ninja ^
-            -DCMAKE_BUILD_TYPE=${{ inputs.buildType }} ^
-            -DCMAKE_C_COMPILER=clang ^
-            -DCMAKE_CXX_COMPILER=clang++ ^
-            -DCMAKE_LINKER=lld ^
-            -DCMAKE_CXX_FLAGS=%CLANG_FLAGS% ^
+          if "${{ inputs.buildType }}" == "Debug" (
+            set PRESET=win-clang-dbg
+          ) else (
+            set PRESET=win-clang-rel
+          )
+          echo PRESET=%PRESET%>> %GITHUB_ENV%
+          cmake --preset %PRESET% ^
+            -DCMAKE_CXX_FLAGS="%CLANG_FLAGS%" ^
             ${{ inputs.cmakeFlags }}
 
       - name: Build (MSVC)
         if: inputs.compiler == 'msvc'
         shell: cmd
-        run: cmake --build build --config ${{ inputs.buildType }} --parallel
+        run: cmake --build --preset %PRESET% --parallel
 
       - name: Build (Clang)
         if: inputs.compiler == 'clang'
         shell: cmd
-        working-directory: build
-        run: ninja
+        run: cmake --build --preset %PRESET%
 
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:
           name: ${{ steps.artifact-metadata.outputs.artifact-name }}
           path: |
-            ./build/bin/${{ inputs.buildType }}
-            !./build/bin/**/*.pdb
-            !./build/bin/**/*.lib
-            !./build/bin/**/*.exp
-            !./build/bin/**/*.ilk
+            ./build/${{ env.PRESET }}/bin/*
+            !./build/${{ env.PRESET }}/bin/**/*.pdb
+            !./build/${{ env.PRESET }}/bin/**/*.lib
+            !./build/${{ env.PRESET }}/bin/**/*.exp
+            !./build/${{ env.PRESET }}/bin/**/*.ilk
           if-no-files-found: error
           retention-days: 30
           overwrite: true
@@ -154,7 +160,7 @@ jobs:
         with:
           name: ${{ steps.artifact-metadata.outputs.artifact-name }}-symbols
           path: |
-            ./build/bin/${{ inputs.buildType }}/**/*.pdb
+            ./build/${{ env.PRESET }}/bin/**/*.pdb
           if-no-files-found: ignore
           retention-days: 30
           overwrite: true

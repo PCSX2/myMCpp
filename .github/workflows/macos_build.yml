@@ -99,25 +99,40 @@ jobs:
 
       - name: Configure CMake
         run: |
-          cmake -B build -G Ninja \
-            -DCMAKE_BUILD_TYPE=${{ inputs.buildType }} \
+          if [ "${{ inputs.buildType }}" = "Debug" ]; then
+            PRESET="macos-dbg"
+          else
+            PRESET="macos-rel"
+          fi
+          cmake --preset $PRESET \
             -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             ${{ inputs.cmakeFlags }}
 
       - name: Build
-        working-directory: build
         run: |
+          if [ "${{ inputs.buildType }}" = "Debug" ]; then
+            PRESET="macos-dbg"
+          else
+            PRESET="macos-rel"
+          fi
           ccache -p
           ccache -z
-          ninja
+          cmake --build --preset $PRESET
           ccache -s
 
       - name: Prepare Build Artifacts
         run: |
+          if [ "${{ inputs.buildType }}" = "Debug" ]; then
+            PRESET="macos-dbg"
+            CONF="Debug"
+          else
+            PRESET="macos-rel"
+            CONF="MinSizeRel"
+          fi
           mkdir -p ci-artifacts
-          mv build/bin/${{ inputs.buildType }}/myMCpp.app ci-artifacts/
+          mv build/$PRESET/bin/$CONF/myMCpp.app ci-artifacts/
 
       - name: Zip Build Artifacts
         run: |

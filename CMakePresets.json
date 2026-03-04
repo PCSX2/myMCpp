@@ -59,6 +59,19 @@
             }
         },
         {
+            "name": "win-clang-dbg",
+            "displayName": "Windows Clang Debug",
+            "description": "Debug build for Windows with Clang and Ninja",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/win-clang-dbg",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "ENABLE_VULKAN": "ON"
+            }
+        },
+        {
             "name": "linux-rel",
             "displayName": "Linux Release",
             "description": "Release build for Linux with Clang and Ninja",
@@ -92,6 +105,19 @@
             "binaryDir": "${sourceDir}/build/linux-gcc-rel",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "MinSizeRel",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "ENABLE_VULKAN": "ON"
+            }
+        },
+        {
+            "name": "linux-gcc-dbg",
+            "displayName": "Linux GCC Debug",
+            "description": "Debug build for Linux with GCC and Ninja",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux-gcc-dbg",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_COMPILER": "gcc",
                 "CMAKE_CXX_COMPILER": "g++",
                 "ENABLE_VULKAN": "ON"
@@ -151,6 +177,11 @@
             "jobs": 0
         },
         {
+            "name": "win-clang-dbg",
+            "configurePreset": "win-clang-dbg",
+            "jobs": 0
+        },
+        {
             "name": "linux-rel",
             "configurePreset": "linux-rel",
             "jobs": 0
@@ -163,6 +194,11 @@
         {
             "name": "linux-gcc-rel",
             "configurePreset": "linux-gcc-rel",
+            "jobs": 0
+        },
+        {
+            "name": "linux-gcc-dbg",
+            "configurePreset": "linux-gcc-dbg",
             "jobs": 0
         },
         {
