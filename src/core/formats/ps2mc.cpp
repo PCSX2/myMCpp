@@ -350,6 +350,25 @@ void PS2MemoryCard::Impl::read_superblock()
 		allocatable_cluster_end = clusters_per_card;
 	}
 
+	{
+		uint32_t total_pages = clusters_per_card * pages_per_cluster;
+		uint64_t expected_with_ecc = static_cast<uint64_t>(total_pages) * (page_size + spare_size);
+		uint64_t expected_no_ecc = static_cast<uint64_t>(total_pages) * page_size;
+
+		file.seekg(0, std::ios::end);
+		uint64_t file_size = static_cast<uint64_t>(file.tellg());
+		file.seekg(0, std::ios::beg);
+
+		if (file_size <= expected_no_ecc || file_size < expected_with_ecc)
+		{
+			spare_size = 0;
+			raw_page_size = page_size;
+			ignore_ecc = true;
+			with_ecc = false;
+			page_cache.clear();
+		}
+	}
+
 	read_fat_from_card();
 }
 
