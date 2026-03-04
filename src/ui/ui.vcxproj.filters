@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="headers">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="src\widgets">
+      <UniqueIdentifier>{B1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C5A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Settings">
+      <UniqueIdentifier>{B1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C5B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dialogs">
+      <UniqueIdentifier>{B1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C5C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\widgets">
+      <UniqueIdentifier>{B1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C6A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\Settings">
+      <UniqueIdentifier>{B1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C6B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\dialogs">
+      <UniqueIdentifier>{B1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C6C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MainWindow.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Themes.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="CardActionHandler.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\MemoryCardBrowser.cpp">
+      <Filter>src\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\SaveDetailsPanel.cpp">
+      <Filter>src\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\IconWidget.cpp">
+      <Filter>src\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingsWindow.cpp">
+      <Filter>src\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="dialogs\NewCardDialog.cpp">
+      <Filter>src\dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingsWidget.cpp">
+      <Filter>src\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="dialogs\AboutDialog.cpp">
+      <Filter>src\dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\GeneralSettingsWidget.cpp">
+      <Filter>src\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\GraphicsSettingsWidget.cpp">
+      <Filter>src\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\FilesSettingsWidget.cpp">
+      <Filter>src\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\AdvancedSettingsWidget.cpp">
+      <Filter>src\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="TranslationManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="MainWindow.h">
+      <Filter>headers</Filter>
+    </QtMoc>
+    <ClInclude Include="Themes.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <QtMoc Include="CardActionHandler.h">
+      <Filter>headers</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\MemoryCardBrowser.h">
+      <Filter>headers\widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\SaveDetailsPanel.h">
+      <Filter>headers\widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\IconWidget.h">
+      <Filter>headers\widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="Settings\SettingsWindow.h">
+      <Filter>headers\Settings</Filter>
+    </QtMoc>
+    <QtMoc Include="dialogs\NewCardDialog.h">
+      <Filter>headers\dialogs</Filter>
+    </QtMoc>
+    <QtMoc Include="Settings\SettingsWidget.h">
+      <Filter>headers\Settings</Filter>
+    </QtMoc>
+    <QtMoc Include="dialogs\AboutDialog.h">
+      <Filter>headers\dialogs</Filter>
+    </QtMoc>
+    <QtMoc Include="Settings\GeneralSettingsWidget.h">
+      <Filter>headers\Settings</Filter>
+    </QtMoc>
+    <QtMoc Include="Settings\GraphicsSettingsWidget.h">
+      <Filter>headers\Settings</Filter>
+    </QtMoc>
+    <QtMoc Include="Settings\FilesSettingsWidget.h">
+      <Filter>headers\Settings</Filter>
+    </QtMoc>
+    <QtMoc Include="Settings\AdvancedSettingsWidget.h">
+      <Filter>headers\Settings</Filter>
+    </QtMoc>
+    <ClInclude Include="TranslationManager.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="ui">
+      <UniqueIdentifier>{C1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C5A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui\Settings">
+      <UniqueIdentifier>{C1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C5B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui\dialogs">
+      <UniqueIdentifier>{C1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C5C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui\widgets">
+      <UniqueIdentifier>{C1B2C3D4-E5F6-4A1B-8C9D-0E1F2A3B4C5D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="MainWindow.ui">
+      <Filter>ui</Filter>
+    </QtUic>
+    <QtUic Include="Settings\AdvancedSettingsWidget.ui">
+      <Filter>ui\Settings</Filter>
+    </QtUic>
+    <QtUic Include="Settings\FilesSettingsWidget.ui">
+      <Filter>ui\Settings</Filter>
+    </QtUic>
+    <QtUic Include="Settings\GeneralSettingsWidget.ui">
+      <Filter>ui\Settings</Filter>
+    </QtUic>
+    <QtUic Include="Settings\GraphicsSettingsWidget.ui">
+      <Filter>ui\Settings</Filter>
+    </QtUic>
+    <QtUic Include="Settings\SettingsWindow.ui">
+      <Filter>ui\Settings</Filter>
+    </QtUic>
+    <QtUic Include="dialogs\AboutDialog.ui">
+      <Filter>ui\dialogs</Filter>
+    </QtUic>
+    <QtUic Include="dialogs\NewCardDialog.ui">
+      <Filter>ui\dialogs</Filter>
+    </QtUic>
+    <QtUic Include="widgets\MemoryCardBrowser.ui">
+      <Filter>ui\widgets</Filter>
+    </QtUic>
+    <QtUic Include="widgets\SaveDetailsPanel.ui">
+      <Filter>ui\widgets</Filter>
+    </QtUic>
+  </ItemGroup>
+</Project>

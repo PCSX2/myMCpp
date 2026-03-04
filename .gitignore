@@ -45,14 +45,15 @@ Makefile*
 
 # Visual Studio
 .vs/
-*.vcxproj
-*.vcxproj.filters
 *.vcxproj.user
-*.sln
 *.suo
 *.user
 *.userosscache
-*.sln.docstates
+x64/
+ARM64/
+Debug/
+Release/
+Devel/
 
 # Visual Studio Code
 .vscode/
