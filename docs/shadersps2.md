@@ -1,5 +1,7 @@
 # OpenGL Shader Rendering in ps2mc-browser
 
+<!-- https://babyno.top/en/posts/2023/12/ps2mc-browsers-shader-introduction/ -->
+
 ---
 
 ## Rendering Vertices, Polygons, and Textures

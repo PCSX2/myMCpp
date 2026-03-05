@@ -1,5 +1,7 @@
 ### Icon
 
+<!-- https://babyno.top/en/posts/2023/10/parsing-ps2-3d-icon/ -->
+
 Unlike the icon.sys file, the icon file for each game is variable in size and quantity, but there is always at least one. Some games may use the same icon for both copying and deleting icons as the regular icon.
 
 Seeing this image, it should be familiar to seasoned PS2 players.  

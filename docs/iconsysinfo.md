@@ -1,3 +1,7 @@
+## iconsysinfo
+
+<!-- based on data from here: https://www.ps2savetools.com/documents/iconsys-format/ -->
+
 This structure defines how a PlayStation 2 save appears in the PS2 Browser, including background gradients, lighting, title text, and icon filenames. All offsets are relative to the start of the file.
 
 ### General Notes:
