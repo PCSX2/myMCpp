@@ -1,45 +1,76 @@
 # Configuration for actions/labeler
 
 "GUI/Qt":
-  - any:
-    - 'src/ui/**/*'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/ui/**/*'
 
 "Core":
-  - any:
-    - 'src/core/**/*'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/core/**/*'
 
 "Build | Project System":
-  - any:
-    - 'CMakeLists.txt'
-    - 'cmake/**/*'
-    - '.github/**/*'
-    - 'scripts/**/*'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'CMakeLists.txt'
+      - 'cmake/**/*'
+      - '.github/**/*'
+      - 'scripts/**/*'
 
 "Linux":
-  - any: ['**/*EGL*', '**/*linux*', '**/*Wayland*', '**/*X11*']
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*EGL*'
+      - '**/*linux*'
+      - '**/*Wayland*'
+      - '**/*X11*'
 
 "Windows":
-  - any: ['**/*WGL*', '**/*win32*', 'resources/myMCpp.rc']
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*WGL*'
+      - '**/*win32*'
+      - 'resources/myMCpp.rc'
 
 "macOS":
-  - any: ['src/core/renderer/Metal/**/*', '**/*AGL*', '**/*.mm', '**/*Cocoa*']
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/core/renderer/Metal/**/*'
+      - '**/*AGL*'
+      - '**/*.mm'
+      - '**/*Cocoa*'
 
 "CLI":
-  - any:
-    - 'src/cli/**/*'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/cli/**/*'
 
 "Vulkan":
-  - any: ['**/vulkan*', '**/Vulkan*', 'src/core/renderer/Vulkan/**/*']
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/vulkan*'
+      - '**/Vulkan*'
+      - 'src/core/renderer/Vulkan/**/*'
 
 "OpenGL":
-  - any: ['**/opengl*', '**/OpenGL*', 'src/core/renderer/OpenGL/**/*']
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/opengl*'
+      - '**/OpenGL*'
+      - 'src/core/renderer/OpenGL/**/*'
 
 "Metal":
-  - any: ['**/metal*', '**/Metal*', 'src/core/renderer/Metal/**/*']
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/metal*'
+      - '**/Metal*'
+      - 'src/core/renderer/Metal/**/*'
 
 "Documentation":
-  - any:
-    - 'docs/**/*'
-    - 'README.md'
-    - 'LICENSE.md'
-    - 'build.md'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'docs/**/*'
+      - 'README.md'
+      - 'LICENSE.md'
+      - 'build.md'
