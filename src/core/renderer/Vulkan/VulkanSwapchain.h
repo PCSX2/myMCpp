@@ -54,6 +54,6 @@ private:
 
 	VkRenderPass m_renderPass = VK_NULL_HANDLE;
 	std::vector<VkFramebuffer> m_framebuffers;
-	
+
 	VkPresentModeKHR m_presentMode = VK_PRESENT_MODE_FIFO_KHR;
 };

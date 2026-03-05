@@ -12,4 +12,4 @@ namespace Themes
 	void UpdateApplicationTheme(Config* config);
 	bool IsDarkApplicationTheme();
 	const char* GetDefaultThemeName();
-}
+} // namespace Themes

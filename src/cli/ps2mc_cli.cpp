@@ -863,10 +863,10 @@ int PS2McCommandLine::cmdEccCheck(const std::vector<std::string>& args)
 	try
 	{
 		bool hasEcc = memoryCard->hasEcc();
-		
+
 		std::cout << "Memory card: " << currentMemCardPath << "\n";
 		std::cout << "ECC status: " << (hasEcc ? "Enabled" : "Disabled") << "\n";
-		
+
 		if (hasEcc)
 		{
 			std::cout << "Running file system check with ECC validation...\n";
@@ -896,4 +896,3 @@ int PS2McCommandLine::cmdEccCheck(const std::vector<std::string>& args)
 		return 1;
 	}
 }
-

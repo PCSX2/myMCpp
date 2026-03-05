@@ -136,7 +136,7 @@ void LightingState::loadFromIconSys(PS2IconSys* iconSys)
 	if (allZero)
 	{
 		Logger::debug("LightingState: All-zero lighting detected, using default fallback");
-		hasIconSysLighting = false;  // Fall back to default lighting
+		hasIconSysLighting = false; // Fall back to default lighting
 	}
 	else
 	{

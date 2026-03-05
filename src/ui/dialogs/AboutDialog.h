@@ -6,18 +6,19 @@
 #include <QDialog>
 #include <memory>
 
-namespace Ui {
-class AboutDialog;
+namespace Ui
+{
+	class AboutDialog;
 }
 
 class AboutDialog : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit AboutDialog(QWidget *parent = nullptr);
-    ~AboutDialog();
+	explicit AboutDialog(QWidget* parent = nullptr);
+	~AboutDialog();
 
 private:
-    std::unique_ptr<Ui::AboutDialog> ui;
+	std::unique_ptr<Ui::AboutDialog> ui;
 };

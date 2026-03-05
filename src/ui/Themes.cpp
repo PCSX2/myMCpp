@@ -18,7 +18,7 @@ namespace Themes
 	static void SetStyleFromSettings(Config* config);
 	static void SetIconThemeFromStyle();
 	static void SetColorScheme(Qt::ColorScheme color_scheme);
-}
+} // namespace Themes
 
 static QString s_unthemed_style_name;
 static QPalette s_unthemed_palette;
@@ -64,7 +64,8 @@ void Themes::SetIconThemeFromStyle()
 	// Add resource icon path to search paths
 	QString iconsPath = QString::fromStdString(ResourcePath::icons().string());
 	QStringList paths = QIcon::themeSearchPaths();
-	if (!paths.contains(iconsPath)) {
+	if (!paths.contains(iconsPath))
+	{
 		paths.prepend(iconsPath);
 		QIcon::setThemeSearchPaths(paths);
 	}
@@ -76,7 +77,8 @@ void Themes::SetIconThemeFromStyle()
 void Themes::SetStyleFromSettings(Config* config)
 {
 	std::string theme = config->getTheme();
-	if (theme.empty()) theme = GetDefaultThemeName();
+	if (theme.empty())
+		theme = GetDefaultThemeName();
 
 	if (theme == "light")
 	{

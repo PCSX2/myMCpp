@@ -226,7 +226,7 @@ void CardActionHandler::formatCard(PS2MemoryCard* card, const QString& cardPath,
 
 	int ret = QMessageBox::warning(parentWidget, tr("Format Card"),
 		tr("WARNING: This will erase ALL data on the memory card!\n\n"
-		"Are you sure you want to continue?"),
+		   "Are you sure you want to continue?"),
 		QMessageBox::Yes | QMessageBox::No,
 		QMessageBox::No);
 

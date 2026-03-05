@@ -88,3 +88,41 @@ SpacesInSquareBrackets: false
 Standard:        Cpp11
 TabWidth:        4
 UseTab:          AlignWithSpaces
+--- # This is how we can format Objective-C files
+Language:        ObjC
+BasedOnStyle:    LLVM
+
+AccessModifierOffset: -4
+AlignAfterOpenBracket: DontAlign
+AlignOperands:   true
+AllowShortBlocksOnASingleLine: false
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass:      true
+  AfterControlStatement: true
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  true
+  AfterObjCDeclaration: true
+  AfterStruct:     true
+  AfterUnion:      true
+  BeforeCatch:     true
+  BeforeElse:      true
+
+ColumnLimit: 0
+ContinuationIndentWidth: 4
+IndentWidth: 4
+NamespaceIndentation: All
+
+PointerAlignment: Left
+SortIncludes: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+
+Standard: Cpp11
+TabWidth: 4
+UseTab: AlignWithSpaces

@@ -12,7 +12,10 @@ class QListWidget;
 class QStackedWidget;
 class QLabel;
 class QTimer;
-namespace Ui { class SettingsWindow; }
+namespace Ui
+{
+	class SettingsWindow;
+}
 
 class SettingsWidget;
 
@@ -51,7 +54,8 @@ private:
 	std::vector<SettingsWidget*> m_settingsWidgets;
 	std::vector<QString> m_descriptions;
 
-	struct HelpEntry {
+	struct HelpEntry
+	{
 		QString title;
 		QString description;
 	};

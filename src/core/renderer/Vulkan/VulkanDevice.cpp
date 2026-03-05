@@ -165,7 +165,7 @@ bool VulkanDevice::createSurface(const WindowInfo& windowInfo)
 	{
 		Display* display = static_cast<Display*>(windowInfo.display_connection);
 		bool ownDisplay = false;
-		
+
 		if (!display)
 		{
 			display = XOpenDisplay(nullptr);
@@ -185,13 +185,14 @@ bool VulkanDevice::createSurface(const WindowInfo& windowInfo)
 		if (vkCreateXlibSurfaceKHR(m_instance, &createInfo, nullptr, &m_surface) != VK_SUCCESS)
 		{
 			Logger::error("VK: Failed to create Xlib surface");
-			if (ownDisplay) XCloseDisplay(display);
+			if (ownDisplay)
+				XCloseDisplay(display);
 			return false;
 		}
-		
+
 		if (ownDisplay)
 			m_platformDisplay = display;
-			
+
 		Logger::info("VK: Xlib surface created successfully");
 		return true;
 	}

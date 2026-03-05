@@ -179,7 +179,10 @@ template <typename F>
 struct ScopedGuard
 {
 	F f;
-	ScopedGuard(F f) : f(f) {}
+	ScopedGuard(F f)
+		: f(f)
+	{
+	}
 	~ScopedGuard() { f(); }
 };
 
@@ -188,7 +191,7 @@ static std::optional<float> GetRefreshRateFromXRandR(const WindowInfo& wi)
 	// Assuming wi.display_connection is a Display* and window_handle is a Window
 	Display* display = static_cast<Display*>(wi.display_connection);
 	Window window = static_cast<Window>(reinterpret_cast<uintptr_t>(wi.window_handle));
-	
+
 	if (!display || !window)
 		return std::nullopt;
 

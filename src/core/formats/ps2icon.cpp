@@ -64,8 +64,8 @@ namespace PS2Icon
 		const uint8_t* bytes = reinterpret_cast<const uint8_t*>(data.data());
 		size_t length = data.size();
 		size_t offset = 0;
-        
-        Logger::info("PS2Icon::load: Start loading. Length: {}", length);
+
+		Logger::info("PS2Icon::load: Start loading. Length: {}", length);
 
 		try
 		{
@@ -80,7 +80,7 @@ namespace PS2Icon
 
 			if (length > offset)
 			{
-				// Warning: Icon file larger than expected.
+				Logger::warn("PS2Icon::load: Extra data at end of file ({} bytes)", length - offset);
 			}
 
 			valid = true;
@@ -188,7 +188,7 @@ namespace PS2Icon
 
 
 		frames.resize(frameCount);
-		
+
 		uint32_t loadedFrames = 0;
 
 		for (uint32_t i = 0; i < frameCount; ++i)
@@ -206,7 +206,7 @@ namespace PS2Icon
 
 			if (static_cast<size_t>(keyCount) > (length - (offset + FRAME_DATA_SIZE)) / FRAME_KEY_SIZE)
 			{
-				Logger::warn("PS2Icon: Invalid key count {} at frame {}/{} (avail bytes: {}). Truncating animation.", 
+				Logger::warn("PS2Icon: Invalid key count {} at frame {}/{} (avail bytes: {}). Truncating animation.",
 					keyCount, i, frameCount, length - (offset + FRAME_DATA_SIZE));
 				break;
 			}
@@ -226,10 +226,10 @@ namespace PS2Icon
 
 				offset += FRAME_KEY_SIZE;
 			}
-			
+
 			loadedFrames++;
 		}
-		
+
 		if (loadedFrames < frameCount)
 		{
 			frames.resize(loadedFrames);
@@ -305,7 +305,7 @@ namespace PS2Icon
 		}
 
 		uint32_t compressedSize = readLE<uint32_t>(data, offset);
-        Logger::info("PS2Icon: Compressed texture size: {}", compressedSize);
+		Logger::info("PS2Icon: Compressed texture size: {}", compressedSize);
 		offset += 4;
 
 		if (length < offset + compressedSize)
@@ -348,14 +348,14 @@ namespace PS2Icon
 					texture[texOffset++] = readLE<uint16_t>(data, offset + rleOffset);
 					rleOffset += 2;
 				}
-            }
+			}
 			else
 			{
 				uint32_t rep = rleCode;
-                
+
 				if (compressedSize < rleOffset + 2)
 				{
-                    Logger::warn("PS2Icon: Compressed texture data too short (Repeat).");
+					Logger::warn("PS2Icon: Compressed texture data too short (Repeat).");
 					break;
 				}
 

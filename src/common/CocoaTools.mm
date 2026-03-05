@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 // Inspired by: https://github.com/PCSX2/pcsx2/blob/master/common/CocoaTools.mm
 
-#if ! __has_feature(objc_arc)
-	#error "Compile this with -fobjc-arc"
+#if !__has_feature(objc_arc)
+#error "Compile this with -fobjc-arc"
 #endif
 
 #include "CocoaTools.h"
@@ -20,7 +20,7 @@ bool CocoaTools::CreateMetalLayer(WindowInfo* wi)
 	if (![NSThread isMainThread])
 	{
 		bool ret;
-		dispatch_sync(dispatch_get_main_queue(), [&ret, wi]{ ret = CreateMetalLayer(wi); });
+		dispatch_sync(dispatch_get_main_queue(), [&ret, wi] { ret = CreateMetalLayer(wi); });
 		return ret;
 	}
 
@@ -32,7 +32,8 @@ bool CocoaTools::CreateMetalLayer(WindowInfo* wi)
 	}
 
 	NSView* view = (__bridge NSView*)wi->window_handle;
-	if (!view) {
+	if (!view)
+	{
 		Logger::error("Window handle is null in CreateMetalLayer");
 		return false;
 	}
@@ -49,7 +50,7 @@ void CocoaTools::DestroyMetalLayer(WindowInfo* wi)
 {
 	if (![NSThread isMainThread])
 	{
-		dispatch_sync_f(dispatch_get_main_queue(), wi, [](void* ctx){ DestroyMetalLayer(static_cast<WindowInfo*>(ctx)); });
+		dispatch_sync_f(dispatch_get_main_queue(), wi, [](void* ctx) { DestroyMetalLayer(static_cast<WindowInfo*>(ctx)); });
 		return;
 	}
 
@@ -58,10 +59,11 @@ void CocoaTools::DestroyMetalLayer(WindowInfo* wi)
 	if (!layer)
 		return;
 	wi->surface_handle = nullptr;
-    if (view) {
-    	[view setLayer:nil];
-	    [view setWantsLayer:NO];
-    }
+	if (view)
+	{
+		[view setLayer:nil];
+		[view setWantsLayer:NO];
+	}
 }
 
 std::optional<float> CocoaTools::GetViewRefreshRate(const WindowInfo& wi)
@@ -69,13 +71,14 @@ std::optional<float> CocoaTools::GetViewRefreshRate(const WindowInfo& wi)
 	if (![NSThread isMainThread])
 	{
 		std::optional<float> ret;
-		dispatch_sync(dispatch_get_main_queue(), [&ret, wi]{ ret = GetViewRefreshRate(wi); });
+		dispatch_sync(dispatch_get_main_queue(), [&ret, wi] { ret = GetViewRefreshRate(wi); });
 		return ret;
 	}
 
 	std::optional<float> ret;
 	NSView* const view = (__bridge NSView*)wi.window_handle;
-    if (!view) return ret;
+	if (!view)
+		return ret;
 
 	const uint32_t did = [[[[[view window] screen] deviceDescription] valueForKey:@"NSScreenNumber"] unsignedIntValue];
 	if (CGDisplayModeRef mode = CGDisplayCopyDisplayMode(did))
@@ -83,24 +86,27 @@ std::optional<float> CocoaTools::GetViewRefreshRate(const WindowInfo& wi)
 		ret = CGDisplayModeGetRefreshRate(mode);
 		CGDisplayModeRelease(mode);
 	}
-	
+
 	return ret;
 }
 
 // MARK: - Directory Services
 
 std::optional<std::string> CocoaTools::GetResourcePath()
-{ @autoreleasepool {
-	if (NSBundle* bundle = [NSBundle mainBundle])
+{
+	@autoreleasepool
 	{
-		NSString* rsrc = [bundle resourcePath];
-		NSString* root = [bundle bundlePath];
-		if ([rsrc isEqualToString:root])
-			rsrc = [rsrc stringByAppendingString:@"/resources"];
-		return [rsrc UTF8String];
+		if (NSBundle* bundle = [NSBundle mainBundle])
+		{
+			NSString* rsrc = [bundle resourcePath];
+			NSString* root = [bundle bundlePath];
+			if ([rsrc isEqualToString:root])
+				rsrc = [rsrc stringByAppendingString:@"/resources"];
+			return [rsrc UTF8String];
+		}
+		return std::nullopt;
 	}
-	return std::nullopt;
-}}
+}
 
 void CocoaTools::GetWindowInfoFromWindow(WindowInfo* wi, void* cf_window)
 {
