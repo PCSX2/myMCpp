@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16...3.24)
 project(myMCpp VERSION 1.0.0 LANGUAGES C CXX)
 
 if(APPLE)
+    enable_language(OBJC)
     enable_language(OBJCXX)
 endif()
 

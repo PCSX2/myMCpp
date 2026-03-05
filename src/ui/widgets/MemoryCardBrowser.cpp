@@ -100,11 +100,14 @@ void MemoryCardBrowser::loadRootDirectory()
 
 				if (isDir)
 				{
-					try {
+					try
+					{
 						uint32_t saveSize = m_card->getSaveSize(savePath.toStdString());
 						double sizeKB = saveSize / 1024.0;
 						item->setText(1, QString("%1 KB").arg(static_cast<int>(sizeKB)));
-					} catch(...) {
+					}
+					catch (...)
+					{
 						item->setText(1, tr("?"));
 					}
 				}
@@ -372,12 +375,13 @@ void MemoryCardBrowser::contextMenuEvent(QContextMenuEvent* event)
 						emit exportFileRequested(m_currentPath, name);
 					});
 				}
-				
+
 				QAction* deleteAction = menu.addAction(tr("Delete"));
 				connect(deleteAction, &QAction::triggered, this, [this, name]() {
 					QString fullPath = m_currentPath + "/" + name;
-					if (m_currentPath == "/") fullPath = "/" + name;
-					emit deleteSaveRequested(fullPath); 
+					if (m_currentPath == "/")
+						fullPath = "/" + name;
+					emit deleteSaveRequested(fullPath);
 				});
 			}
 		}
@@ -415,11 +419,11 @@ void MemoryCardBrowser::dropEvent(QDropEvent* event)
 			if (m_currentPath == "/")
 			{
 				bool isSaveFile = file.endsWith(".psu", Qt::CaseInsensitive) ||
-					file.endsWith(".max", Qt::CaseInsensitive) ||
-					file.endsWith(".sps", Qt::CaseInsensitive) ||
-					file.endsWith(".cbs", Qt::CaseInsensitive) ||
-					file.endsWith(".xps", Qt::CaseInsensitive) ||
-					file.endsWith(".psv", Qt::CaseInsensitive);
+				                  file.endsWith(".max", Qt::CaseInsensitive) ||
+				                  file.endsWith(".sps", Qt::CaseInsensitive) ||
+				                  file.endsWith(".cbs", Qt::CaseInsensitive) ||
+				                  file.endsWith(".xps", Qt::CaseInsensitive) ||
+				                  file.endsWith(".psv", Qt::CaseInsensitive);
 
 				if (isSaveFile)
 				{

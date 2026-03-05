@@ -117,7 +117,7 @@ bool VulkanSwapchain::createSwapchain(VulkanDevice& device, uint32_t width, uint
 			break;
 		}
 	}
-	
+
 	m_presentMode = presentMode;
 
 	VkExtent2D extent = capabilities.currentExtent;

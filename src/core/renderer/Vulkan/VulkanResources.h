@@ -14,21 +14,25 @@ struct VulkanBGVertex;
 static constexpr uint32_t MAX_FRAMES_IN_FLIGHT = 2;
 
 #define VK_CHECK(call) \
-	do { \
+	do \
+	{ \
 		VkResult result = call; \
-		if (result != VK_SUCCESS) { \
+		if (result != VK_SUCCESS) \
+		{ \
 			Logger::error("VK: {} failed with error {} at {}:{}", #call, static_cast<int>(result), __FILE__, __LINE__); \
 		} \
-	} while(0)
+	} while (0)
 
 #define VK_CHECK_RETURN(call) \
-	do { \
+	do \
+	{ \
 		VkResult result = call; \
-		if (result != VK_SUCCESS) { \
+		if (result != VK_SUCCESS) \
+		{ \
 			Logger::error("VK: {} failed with error {} at {}:{}", #call, static_cast<int>(result), __FILE__, __LINE__); \
 			return false; \
 		} \
-	} while(0)
+	} while (0)
 
 class VulkanResources
 {

@@ -16,9 +16,9 @@ namespace CocoaTools
 	void DestroyMetalLayer(WindowInfo* wi);
 	std::optional<float> GetViewRefreshRate(const WindowInfo& wi);
 
-    // Helpers for extracting WindowInfo from a native window handle
+	// Helpers for extracting WindowInfo from a native window handle
 	void GetWindowInfoFromWindow(WindowInfo* wi, void* window);
-    
-    // Resource path helper
+
+	// Resource path helper
 	std::optional<std::string> GetResourcePath();
 } // namespace CocoaTools

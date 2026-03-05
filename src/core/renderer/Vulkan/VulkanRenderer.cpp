@@ -889,7 +889,8 @@ bool VulkanRenderer::createCommandBuffers()
 					m_vulkanPipeline.getPipelineLayout(), 0, 1, &m_descriptorSet, 0, nullptr);
 			}
 
-			struct PushConstants {
+			struct PushConstants
+			{
 				int32_t useTexture;
 				int32_t enableAlpha;
 				float alphaOverride;

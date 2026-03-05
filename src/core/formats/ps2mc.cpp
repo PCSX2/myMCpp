@@ -555,7 +555,7 @@ void PS2MemoryCard::Impl::write_dirents(uint32_t dir_cluster, const std::vector<
 		if (entry_idx < entries.size())
 		{
 			uint32_t next = fat[current_cluster] & PS2MC_FAT_CLUSTER_MASK;
-			
+
 			if (next >= fat.size() || next == PS2MC_FAT_CHAIN_END_UNALLOC || next == PS2MC_FAT_CHAIN_END)
 			{
 				uint32_t new_cluster = allocate_cluster();
@@ -656,13 +656,13 @@ void PS2MemoryCard::Impl::write_fat_to_card()
 				uint32_t entry = fat[fat_entry_idx++];
 				writeLE(fat_data, k * 4, entry);
 			}
-			
+
 			write_cluster(fat_cluster_phys, fat_data);
 
 			if (fat_entry_idx >= fat.size())
 				break;
 		}
-		
+
 		if (fat_entry_idx >= fat.size())
 			break;
 	}
@@ -880,7 +880,7 @@ void PS2MemoryCard::create(const std::string& filename, int sizeInMB, bool disab
 	uint32_t good_block2 = erase_blocks_per_card - 2;
 
 	uint64_t totalBytes = static_cast<uint64_t>(pImpl->clusters_per_card) *
-						  pImpl->pages_per_cluster * pImpl->raw_page_size;
+	                      pImpl->pages_per_cluster * pImpl->raw_page_size;
 
 	pImpl->create_empty_card_file(filename, totalBytes);
 
@@ -1756,7 +1756,7 @@ void PS2MemoryCard::saveAs(const std::string& filename, bool withEcc)
 	}
 
 	PS2MemoryCard newCard;
-	newCard.create(filename, 8); // Create standard 8MB card
+	newCard.create(filename, 8);
 
 	uint32_t pageCount = pImpl->clusters_per_card * pImpl->pages_per_cluster;
 

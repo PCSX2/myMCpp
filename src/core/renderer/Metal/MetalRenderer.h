@@ -62,7 +62,7 @@ private:
 	WindowInfo m_windowInfo;
 	uint32_t m_vertexCount = 0;
 	uint32_t m_frameCount = 0;
-    uint32_t m_frameIndex = 0;
+	uint32_t m_frameIndex = 0;
 
 	std::shared_ptr<PS2Icon::Icon> m_icon;
 	bool m_animationEnabled = true;

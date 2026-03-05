@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.16...3.24)
-project(myMCpp_3rdparty)
+
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    project(myMCpp_3rdparty LANGUAGES C CXX)
+endif()
 
 # zlib
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/zlib/zconf.h"

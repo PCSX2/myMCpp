@@ -27,10 +27,10 @@ public:
 
 	// Saves the settings handled by this widget.
 	virtual void saveSettings() {}
-	
+
 	// Reloads settings from config to UI.
 	virtual void loadSettings() {}
-	
+
 	// Restores default values for this widget.
 	virtual void restoreDefaults() {}
 

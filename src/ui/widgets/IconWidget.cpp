@@ -271,7 +271,7 @@ void IconWidget::startRendering()
 
 	int maxFps = m_config ? m_config->getMaxFPS() : 30;
 	float rate;
-	
+
 	if (maxFps <= 0)
 	{
 		rate = getRefreshRate(this);
