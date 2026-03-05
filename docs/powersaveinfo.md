@@ -1,5 +1,7 @@
 ## PS2 PowerSave File Format
 
+<!-- based off data from here: https://www.ps2savetools.com/documents/ps2-ar-max-save-format/ -->
+
 This file format is used by Action Replay Max / PS2 PowerSave to store a compressed PlayStation 2 save directory. The file consists of a fixed header followed by lzAri-compressed archive data. All strings are null-terminated ASCII unless otherwise stated.
 
 ### Header
