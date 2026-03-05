@@ -48,22 +48,23 @@ bool CocoaTools::CreateMetalLayer(WindowInfo* wi)
 
 void CocoaTools::DestroyMetalLayer(WindowInfo* wi)
 {
+	if (!wi)
+		return;
+
 	if (![NSThread isMainThread])
 	{
 		dispatch_sync_f(dispatch_get_main_queue(), wi, [](void* ctx) { DestroyMetalLayer(static_cast<WindowInfo*>(ctx)); });
 		return;
 	}
 
-	NSView* view = (__bridge NSView*)wi->window_handle;
-	CAMetalLayer* layer = (__bridge_transfer CAMetalLayer*)wi->surface_handle;
-	if (!layer)
-		return;
+	void* raw_layer_handle = wi->surface_handle;
 	wi->surface_handle = nullptr;
-	if (view)
-	{
-		[view setLayer:nil];
-		[view setWantsLayer:NO];
-	}
+
+	if (!raw_layer_handle)
+		return;
+
+	// Only release the retained layer reference.
+	(void)(__bridge_transfer CAMetalLayer*)raw_layer_handle;
 }
 
 std::optional<float> CocoaTools::GetViewRefreshRate(const WindowInfo& wi)

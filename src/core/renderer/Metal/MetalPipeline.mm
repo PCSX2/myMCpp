@@ -20,15 +20,35 @@ bool MetalPipeline::initialize(id<MTLDevice> device)
 	fs::path metallibPath = resourcePath / "shaders" / "Metal" / "default.metallib";
 
 	NSError* error = nil;
-	NSString* path = [NSString stringWithUTF8String:metallibPath.string().c_str()];
-	NSURL* url = [NSURL fileURLWithPath:path];
-	id<MTLLibrary> library = [device newLibraryWithURL:url error:&error];
+	id<MTLLibrary> library = nil;
+
+	if (fs::exists(metallibPath))
+	{
+		NSString* path = [NSString stringWithUTF8String:metallibPath.string().c_str()];
+		NSURL* url = [NSURL fileURLWithPath:path];
+		library = [device newLibraryWithURL:url error:&error];
+	}
 
 	if (!library)
 	{
-		Logger::error("MTL: Failed to load metallib from {}: {}",
-			metallibPath.string(),
-			[[error description] UTF8String]);
+		if (error)
+		{
+			Logger::warn("MTL: Failed to load metallib from {}: {}. Falling back to default library.",
+				metallibPath.string(),
+				[[error description] UTF8String]);
+		}
+		else
+		{
+			Logger::warn("MTL: Metallib not available at {}. Falling back to default library.", metallibPath.string());
+		}
+
+		error = nil;
+		library = [device newDefaultLibrary];
+	}
+
+	if (!library)
+	{
+		Logger::error("MTL: Failed to load shader library from metallib and default library fallback");
 		return false;
 	}
 
@@ -44,7 +64,7 @@ bool MetalPipeline::initialize(id<MTLDevice> device)
 	MTLRenderPipelineDescriptor* psoDesc = [[MTLRenderPipelineDescriptor alloc] init];
 	psoDesc.vertexFunction = vertexFunc;
 	psoDesc.fragmentFunction = fragmentFunc;
-	psoDesc.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
+	psoDesc.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
 	psoDesc.depthAttachmentPixelFormat = MTLPixelFormatDepth32Float;
 
 	psoDesc.colorAttachments[0].blendingEnabled = YES;
@@ -52,7 +72,7 @@ bool MetalPipeline::initialize(id<MTLDevice> device)
 	psoDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
 	psoDesc.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
 	psoDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
-	psoDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+	psoDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorZero;
 	psoDesc.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
 
 	MTLVertexDescriptor* vertexDesc = [[MTLVertexDescriptor alloc] init];
@@ -116,7 +136,7 @@ bool MetalPipeline::createBackgroundPipeline(id<MTLDevice> device)
 	MTLRenderPipelineDescriptor* psoDesc = [[MTLRenderPipelineDescriptor alloc] init];
 	psoDesc.vertexFunction = vertexFunc;
 	psoDesc.fragmentFunction = fragmentFunc;
-	psoDesc.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
+	psoDesc.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
 	psoDesc.depthAttachmentPixelFormat = MTLPixelFormatDepth32Float;
 
 	MTLVertexDescriptor* vertexDesc = [[MTLVertexDescriptor alloc] init];
@@ -134,9 +154,20 @@ bool MetalPipeline::createBackgroundPipeline(id<MTLDevice> device)
 	vertexDesc.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
 
 	psoDesc.vertexDescriptor = vertexDesc;
+	psoDesc.colorAttachments[0].blendingEnabled = YES;
+	psoDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+	psoDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+	psoDesc.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
+	psoDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
+	psoDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorZero;
+	psoDesc.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
 
 	NSError* error = nil;
 	m_bgPipelineState = [device newRenderPipelineStateWithDescriptor:psoDesc error:&error];
+	if (!m_bgPipelineState)
+	{
+		Logger::error("MTL: Failed to create background pipeline state: {}", [[error description] UTF8String]);
+	}
 
 	MTLDepthStencilDescriptor* depthDesc = [[MTLDepthStencilDescriptor alloc] init];
 	depthDesc.depthCompareFunction = MTLCompareFunctionAlways;

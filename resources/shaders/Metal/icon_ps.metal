@@ -27,12 +27,7 @@ fragment float4 IconPSMain(
         color += lambert * scene.lightColor[i].rgb * baseColor;
     }
 
-    float alpha = in.fragColor.a;
-
-    if (push.enableAlpha != 0)
-    {
-        alpha = push.alphaOverride;
-    }
+    float alpha = (push.enableAlpha != 0) ? in.fragColor.a : push.alphaOverride;
 
     return float4(color, alpha);
 }

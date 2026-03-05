@@ -33,7 +33,7 @@ public:
 	void setVSync(bool enabled) override;
 
 	void setIcon(std::shared_ptr<PS2Icon::Icon> icon) override;
-	bool hasValidIcon() const override { return m_icon != nullptr; }
+	bool hasValidIcon() const override;
 
 	void setAnimationEnabled(bool enabled) override { m_animationEnabled = enabled; }
 	bool isAnimationEnabled() const override { return m_animationEnabled; }
