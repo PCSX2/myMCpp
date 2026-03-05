@@ -22,6 +22,7 @@ public:
 
 	void uploadTexture(id<MTLDevice> device, const uint8_t* rgbaData, uint32_t width, uint32_t height);
 	id<MTLTexture> getTexture() const { return m_texture; }
+	id<MTLSamplerState> getSamplerState() const { return m_samplerState; }
 
 	bool createDepthTexture(id<MTLDevice> device, uint32_t width, uint32_t height);
 	id<MTLTexture> getDepthTexture() const { return m_depthTexture; }
@@ -39,6 +40,7 @@ public:
 
 private:
 	id<MTLTexture> m_texture = nil;
+	id<MTLSamplerState> m_samplerState = nil;
 	id<MTLTexture> m_depthTexture = nil;
 
 	std::array<dispatch_semaphore_t, kMaxFramesInFlight> m_renderSemaphores;

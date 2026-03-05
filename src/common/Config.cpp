@@ -99,7 +99,11 @@ std::string Config::getRenderer() const
 	}
 	catch (...)
 	{
+#if defined(__APPLE__)
+		return "metal";
+#else
 		return "vulkan";
+#endif
 	}
 }
 
