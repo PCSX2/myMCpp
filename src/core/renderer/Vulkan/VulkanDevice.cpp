@@ -9,6 +9,9 @@
 #if defined(_WIN32)
 #include <windows.h>
 #include <vulkan/vulkan_win32.h>
+#elif defined(__APPLE__)
+#include <vulkan/vulkan_metal.h>
+#include "CocoaTools.h"
 #elif defined(__linux__)
 #include "../Renderer.h"
 #include <X11/Xlib.h>
@@ -86,6 +89,8 @@ bool VulkanDevice::createInstance()
 		VK_KHR_SURFACE_EXTENSION_NAME,
 #if defined(_WIN32)
 		VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
+#elif defined(__APPLE__)
+		VK_EXT_METAL_SURFACE_EXTENSION_NAME,
 #elif defined(__linux__)
 		VK_KHR_XLIB_SURFACE_EXTENSION_NAME,
 		VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME,
@@ -201,6 +206,33 @@ bool VulkanDevice::createSurface(const WindowInfo& windowInfo)
 		Logger::error("VK: Unknown or invalid window type for Linux");
 		return false;
 	}
+#elif defined(__APPLE__)
+	if (windowInfo.type != WindowInfo::Type::MacOS)
+	{
+		Logger::error("VK: Invalid window type for macOS");
+		return false;
+	}
+
+	if (!windowInfo.surface_handle)
+	{
+		Logger::error("VK: Metal layer not created for MoltenVK");
+		return false;
+	}
+
+	VkMetalSurfaceCreateInfoEXT createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
+	createInfo.pLayer = static_cast<const CAMetalLayer*>(windowInfo.surface_handle);
+
+	VkResult result = vkCreateMetalSurfaceEXT(m_instance, &createInfo, nullptr, &m_surface);
+
+	if (result != VK_SUCCESS)
+	{
+		Logger::error("VK: Failed to create Metal surface: {}", static_cast<int>(result));
+		return false;
+	}
+
+	Logger::info("VK: Metal surface created successfully for MoltenVK");
+	return true;
 #else
 	Logger::error("VK: Vulkan surface creation not implemented for this platform");
 	return false;

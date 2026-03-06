@@ -108,6 +108,10 @@ if(ENABLE_VULKAN)
         Vulkan::Vulkan
         GPUOpen::VulkanMemoryAllocator
     )
+    
+    if(APPLE)
+        target_link_libraries(myMCpp-core PUBLIC MoltenVK::MoltenVK)
+    endif()
 endif()
 
 if(UNIX AND NOT APPLE)

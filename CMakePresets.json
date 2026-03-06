@@ -126,23 +126,23 @@
         {
             "name": "macos-rel",
             "displayName": "macOS Release",
-            "description": "Release build for macOS (Metal renderer only)",
+            "description": "Release build for macOS",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/macos-rel",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "MinSizeRel",
-                "ENABLE_VULKAN": "OFF"
+                "ENABLE_VULKAN": "ON"
             }
         },
         {
             "name": "macos-dbg",
             "displayName": "macOS Debug",
-            "description": "Debug build for macOS (Metal renderer only)",
+            "description": "Debug build for macOS",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/macos-dbg",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "ENABLE_VULKAN": "OFF"
+                "ENABLE_VULKAN": "ON"
             }
         }
     ],
