@@ -64,6 +64,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+!/3rdparty/MoltenVK/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib
 
 # IDE
 .idea/
@@ -79,4 +80,3 @@ resources/shaders/**/*.spv
 
 # will be removed before release
 ico/
-/scripts/
