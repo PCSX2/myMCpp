@@ -10,11 +10,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # 3rdparty dependencies
-if(APPLE)
-    option(ENABLE_VULKAN "Enable Vulkan renderer" OFF)
-else()
-    option(ENABLE_VULKAN "Enable Vulkan renderer" ON)
-endif()
+option(ENABLE_VULKAN "Enable Vulkan renderer" ON)
 
 if(WIN32)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_WARNINGS)

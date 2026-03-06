@@ -19,6 +19,10 @@
 #include <vulkan/vulkan_win32.h>
 #endif
 
+#ifdef __APPLE__
+#include "CocoaTools.h"
+#endif
+
 VulkanRenderer::VulkanRenderer(const WindowInfo& windowInfo, Config* config)
 	: m_windowInfo(windowInfo)
 	, m_width(windowInfo.surface_width)
@@ -61,6 +65,17 @@ bool VulkanRenderer::initialize()
 		m_width = std::max(m_width, 100u);
 		m_height = std::max(m_height, 100u);
 	}
+
+#ifdef __APPLE__
+	if (!m_windowInfo.surface_handle)
+	{
+		if (!CocoaTools::CreateMetalLayer(&m_windowInfo))
+		{
+			Logger::error("VK: Failed to create Metal layer for MoltenVK");
+			return false;
+		}
+	}
+#endif
 
 	if (!m_vulkanDevice.create(m_windowInfo))
 		return false;

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "Renderer.h"
-#if !defined(__APPLE__)
+#if defined(ENABLE_VULKAN)
 #include "Vulkan/VulkanRenderer.h"
 #endif
 #include "OpenGL/OpenGLRenderer.h"
@@ -21,7 +21,7 @@ std::unique_ptr<Renderer> RendererFactory::createRenderer(
 	switch (type)
 	{
 		case RendererType::Vulkan:
-#if !defined(__APPLE__)
+#if defined(ENABLE_VULKAN)
 			return createVulkanRenderer(windowInfo, config);
 #endif
 		case RendererType::OpenGL:
@@ -35,7 +35,7 @@ std::unique_ptr<Renderer> RendererFactory::createRenderer(
 	}
 }
 
-#if !defined(__APPLE__)
+#if defined(ENABLE_VULKAN)
 std::unique_ptr<Renderer> RendererFactory::createVulkanRenderer(const WindowInfo& windowInfo, Config* config)
 {
 	auto renderer = std::make_unique<VulkanRenderer>(windowInfo, config);

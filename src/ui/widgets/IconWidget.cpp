@@ -391,10 +391,8 @@ void IconWidget::ensureRenderer()
 #endif
 		else
 		{
-#if defined(ENABLE_VULKAN) && !defined(__APPLE__)
+#if defined(ENABLE_VULKAN)
 			m_renderer = RendererFactory::createVulkanRenderer(wi, m_config);
-#else
-			m_renderer = RendererFactory::createOpenGLRenderer(wi, m_config);
 #endif
 		}
 

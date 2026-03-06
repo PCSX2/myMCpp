@@ -25,7 +25,7 @@ GraphicsSettingsWidget::GraphicsSettingsWidget(SettingsWindow* dialog, QWidget* 
 	registerHelp(ui->vsyncCheck, tr("VSync"), tr("Synchronize frame rate with monitor refresh rate to prevent screen tearing."));
 
 	ui->rendererCombo->clear();
-#if defined(ENABLE_VULKAN) && !defined(__APPLE__)
+#if defined(ENABLE_VULKAN)
 	ui->rendererCombo->addItem("Vulkan", "vulkan");
 #endif
 	ui->rendererCombo->addItem("OpenGL", "opengl");
