@@ -41,6 +41,7 @@ signals:
 	void createFolderRequested(const QString& parentPath);
 	void importArbitraryFileRequested(const QString& targetDir);
 	void editTimestampRequested(const QString& path);
+	void renameRequested(const QString& path);
 
 protected:
 	void dragEnterEvent(QDragEnterEvent* event) override;

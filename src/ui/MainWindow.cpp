@@ -99,6 +99,9 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->cardBrowser, &MemoryCardBrowser::editTimestampRequested,
 		this, &MainWindow::onEditTimestamp);
 
+	connect(ui->cardBrowser, &MemoryCardBrowser::renameRequested,
+		this, &MainWindow::onRenameEntry);
+
 	connect(ui->cardBrowser, &MemoryCardBrowser::saveFileDropped, this, [this](const QString& path) {
 		if (memoryCard)
 		{
@@ -847,6 +850,56 @@ void MainWindow::onEccTool()
 	{
 		QMessageBox::critical(this, tr("Error"),
 			tr("Failed to save: %1").arg(e.what()));
+	}
+}
+
+void MainWindow::onRenameEntry(const QString& mcPath)
+{
+	if (!memoryCard)
+		return;
+
+	QString currentName = mcPath;
+	int lastSlash = currentName.lastIndexOf('/');
+	if (lastSlash >= 0)
+		currentName = currentName.mid(lastSlash + 1);
+
+	bool ok = false;
+	QString newName = QInputDialog::getText(
+		this,
+		tr("Rename"),
+		tr("New name:"),
+		QLineEdit::Normal,
+		currentName,
+		&ok);
+
+	if (!ok || newName.isEmpty())
+		return;
+
+	if (newName == "." || newName == ".." || newName.contains('/'))
+	{
+		QMessageBox::warning(this, tr("Rename"),
+			tr("The name is invalid."));
+		return;
+	}
+
+	try
+	{
+		memoryCard->renameEntry(mcPath.toStdString(), newName.toStdString());
+
+		QString parentPath;
+		int slash = mcPath.lastIndexOf('/');
+		if (slash <= 0)
+			parentPath = "/";
+		else
+			parentPath = mcPath.left(slash);
+
+		updateCardView();
+		ui->cardBrowser->navigateTo(parentPath);
+	}
+	catch (const std::exception& e)
+	{
+		QMessageBox::critical(this, tr("Error"),
+			tr("Failed to rename: %1").arg(e.what()));
 	}
 }
 

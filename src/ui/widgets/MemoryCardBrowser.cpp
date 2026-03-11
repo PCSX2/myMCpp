@@ -349,6 +349,11 @@ void MemoryCardBrowser::contextMenuEvent(QContextMenuEvent* event)
 
 				menu.addSeparator();
 
+				QAction* renameAction = menu.addAction(tr("Rename..."));
+				connect(renameAction, &QAction::triggered, this, [this, fullPath]() {
+					emit renameRequested(fullPath);
+				});
+
 				QAction* editTimestampAction = menu.addAction(tr("Edit Modified Date..."));
 				connect(editTimestampAction, &QAction::triggered, this, [this, fullPath]() {
 					emit editTimestampRequested(fullPath);
@@ -384,6 +389,11 @@ void MemoryCardBrowser::contextMenuEvent(QContextMenuEvent* event)
 						emit exportFileRequested(m_currentPath, name);
 					});
 				}
+
+				QAction* renameAction = menu.addAction(tr("Rename..."));
+				connect(renameAction, &QAction::triggered, this, [this, fullPath]() {
+					emit renameRequested(fullPath);
+				});
 
 				QAction* editTimestampAction = menu.addAction(tr("Edit Modified Date..."));
 				connect(editTimestampAction, &QAction::triggered, this, [this, fullPath]() {

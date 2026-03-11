@@ -1650,6 +1650,61 @@ void PS2MemoryCard::setModifiedTime(const std::string& path, std::time_t newTime
 	pImpl->modified = true;
 }
 
+void PS2MemoryCard::renameEntry(const std::string& path, const std::string& newName)
+{
+	if (!pImpl->file.is_open())
+	{
+		throw PS2McError("Memory card not open");
+	}
+
+	if (path.empty() || path == "/")
+	{
+		throw PS2McIOError("Invalid path for rename");
+	}
+
+	if (newName.empty() || newName == "." || newName == "..")
+	{
+		throw PS2McIOError("Invalid new name");
+	}
+
+	if (newName.find('/') != std::string::npos)
+	{
+		throw PS2McIOError("Name cannot contain '/'");
+	}
+
+	uint32_t parent_cluster = 0;
+	auto entry = pImpl->find_entry(path, parent_cluster);
+
+	auto entries = pImpl->read_dirents(parent_cluster);
+
+	for (const auto& e : entries)
+	{
+		if ((e.mode & DF_EXISTS) && e.name == newName)
+		{
+			throw PS2McIOError("An entry with the new name already exists");
+		}
+	}
+
+	bool found = false;
+	for (auto& e : entries)
+	{
+		if (e.name == entry.name && e.dirEntry == entry.dirEntry)
+		{
+			e.name = newName;
+			found = true;
+			break;
+		}
+	}
+
+	if (!found)
+	{
+		throw PS2McError("Entry not found in parent directory");
+	}
+
+	pImpl->write_dirents(parent_cluster, entries);
+	pImpl->modified = true;
+}
+
 uint32_t PS2MemoryCard::getAllocatableSpace()
 {
 	if (!pImpl->file.is_open())
