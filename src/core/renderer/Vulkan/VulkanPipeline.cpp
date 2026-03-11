@@ -5,9 +5,98 @@
 
 #include <array>
 #include <fstream>
+#include <sstream>
 #include "Logger.h"
 #include "ResourcePath.h"
 #include <vector>
+
+#include <glslang/Public/ShaderLang.h>
+#include <glslang/Public/ResourceLimits.h>
+#include <SPIRV/GlslangToSpv.h>
+
+namespace
+{
+	bool InitializeGlslang()
+	{
+		static bool initialized = false;
+		if (!initialized)
+		{
+			initialized = glslang::InitializeProcess();
+			if (!initialized)
+				Logger::error("VK: Failed to initialize glslang");
+		}
+		return initialized;
+	}
+
+	EShLanguage GetShaderStage(const char* filename)
+	{
+		if (filename == nullptr)
+			return EShLangVertex;
+
+		std::string name(filename);
+		if (name.ends_with(".vert.glsl"))
+			return EShLangVertex;
+		if (name.ends_with(".frag.glsl"))
+			return EShLangFragment;
+		return EShLangVertex;
+	}
+
+	bool CompileGlslToSpirv(const fs::path& path, std::vector<uint32_t>& spirv)
+	{
+		if (!InitializeGlslang())
+			return false;
+
+		std::ifstream file(path);
+		if (!file.is_open())
+		{
+			Logger::error("VK: Failed to open GLSL shader file: {}", path.string());
+			return false;
+		}
+
+		std::stringstream buffer;
+		buffer << file.rdbuf();
+		const std::string source = buffer.str();
+
+		const std::string pathStr = path.string();
+		const char* cstr = source.c_str();
+
+		EShLanguage stage = GetShaderStage(pathStr.c_str());
+		glslang::TShader shader(stage);
+		shader.setStrings(&cstr, 1);
+		shader.setEntryPoint("main");
+		shader.setSourceEntryPoint("main");
+		shader.setEnvInput(glslang::EShSourceGlsl, stage, glslang::EShClientVulkan, 1);
+		shader.setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_2);
+		shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_5);
+
+		EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
+
+		const TBuiltInResource* resources = GetDefaultResources();
+		if (!resources)
+		{
+			Logger::error("VK: glslang::GetDefaultResources() returned null for {}", pathStr);
+			return false;
+		}
+
+		if (!shader.parse(resources, 100, false, messages))
+		{
+			Logger::error("VK: GLSL shader parse failed for {}:\n{}", pathStr, shader.getInfoLog());
+			return false;
+		}
+
+		glslang::TProgram program;
+		program.addShader(&shader);
+
+		if (!program.link(messages))
+		{
+			Logger::error("VK: GLSL program link failed for {}:\n{}", pathStr, program.getInfoLog());
+			return false;
+		}
+
+		glslang::GlslangToSpv(*program.getIntermediate(stage), spirv);
+		return true;
+	}
+} // namespace
 
 VulkanPipeline::VulkanPipeline() = default;
 
@@ -93,41 +182,21 @@ VkShaderModule VulkanPipeline::createShaderModule(VkDevice device, const std::ve
 
 bool VulkanPipeline::createShaderModules(VkDevice device)
 {
-	fs::path shaderPath = ResourcePath::shaders() / "Vulkan" / "icon.vert.spv";
-	std::ifstream vertFile(shaderPath, std::ios::binary | std::ios::ate);
-	if (!vertFile.is_open())
-	{
-		Logger::error("VK: Failed to open vertex shader SPIR-V file");
-		return false;
-	}
+	fs::path vertPath = ResourcePath::shaders() / "Vulkan" / "icon.vert.glsl";
+	fs::path fragPath = ResourcePath::shaders() / "Vulkan" / "icon.frag.glsl";
 
-	std::streamsize vertSize = vertFile.tellg();
-	vertFile.seekg(0, std::ios::beg);
-	std::vector<char> vertCode(vertSize);
-	if (!vertFile.read(vertCode.data(), vertSize))
-	{
-		Logger::error("VK: Failed to read vertex shader SPIR-V file");
-		return false;
-	}
-	vertFile.close();
+	std::vector<uint32_t> vertSpirv;
+	std::vector<uint32_t> fragSpirv;
 
-	shaderPath = ResourcePath::shaders() / "Vulkan" / "icon.frag.spv";
-	std::ifstream fragFile(shaderPath, std::ios::binary | std::ios::ate);
-	if (!fragFile.is_open())
-	{
-		Logger::error("VK: Failed to open fragment shader SPIR-V file");
+	if (!CompileGlslToSpirv(vertPath, vertSpirv))
 		return false;
-	}
+	if (!CompileGlslToSpirv(fragPath, fragSpirv))
+		return false;
 
-	std::streamsize fragSize = fragFile.tellg();
-	fragFile.seekg(0, std::ios::beg);
-	std::vector<char> fragCode(fragSize);
-	if (!fragFile.read(fragCode.data(), fragSize))
-	{
-		Logger::error("VK: Failed to read fragment shader SPIR-V file");
-		return false;
-	}
-	fragFile.close();
+	std::vector<char> vertCode(reinterpret_cast<char*>(vertSpirv.data()),
+		reinterpret_cast<char*>(vertSpirv.data()) + vertSpirv.size() * sizeof(uint32_t));
+	std::vector<char> fragCode(reinterpret_cast<char*>(fragSpirv.data()),
+		reinterpret_cast<char*>(fragSpirv.data()) + fragSpirv.size() * sizeof(uint32_t));
 
 	m_vertexShader = createShaderModule(device, vertCode);
 	m_fragmentShader = createShaderModule(device, fragCode);
@@ -322,39 +391,21 @@ bool VulkanPipeline::createMainPipeline(VkDevice device, VkRenderPass renderPass
 
 bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass renderPass)
 {
-	fs::path shaderPath = ResourcePath::shaders() / "Vulkan" / "background.vert.spv";
-	std::ifstream vertFile(shaderPath, std::ios::binary | std::ios::ate);
-	if (!vertFile.is_open())
-	{
-		Logger::error("VK: Failed to open background vertex shader SPIR-V file");
-		return false;
-	}
-	std::streamsize vertSize = vertFile.tellg();
-	vertFile.seekg(0, std::ios::beg);
-	std::vector<char> vertCode(vertSize);
-	if (!vertFile.read(vertCode.data(), vertSize))
-	{
-		Logger::error("VK: Failed to read background vertex shader SPIR-V file");
-		return false;
-	}
-	vertFile.close();
+	fs::path vertPath = ResourcePath::shaders() / "Vulkan" / "background.vert.glsl";
+	fs::path fragPath = ResourcePath::shaders() / "Vulkan" / "background.frag.glsl";
 
-	shaderPath = ResourcePath::shaders() / "Vulkan" / "background.frag.spv";
-	std::ifstream fragFile(shaderPath, std::ios::binary | std::ios::ate);
-	if (!fragFile.is_open())
-	{
-		Logger::error("VK: Failed to open background fragment shader SPIR-V file");
+	std::vector<uint32_t> vertSpirv;
+	std::vector<uint32_t> fragSpirv;
+
+	if (!CompileGlslToSpirv(vertPath, vertSpirv))
 		return false;
-	}
-	std::streamsize fragSize = fragFile.tellg();
-	fragFile.seekg(0, std::ios::beg);
-	std::vector<char> fragCode(fragSize);
-	if (!fragFile.read(fragCode.data(), fragSize))
-	{
-		Logger::error("VK: Failed to read background fragment shader SPIR-V file");
+	if (!CompileGlslToSpirv(fragPath, fragSpirv))
 		return false;
-	}
-	fragFile.close();
+
+	std::vector<char> vertCode(reinterpret_cast<char*>(vertSpirv.data()),
+		reinterpret_cast<char*>(vertSpirv.data()) + vertSpirv.size() * sizeof(uint32_t));
+	std::vector<char> fragCode(reinterpret_cast<char*>(fragSpirv.data()),
+		reinterpret_cast<char*>(fragSpirv.data()) + fragSpirv.size() * sizeof(uint32_t));
 
 	VkShaderModule bgVert = createShaderModule(device, vertCode);
 	VkShaderModule bgFrag = createShaderModule(device, fragCode);

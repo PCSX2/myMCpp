@@ -22,6 +22,7 @@
         $(ThirdPartyDir)SPIRV-Tools\include;
         $(ThirdPartyDir)utf8proc;
         $(ThirdPartyDir)discord-rpc\include;
+        $(ThirdPartyDir)glslang;
         $(ThirdPartyDir);
         %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>

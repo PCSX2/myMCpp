@@ -12,10 +12,6 @@ if(WIN32)
     target_sources(myMCpp PRIVATE ${CMAKE_SOURCE_DIR}/resources/myMCpp.rc)
 endif()
 
-if(ENABLE_VULKAN)
-    add_dependencies(myMCpp CompileShaders)
-endif()
-
 target_link_libraries(myMCpp PRIVATE
     myMCpp-core
     myMCpp-qt

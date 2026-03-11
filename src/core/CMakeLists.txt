@@ -90,6 +90,7 @@ target_include_directories(myMCpp-core PUBLIC
     ${glm_SOURCE_DIR}
     ${glfw_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/3rdparty/glad/include
+    ${CMAKE_SOURCE_DIR}/3rdparty/glslang
 )
 
 target_sources(myMCpp-core PRIVATE
@@ -108,6 +109,22 @@ if(ENABLE_VULKAN)
         Vulkan::Vulkan
         GPUOpen::VulkanMemoryAllocator
     )
+
+    target_link_libraries(myMCpp-core PRIVATE
+        glslang
+        SPIRV
+        MachineIndependent
+        GenericCodeGen
+        OSDependent
+        glslang-default-resource-limits
+    )
+
+    if(TARGET SPIRV-Tools)
+        target_link_libraries(myMCpp-core PRIVATE SPIRV-Tools)
+    endif()
+    if(TARGET SPIRV-Tools-opt)
+        target_link_libraries(myMCpp-core PRIVATE SPIRV-Tools-opt)
+    endif()
     
     if(APPLE)
         target_link_libraries(myMCpp-core PUBLIC MoltenVK::MoltenVK)
