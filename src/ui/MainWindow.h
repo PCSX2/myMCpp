@@ -51,6 +51,7 @@ private slots:
 	void onCardItemDoubleClicked();
 	void onSettingsChanged();
 	void onEditTimestamp(const QString& mcPath);
+	void onRenameEntry(const QString& mcPath);
 
 private:
 	void updateCardView();

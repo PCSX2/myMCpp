@@ -96,6 +96,7 @@ public:
 	void setMode(const std::string& path, uint16_t mode);
 
 	void setModifiedTime(const std::string& path, std::time_t newTime);
+	void renameEntry(const std::string& path, const std::string& newName);
 
 	std::vector<uint8_t> readFile(const std::string& path);
 	void exportFile(const std::string& mcPath, const std::string& hostPath);
