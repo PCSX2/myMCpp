@@ -25,6 +25,8 @@ public:
 	bool getDisableEcc() const;
 
 private:
+	void updateSelectionDetails();
+
 	std::unique_ptr<Ui::NewCardDialog> ui;
 	QButtonGroup* sizeGroup;
 };
