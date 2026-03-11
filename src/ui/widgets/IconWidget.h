@@ -37,6 +37,10 @@ public:
 	void startRendering();
 	void stopRendering();
 
+	void resetCamera();
+	void zoomIn();
+	void zoomOut();
+
 	Renderer* getRenderer() const { return m_renderer.get(); }
 
 signals:
@@ -44,10 +48,17 @@ signals:
 	void iconLoadFailed(const QString& error);
 
 protected:
+	QSize sizeHint() const override;
+	bool hasHeightForWidth() const override;
+	int heightForWidth(int w) const override;
 	void timerEvent(QTimerEvent* event) override;
 	void resizeEvent(QResizeEvent* event) override;
 	void showEvent(QShowEvent* event) override;
 	QPaintEngine* paintEngine() const override;
+	void mousePressEvent(QMouseEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
+	void mouseReleaseEvent(QMouseEvent* event) override;
+	void wheelEvent(QWheelEvent* event) override;
 
 private:
 	void printPlatformInfo();
@@ -60,4 +71,9 @@ private:
 	std::unique_ptr<Renderer> m_renderer;
 	QBasicTimer m_renderTimer;
 	bool m_renderLoopEnabled = false;
+	float m_rotX = 0.0f;
+	float m_rotY = 0.0f;
+	float m_zoom = 1.0f;
+	QPoint m_lastDragPos;
+	bool m_dragging = false;
 };

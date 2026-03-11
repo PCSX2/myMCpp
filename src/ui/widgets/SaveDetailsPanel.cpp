@@ -4,6 +4,7 @@
 #include "SaveDetailsPanel.h"
 #include "IconWidget.h"
 #include "Config.h"
+#include <QStyle>
 #include "ps2mc.h"
 #include "ps2iconsys.h"
 #include "TranslationManager.h"
@@ -25,6 +26,31 @@ SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)
 
 	connect(&TranslationManager::instance(), &TranslationManager::languageChanged, this, [this]() {
 		ui->retranslateUi(this);
+	});
+
+	connect(ui->playPauseButton, &QPushButton::clicked, this, [this]() {
+		if (!iconWidget)
+			return;
+		iconWidget->setAnimationEnabled(!iconWidget->isAnimationEnabled());
+		updatePlayPauseButton();
+	});
+
+	connect(ui->resetViewButton, &QPushButton::clicked, this, [this]() {
+		if (!iconWidget)
+			return;
+		iconWidget->resetCamera();
+	});
+
+	connect(ui->zoomInButton, &QPushButton::clicked, this, [this]() {
+		if (!iconWidget)
+			return;
+		iconWidget->zoomIn();
+	});
+
+	connect(ui->zoomOutButton, &QPushButton::clicked, this, [this]() {
+		if (!iconWidget)
+			return;
+		iconWidget->zoomOut();
 	});
 
 	this->hide();
@@ -139,6 +165,7 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 
 				iconWidget->setRotation(0.0f, 0.0f, 0.0f);
 				iconWidget->setZoom(1.0f);
+				updatePlayPauseButton();
 				return;
 			}
 			else
@@ -147,7 +174,7 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 			}
 		}
 	}
-	catch (const std::exception& e)
+	catch (const std::exception&)
 	{
 		if (iconWidget)
 			iconWidget->hide();
@@ -157,6 +184,7 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 		if (iconWidget)
 			iconWidget->hide();
 	}
+	updatePlayPauseButton();
 }
 
 void SaveDetailsPanel::clear()
@@ -169,9 +197,28 @@ void SaveDetailsPanel::clear()
 		ui->detailsLabel->setText(tr("No details available"));
 	if (iconWidget)
 		iconWidget->hide();
+	updatePlayPauseButton();
 	currentCard = nullptr;
 	currentSavePath.clear();
 	this->hide();
+}
+
+void SaveDetailsPanel::updatePlayPauseButton()
+{
+	const bool visible = iconWidget && iconWidget->isVisible();
+	ui->playPauseButton->setVisible(visible);
+	ui->resetViewButton->setVisible(visible);
+	ui->zoomInButton->setVisible(visible);
+	ui->zoomOutButton->setVisible(visible);
+	if (!visible)
+		return;
+
+	const bool animating = iconWidget->isAnimationEnabled();
+	ui->playPauseButton->setIcon(
+		style()->standardIcon(animating ? QStyle::SP_MediaPause : QStyle::SP_MediaPlay));
+	ui->playPauseButton->setToolTip(
+		animating ? tr("Pause animation") : tr("Play animation"));
+	ui->resetViewButton->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
 }
 
 void SaveDetailsPanel::createIconWidget()
@@ -189,9 +236,11 @@ void SaveDetailsPanel::createIconWidget()
 	else
 		m_lastRendererType = "vulkan";
 
-	iconWidget->setMinimumSize(256, 256);
-	iconWidget->setMaximumSize(256, 256);
-	ui->iconLayout->addWidget(iconWidget);
+	iconWidget->setMinimumSize(128, 128);
+	QSizePolicy sp(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
+	sp.setHeightForWidth(true);
+	iconWidget->setSizePolicy(sp);
+	ui->iconLayout->insertWidget(0, iconWidget);
 	iconWidget->hide();
 }
 
