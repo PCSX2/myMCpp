@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>250</width>
-    <height>300</height>
+    <width>460</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>250</width>
+    <width>430</width>
     <height>0</height>
    </size>
   </property>
@@ -24,18 +24,61 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <layout class="QHBoxLayout" name="headerLayout">
+     <item>
+      <widget class="QLabel" name="introIconLabel">
+       <property name="minimumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="introLabel">
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Choose the size and format for your new memory card. Smaller cards are usually the safest choice for game compatibility.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QGroupBox" name="sizeGroup">
      <property name="title">
-      <string>Card Size</string>
+      <string>Card Size Preset</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="QRadioButton" name="size8MB">
         <property name="text">
-         <string>8 MB (Standard)</string>
+         <string>8 MB (Recommended)</string>
         </property>
         <property name="checked">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="size8Hint">
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Official size used by standard PS2 cards. Best overall compatibility.</string>
         </property>
        </widget>
       </item>
@@ -47,6 +90,16 @@
        </widget>
       </item>
       <item>
+       <widget class="QLabel" name="size16Hint">
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Expanded capacity with generally good compatibility in many titles.</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QRadioButton" name="size32MB">
         <property name="text">
          <string>32 MB</string>
@@ -54,9 +107,29 @@
        </widget>
       </item>
       <item>
+       <widget class="QLabel" name="size32Hint">
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Larger third-party style size. Useful when you need extra space.</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QRadioButton" name="size64MB">
         <property name="text">
          <string>64 MB</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="size64Hint">
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Very large card size. Some games and tools may not handle this reliably.</string>
         </property>
        </widget>
       </item>
@@ -72,11 +145,40 @@
       <item>
        <widget class="QCheckBox" name="disableEccCheckbox">
         <property name="toolTip">
-         <string>Creates a memory card image without ECC data.
-Some emulators require non-ECC images.</string>
+         <string>Create image data without error correction bytes.
+Useful for specific raw-image workflows.</string>
         </property>
         <property name="text">
-         <string>Disable ECC (for raw images)</string>
+         <string>Create without ECC bytes</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="eccHintLabel">
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Keep ECC enabled unless you specifically need a raw image format.</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="selectionGroup">
+     <property name="title">
+      <string>Selection Summary</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QLabel" name="selectionSummaryLabel">
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Current selection:</string>
         </property>
        </widget>
       </item>
