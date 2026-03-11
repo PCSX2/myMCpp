@@ -17,6 +17,7 @@
 #include <QDateTimeEdit>
 #include <QDesktopServices>
 #include <QInputDialog>
+#include <QFormLayout>
 
 #include "ui_MainWindow.h"
 
@@ -65,6 +66,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->actionCreate, &QAction::triggered, this, &MainWindow::onCreateMemoryCard);
 	connect(ui->actionClose, &QAction::triggered, this, &MainWindow::onCloseMemoryCard);
 	connect(ui->actionSaveAs, &QAction::triggered, this, &MainWindow::onSaveAs);
+	connect(ui->actionCardInfo, &QAction::triggered, this, &MainWindow::onCardInfo);
 	connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
 	connect(ui->actionImport, &QAction::triggered, this, &MainWindow::onImportSave);
 	connect(ui->actionExport, &QAction::triggered, this, &MainWindow::onExportSave);
@@ -277,6 +279,7 @@ void MainWindow::onOpenMemoryCard()
 
 		ui->actionClose->setEnabled(true);
 		ui->actionSaveAs->setEnabled(true);
+		ui->actionCardInfo->setEnabled(true);
 		ui->actionEccTool->setEnabled(true);
 		ui->actionImport->setEnabled(true);
 		ui->actionExport->setEnabled(true);
@@ -324,6 +327,7 @@ void MainWindow::onCreateMemoryCard()
 
 		ui->actionClose->setEnabled(true);
 		ui->actionSaveAs->setEnabled(true);
+		ui->actionCardInfo->setEnabled(true);
 		ui->actionEccTool->setEnabled(true);
 		ui->actionImport->setEnabled(true);
 		ui->actionExport->setEnabled(true);
@@ -761,6 +765,7 @@ void MainWindow::closeCard()
 
 	ui->actionClose->setEnabled(false);
 	ui->actionSaveAs->setEnabled(false);
+	ui->actionCardInfo->setEnabled(false);
 	ui->actionEccTool->setEnabled(false);
 	ui->actionImport->setEnabled(false);
 	ui->actionExport->setEnabled(false);
@@ -806,6 +811,95 @@ void MainWindow::onSaveAs()
 	{
 		QMessageBox::critical(this, tr("Error"),
 			tr("Failed to save: %1").arg(e.what()));
+	}
+}
+
+void MainWindow::onCardInfo()
+{
+	if (!memoryCard)
+		return;
+
+	try
+	{
+		PS2MemoryCard::CardInfo info = memoryCard->getCardInfo();
+
+		QDialog dialog(this);
+		dialog.setWindowTitle(tr("Card Info"));
+
+		QFormLayout* layout = new QFormLayout(&dialog);
+
+		auto addRow = [layout](const QString& label, const QString& value) {
+			layout->addRow(new QLabel(label), new QLabel(value));
+		};
+
+		auto addSection = [layout](const QString& label) {
+			QLabel* header = new QLabel(label);
+			header->setStyleSheet(QStringLiteral("font-weight: bold; margin-top: 8px;"));
+			layout->addRow(header, new QLabel);
+		};
+
+		const double imageMiB = static_cast<double>(info.imageSizeBytes) / (1024.0 * 1024.0);
+		const double usedMiB = static_cast<double>(info.usedBytes) / (1024.0 * 1024.0);
+		const double freeMiB = static_cast<double>(info.freeBytes) / (1024.0 * 1024.0);
+
+		addSection(tr("Header"));
+		addRow(tr("Magic"), QString::fromLatin1(PS2MC_MAGIC));
+		addRow(tr("Image Size"), tr("%1 MiB").arg(imageMiB, 0, 'f', 2));
+
+		addSection(tr("Geometry"));
+		addRow(tr("Page Length"), tr("%1 bytes").arg(info.pageSize));
+		addRow(tr("Page Physical"), tr("%1 bytes").arg(info.rawPageSize));
+		addRow(tr("Pages / Cluster"), QString::number(info.pagesPerCluster));
+		addRow(tr("Cluster Size"), tr("%1 KiB").arg(info.clusterSize / 1024.0, 0, 'f', 2));
+		addRow(tr("Clusters / Card"), QString::number(info.clustersPerCard));
+
+		addSection(tr("Type and Flags"));
+		QString typeLabel = tr("Unknown (%1)").arg(info.cardType);
+		if (info.cardType == 2)
+			typeLabel = tr("PS2 (2)");
+		else if (info.cardType == 1)
+			typeLabel = tr("PSX (1)");
+		addRow(tr("Card Type"), typeLabel);
+
+		QStringList flagBits;
+		if (info.cardFlags & 0x01)
+			flagBits << tr("USE_ECC");
+		if (info.cardFlags & 0x08)
+			flagBits << tr("BAD_BLOCK");
+		if (info.cardFlags & 0x10)
+			flagBits << tr("ERASE_ZEROES");
+		QString flagsText = tr("0x%1").arg(QString::number(info.cardFlags, 16).toUpper());
+		if (!flagBits.isEmpty())
+			flagsText += tr(" (") + flagBits.join(", ") + ")";
+		addRow(tr("Card Flags"), flagsText);
+
+		addRow(tr("ECC Layout"), info.withEcc ? tr("Yes (512+16)") : tr("No (512 only)"));
+
+		addSection(tr("Allocation"));
+		addRow(tr("Alloc Offset"), QString::number(info.allocatableOffset));
+		addRow(tr("Alloc Count"), QString::number(info.allocatableCount));
+		addRow(tr("Reserved Clusters"), QString::number(info.reservedClusters));
+		addRow(tr("Root Dir Cluster"), QString::number(info.rootDirCluster));
+		addRow(tr("Backup Block 1"), QString::number(info.backupBlock1));
+		addRow(tr("Backup Block 2"), QString::number(info.backupBlock2));
+		addRow(tr("Bad Blocks"), QString::number(info.badBlockCount));
+
+		addSection(tr("Usage"));
+		addRow(tr("Used / Free Clusters"),
+			tr("%1 / %2").arg(info.usedClusters).arg(info.freeClusters));
+		addRow(tr("Used Bytes"), tr("%1 MiB").arg(usedMiB, 0, 'f', 2));
+		addRow(tr("Free Bytes"), tr("%1 MiB").arg(freeMiB, 0, 'f', 2));
+
+		addSection(tr("Health"));
+		const bool fsOk = memoryCard->check();
+		addRow(tr("Filesystem Check"), fsOk ? tr("OK") : tr("Problems detected"));
+
+		dialog.exec();
+	}
+	catch (const std::exception& e)
+	{
+		QMessageBox::critical(this, tr("Error"),
+			tr("Failed to read card info: %1").arg(e.what()));
 	}
 }
 
