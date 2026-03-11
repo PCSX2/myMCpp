@@ -28,6 +28,7 @@ public:
 
 private:
 	void createIconWidget();
+	void updatePlayPauseButton();
 
 	Config* m_config;
 	IconWidget* iconWidget;

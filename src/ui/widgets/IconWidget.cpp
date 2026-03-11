@@ -6,6 +6,8 @@
 #include "../../common/Logger.h"
 #include "../common/WindowInfo.h"
 #include <QResizeEvent>
+#include <QMouseEvent>
+#include <QWheelEvent>
 #if defined(__linux__)
 #include <qpa/qplatformnativeinterface.h>
 #endif
@@ -127,7 +129,9 @@ bool IconWidget::loadIcon(const std::vector<uint8_t>& iconData)
 		m_icon = std::make_shared<PS2Icon::Icon>();
 		if (!m_icon->load(iconData))
 		{
-			emit iconLoadFailed(QString::fromStdString(m_icon->getError()));
+			QString err = QString::fromStdString(m_icon->getError());
+			m_icon.reset();
+			emit iconLoadFailed(err);
 			return false;
 		}
 
@@ -190,6 +194,8 @@ bool IconWidget::isAnimationEnabled() const
 
 void IconWidget::setRotation(float x, float y, float z)
 {
+	m_rotX = x;
+	m_rotY = y;
 	ensureRenderer();
 	if (m_renderer)
 	{
@@ -200,12 +206,36 @@ void IconWidget::setRotation(float x, float y, float z)
 
 void IconWidget::setZoom(float zoom)
 {
+	m_zoom = std::clamp(zoom, 0.1f, 10.0f);
 	ensureRenderer();
 	if (m_renderer)
 	{
-		m_renderer->setZoom(zoom);
+		m_renderer->setZoom(m_zoom);
 		renderFrame();
 	}
+}
+
+void IconWidget::resetCamera()
+{
+	m_rotX = 0.0f;
+	m_rotY = 0.0f;
+	m_zoom = 1.0f;
+	ensureRenderer();
+	if (m_renderer)
+	{
+		m_renderer->resetCamera();
+		renderFrame();
+	}
+}
+
+void IconWidget::zoomIn()
+{
+	setZoom(m_zoom - 0.2f);
+}
+
+void IconWidget::zoomOut()
+{
+	setZoom(m_zoom + 0.2f);
 }
 
 void IconWidget::setLightingFromIconSys(PS2IconSys* iconSys)
@@ -452,6 +482,63 @@ void IconWidget::renderFrame()
 		qWarning() << "IconWidget: render exception, recreating renderer:" << e.what();
 		recreateRenderer();
 	}
+}
+
+void IconWidget::mousePressEvent(QMouseEvent* event)
+{
+	if (event->button() == Qt::LeftButton)
+	{
+		m_dragging = true;
+		m_lastDragPos = event->pos();
+	}
+	QWidget::mousePressEvent(event);
+}
+
+void IconWidget::mouseMoveEvent(QMouseEvent* event)
+{
+	if (m_dragging && (event->buttons() & Qt::LeftButton))
+	{
+		const QPoint delta = event->pos() - m_lastDragPos;
+		m_lastDragPos = event->pos();
+		m_rotY += static_cast<float>(delta.x()) * 0.005f;
+		m_rotX += static_cast<float>(delta.y()) * 0.005f;
+		ensureRenderer();
+		if (m_renderer)
+		{
+			m_renderer->setRotation(m_rotX, m_rotY, 0.0f);
+			renderFrame();
+		}
+	}
+	QWidget::mouseMoveEvent(event);
+}
+
+void IconWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+	if (event->button() == Qt::LeftButton)
+		m_dragging = false;
+	QWidget::mouseReleaseEvent(event);
+}
+
+void IconWidget::wheelEvent(QWheelEvent* event)
+{
+	const float steps = static_cast<float>(event->angleDelta().y()) / 120.0f;
+	setZoom(m_zoom - steps * 0.15f);
+	event->accept();
+}
+
+QSize IconWidget::sizeHint() const
+{
+	return QSize(256, 256);
+}
+
+bool IconWidget::hasHeightForWidth() const
+{
+	return true;
+}
+
+int IconWidget::heightForWidth(int w) const
+{
+	return w;
 }
 
 void IconWidget::timerEvent(QTimerEvent* event)
