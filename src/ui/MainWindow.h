@@ -50,6 +50,7 @@ private slots:
 	void onCardItemSelected();
 	void onCardItemDoubleClicked();
 	void onSettingsChanged();
+	void onEditTimestamp(const QString& mcPath);
 
 private:
 	void updateCardView();

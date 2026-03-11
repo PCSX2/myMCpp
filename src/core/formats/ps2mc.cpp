@@ -1617,6 +1617,39 @@ void PS2MemoryCard::setMode(const std::string& path, uint16_t mode)
 	pImpl->write_dirents(parent_cluster, entries);
 }
 
+void PS2MemoryCard::setModifiedTime(const std::string& path, std::time_t newTime)
+{
+	if (!pImpl->file.is_open())
+	{
+		throw PS2McError("Memory card not open");
+	}
+
+	uint32_t parent_cluster = 0;
+	auto entry = pImpl->find_entry(path, parent_cluster);
+
+	auto entries = pImpl->read_dirents(parent_cluster);
+	PS2McTod newTod = timeToTod(newTime);
+
+	bool found = false;
+	for (auto& e : entries)
+	{
+		if (e.name == entry.name && e.dirEntry == entry.dirEntry)
+		{
+			e.modified = newTod;
+			found = true;
+			break;
+		}
+	}
+
+	if (!found)
+	{
+		throw PS2McError("Entry not found in parent directory");
+	}
+
+	pImpl->write_dirents(parent_cluster, entries);
+	pImpl->modified = true;
+}
+
 uint32_t PS2MemoryCard::getAllocatableSpace()
 {
 	if (!pImpl->file.is_open())
