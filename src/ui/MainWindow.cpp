@@ -732,7 +732,13 @@ void MainWindow::updateStatusBar()
 			uint32_t allocatable = memoryCard->getAllocatableSpace();
 			double freeMB = freeSpace / (1024.0 * 1024.0);
 			double totalMB = allocatable / (1024.0 * 1024.0);
-			ui->statusBar->showMessage(tr("Free: %2 MB / Total: %1 MB").arg(totalMB, 0, 'f', 2).arg(freeMB, 0, 'f', 2));
+			bool hasEcc = memoryCard->hasEcc();
+			QString eccLabel = hasEcc ? tr("ECC") : tr("No ECC");
+			ui->statusBar->showMessage(
+				tr("Free: %2 MB / Total: %1 MB (%3)")
+					.arg(totalMB, 0, 'f', 2)
+					.arg(freeMB, 0, 'f', 2)
+					.arg(eccLabel));
 		}
 		catch (...)
 		{
