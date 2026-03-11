@@ -325,16 +325,18 @@ void MemoryCardBrowser::contextMenuEvent(QContextMenuEvent* event)
 
 			if (name != "..")
 			{
+				const QString fullPath = "/" + name;
+
 				if (isDir)
 				{
 					QAction* browseAction = menu.addAction(tr("Browse Contents"));
-					connect(browseAction, &QAction::triggered, this, [this, name]() {
-						navigateTo("/" + name);
+					connect(browseAction, &QAction::triggered, this, [this, fullPath]() {
+						navigateTo(fullPath);
 					});
 
 					QAction* exportAction = menu.addAction(tr("Export Save..."));
-					connect(exportAction, &QAction::triggered, this, [this, name]() {
-						emit exportSaveRequested("/" + name);
+					connect(exportAction, &QAction::triggered, this, [this, fullPath]() {
+						emit exportSaveRequested(fullPath);
 					});
 				}
 				else
@@ -347,9 +349,14 @@ void MemoryCardBrowser::contextMenuEvent(QContextMenuEvent* event)
 
 				menu.addSeparator();
 
+				QAction* editTimestampAction = menu.addAction(tr("Edit Modified Date..."));
+				connect(editTimestampAction, &QAction::triggered, this, [this, fullPath]() {
+					emit editTimestampRequested(fullPath);
+				});
+
 				QAction* deleteAction = menu.addAction(tr("Delete"));
-				connect(deleteAction, &QAction::triggered, this, [this, name]() {
-					emit deleteSaveRequested("/" + name);
+				connect(deleteAction, &QAction::triggered, this, [this, fullPath]() {
+					emit deleteSaveRequested(fullPath);
 				});
 			}
 		}
@@ -368,6 +375,8 @@ void MemoryCardBrowser::contextMenuEvent(QContextMenuEvent* event)
 			}
 			else
 			{
+				const QString fullPath = m_currentPath == "/" ? "/" + name : m_currentPath + "/" + name;
+
 				if (!isDir)
 				{
 					QAction* exportAction = menu.addAction(tr("Export File..."));
@@ -376,11 +385,13 @@ void MemoryCardBrowser::contextMenuEvent(QContextMenuEvent* event)
 					});
 				}
 
+				QAction* editTimestampAction = menu.addAction(tr("Edit Modified Date..."));
+				connect(editTimestampAction, &QAction::triggered, this, [this, fullPath]() {
+					emit editTimestampRequested(fullPath);
+				});
+
 				QAction* deleteAction = menu.addAction(tr("Delete"));
-				connect(deleteAction, &QAction::triggered, this, [this, name]() {
-					QString fullPath = m_currentPath + "/" + name;
-					if (m_currentPath == "/")
-						fullPath = "/" + name;
+				connect(deleteAction, &QAction::triggered, this, [this, fullPath]() {
 					emit deleteSaveRequested(fullPath);
 				});
 			}

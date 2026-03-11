@@ -40,6 +40,7 @@ signals:
 	void importFileRequested(const QString& savePath, const QString& hostFilePath);
 	void createFolderRequested(const QString& parentPath);
 	void importArbitraryFileRequested(const QString& targetDir);
+	void editTimestampRequested(const QString& path);
 
 protected:
 	void dragEnterEvent(QDragEnterEvent* event) override;

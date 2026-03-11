@@ -14,6 +14,7 @@
 #include "Themes.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDateTimeEdit>
 #include <QDesktopServices>
 #include <QInputDialog>
 
@@ -94,6 +95,9 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		this, &MainWindow::onCardItemSelected);
 	connect(ui->cardBrowser, &QTreeWidget::itemDoubleClicked,
 		this, &MainWindow::onCardItemDoubleClicked);
+
+	connect(ui->cardBrowser, &MemoryCardBrowser::editTimestampRequested,
+		this, &MainWindow::onEditTimestamp);
 
 	connect(ui->cardBrowser, &MemoryCardBrowser::saveFileDropped, this, [this](const QString& path) {
 		if (memoryCard)
@@ -637,6 +641,75 @@ void MainWindow::onCardItemDoubleClicked()
 		QString currentPath = ui->cardBrowser->getCurrentPath();
 		QString targetPath = currentPath == "/" ? "/" + name : currentPath + "/" + name;
 		ui->cardBrowser->navigateTo(targetPath);
+	}
+}
+
+void MainWindow::onEditTimestamp(const QString& mcPath)
+{
+	if (!memoryCard)
+		return;
+
+	try
+	{
+		const std::string path = mcPath.toStdString();
+		PS2McDirEntry entry = memoryCard->getEntry(path);
+		std::time_t currentTime = todToTime(entry.modified);
+
+		QDateTime currentDateTime;
+		if (currentTime == 0)
+		{
+			currentDateTime = QDateTime::currentDateTime();
+		}
+		else
+		{
+			currentDateTime = QDateTime::fromSecsSinceEpoch(static_cast<qint64>(currentTime));
+		}
+
+		QDialog dialog(this);
+		dialog.setWindowTitle(tr("Edit Modified Date"));
+
+		QVBoxLayout* layout = new QVBoxLayout(&dialog);
+
+		QLabel* pathLabel = new QLabel(mcPath, &dialog);
+		pathLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+		layout->addWidget(pathLabel);
+
+		QDateTimeEdit* dateTimeEdit = new QDateTimeEdit(currentDateTime, &dialog);
+		dateTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
+		dateTimeEdit->setCalendarPopup(true);
+		layout->addWidget(dateTimeEdit);
+
+		QPushButton* nowButton = new QPushButton(tr("Set to Now"), &dialog);
+		connect(nowButton, &QPushButton::clicked, &dialog, [dateTimeEdit]() {
+			dateTimeEdit->setDateTime(QDateTime::currentDateTime());
+		});
+		layout->addWidget(nowButton);
+
+		QDialogButtonBox* buttonBox = new QDialogButtonBox(
+			QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+		layout->addWidget(buttonBox);
+
+		connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+		connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+		if (dialog.exec() != QDialog::Accepted)
+			return;
+
+		QDateTime newDateTime = dateTimeEdit->dateTime();
+		if (!newDateTime.isValid())
+			return;
+
+		std::time_t newTime = static_cast<std::time_t>(newDateTime.toSecsSinceEpoch());
+
+		memoryCard->setModifiedTime(path, newTime);
+
+		updateCardView();
+		ui->cardBrowser->navigateTo(ui->cardBrowser->getCurrentPath());
+	}
+	catch (const std::exception& e)
+	{
+		QMessageBox::critical(this, tr("Error"),
+			tr("Failed to edit timestamp: %1").arg(e.what()));
 	}
 }
 

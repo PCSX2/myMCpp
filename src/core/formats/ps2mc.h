@@ -95,6 +95,8 @@ public:
 	uint16_t getMode(const std::string& path);
 	void setMode(const std::string& path, uint16_t mode);
 
+	void setModifiedTime(const std::string& path, std::time_t newTime);
+
 	std::vector<uint8_t> readFile(const std::string& path);
 	void exportFile(const std::string& mcPath, const std::string& hostPath);
 	void writeFile(const std::string& path, const std::vector<uint8_t>& data);
