@@ -70,6 +70,12 @@ public:
 
 	std::array<uint32_t, 32> indirect_fat_cluster_list = {};
 
+	uint8_t card_type = 0;
+	uint8_t card_flags = 0;
+	uint32_t backup_block1 = 0;
+	uint32_t backup_block2 = 0;
+	std::array<uint32_t, 32> bad_block_list = {};
+
 	bool modified = false;
 	std::map<uint32_t, std::vector<uint8_t>> page_cache;
 	std::map<uint32_t, std::vector<uint8_t>> fat_cluster_cache;
@@ -343,6 +349,31 @@ void PS2MemoryCard::Impl::read_superblock()
 	for (int i = 0; i < 32; ++i)
 	{
 		indirect_fat_cluster_list[i] = readLE<uint32_t>(sb_page, 76 + i * 4);
+	}
+
+	if (sb_page.size() > 0x44 + 4)
+	{
+		backup_block1 = readLE<uint32_t>(sb_page, 0x40);
+		backup_block2 = readLE<uint32_t>(sb_page, 0x44);
+	}
+
+	if (sb_page.size() > 0x151)
+	{
+		card_type = sb_page[0x150];
+		card_flags = sb_page[0x151];
+
+		if ((card_flags & 0x01) == 0)
+		{
+			with_ecc = false;
+		}
+	}
+
+	if (sb_page.size() > 0xD0 + 32 * 4)
+	{
+		for (int i = 0; i < 32; ++i)
+		{
+			bad_block_list[i] = readLE<uint32_t>(sb_page, 0xD0 + i * 4);
+		}
 	}
 
 	if (allocatable_cluster_end == 0 || allocatable_cluster_end > 1000000)
@@ -1161,6 +1192,72 @@ uint32_t PS2MemoryCard::getFreeSpace()
 		}
 	}
 	return free_clusters * pImpl->cluster_size;
+}
+
+PS2MemoryCard::CardInfo PS2MemoryCard::getCardInfo()
+{
+	if (!pImpl->file.is_open())
+	{
+		throw PS2McError("Memory card not open");
+	}
+
+	CardInfo info{};
+
+	info.pageSize = pImpl->page_size;
+	info.rawPageSize = pImpl->raw_page_size;
+	info.spareSize = pImpl->spare_size;
+	info.withEcc = pImpl->with_ecc && pImpl->spare_size > 0;
+	info.cardType = pImpl->card_type;
+	info.cardFlags = pImpl->card_flags;
+	info.pagesPerCluster = pImpl->pages_per_cluster;
+	info.clusterSize = pImpl->cluster_size;
+	info.clustersPerCard = pImpl->clusters_per_card;
+	info.allocatableOffset = pImpl->allocatable_cluster_offset;
+	info.allocatableCount = pImpl->allocatable_cluster_end;
+	info.rootDirCluster = pImpl->rootdir_fat_cluster;
+
+	uint32_t freeClusters = 0;
+	for (uint32_t entry : pImpl->fat)
+	{
+		if ((entry & PS2MC_FAT_ALLOCATED_BIT) == 0 && entry == PS2MC_FAT_CHAIN_END_UNALLOC)
+		{
+			freeClusters++;
+		}
+	}
+
+	info.freeClusters = freeClusters;
+
+	uint32_t allocatableClusters = info.allocatableCount;
+	uint32_t usedClusters = (allocatableClusters > freeClusters) ? (allocatableClusters - freeClusters) : 0;
+	info.usedClusters = usedClusters;
+
+	uint32_t reservedClusters = 0;
+	if (pImpl->clusters_per_card > info.allocatableOffset + info.allocatableCount)
+	{
+		reservedClusters = pImpl->clusters_per_card - (info.allocatableOffset + info.allocatableCount);
+	}
+	info.reservedClusters = reservedClusters;
+
+	info.backupBlock1 = pImpl->backup_block1;
+	info.backupBlock2 = pImpl->backup_block2;
+
+	uint32_t badCount = 0;
+	for (uint32_t v : pImpl->bad_block_list)
+	{
+		if (v != 0 && v != 0xFFFFFFFF)
+		{
+			++badCount;
+		}
+	}
+	info.badBlockCount = badCount;
+
+	info.usedBytes = static_cast<uint64_t>(usedClusters) * info.clusterSize;
+	info.freeBytes = static_cast<uint64_t>(freeClusters) * info.clusterSize;
+
+	info.imageSizeBytes =
+		static_cast<uint64_t>(pImpl->page_size) * pImpl->pages_per_cluster * pImpl->clusters_per_card;
+
+	return info;
 }
 
 void PS2MemoryCard::makeDir(const std::string& path)

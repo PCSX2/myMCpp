@@ -80,6 +80,30 @@ public:
 class PS2MemoryCard
 {
 public:
+	struct CardInfo
+	{
+		uint64_t imageSizeBytes = 0;
+		uint32_t pageSize = 0;
+		uint32_t rawPageSize = 0;
+		uint32_t spareSize = 0;
+		bool withEcc = false;
+		uint8_t cardType = 0;
+		uint8_t cardFlags = 0;
+		uint32_t pagesPerCluster = 0;
+		uint32_t clusterSize = 0;
+		uint32_t clustersPerCard = 0;
+		uint32_t allocatableOffset = 0;
+		uint32_t allocatableCount = 0;
+		uint32_t reservedClusters = 0;
+		uint32_t backupBlock1 = 0;
+		uint32_t backupBlock2 = 0;
+		uint32_t badBlockCount = 0;
+		uint32_t rootDirCluster = 0;
+		uint32_t usedClusters = 0;
+		uint32_t freeClusters = 0;
+		uint64_t usedBytes = 0;
+		uint64_t freeBytes = 0;
+	};
 	PS2MemoryCard();
 	~PS2MemoryCard();
 
@@ -123,6 +147,8 @@ public:
 	std::string getPsxTitle(const std::string& savePath);
 
 	void saveAs(const std::string& filename, bool withEcc = true);
+
+	CardInfo getCardInfo();
 
 private:
 	class Impl;

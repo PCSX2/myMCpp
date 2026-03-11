@@ -33,6 +33,7 @@ private slots:
 	void onCreateMemoryCard();
 	void onCloseMemoryCard();
 	void onSaveAs();
+	void onCardInfo();
 	void onImportSave();
 	void onExportSave();
 	void onDeleteFile();
