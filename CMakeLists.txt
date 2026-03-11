@@ -30,10 +30,6 @@ if(UNIX AND NOT APPLE)
 else()
     find_package(OpenGL REQUIRED)
 endif()
-if(ENABLE_VULKAN)
-    include(${CMAKE_SOURCE_DIR}/cmake/shaders.cmake)
-endif()
-
 # make myMCpp
 add_subdirectory(src)
 
