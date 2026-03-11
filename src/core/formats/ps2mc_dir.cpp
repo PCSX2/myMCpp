@@ -114,6 +114,8 @@ std::vector<uint8_t> packDirEntry(const PS2McDirEntry& entry)
 
 std::time_t todToTime(const PS2McTod& tod)
 {
+	// Values on card are in JST (UTC+9).
+	// Convert JST -> UTC so the returned time_t is not timezone dependent.
 	std::tm timeinfo = {};
 	timeinfo.tm_sec = tod.sec;
 	timeinfo.tm_min = tod.min;
@@ -121,16 +123,30 @@ std::time_t todToTime(const PS2McTod& tod)
 	timeinfo.tm_mday = tod.mday;
 	timeinfo.tm_mon = tod.month - 1;
 	timeinfo.tm_year = tod.year - 1900;
-	return std::mktime(&timeinfo);
+	timeinfo.tm_isdst = -1;
+
+	std::time_t jst_time;
+#if defined(_WIN32)
+	jst_time = _mkgmtime(&timeinfo);
+#else
+	jst_time = timegm(&timeinfo);
+#endif
+
+	// JST is UTC+9.
+	return jst_time - static_cast<std::time_t>(9 * 60 * 60);
 }
 
 PS2McTod timeToTod(std::time_t time)
 {
+	// Store timestamps on card in JST (UTC+9),
+	// regardless of whatever the host system's local timezone is.
+	std::time_t jst_time = time + static_cast<std::time_t>(9 * 60 * 60);
+
 	std::tm timeinfo{};
 #if defined(_WIN32)
-	localtime_s(&timeinfo, &time);
+	gmtime_s(&timeinfo, &jst_time);
 #else
-	localtime_r(&time, &timeinfo);
+	gmtime_r(&jst_time, &timeinfo);
 #endif
 	PS2McTod tod{};
 	tod.sec = static_cast<uint8_t>(timeinfo.tm_sec);
