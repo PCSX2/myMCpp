@@ -6,17 +6,17 @@
     <message>
       <location filename="../Settings/AdvancedSettingsWidget.cpp" line="+19"/>
       <source>Debug Logging</source>
-      <translation type="unfinished">Debug Logging</translation>
+      <translation>デバッグログ</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Enable verbose logging to standard output for debugging purposes.</source>
-      <translation type="unfinished">Enable verbose logging to standard output for debugging purposes.</translation>
+      <translation>デバッグ用のログを標準出力に表示することを有効にする。</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Advanced</source>
-      <translation type="unfinished">Advanced</translation>
+      <translation>アドバンスド</translation>
     </message>
   </context>
   <context>
@@ -24,22 +24,22 @@
     <message>
       <location filename="../Settings/BehaviorSettingsWidget.cpp" line="+19"/>
       <source>Warn Before Deleting</source>
-      <translation type="unfinished">Warn Before Deleting</translation>
+      <translation>削除前に警告する</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Show a warning dialog when attempting to delete files from a memory card.</source>
-      <translation type="unfinished">Show a warning dialog when attempting to delete files from a memory card.</translation>
+      <translation>メモリーカードからファイルを削除するときに警告を出す。</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Hide to System Tray</source>
-      <translation type="unfinished">Hide to System Tray</translation>
+      <translation>システムトレイに格納</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Minimize the application to the system tray instead of the taskbar.</source>
-      <translation type="unfinished">Minimize the application to the system tray instead of the taskbar.</translation>
+      <translation>最小化するときにタスクバーからシステムトレイに格納する。</translation>
     </message>
     <message>
       <location line="+5"/>
@@ -637,7 +637,7 @@ Files: %1</translation>
     <message>
       <location line="+2"/>
       <source>Advanced</source>
-      <translation type="unfinished">Advanced</translation>
+      <translation>アドバンスド</translation>
     </message>
     <message>
       <location line="+2"/>
