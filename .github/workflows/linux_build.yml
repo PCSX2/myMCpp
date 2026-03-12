@@ -258,14 +258,6 @@ jobs:
           echo "AppImage created: ${APPIMAGE_NAME}"
           echo "appimage-path=${APPIMAGE_NAME}" >> $GITHUB_OUTPUT
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v6
-        with:
-          name: ${{ steps.artifact-metadata.outputs.artifact-name }}
-          path: build/${{ env.PRESET }}/bin/*/
-          if-no-files-found: error
-          retention-days: 30
-
       - name: Upload AppImage artifact
         uses: actions/upload-artifact@v6
         with:

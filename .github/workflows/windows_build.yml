@@ -146,7 +146,7 @@ jobs:
         with:
           name: ${{ steps.artifact-metadata.outputs.artifact-name }}
           path: |
-            ./build/${{ env.PRESET }}/bin/*
+            ./build/${{ env.PRESET }}/bin
             !./build/${{ env.PRESET }}/bin/**/*.pdb
             !./build/${{ env.PRESET }}/bin/**/*.lib
             !./build/${{ env.PRESET }}/bin/**/*.exp

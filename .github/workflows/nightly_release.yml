@@ -115,15 +115,70 @@ jobs:
         with:
           path: artifacts
 
+      - name: Display structure of downloaded files
+        run: ls -R artifacts/
+
+      - name: Prepare release assets
+        shell: bash
+        run: |
+          mkdir -p release-assets
+          TAG="${{ steps.nightly_tag.outputs.tag }}"
+
+          for dir in artifacts/*/; do
+            dirname="$(basename "$dir")"
+
+            # Skip symbol artifacts
+            if [[ "$dirname" == *"-symbols" ]]; then
+              continue
+            fi
+
+            echo "Processing: $dirname"
+
+            # Windows artifacts: zip the directory contents
+            if [[ "$dirname" == *"windows"* ]]; then
+              asset_name="myMCpp-${TAG}-${dirname#myMCpp-nightly-}.zip"
+              echo "  -> Creating $asset_name"
+              cd "$dir"
+              zip -r "../../release-assets/$asset_name" ./*
+              cd ../..
+
+            # macOS artifacts: move the .tar.xz as-is
+            elif [[ "$dirname" == *"macos"* ]]; then
+              for f in "$dir"*.tar.xz; do
+                if [ -f "$f" ]; then
+                  asset_name="myMCpp-${TAG}-${dirname#myMCpp-nightly-}.tar.xz"
+                  echo "  -> Moving to $asset_name"
+                  cp "$f" "release-assets/$asset_name"
+                fi
+              done
+
+            # Linux artifacts: move AppImage as-is
+            elif [[ "$dirname" == *"linux"* ]]; then
+              for f in "$dir"*.AppImage; do
+                if [ -f "$f" ]; then
+                  asset_name="myMCpp-${TAG}-${dirname#myMCpp-nightly-}.AppImage"
+                  echo "  -> Moving to $asset_name"
+                  cp "$f" "release-assets/$asset_name"
+                fi
+              done
+            fi
+          done
+
+          echo ""
+          echo "=== Final release assets ==="
+          ls -la release-assets/
+
       - name: Create GitHub pre-release with assets
         uses: softprops/action-gh-release@v2.5.0
         with:
           tag_name: ${{ steps.nightly_tag.outputs.tag }}
           name: ${{ steps.nightly_tag.outputs.name }}
+          target_commitish: ${{ github.sha }}
           prerelease: true
+          draft: false
+          make_latest: false
           generate_release_notes: true
           files: |
-            artifacts/**
+            release-assets/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
