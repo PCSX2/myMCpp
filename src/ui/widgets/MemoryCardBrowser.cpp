@@ -162,6 +162,9 @@ void MemoryCardBrowser::loadSaveDirectory(const QString& savePath)
 
 		for (const auto& entry : entries)
 		{
+			if (!(entry.mode & DF_EXISTS) || (entry.mode & DF_HIDDEN))
+				continue;
+
 			if (entry.name == "." || entry.name == "..")
 				continue;
 
