@@ -171,7 +171,7 @@
     <message>
       <location line="+18"/>
       <source>Confirm Delete</source>
-      <translation type="unfinished">Confirm Delete</translation>
+      <translation>Konfirmasi Hapus</translation>
     </message>
     <message>
       <location line="+1"/>
@@ -250,7 +250,7 @@ Are you sure you want to continue?</translation>
     <message>
       <location line="+0"/>
       <source>Open a file dialog to select the memory card directory.</source>
-      <translation type="unfinished">Open a file dialog to select the memory card directory.</translation>
+      <translation>Buka kotak dialog file untuk memilih direktori kartu memori.</translation>
     </message>
     <message>
       <location line="+5"/>
@@ -268,7 +268,7 @@ Are you sure you want to continue?</translation>
     <message>
       <location filename="../Settings/InterfaceSettingsWidget.cpp" line="+25"/>
       <source>Language</source>
-      <translation type="unfinished">Language</translation>
+      <translation>Bahasa</translation>
     </message>
     <message>
       <location line="+0"/>
@@ -278,7 +278,7 @@ Are you sure you want to continue?</translation>
     <message>
       <location line="+1"/>
       <source>Theme</source>
-      <translation type="unfinished">Theme</translation>
+      <translation>Tema</translation>
     </message>
     <message>
       <location line="+0"/>
