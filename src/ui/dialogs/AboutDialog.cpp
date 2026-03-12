@@ -60,3 +60,15 @@ AboutDialog::AboutDialog(QWidget* parent)
 AboutDialog::~AboutDialog()
 {
 }
+
+void AboutDialog::changeEvent(QEvent* event)
+{
+	if (event->type() == QEvent::LanguageChange)
+	{
+		if (ui)
+		{
+			ui->retranslateUi(this);
+		}
+	}
+	QDialog::changeEvent(event);
+}

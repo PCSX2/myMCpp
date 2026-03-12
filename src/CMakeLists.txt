@@ -22,12 +22,29 @@ target_link_libraries(myMCpp PRIVATE
     Qt6::Widgets
 )
 
-file(GLOB TS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/ui/Translations/*.ts")
-qt6_add_translations(myMCpp
-    TS_FILES ${TS_FILES}
-    LUPDATE_OPTIONS -locations relative
-    RESOURCE_PREFIX "/translations"
-)
+# Took inspiration from https://github.com/PCSX2/pcsx2/blob/master/pcsx2-qt/CMakeLists.txt for the translation generation
+file(GLOB TS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/ui/Translations/myMCpp_*.ts")
+
+if(WIN32)
+    set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_SOURCE_DIR}/bin/translations")
+    qt_add_lrelease(myMCpp TS_FILES ${TS_FILES})
+elseif(APPLE)
+    qt_add_lrelease(myMCpp TS_FILES ${TS_FILES} QM_FILES_OUTPUT_VARIABLE QM_FILES)
+    foreach(QM_FILE IN LISTS QM_FILES)
+        target_sources(myMCpp PRIVATE ${QM_FILE})
+        set_source_files_properties(${QM_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources/translations/)
+    endforeach()
+else()
+    qt_add_lrelease(myMCpp TS_FILES ${TS_FILES} QM_FILES_OUTPUT_VARIABLE QM_FILES)
+    set(QM_OUTPUT_DIR "$<TARGET_FILE_DIR:myMCpp>/translations")
+    add_custom_command(TARGET myMCpp POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${QM_OUTPUT_DIR}")
+    foreach(QM_FILE IN LISTS QM_FILES)
+        get_filename_component(QM_FILE_NAME ${QM_FILE} NAME)
+        add_custom_command(TARGET myMCpp POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${QM_FILE}" "${QM_OUTPUT_DIR}/${QM_FILE_NAME}")
+    endforeach()
+endif()
 
 target_include_directories(myMCpp PRIVATE
     ${Qt6Gui_PRIVATE_INCLUDE_DIRS}

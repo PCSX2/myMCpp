@@ -33,6 +33,10 @@ private slots:
 	void onClearRecentFiles();
 	void onBrowseImportExportPath();
 
+protected:
+	void changeEvent(QEvent* event) override;
+
 private:
 	std::unique_ptr<Ui::FilesSettingsWidget> ui;
+	QWidget* m_rootWidget = nullptr;
 };

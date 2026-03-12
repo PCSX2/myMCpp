@@ -13,8 +13,8 @@ FilesSettingsWidget::FilesSettingsWidget(SettingsWindow* dialog, QWidget* parent
 	: SettingsWidget(dialog, parent)
 	, ui(new Ui::FilesSettingsWidget)
 {
-	QWidget* container = new QWidget(this);
-	ui->setupUi(container);
+	m_rootWidget = new QWidget(this);
+	ui->setupUi(m_rootWidget);
 
 	registerHelp(ui->memoryCardPathEdit, tr("Memory Card Directory"), tr("The default directory where memory card images are stored."));
 	registerHelp(ui->browseButton, tr("Browse Directory"), tr("Open a file dialog to select the memory card directory."));
@@ -31,11 +31,23 @@ FilesSettingsWidget::FilesSettingsWidget(SettingsWindow* dialog, QWidget* parent
 
 	ui->recentFilesList->setSelectionMode(QAbstractItemView::NoSelection);
 
-	addTab(tr("Files"), container);
+	addTab(tr("Files"), m_rootWidget);
 	loadSettings();
 }
 
 FilesSettingsWidget::~FilesSettingsWidget() = default;
+
+void FilesSettingsWidget::changeEvent(QEvent* event)
+{
+	if (event->type() == QEvent::LanguageChange)
+	{
+		if (ui && m_rootWidget)
+		{
+			ui->retranslateUi(m_rootWidget);
+		}
+	}
+	SettingsWidget::changeEvent(event);
+}
 
 void FilesSettingsWidget::loadSettings()
 {

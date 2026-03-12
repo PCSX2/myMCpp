@@ -11,8 +11,8 @@ GeneralSettingsWidget::GeneralSettingsWidget(SettingsWindow* dialog, QWidget* pa
 	: SettingsWidget(dialog, parent)
 	, ui(new Ui::GeneralSettingsWidget)
 {
-	QWidget* container = new QWidget(this);
-	ui->setupUi(container);
+	m_rootWidget = new QWidget(this);
+	ui->setupUi(m_rootWidget);
 
 	registerHelp(ui->languageCombo, tr("Language"), tr("Select the language for the application interface."));
 	registerHelp(ui->themeCombo, tr("Theme"), tr("Select the color theme for the application."));
@@ -49,11 +49,23 @@ GeneralSettingsWidget::GeneralSettingsWidget(SettingsWindow* dialog, QWidget* pa
 	connect(ui->forceImportCheck, &QCheckBox::toggled, this, &SettingsWidget::settingChanged);
 	connect(ui->discordRpcCheck, &QCheckBox::toggled, this, &SettingsWidget::settingChanged);
 
-	addTab(tr("General"), container);
+	addTab(tr("General"), m_rootWidget);
 	loadSettings();
 }
 
 GeneralSettingsWidget::~GeneralSettingsWidget() = default;
+
+void GeneralSettingsWidget::changeEvent(QEvent* event)
+{
+	if (event->type() == QEvent::LanguageChange)
+	{
+		if (ui && m_rootWidget)
+		{
+			ui->retranslateUi(m_rootWidget);
+		}
+	}
+	SettingsWidget::changeEvent(event);
+}
 
 void GeneralSettingsWidget::loadSettings()
 {

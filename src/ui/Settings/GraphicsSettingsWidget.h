@@ -31,6 +31,10 @@ private slots:
 	void onRendererChanged(int index);
 	void onVSyncChanged(bool enabled);
 
+protected:
+	void changeEvent(QEvent* event) override;
+
 private:
 	std::unique_ptr<Ui::GraphicsSettingsWidget> ui;
+	QWidget* m_rootWidget = nullptr;
 };

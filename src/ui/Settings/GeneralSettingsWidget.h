@@ -27,6 +27,10 @@ public:
 	void loadSettings() override;
 	void restoreDefaults() override;
 
+protected:
+	void changeEvent(QEvent* event) override;
+
 private:
 	std::unique_ptr<Ui::GeneralSettingsWidget> ui;
+	QWidget* m_rootWidget = nullptr;
 };

@@ -30,6 +30,9 @@ private slots:
 	void onExportSettings();
 	void onImportSettings();
 
+protected:
+	void changeEvent(QEvent* event) override;
+
 private:
 	std::unique_ptr<Ui::AdvancedSettingsWidget> ui;
 };

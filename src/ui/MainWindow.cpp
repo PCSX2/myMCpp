@@ -497,6 +497,29 @@ void MainWindow::onSettingsChanged()
 	}
 }
 
+void MainWindow::onLanguageChanged()
+{
+	const bool hadSettingsWindow = (m_settingsWindow != nullptr);
+
+	if (ui)
+	{
+		ui->retranslateUi(this);
+		updateStatusBar();
+		updateForceImportWarning();
+	}
+
+	if (m_settingsWindow)
+	{
+		m_settingsWindow->close();
+		m_settingsWindow = nullptr;
+	}
+
+	if (hadSettingsWindow)
+	{
+		onPreferences();
+	}
+}
+
 void MainWindow::onPreferences()
 {
 	if (!m_settingsWindow)
@@ -504,6 +527,7 @@ void MainWindow::onPreferences()
 		m_settingsWindow = new SettingsWindow(m_config, this);
 
 		connect(m_settingsWindow, &SettingsWindow::applicationSettingsChanged, this, &MainWindow::onSettingsChanged);
+		connect(m_settingsWindow, &SettingsWindow::languageChanged, this, &MainWindow::onLanguageChanged);
 
 		connect(m_settingsWindow, &QDialog::finished, m_settingsWindow, &QObject::deleteLater);
 		connect(m_settingsWindow, &QObject::destroyed, this, [this]() {

@@ -54,6 +54,7 @@ private slots:
 	void onSettingsChanged();
 	void onEditTimestamp(const QString& mcPath);
 	void onRenameEntry(const QString& mcPath);
+	void onLanguageChanged();
 
 private:
 	void updateCardView();

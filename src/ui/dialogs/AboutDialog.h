@@ -19,6 +19,9 @@ public:
 	explicit AboutDialog(QWidget* parent = nullptr);
 	~AboutDialog();
 
+protected:
+	void changeEvent(QEvent* event) override;
+
 private:
 	std::unique_ptr<Ui::AboutDialog> ui;
 };

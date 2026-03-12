@@ -29,6 +29,18 @@ AdvancedSettingsWidget::AdvancedSettingsWidget(SettingsWindow* dialog, QWidget* 
 
 AdvancedSettingsWidget::~AdvancedSettingsWidget() = default;
 
+void AdvancedSettingsWidget::changeEvent(QEvent* event)
+{
+	if (event->type() == QEvent::LanguageChange)
+	{
+		if (ui)
+		{
+			ui->retranslateUi(this);
+		}
+	}
+	SettingsWidget::changeEvent(event);
+}
+
 void AdvancedSettingsWidget::loadSettings()
 {
 	Config* config = m_dialog->getConfig();

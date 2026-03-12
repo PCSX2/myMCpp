@@ -33,6 +33,7 @@ public:
 
 signals:
 	void applicationSettingsChanged();
+	void languageChanged();
 
 private slots:
 	void onCategorySelected(int row);
@@ -43,6 +44,7 @@ private slots:
 
 protected:
 	bool eventFilter(QObject* watched, QEvent* event) override;
+	void changeEvent(QEvent* event) override;
 
 private:
 	void updateDescription(int index);

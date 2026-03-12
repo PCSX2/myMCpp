@@ -14,6 +14,7 @@
 #include "AdvancedSettingsWidget.h"
 
 #include <QTimer>
+#include <QEvent>
 
 SettingsWindow::SettingsWindow(Config* config, QWidget* parent)
 	: QDialog(parent)
@@ -53,10 +54,26 @@ SettingsWindow::SettingsWindow(Config* config, QWidget* parent)
 	m_saveTimer->setSingleShot(true);
 	m_saveTimer->setInterval(500);
 	connect(m_saveTimer, &QTimer::timeout, this, &SettingsWindow::saveToDisk);
+
+	connect(&TranslationManager::instance(), &TranslationManager::languageChanged,
+		this, &SettingsWindow::languageChanged);
 }
 
 SettingsWindow::~SettingsWindow()
 {
+}
+
+void SettingsWindow::changeEvent(QEvent* event)
+{
+	if (event->type() == QEvent::LanguageChange)
+	{
+		if (ui)
+		{
+			ui->retranslateUi(this);
+			updateDescription(ui->settingsCategory->currentRow());
+		}
+	}
+	QDialog::changeEvent(event);
 }
 
 void SettingsWindow::onSettingChanged()
@@ -79,7 +96,6 @@ void SettingsWindow::saveToDisk()
 	if (m_config)
 	{
 		m_config->save();
-		TranslationManager::instance().loadLanguage(m_config->getLanguage());
 	}
 }
 
@@ -153,7 +169,6 @@ void SettingsWindow::onClose()
 	if (m_config)
 	{
 		m_config->save();
-		TranslationManager::instance().loadLanguage(m_config->getLanguage());
 	}
 
 	accept();

@@ -38,6 +38,19 @@ NewCardDialog::~NewCardDialog()
 {
 }
 
+void NewCardDialog::changeEvent(QEvent* event)
+{
+	if (event->type() == QEvent::LanguageChange)
+	{
+		if (ui)
+		{
+			ui->retranslateUi(this);
+			updateSelectionDetails();
+		}
+	}
+	QDialog::changeEvent(event);
+}
+
 int NewCardDialog::getCardSizeMB() const
 {
 	return sizeGroup->checkedId();

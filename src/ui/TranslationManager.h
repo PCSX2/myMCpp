@@ -33,4 +33,5 @@ private:
 	QApplication* m_app = nullptr;
 	Config* m_config = nullptr;
 	std::unique_ptr<QTranslator> m_translator;
+	std::string m_currentLanguage;
 };

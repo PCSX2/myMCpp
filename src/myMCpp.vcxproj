@@ -176,8 +176,47 @@
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y /E /I "$(ProjectDir)..\resources" "$(TargetDir)resources"</Command>
-      <Message>Copying resources directory to output...</Message>
+      <Command>
+if not exist "$(TargetDir)translations" mkdir "$(TargetDir)translations"
+
+set "QT_BIN=C:\Qt\6.10.2\msvc2022_64\bin"
+
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_af-ZA.ts" -qm "$(TargetDir)translations\myMCpp_af-ZA.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_ar-SA.ts" -qm "$(TargetDir)translations\myMCpp_ar-SA.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_ca-ES.ts" -qm "$(TargetDir)translations\myMCpp_ca-ES.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_cs-CZ.ts" -qm "$(TargetDir)translations\myMCpp_cs-CZ.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_da-DK.ts" -qm "$(TargetDir)translations\myMCpp_da-DK.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_de-DE.ts" -qm "$(TargetDir)translations\myMCpp_de-DE.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_el-GR.ts" -qm "$(TargetDir)translations\myMCpp_el-GR.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_en.ts" -qm "$(TargetDir)translations\myMCpp_en.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_en-US.ts" -qm "$(TargetDir)translations\myMCpp_en-US.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_es-ES.ts" -qm "$(TargetDir)translations\myMCpp_es-ES.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_fi-FI.ts" -qm "$(TargetDir)translations\myMCpp_fi-FI.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_fr-FR.ts" -qm "$(TargetDir)translations\myMCpp_fr-FR.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_he-IL.ts" -qm "$(TargetDir)translations\myMCpp_he-IL.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_hu-HU.ts" -qm "$(TargetDir)translations\myMCpp_hu-HU.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_id-ID.ts" -qm "$(TargetDir)translations\myMCpp_id-ID.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_it-IT.ts" -qm "$(TargetDir)translations\myMCpp_it-IT.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_ja-JP.ts" -qm "$(TargetDir)translations\myMCpp_ja-JP.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_ko-KR.ts" -qm "$(TargetDir)translations\myMCpp_ko-KR.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_nl-NL.ts" -qm "$(TargetDir)translations\myMCpp_nl-NL.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_no-NO.ts" -qm "$(TargetDir)translations\myMCpp_no-NO.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_pl-PL.ts" -qm "$(TargetDir)translations\myMCpp_pl-PL.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_pt-BR.ts" -qm "$(TargetDir)translations\myMCpp_pt-BR.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_pt-PT.ts" -qm "$(TargetDir)translations\myMCpp_pt-PT.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_ro-RO.ts" -qm "$(TargetDir)translations\myMCpp_ro-RO.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_ru-RU.ts" -qm "$(TargetDir)translations\myMCpp_ru-RU.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_sr-SP.ts" -qm "$(TargetDir)translations\myMCpp_sr-SP.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_sv-SE.ts" -qm "$(TargetDir)translations\myMCpp_sv-SE.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_tr-TR.ts" -qm "$(TargetDir)translations\myMCpp_tr-TR.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_uk-UA.ts" -qm "$(TargetDir)translations\myMCpp_uk-UA.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_vi-VN.ts" -qm "$(TargetDir)translations\myMCpp_vi-VN.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_zh-CN.ts" -qm "$(TargetDir)translations\myMCpp_zh-CN.qm"
+"%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_zh-TW.ts" -qm "$(TargetDir)translations\myMCpp_zh-TW.qm"
+
+xcopy /Y /E /I "$(ProjectDir)..\resources" "$(TargetDir)resources"
+      </Command>
+      <Message>Generating translations and copying resources to output...</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
 

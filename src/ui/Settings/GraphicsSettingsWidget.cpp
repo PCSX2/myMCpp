@@ -12,8 +12,8 @@ GraphicsSettingsWidget::GraphicsSettingsWidget(SettingsWindow* dialog, QWidget* 
 	: SettingsWidget(dialog, parent)
 	, ui(new Ui::GraphicsSettingsWidget)
 {
-	QWidget* container = new QWidget(this);
-	ui->setupUi(container);
+	m_rootWidget = new QWidget(this);
+	ui->setupUi(m_rootWidget);
 
 	registerHelp(ui->rendererCombo, tr("Renderer"), tr("Select the graphics API used for rendering the 3D icons."));
 	registerHelp(ui->cameraCombo, tr("Camera Angle"), tr("Change the camera angle used to view the 3D icons."));
@@ -60,11 +60,23 @@ GraphicsSettingsWidget::GraphicsSettingsWidget(SettingsWindow* dialog, QWidget* 
 	connect(ui->fpsLimitSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this, &SettingsWidget::settingChanged);
 	connect(ui->vsyncCheck, &QCheckBox::toggled, this, &GraphicsSettingsWidget::onVSyncChanged);
 
-	addTab(tr("Graphics"), container);
+	addTab(tr("Graphics"), m_rootWidget);
 	loadSettings();
 }
 
 GraphicsSettingsWidget::~GraphicsSettingsWidget() = default;
+
+void GraphicsSettingsWidget::changeEvent(QEvent* event)
+{
+	if (event->type() == QEvent::LanguageChange)
+	{
+		if (ui && m_rootWidget)
+		{
+			ui->retranslateUi(m_rootWidget);
+		}
+	}
+	SettingsWidget::changeEvent(event);
+}
 
 void GraphicsSettingsWidget::onRendererChanged(int index)
 {

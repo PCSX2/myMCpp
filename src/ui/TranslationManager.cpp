@@ -7,6 +7,8 @@
 
 #include <QApplication>
 #include <QDir>
+#include <QSet>
+#include <QWidget>
 
 TranslationManager& TranslationManager::instance()
 {
@@ -33,6 +35,9 @@ void TranslationManager::loadLanguage(const std::string& lang)
 		return;
 	}
 
+	if (lang == m_currentLanguage)
+		return;
+
 	if (m_translator)
 	{
 		m_app->removeTranslator(m_translator.get());
@@ -45,11 +50,17 @@ void TranslationManager::loadLanguage(const std::string& lang)
 	m_translator = std::make_unique<QTranslator>();
 	bool loaded = false;
 
-	QString externalPath = QString::fromStdString((m_config->getResourcesPath() / "translations").string());
-	if (m_translator->load("myMCpp_" + langStr, externalPath))
+	QString appTranslations = QApplication::applicationDirPath() + QStringLiteral("/translations");
+	if (m_translator->load("myMCpp_" + langStr, appTranslations))
 	{
 		loaded = true;
-		Logger::info("Loaded translation from external folder: {}", externalPath.toStdString());
+		Logger::info("Loaded translation from app translations folder: {}", appTranslations.toStdString());
+	}
+	else if (m_translator->load("myMCpp_" + langStr,
+				 QString::fromStdString((m_config->getResourcesPath() / "translations").string())))
+	{
+		loaded = true;
+		Logger::info("Loaded translation from external resources folder");
 	}
 	// Try resource path
 	else if (m_translator->load(":/translations/myMCpp_" + langStr + ".qm"))
@@ -62,12 +73,12 @@ void TranslationManager::loadLanguage(const std::string& lang)
 		Logger::warn("Failed to load translation for language: {}", lang);
 	}
 
+	m_currentLanguage = lang;
+
 	if (loaded)
 	{
 		m_app->installTranslator(m_translator.get());
 		Logger::info("Translator installed successfully");
-		QEvent* event = new QEvent(QEvent::LanguageChange);
-		QApplication::postEvent(m_app, event);
 		emit languageChanged();
 	}
 }
@@ -75,29 +86,44 @@ void TranslationManager::loadLanguage(const std::string& lang)
 std::vector<std::pair<QString, QString>> TranslationManager::getAvailableLanguages()
 {
 	std::vector<std::pair<QString, QString>> languages;
-	languages.push_back({"English (US)", "en"});
+	languages.push_back({QStringLiteral("English (US)"), QStringLiteral("en")});
 
-	QDir dir(":/translations");
-	QStringList filters;
-	filters << "myMCpp_*.qm";
-	dir.setNameFilters(filters);
+	QSet<QString> seenCodes;
+	seenCodes.insert(QStringLiteral("en"));
 
-	for (const QString& filename : dir.entryList())
-	{
-		QString code = filename.mid(7, filename.length() - 10);
-		if (code == "en")
-			continue;
+	auto addLanguagesFromDir = [&](const QDir& dir) {
+		if (!dir.exists())
+			return;
 
-		QLocale locale(code);
-		QString name = QLocale::languageToString(locale.language());
-		if (locale.territory() != QLocale::AnyCountry)
+		const QStringList files = dir.entryList(QStringList(QStringLiteral("myMCpp_*.qm")), QDir::Files);
+		for (const QString& filename : files)
 		{
-			name += " (" + QLocale::territoryToString(locale.territory()) + ")";
-		}
+			const QString code = filename.mid(7, filename.length() - 10);
+			if (code.isEmpty() || seenCodes.contains(code))
+				continue;
 
-		if (name.isEmpty() || name == "C")
-			name = code;
-		languages.push_back({name, code});
+			QLocale locale(code);
+			QString name = QLocale::languageToString(locale.language());
+			if (locale.territory() != QLocale::AnyCountry)
+			{
+				name += QStringLiteral(" (") + QLocale::territoryToString(locale.territory()) + QStringLiteral(")");
+			}
+
+			if (name.isEmpty() || name == QStringLiteral("C"))
+				name = code;
+
+			seenCodes.insert(code);
+			languages.emplace_back(name, code);
+		}
+	};
+
+	addLanguagesFromDir(QDir(QStringLiteral(":/translations")));
+	addLanguagesFromDir(QDir(QApplication::applicationDirPath() + QStringLiteral("/translations")));
+
+	if (m_config)
+	{
+		const auto translationsPath = (m_config->getResourcesPath() / "translations").string();
+		addLanguagesFromDir(QDir(QString::fromStdString(translationsPath)));
 	}
 
 	return languages;

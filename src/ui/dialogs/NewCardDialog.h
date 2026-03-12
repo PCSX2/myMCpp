@@ -24,6 +24,9 @@ public:
 	int getCardSizeMB() const;
 	bool getDisableEcc() const;
 
+protected:
+	void changeEvent(QEvent* event) override;
+
 private:
 	void updateSelectionDetails();
 
