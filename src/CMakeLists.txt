@@ -26,8 +26,15 @@ target_link_libraries(myMCpp PRIVATE
 file(GLOB TS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/ui/Translations/myMCpp_*.ts")
 
 if(WIN32)
-    set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_SOURCE_DIR}/bin/translations")
-    qt_add_lrelease(myMCpp TS_FILES ${TS_FILES})
+    qt_add_lrelease(myMCpp TS_FILES ${TS_FILES} QM_FILES_OUTPUT_VARIABLE QM_FILES)
+    set(QM_OUTPUT_DIR "$<TARGET_FILE_DIR:myMCpp>/translations")
+    add_custom_command(TARGET myMCpp POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${QM_OUTPUT_DIR}")
+    foreach(QM_FILE IN LISTS QM_FILES)
+        get_filename_component(QM_FILE_NAME ${QM_FILE} NAME)
+        add_custom_command(TARGET myMCpp POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${QM_FILE}" "${QM_OUTPUT_DIR}/${QM_FILE_NAME}")
+    endforeach()
 elseif(APPLE)
     qt_add_lrelease(myMCpp TS_FILES ${TS_FILES} QM_FILES_OUTPUT_VARIABLE QM_FILES)
     foreach(QM_FILE IN LISTS QM_FILES)

@@ -4,6 +4,8 @@
 #include "AboutDialog.h"
 #include "ui_AboutDialog.h"
 #include "ResourcePath.h"
+#include "version.h"
+#include "BuildVersion.h"
 #include <QDesktopServices>
 #include <QTextBrowser>
 #include <QDialogButtonBox>
@@ -24,6 +26,20 @@ AboutDialog::AboutDialog(QWidget* parent)
 			ui->logoLabel->setPixmap(pixmap.scaledToHeight(targetHeight, Qt::SmoothTransformation));
 		}
 	}
+
+	QString base = QStringLiteral("%1 v%2")
+	                   .arg(QString::fromUtf8(MYMCpp_APP_NAME))
+	                   .arg(QString::fromUtf8(myMCpp_VERSION_STRING));
+
+	const QString gitRev = QString::fromUtf8(BuildVersion::GitRev);
+	const QString gitHash = QString::fromUtf8(BuildVersion::GitHash);
+
+	if (!gitRev.isEmpty() && gitRev != QStringLiteral("Unknown"))
+		ui->versionLabel->setText(QStringLiteral("%1 (%2)").arg(base, gitRev));
+	else if (!gitHash.isEmpty())
+		ui->versionLabel->setText(QStringLiteral("%1 (git %2)").arg(base, gitHash.left(7)));
+	else
+		ui->versionLabel->setText(base);
 
 	adjustSize();
 	setFixedSize(size());

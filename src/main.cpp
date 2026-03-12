@@ -4,6 +4,8 @@
 #include "MainWindow.h"
 #include "ps2mc_cli.h"
 #include "Config.h"
+#include "version.h"
+#include "BuildVersion.h"
 #if !defined(__APPLE__)
 #include <QVulkanInstance>
 #endif
@@ -83,8 +85,14 @@ static int appMain(int argc, char* argv[])
 
 	QApplication app(argc, argv);
 
-	app.setApplicationName("myMCpp");
-	app.setApplicationVersion("1.0.0");
+	Logger::info("Main: myMCpp version {} ({}, hash {}, date {})",
+		myMCpp_VERSION_STRING,
+		BuildVersion::GitRev,
+		BuildVersion::GitHash,
+		BuildVersion::GitDate);
+
+	app.setApplicationName(MYMCpp_APP_NAME);
+	app.setApplicationVersion(myMCpp_VERSION_STRING);
 	app.setOrganizationName("myMCpp");
 
 	Config config;

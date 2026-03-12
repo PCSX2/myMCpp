@@ -12,6 +12,8 @@
 #include "DiscordRPCManager.h"
 #include "Config.h"
 #include "Themes.h"
+#include "version.h"
+#include "BuildVersion.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDateTimeEdit>
@@ -57,6 +59,22 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	, m_discordRpc(std::make_unique<DiscordRPCManager>(this))
 {
 	ui->setupUi(this);
+	QString baseTitle = QStringLiteral("%1 v%2")
+	                        .arg(QString::fromUtf8(MYMCpp_APP_NAME))
+	                        .arg(QString::fromUtf8(myMCpp_VERSION_STRING));
+
+	const QString gitTag = QString::fromUtf8(BuildVersion::GitTag);
+	const QString gitRev = QString::fromUtf8(BuildVersion::GitRev);
+	const QString gitHash = QString::fromUtf8(BuildVersion::GitHash);
+
+	if (!gitTag.isEmpty())
+		setWindowTitle(QStringLiteral("%1 (%2)").arg(baseTitle, gitTag));
+	else if (!gitRev.isEmpty() && gitRev != QStringLiteral("Unknown"))
+		setWindowTitle(QStringLiteral("%1 (%2)").arg(baseTitle, gitRev));
+	else if (!gitHash.isEmpty())
+		setWindowTitle(QStringLiteral("%1 (git %2)").arg(baseTitle, gitHash.left(7)));
+	else
+		setWindowTitle(baseTitle);
 	ui->detailsPanel->setConfig(config);
 	actionHandler = std::make_unique<CardActionHandler>(this);
 
@@ -559,7 +577,7 @@ void MainWindow::onDocumentation()
 void MainWindow::onCheckForUpdates()
 {
 	QMessageBox::information(this, tr("Check for Updates"),
-		tr("You are running the latest version of myMCpp (v1.0.0).\n\n"
+		tr("TBD\n\n"
 		   "For updates, visit: https://github.com/SternXD/myMCpp/releases"));
 }
 

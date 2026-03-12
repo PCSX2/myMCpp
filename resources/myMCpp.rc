@@ -6,8 +6,8 @@
 IDI_APPICON ICON "icons/AppIcon.ico"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION 1,0,0,0
-PRODUCTVERSION 1,0,0,0
+FILEVERSION 0,1,0,0
+PRODUCTVERSION 0,1,0,0
 FILEFLAGSMASK 0x3f
 FILEFLAGS 0x0
 FILEOS VOS_NT_WINDOWS32
@@ -20,12 +20,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "myMCpp"
             VALUE "FileDescription", "PS2 Memory Card Manager"
-            VALUE "FileVersion", "1.0.0.0"
+            VALUE "FileVersion", "0.1.0.0"
             VALUE "InternalName", "myMCpp"
             VALUE "LegalCopyright", "GPLv3"
             VALUE "OriginalFilename", "myMCpp.exe"
             VALUE "ProductName", "myMCpp"
-            VALUE "ProductVersion", "1.0.0.0"
+            VALUE "ProductVersion", "0.1.0.0"
         END
     END
     BLOCK "VarFileInfo"

@@ -6,6 +6,7 @@
 #include "ps2save.h"
 #include "../common/Logger.h"
 #include "version.h"
+#include "BuildVersion.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -18,7 +19,7 @@ PS2McCommandLine::~PS2McCommandLine() = default;
 
 void PS2McCommandLine::printHelp()
 {
-	std::cout << "Usage: mymcpp [-i memcard] [-h] command [arguments]\n\n"
+	std::cout << "Usage: myMCpp [-i memcard] [-h] command [arguments]\n\n"
 			  << "Manipulate PS2 memory card images.\n\n"
 			  << "Supported commands:\n"
 			  << "   add:     Add files to the memory card\n"
@@ -45,7 +46,23 @@ void PS2McCommandLine::printHelp()
 
 void PS2McCommandLine::printVersion()
 {
-	std::cout << "mymcpp version " << MYMCpp_VERSION_MAJOR << "." << MYMCpp_VERSION_MINOR << "." << MYMCpp_VERSION_BUILD << "\n";
+	std::string rev = BuildVersion::GitRev ? BuildVersion::GitRev : "";
+	std::string hash = BuildVersion::GitHash ? BuildVersion::GitHash : "";
+
+	std::cout << "myMCpp " << myMCpp_VERSION_STRING;
+
+	if (!rev.empty() && rev != "Unknown")
+	{
+		std::cout << " (" << rev << ")";
+	}
+	else if (!hash.empty())
+	{
+		if (hash.size() > 7)
+			hash = hash.substr(0, 7);
+		std::cout << " (git " << hash << ")";
+	}
+
+	std::cout << "\n";
 }
 
 int PS2McCommandLine::execute(int argc, char* argv[])

@@ -52,7 +52,7 @@
       </font>
      </property>
      <property name="text">
-      <string>myMCpp v1.0.0</string>
+      <string>myMCpp</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

@@ -126,12 +126,13 @@
   <!-- Project-specific settings -->
   <ItemDefinitionGroup>
     <PreBuildEvent>
-      <Command>call "$(MSBuildThisFileDirectory)..\..\3rdparty\build_deps.cmd" "$(Configuration)" $(Platform)</Command>
-      <Message>Building 3rdparty dependencies via CMake...</Message>
+      <Command>call "$(MSBuildThisFileDirectory)..\..\3rdparty\build_deps.cmd" "$(Configuration)" $(Platform)
+call "$(SolutionDir)scripts\generate_svnrev.cmd" "$(SolutionDir)" "$(SolutionDir)build\$(Platform)\$(Configuration)\generated"</Command>
+      <Message>Building 3rdparty dependencies via CMake and generating svnrev.h...</Message>
     </PreBuildEvent>
     <ClCompile>
       <PreprocessorDefinitions>_LIB;UTF8PROC_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\core;$(SolutionDir)build\$(Platform)\$(Configuration)\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
 
@@ -141,11 +142,13 @@
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="WindowInfo.cpp" />
     <ClCompile Include="Config.cpp" />
+    <ClCompile Include="BuildVersion.cpp" />
     <ClCompile Include="..\..\3rdparty\utf8proc\utf8proc.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="round.h" />
     <ClInclude Include="version.h" />
+    <ClInclude Include="BuildVersion.h" />
     <ClInclude Include="sjis.h" />
     <ClInclude Include="lzari.h" />
     <ClInclude Include="Logger.h" />

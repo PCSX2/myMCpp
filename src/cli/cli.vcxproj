@@ -98,7 +98,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\common;$(ProjectDir)..\core;$(ProjectDir)..\core\formats;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\common;$(ProjectDir)..\core;$(ProjectDir)..\core\formats;$(ProjectDir);$(SolutionDir)build\$(Platform)\$(Configuration)\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
 

@@ -4,11 +4,13 @@ set(COMMON_SOURCES
     Logger.cpp
     WindowInfo.cpp
     Config.cpp
+    BuildVersion.cpp
 )
 
 set(COMMON_HEADERS
     round.h
     version.h
+    BuildVersion.h
     sjis.h
     lzari.h
     Logger.h
