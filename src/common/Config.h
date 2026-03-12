@@ -70,6 +70,9 @@ public:
 	bool getAsciiMode() const;
 	void setAsciiMode(bool enabled);
 
+	bool getToolbarLocked() const;
+	void setToolbarLocked(bool locked);
+
 	bool getForceImport() const;
 	void setForceImport(bool enabled);
 	bool getDiscordRPCEnabled() const;

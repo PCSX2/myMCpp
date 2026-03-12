@@ -88,6 +88,8 @@
     <addaction name="actionAscii"/>
     <addaction name="actionForceImport"/>
     <addaction name="separator"/>
+    <addaction name="actionLockToolbar"/>
+    <addaction name="separator"/>
     <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -348,6 +350,17 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+F</string>
+   </property>
+  </action>
+  <action name="actionLockToolbar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Lock Toolbar</string>
+   </property>
+   <property name="statusTip">
+    <string>Prevent the main toolbar from being moved or floated</string>
    </property>
   </action>
   <action name="actionPreferences">

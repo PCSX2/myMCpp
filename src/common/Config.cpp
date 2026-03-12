@@ -380,6 +380,23 @@ void Config::setAsciiMode(bool enabled)
 	m_config["ui"]["ascii_mode"] = enabled;
 }
 
+bool Config::getToolbarLocked() const
+{
+	try
+	{
+		return m_config["ui"]["toolbar_locked"].get<bool>();
+	}
+	catch (...)
+	{
+		return false;
+	}
+}
+
+void Config::setToolbarLocked(bool locked)
+{
+	m_config["ui"]["toolbar_locked"] = locked;
+}
+
 bool Config::getForceImport() const
 {
 	try
@@ -585,6 +602,7 @@ void Config::createDefaults()
 		{"ui", {{"theme", "dark"},
 				   {"thumbnail_size", 64},
 				   {"ascii_mode", false},
+				   {"toolbar_locked", false},
 				   {"language", "en"}}},
 		{"behavior", {{"warn_on_delete", true},
 						 {"hide_to_tray", false},
@@ -644,6 +662,8 @@ void Config::ensureKeys()
 		m_config["ui"]["thumbnail_size"] = 64;
 	if (!m_config["ui"].contains("ascii_mode"))
 		m_config["ui"]["ascii_mode"] = false;
+	if (!m_config["ui"].contains("toolbar_locked"))
+		m_config["ui"]["toolbar_locked"] = false;
 	if (!m_config["ui"].contains("language"))
 		m_config["ui"]["language"] = "en";
 
