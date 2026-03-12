@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
+// PS2 memory card layout and algorithms adapted from mymc++ / mymc (Florian Märkl, Ross Ridge) and public PS2 save format documentation.
 
 #include "Logger.h"
 #include "ps2mc.h"

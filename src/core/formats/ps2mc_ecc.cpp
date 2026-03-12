@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
+// ECC routines are a C++ version of the mymc++ / mymc ECC code and related public PS2 memory card ECC references.
 
 #include "ps2mc_ecc.h"
 #include "round.h"

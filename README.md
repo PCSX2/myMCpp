@@ -15,6 +15,10 @@
 </p>
 
 <p align="center">
+	This project is in <strong>alpha</strong>. It is <strong>experimental</strong>, <strong>unstable</strong>, and <strong>not intended for production or general use</strong>. Interfaces and behavior may change at any time.
+</p>
+
+<p align="center">
 	The project is a full C++ rewrite of the original Python based mymc++, with a Qt GUI and CLI.
 </p>
 
@@ -61,6 +65,14 @@ Global options:
 ## License
 
 Licensed under GPLv3. See [LICENSE.md](LICENSE.md).
+
+## Credits and Origins
+
+- `myMCpp` is a C++ rewrite inspired by **mymc++**, which itself builds on **mymc+** by Florian Märkl and the original **mymc** utility created by Ross Ridge (public domain).
+
+- Documentation about PS2 icons and save formats in the `docs/` directory is based on community research, including material from **PS2 Save Tools** (https://www.ps2savetools.com) and other references linked in the individual files.
+
+- The application icons in `resources/icons` come from **Remix Icon** and are used under the **Apache 2.0** license. See `resources/icons/white/svg/LICENSE` and `resources/licenses.html` for the full license text and attribution details.
 
 ## Contributing
 

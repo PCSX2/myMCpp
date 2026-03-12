@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
+// icon.sys structure decoding is based on mymc++ / mymc and public docs such as PS2 Save Tools and Martin Åkesson’s PS2 icon format notes.
 
 #include "ps2iconsys.h"
 #include "sjis.h"

@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
+// Directory entry packing/unpacking follows the mymc++ / mymc implementation and PS2 Browser directory structure docs.
 
 #include "ps2mc_dir.h"
 #include <algorithm>

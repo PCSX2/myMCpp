@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
+// PS2 icon parsing is adapted from mymc++ / mymc icon handling and community PS2 icon format documentation.
 
 #include "ps2icon.h"
 #include <cstring>

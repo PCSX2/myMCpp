@@ -7,6 +7,8 @@ body:
   - type: markdown
     attributes:
       value: |
+        myMCpp is currently in **alpha**. UI, UX, and behavior may change quickly during this phase.
+
         Use this template to suggest **new features or improvements**.
         Please ensure the feature aligns with the scope of myMCpp.
 

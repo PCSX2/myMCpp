@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
+// PS2 save container handling (MAX/EMS/SharkPort/CodeBreaker/PSV) follows the mymc++ / mymc implementations and PS2 save format documentation.
 
 #include "ps2save.h"
 #include "round.h"

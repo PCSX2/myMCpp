@@ -12,6 +12,8 @@ body:
       value: |
         ## Important: Read First
 
+        myMCpp is currently in **alpha**. Behavior, features, and UI may change without notice, and some bugs are expected.
+
         This issue tracker is for **bugs and feature requests only**.
         Please do **not** use GitHub issues for general support questions.
 
