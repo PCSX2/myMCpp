@@ -268,82 +268,82 @@ Are you sure you want to continue?</translation>
     <message>
       <location filename="../Settings/InterfaceSettingsWidget.cpp" line="+25"/>
       <source>Language</source>
-      <translation type="unfinished">Language</translation>
+      <translation>言語</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Select the language for the application interface.</source>
-      <translation type="unfinished">Select the language for the application interface.</translation>
+      <translation>インターフェースの言語を選択してください。</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Theme</source>
-      <translation type="unfinished">Theme</translation>
+      <translation>テーマ</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Select the color theme for the application.</source>
-      <translation type="unfinished">Select the color theme for the application.</translation>
+      <translation>カラーテーマを選択してください。</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Thumbnail Size</source>
-      <translation type="unfinished">Thumbnail Size</translation>
+      <translation>サムネイルサイズ</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Adjust the size of the save icons in the main view.</source>
-      <translation type="unfinished">Adjust the size of the save icons in the main view.</translation>
+      <translation>セーブアイコンのサイズを選択してください。</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Renderer</source>
-      <translation type="unfinished">Renderer</translation>
+      <translation>描画エンジン</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Select the graphics API used for rendering the 3D icons.</source>
-      <translation type="unfinished">Select the graphics API used for rendering the 3D icons.</translation>
+      <translation>3Dアイコンの描画エンジンを選択してください。</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Camera Angle</source>
-      <translation type="unfinished">Camera Angle</translation>
+      <translation>カメラの角度</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Change the camera angle used to view the 3D icons.</source>
-      <translation type="unfinished">Change the camera angle used to view the 3D icons.</translation>
+      <translation>3Dアイコンのカメラ角度を変更できます。</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Lighting Mode</source>
-      <translation type="unfinished">Lighting Mode</translation>
+      <translation>光源モード</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Select how the icons are lit.</source>
-      <translation type="unfinished">Select how the icons are lit.</translation>
+      <translation>アイコンがどこから光源を当てられるかを選択してください。</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Animate Icons</source>
-      <translation type="unfinished">Animate Icons</translation>
+      <translation>アイコンのアニメーション</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Enable rotating animations for the 3D icons.</source>
-      <translation type="unfinished">Enable rotating animations for the 3D icons.</translation>
+      <translation>3Dアイコンの回転アニメーションを有効にする。</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>None</source>
-      <translation type="unfinished">None</translation>
+      <translation>なし</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Dark (Default)</source>
-      <translation type="unfinished">Dark (Default)</translation>
+      <translation>ダーク (デフォルト)</translation>
     </message>
     <message>
       <location line="+1"/>
@@ -421,83 +421,83 @@ Are you sure you want to continue?</translation>
     <message>
       <location line="+2"/>
       <source>PS2 Memory Card (*.ps2 *.mc2 *.mcd *.bin *.mc);;All Files (*.*)</source>
-      <translation type="unfinished">PS2 Memory Card (*.ps2 *.mc2 *.mcd *.bin *.mc);;All Files (*.*)</translation>
+      <translation>PS2 Memory Card (*.ps2 *.mc2 *.mcd *.bin *.mc);;All Files (*.*)</translation>
     </message>
     <message>
       <location line="+40"/>
       <source>Create Memory Card</source>
-      <translation type="unfinished">Create Memory Card</translation>
+      <translation>メモリーカードの作成</translation>
     </message>
     <message>
       <location line="+2"/>
       <location line="+275"/>
       <source>PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</source>
-      <translation type="unfinished">PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</translation>
+      <translation>PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</translation>
     </message>
     <message>
       <location line="-250"/>
       <source>Created %1 MB memory card</source>
-      <translation type="unfinished">Created %1 MB memory card</translation>
+      <translation>%1 MBのメモリーカードの作成完了</translation>
     </message>
     <message>
       <location line="+18"/>
       <source>Import Save</source>
-      <translation type="unfinished">Import Save</translation>
+      <translation>セーブのインポート</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>PS2 Save Files (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;All Files (*.*)</source>
-      <translation type="unfinished">PS2 Save Files (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;All Files (*.*)</translation>
+      <translation>PS2 Save Files (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;All Files (*.*)</translation>
     </message>
     <message>
       <location line="+15"/>
       <source>Export</source>
-      <translation type="unfinished">Export</translation>
+      <translation>エクスポート</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Please select a save to export</source>
-      <translation type="unfinished">Please select a save to export</translation>
+      <translation>エクスポートするセーブファイルを選んでください</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Export Save</source>
-      <translation type="unfinished">Export Save</translation>
+      <translation>セーブのエクスポート</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</source>
-      <translation type="unfinished">EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</translation>
+      <translation>EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</translation>
     </message>
     <message>
       <location line="+15"/>
       <source>Delete</source>
-      <translation type="unfinished">Delete</translation>
+      <translation>削除</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Please select a save to delete</source>
-      <translation type="unfinished">Please select a save to delete</translation>
+      <translation>削除するセーブファイルを選んでください</translation>
     </message>
     <message>
       <location line="+9"/>
       <source>Delete Save</source>
-      <translation type="unfinished">Delete Save</translation>
+      <translation>セーブ削除</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Are you sure you want to delete &apos;%1&apos;?</source>
-      <translation type="unfinished">Are you sure you want to delete &apos;%1&apos;?</translation>
+      <translation>&apos;%1&apos;を削除してもよろしいでしょうか？</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>Deleted %1</source>
-      <translation type="unfinished">Deleted %1</translation>
+      <translation>%1 を削除しました</translation>
     </message>
     <message>
       <location line="+71"/>
       <source>Check for Updates</source>
-      <translation type="unfinished">Check for Updates</translation>
+      <translation>アップデートの確認</translation>
     </message>
     <message>
       <location line="+1"/>
@@ -511,12 +511,12 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
     <message>
       <location line="+57"/>
       <source>Free space: %1 MB</source>
-      <translation type="unfinished">Free space: %1 MB</translation>
+      <translation>空き領域: %1 MB</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Memory card open</source>
-      <translation type="unfinished">Memory card open</translation>
+      <translation>メモリーカードを開く</translation>
     </message>
     <message>
       <location line="+5"/>
@@ -526,13 +526,13 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
     <message>
       <location line="+32"/>
       <source>Save Memory Card As</source>
-      <translation type="unfinished">Save Memory Card As</translation>
+      <translation>メモリーカードを保存</translation>
     </message>
     <message>
       <location line="+10"/>
       <location line="+44"/>
       <source>Saved to %1</source>
-      <translation type="unfinished">Saved to %1</translation>
+      <translation>%1に保存しました</translation>
     </message>
     <message>
       <location line="-40"/>
@@ -544,22 +544,22 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
       <location line="-43"/>
       <location line="+44"/>
       <source>Failed to save: %1</source>
-      <translation type="unfinished">Failed to save: %1</translation>
+      <translation>保存に失敗しました: %1</translation>
     </message>
     <message>
       <location line="-19"/>
       <source>Remove ECC and Save As...</source>
-      <translation type="unfinished">Remove ECC and Save As...</translation>
+      <translation>ECCを削除して保存…</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Add ECC and Save As...</source>
-      <translation type="unfinished">Add ECC and Save As...</translation>
+      <translation>ECCを追加して保存…</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>PS2 Memory Card (*.ps2 *.mc2 *.mcd);;All Files (*.*)</source>
-      <translation type="unfinished">PS2 Memory Card (*.ps2 *.mc2 *.mcd);;All Files (*.*)</translation>
+      <translation>PS2 Memory Card (*.ps2 *.mc2 *.mcd);;All Files (*.*)</translation>
     </message>
   </context>
   <context>
@@ -572,7 +572,7 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
     <message>
       <location line="+1"/>
       <source>Failed to read memory card: %1</source>
-      <translation type="unfinished">Failed to read memory card: %1</translation>
+      <translation>メモリーカードの読み取りに失敗しました: %1</translation>
     </message>
   </context>
   <context>
@@ -581,25 +581,25 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
       <location filename="../widgets/SaveDetailsPanel.cpp" line="+92"/>
       <source>Size: %1
 Modified: %2</source>
-      <translation type="unfinished">Size: %1
-Modified: %2</translation>
+      <translation>サイズ: %1
+変更: %2</translation>
     </message>
     <message>
       <location line="+17"/>
       <source>
 Files: %1</source>
-      <translation type="unfinished">
-Files: %1</translation>
+      <translation>
+ファイル数: %1</translation>
     </message>
     <message>
       <location line="+73"/>
       <source>No save selected</source>
-      <translation type="unfinished">No save selected</translation>
+      <translation>セーブが選択されていません</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>No details available</source>
-      <translation type="unfinished">No details available</translation>
+      <translation>詳細情報がありません</translation>
     </message>
   </context>
   <context>
@@ -612,7 +612,7 @@ Files: %1</translation>
     <message>
       <location line="+2"/>
       <source>&lt;strong&gt;Interface Settings&lt;/strong&gt;&lt;hr&gt;These options control how the software looks throughout the application.</source>
-      <translation type="unfinished">&lt;strong&gt;Interface Settings&lt;/strong&gt;&lt;hr&gt;These options control how the software looks throughout the application.</translation>
+      <translation>&lt;strong&gt;インターフェース設定&lt;/strong&gt;&lt;hr&gt;このオプションは、アプリケーションの見た目を変更できます。</translation>
     </message>
     <message>
       <location line="+2"/>
@@ -622,7 +622,7 @@ Files: %1</translation>
     <message>
       <location line="+2"/>
       <source>&lt;strong&gt;Behavior Settings&lt;/strong&gt;&lt;hr&gt;Configure how the application behaves, including warnings and shutdown confirmations.</source>
-      <translation type="unfinished">&lt;strong&gt;Behavior Settings&lt;/strong&gt;&lt;hr&gt;Configure how the application behaves, including warnings and shutdown confirmations.</translation>
+      <translation>&lt;strong&gt;挙動設定&lt;/strong&gt;&lt;hr&gt;このオプションは、警告や閉じたときの動作などのアプリケーションの挙動を変更できます。</translation>
     </message>
     <message>
       <location line="+2"/>
@@ -632,7 +632,7 @@ Files: %1</translation>
     <message>
       <location line="+2"/>
       <source>&lt;strong&gt;File Settings&lt;/strong&gt;&lt;hr&gt;Manage default paths for memory cards and other resources.</source>
-      <translation type="unfinished">&lt;strong&gt;File Settings&lt;/strong&gt;&lt;hr&gt;Manage default paths for memory cards and other resources.</translation>
+      <translation>&lt;strong&gt;ファイル設定&lt;/strong&gt;&lt;hr&gt;このオプションは、メモリーカードやリソースのデフォルトパスを設定できます。</translation>
     </message>
     <message>
       <location line="+2"/>
@@ -642,7 +642,7 @@ Files: %1</translation>
     <message>
       <location line="+2"/>
       <source>&lt;strong&gt;Advanced Settings&lt;/strong&gt;&lt;hr&gt;Advanced options for debugging and developer tools.</source>
-      <translation type="unfinished">&lt;strong&gt;Advanced Settings&lt;/strong&gt;&lt;hr&gt;Advanced options for debugging and developer tools.</translation>
+      <translation>&lt;strong&gt;アドバンスド設定&lt;/strong&gt;&lt;hr&gt;このオプションは、デバッグや開発者ツールの設定ができます。</translation>
     </message>
   </context>
 </TS>
