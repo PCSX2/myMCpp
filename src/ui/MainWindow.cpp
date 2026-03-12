@@ -14,6 +14,7 @@
 #include "Themes.h"
 #include "version.h"
 #include "BuildVersion.h"
+#include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDateTimeEdit>
@@ -251,6 +252,67 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 					tr("Failed to create folder: %1").arg(e.what()));
 			}
 		}
+	});
+
+	connect(ui->cardBrowser, &MemoryCardBrowser::exportMultipleSavesRequested, this, [this](const QStringList& savePaths) {
+		if (!memoryCard || savePaths.isEmpty())
+			return;
+
+		QString targetDir = QFileDialog::getExistingDirectory(
+			this,
+			tr("Export Selected Saves"),
+			QString());
+
+		if (targetDir.isEmpty())
+			return;
+
+		QDir dir(targetDir);
+		for (const QString& savePath : savePaths)
+		{
+			QString baseName = QFileInfo(savePath).fileName();
+			if (baseName.isEmpty())
+				continue;
+
+			QString outputPath = dir.filePath(baseName + ".psu");
+			actionHandler->exportSave(memoryCard.get(), savePath, outputPath);
+		}
+
+		ui->statusBar->showMessage(tr("Exported %1 saves").arg(savePaths.size()), 5000);
+	});
+
+	connect(ui->cardBrowser, &MemoryCardBrowser::deleteMultipleSavesRequested, this, [this](const QStringList& savePaths) {
+		if (!memoryCard || savePaths.isEmpty())
+			return;
+
+		if (m_config && m_config->getWarnOnDelete())
+		{
+			QStringList displayNames;
+			for (const QString& path : savePaths)
+			{
+				QString name = path;
+				if (name.startsWith('/'))
+					name.remove(0, 1);
+				displayNames.append(name);
+			}
+
+			const QString listText = displayNames.join("\n");
+			QMessageBox::StandardButton reply = QMessageBox::question(
+				this,
+				tr("Delete Selected Saves"),
+				tr("Are you sure you want to delete the following saves?\n\n%1").arg(listText),
+				QMessageBox::Yes | QMessageBox::No);
+
+			if (reply == QMessageBox::No)
+				return;
+		}
+
+		for (const QString& savePath : savePaths)
+		{
+			actionHandler->deleteSave(memoryCard.get(), savePath);
+		}
+
+		updateCardView();
+		ui->detailsPanel->clear();
 	});
 
 	actionHandler->setStatusBar(ui->statusBar);

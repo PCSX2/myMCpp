@@ -37,6 +37,8 @@ signals:
 	void exportSaveRequested(const QString& savePath);
 	void exportFileRequested(const QString& savePath, const QString& fileName);
 	void deleteSaveRequested(const QString& savePath);
+	void exportMultipleSavesRequested(const QStringList& savePaths);
+	void deleteMultipleSavesRequested(const QStringList& savePaths);
 	void importFileRequested(const QString& savePath, const QString& hostFilePath);
 	void createFolderRequested(const QString& parentPath);
 	void importArbitraryFileRequested(const QString& targetDir);

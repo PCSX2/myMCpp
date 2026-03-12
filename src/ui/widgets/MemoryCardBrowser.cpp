@@ -15,6 +15,8 @@ MemoryCardBrowser::MemoryCardBrowser(QWidget* parent)
 	, ui(new Ui::MemoryCardBrowser)
 {
 	ui->setupUi(this);
+	setSelectionMode(QAbstractItemView::ExtendedSelection);
+	setSelectionBehavior(QAbstractItemView::SelectRows);
 	connect(&TranslationManager::instance(), &TranslationManager::languageChanged, this, [this]() {
 		ui->retranslateUi(this);
 	});
@@ -307,6 +309,9 @@ void MemoryCardBrowser::contextMenuEvent(QContextMenuEvent* event)
 
 	QMenu menu(this);
 
+	const QList<QTreeWidgetItem*> selected = selectedItems();
+	const bool multipleSelection = (selected.size() > 1);
+
 	QAction* importAction = menu.addAction(tr("Import File..."));
 	connect(importAction, &QAction::triggered, this, [this]() {
 		emit importArbitraryFileRequested(m_currentPath);
@@ -319,7 +324,37 @@ void MemoryCardBrowser::contextMenuEvent(QContextMenuEvent* event)
 
 	menu.addSeparator();
 
-	if (m_currentPath == "/")
+	// Special menu when multiple saves are selected at the root level
+	if (multipleSelection && m_currentPath == "/")
+	{
+		QStringList savePaths;
+		for (QTreeWidgetItem* it : selected)
+		{
+			if (!it)
+				continue;
+			const QString name = it->data(0, Qt::UserRole).toString();
+			const bool isDir = it->data(0, Qt::UserRole + 1).toBool();
+			if (name.isEmpty() || name == ".." || !isDir)
+				continue;
+			savePaths.append("/" + name);
+		}
+
+		if (!savePaths.isEmpty())
+		{
+			menu.addSeparator();
+
+			QAction* exportSelectedAction = menu.addAction(tr("Export Selected Saves..."));
+			connect(exportSelectedAction, &QAction::triggered, this, [this, savePaths]() {
+				emit exportMultipleSavesRequested(savePaths);
+			});
+
+			QAction* deleteSelectedAction = menu.addAction(tr("Delete Selected Saves"));
+			connect(deleteSelectedAction, &QAction::triggered, this, [this, savePaths]() {
+				emit deleteMultipleSavesRequested(savePaths);
+			});
+		}
+	}
+	else if (m_currentPath == "/")
 	{
 		if (item)
 		{
