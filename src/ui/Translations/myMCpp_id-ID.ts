@@ -16,7 +16,7 @@
     <message>
       <location line="+4"/>
       <source>Advanced</source>
-      <translation type="unfinished">Advanced</translation>
+      <translation>Tingkat Lanjut</translation>
     </message>
   </context>
   <context>
@@ -24,7 +24,7 @@
     <message>
       <location filename="../Settings/BehaviorSettingsWidget.cpp" line="+19"/>
       <source>Warn Before Deleting</source>
-      <translation type="unfinished">Warn Before Deleting</translation>
+      <translation>Peringatkan Sebelum Menghapus</translation>
     </message>
     <message>
       <location line="+0"/>
@@ -637,7 +637,7 @@ Files: %1</translation>
     <message>
       <location line="+2"/>
       <source>Advanced</source>
-      <translation type="unfinished">Advanced</translation>
+      <translation>Tingkat Lanjut</translation>
     </message>
     <message>
       <location line="+2"/>
