@@ -81,6 +81,21 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	ui->actionForceImport->setChecked(m_config ? m_config->getForceImport() : false);
 	connect(ui->actionForceImport, &QAction::triggered, this, &MainWindow::onToggleForceImport);
 
+	if (m_config)
+	{
+		const bool toolbarLocked = m_config->getToolbarLocked();
+		ui->actionLockToolbar->setChecked(toolbarLocked);
+		ui->mainToolBar->setMovable(!toolbarLocked);
+		ui->mainToolBar->setFloatable(!toolbarLocked);
+	}
+	else
+	{
+		ui->mainToolBar->setMovable(true);
+		ui->mainToolBar->setFloatable(true);
+	}
+
+	connect(ui->actionLockToolbar, &QAction::triggered, this, &MainWindow::onToggleToolbarLock);
+
 	ui->actionAbout->setMenuRole(QAction::AboutRole);
 	ui->actionPreferences->setText(tr("Settings..."));
 	ui->actionPreferences->setMenuRole(QAction::PreferencesRole);
@@ -1025,6 +1040,24 @@ void MainWindow::onToggleForceImport()
 		m_config->save();
 		updateForceImportWarning();
 	}
+}
+
+void MainWindow::onToggleToolbarLock()
+{
+	if (!m_config)
+		return;
+
+	const bool newValue = !m_config->getToolbarLocked();
+	m_config->setToolbarLocked(newValue);
+	ui->actionLockToolbar->setChecked(newValue);
+
+	if (ui->mainToolBar)
+	{
+		ui->mainToolBar->setMovable(!newValue);
+		ui->mainToolBar->setFloatable(!newValue);
+	}
+
+	m_config->save();
 }
 
 void MainWindow::importFileToCard(const QString& savePath, const QString& hostFilePath)

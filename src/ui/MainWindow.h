@@ -42,6 +42,7 @@ private slots:
 	void onEccTool();
 	void onToggleAscii();
 	void onToggleForceImport();
+	void onToggleToolbarLock();
 	void onPreferences();
 	void onAbout();
 	void onGitHubRepository();
