@@ -1,0 +1,18 @@
+# Normalize text files
+* text=auto
+
+# Set line endings for shell scripts and batch files
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.zip binary
+*.bin binary
+
+# Ignore documentation files for language statistics
+docs/** linguist-documentation
+
+# Exclude license HTML from language graph
+resources/licenses.html linguist-detectable=false
