@@ -6,32 +6,6 @@
 #include "sjis.h"
 #include <cstring>
 
-namespace
-{
-
-	uint32_t readLEu32(const uint8_t* ptr)
-	{
-		return (static_cast<uint32_t>(ptr[3]) << 24) |
-		       (static_cast<uint32_t>(ptr[2]) << 16) |
-		       (static_cast<uint32_t>(ptr[1]) << 8) |
-		       (static_cast<uint32_t>(ptr[0]));
-	}
-
-} // namespace
-
-struct IconSysHeader
-{
-	uint16_t unknown1;
-	uint16_t unknown2;
-	uint32_t animCount;
-	uint32_t animSpeed;
-	uint32_t animLoopCount;
-	uint32_t unknown3;
-	// Followed by animation speed entries (animCount * 2 bytes each)
-	// Then title entries
-	// Then icon data
-};
-
 class PS2IconSys::Impl
 {
 public:
@@ -76,16 +50,16 @@ public:
 		};
 
 		titleLineOffset = static_cast<uint16_t>((ptr[0x06] << 8) | ptr[0x07]);
-		bgTransparency = static_cast<float>(ptr[0x0C]) / 128.0f;
+		bgTransparency = static_cast<float>(ptr[0x0C]) / 255.0f;
 
 		for (int i = 0; i < 4; ++i)
 		{
 			size_t offset = 0x10 + (i * 16);
-			// Each color channel is stored as a uint32 (only low byte used), 0x00-0x80 range
-			bgColors[i].r = static_cast<float>(ptr[offset + 0]) / 128.0f;
-			bgColors[i].g = static_cast<float>(ptr[offset + 4]) / 128.0f;
-			bgColors[i].b = static_cast<float>(ptr[offset + 8]) / 128.0f;
-			bgColors[i].a = static_cast<float>(ptr[offset + 12]) / 128.0f;
+			// background colors stored as uint32[4] (RGBA), each channel 0–255 in low byte
+			bgColors[i].r = static_cast<float>(ptr[offset + 0]) / 255.0f;
+			bgColors[i].g = static_cast<float>(ptr[offset + 4]) / 255.0f;
+			bgColors[i].b = static_cast<float>(ptr[offset + 8]) / 255.0f;
+			bgColors[i].a = static_cast<float>(ptr[offset + 12]) / 255.0f;
 		}
 
 		for (int i = 0; i < 3; ++i)
