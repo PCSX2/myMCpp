@@ -3,6 +3,7 @@
 // PS2 save container handling (MAX/EMS/SharkPort/CodeBreaker/PSV) follows the mymc++ / mymc implementations and PS2 save format documentation.
 
 #include "ps2save.h"
+#include "Logger.h"
 #include "round.h"
 #include "lzari.h"
 #include "sjis.h"
@@ -179,7 +180,11 @@ SaveFormat PS2SaveFile::detectFormat(const std::string& filename)
 		std::string ext = filename.substr(dotPos);
 		std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
 
-		if (ext == ".psu" || ext == ".max")
+		if (ext == ".psu")
+		{
+			return SaveFormat::EMS;
+		}
+		if (ext == ".max")
 		{
 			return SaveFormat::MAX_DRIVE;
 		}
@@ -773,7 +778,11 @@ void PS2SaveFile::Impl::loadEms(std::ifstream& file)
 		auto entRaw = readFixed(file, PS2MC_DIRENT_LENGTH);
 		auto ent = unpackDirEntry(entRaw);
 		if (!modeIsFile(ent.mode))
-			throw PS2SaveError("Subdir in PSU");
+		{
+			const std::string name = ent.name.empty() ? std::string("<unnamed>") : ent.name;
+			Logger::warn("Skipping subdir (entry {}): {}", i, name);
+			continue;
+		}
 		auto data = readFixed(file, ent.length);
 		size_t pad = roundUp(static_cast<int>(ent.length), 1024) - ent.length;
 		if (pad)
