@@ -62,6 +62,9 @@
     <ClCompile Include="dialogs\AboutDialog.cpp">
       <Filter>src\dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="dialogs\ExportSavesDialog.cpp">
+      <Filter>src\dialogs</Filter>
+    </ClCompile>
     <ClCompile Include="Settings\GeneralSettingsWidget.cpp">
       <Filter>src\Settings</Filter>
     </ClCompile>
@@ -110,6 +113,9 @@
       <Filter>headers\Settings</Filter>
     </QtMoc>
     <QtMoc Include="dialogs\AboutDialog.h">
+      <Filter>headers\dialogs</Filter>
+    </QtMoc>
+    <QtMoc Include="dialogs\ExportSavesDialog.h">
       <Filter>headers\dialogs</Filter>
     </QtMoc>
     <QtMoc Include="Settings\GeneralSettingsWidget.h">
@@ -162,6 +168,9 @@
       <Filter>ui\Settings</Filter>
     </QtUic>
     <QtUic Include="dialogs\AboutDialog.ui">
+      <Filter>ui\dialogs</Filter>
+    </QtUic>
+    <QtUic Include="dialogs\ExportSavesDialog.ui">
       <Filter>ui\dialogs</Filter>
     </QtUic>
     <QtUic Include="dialogs\NewCardDialog.ui">

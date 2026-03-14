@@ -143,12 +143,13 @@ void CardActionHandler::importSave(PS2MemoryCard* card, const QString& filename)
 	}
 }
 
-void CardActionHandler::exportSave(PS2MemoryCard* card, const QString& savePath, const QString& outputFilename)
+bool CardActionHandler::exportSave(PS2MemoryCard* card, const QString& savePath, const QString& outputFilename, bool showSuccessDialog)
 {
 	if (!card)
 	{
-		QMessageBox::warning(parentWidget, tr("Warning"), tr("No memory card open"));
-		return;
+		if (showSuccessDialog)
+			QMessageBox::warning(parentWidget, tr("Warning"), tr("No memory card open"));
+		return false;
 	}
 
 	try
@@ -158,24 +159,24 @@ void CardActionHandler::exportSave(PS2MemoryCard* card, const QString& savePath,
 
 		SaveFormat format = PS2SaveFile::detectFormat(outputFilename.toStdString());
 		if (format == SaveFormat::UNKNOWN)
-		{
-			format = SaveFormat::EMS; // Default to .psu
-		}
+			format = SaveFormat::EMS;
 
 		saveFile.save(outputFilename.toStdString(), format);
 
-		QMessageBox::information(parentWidget, tr("Success"),
-			tr("Successfully exported save to:\n%1").arg(outputFilename));
-
-		if (statusBar)
+		if (showSuccessDialog)
 		{
-			statusBar->showMessage(tr("Exported: %1").arg(savePath), 3000);
+			QMessageBox::information(parentWidget, tr("Success"),
+				tr("Successfully exported save to:\n%1").arg(outputFilename));
 		}
+		if (statusBar && showSuccessDialog)
+			statusBar->showMessage(tr("Exported: %1").arg(savePath), 3000);
+		return true;
 	}
 	catch (const std::exception& e)
 	{
-		QMessageBox::critical(parentWidget, tr("Error"),
-			tr("Failed to export save: %1").arg(e.what()));
+		if (showSuccessDialog)
+			QMessageBox::critical(parentWidget, tr("Error"), tr("Failed to export save: %1").arg(e.what()));
+		return false;
 	}
 }
 
