@@ -1636,17 +1636,18 @@ void PS2MemoryCard::exportSaveFile(const std::string& savePath, PS2SaveFile& sav
 				continue;
 			}
 
-			// Only export files, not subdirectories
-			if (entry.mode & DF_FILE)
+			if (entry.mode & DF_DIR)
 			{
-				PS2SaveEntry fileEntry;
-				fileEntry.dirEntry = entry;
-
-				std::string filePath = savePath + "/" + entry.name;
-				fileEntry.data = readFile(filePath);
-
-				entries.push_back(fileEntry);
+				continue;
 			}
+
+			PS2SaveEntry fileEntry;
+			fileEntry.dirEntry = entry;
+
+			std::string filePath = savePath + "/" + entry.name;
+			fileEntry.data = readFile(filePath);
+
+			entries.push_back(fileEntry);
 		}
 
 		// Set the save title from icon.sys if available
