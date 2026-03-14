@@ -7,6 +7,7 @@
 #include "CardActionHandler.h"
 #include "NewCardDialog.h"
 #include "dialogs/AboutDialog.h"
+#include "dialogs/ExportSavesDialog.h"
 #include "ps2mc.h"
 #include "Settings/SettingsWindow.h"
 #include "DiscordRPCManager.h"
@@ -151,16 +152,19 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		if (!memoryCard)
 			return;
 
-		QString filename = QFileDialog::getSaveFileName(
-			this,
-			tr("Export Save"),
-			"",
-			tr("EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)"));
+		ExportSavesDialog nameDialog({savePath}, this);
+		if (nameDialog.exec() != QDialog::Accepted)
+			return;
 
-		if (!filename.isEmpty())
-		{
-			actionHandler->exportSave(memoryCard.get(), savePath, filename);
-		}
+		QStringList filenames = nameDialog.getFilenames();
+		if (filenames.isEmpty())
+			return;
+		QString suggestedName = filenames[0];
+		QString filter = suggestedName.endsWith(QLatin1String(".max"), Qt::CaseInsensitive) ? tr("MAX Drive Format (*.max);;EMS/PSU Format (*.psu);;All Files (*.*)") : tr("EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)");
+		QString path = QFileDialog::getSaveFileName(this, tr("Export Save"),
+			QDir::homePath() + QLatin1Char('/') + suggestedName, filter);
+		if (!path.isEmpty())
+			actionHandler->exportSave(memoryCard.get(), savePath, path);
 	});
 
 	connect(ui->cardBrowser, &MemoryCardBrowser::exportFileRequested, this, [this](const QString& savePath, const QString& fileName) {
@@ -258,6 +262,11 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		if (!memoryCard || savePaths.isEmpty())
 			return;
 
+		ExportSavesDialog nameDialog(savePaths, this);
+		if (nameDialog.exec() != QDialog::Accepted)
+			return;
+
+		QStringList filenames = nameDialog.getFilenames();
 		QString targetDir = QFileDialog::getExistingDirectory(
 			this,
 			tr("Export Selected Saves"),
@@ -267,17 +276,40 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 			return;
 
 		QDir dir(targetDir);
-		for (const QString& savePath : savePaths)
+		QStringList existing;
+		for (int i = 0; i < savePaths.size() && i < filenames.size(); ++i)
 		{
-			QString baseName = QFileInfo(savePath).fileName();
-			if (baseName.isEmpty())
-				continue;
-
-			QString outputPath = dir.filePath(baseName + ".psu");
-			actionHandler->exportSave(memoryCard.get(), savePath, outputPath);
+			if (!filenames[i].isEmpty() && QFileInfo(dir, filenames[i]).exists())
+				existing.append(filenames[i]);
+		}
+		if (!existing.isEmpty())
+		{
+			QMessageBox::StandardButton reply = QMessageBox::question(this, tr("Overwrite Files"),
+				tr("%1 file(s) already exist in the folder. Overwrite?").arg(existing.size()),
+				QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+			if (reply == QMessageBox::No)
+				return;
 		}
 
-		ui->statusBar->showMessage(tr("Exported %1 saves").arg(savePaths.size()), 5000);
+		int ok = 0, failed = 0;
+		QStringList failedNames;
+		for (int i = 0; i < savePaths.size() && i < filenames.size(); ++i)
+		{
+			if (filenames[i].isEmpty())
+				continue;
+			QString outputPath = dir.filePath(filenames[i]);
+			if (actionHandler->exportSave(memoryCard.get(), savePaths[i], outputPath, false))
+				++ok;
+			else
+			{
+				++failed;
+				failedNames.append(filenames[i]);
+			}
+		}
+
+		if (failed > 0)
+			QMessageBox::warning(this, tr("Export"), tr("Exported %1 save(s); %2 failed:\n%3").arg(ok).arg(failed).arg(failedNames.join("\n")));
+		ui->statusBar->showMessage(failed == 0 ? tr("Exported %1 saves").arg(ok) : tr("Exported %1, %2 failed").arg(ok).arg(failed), 5000);
 	});
 
 	connect(ui->cardBrowser, &MemoryCardBrowser::deleteMultipleSavesRequested, this, [this](const QStringList& savePaths) {
