@@ -72,5 +72,5 @@
     - any-glob-to-any-file:
       - 'docs/**/*'
       - 'README.md'
-      - 'LICENSE.md'
+      - 'LICENSE'
       - 'build.md'
