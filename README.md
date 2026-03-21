@@ -64,7 +64,7 @@ Global options:
 
 ## License
 
-Licensed under GPLv3. See [LICENSE.md](LICENSE.md).
+Licensed under GPLv3. See [LICENSE](LICENSE).
 
 ## Credits and Origins
 
