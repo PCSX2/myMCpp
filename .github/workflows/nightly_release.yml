@@ -34,22 +34,13 @@ jobs:
           git fetch --tags --no-recurse-submodules
 
           SHA="${{ github.sha }}"
-
-          bump_patch() {
-            local t="${1#v}"
-            local major minor patch
-            IFS=. read -r major minor patch <<< "${t%%-*}"
-            major=${major:-0}
-            minor=${minor:-0}
-            patch=${patch:-0}
-            echo "v$((major)).$((minor)).$((patch + 1))"
-          }
-
-          LATEST="$(git tag -l 'v[0-9]*' --sort=-version:refname | head -1 || true)"
-          if [ -z "$LATEST" ]; then LATEST="v0.0.0"; fi
-          TAG="$(bump_patch "$LATEST")"
-          NAME="myMCpp ${TAG}"
+          DATE="$(date -u +'%Y%m%d')"
+          TAG="nightly-${DATE}"
+          NAME="myMCpp Nightly ${DATE}"
           PRERELEASE=true
+
+          gh release delete "$TAG" --yes 2>/dev/null || true
+          git push origin ":refs/tags/$TAG" 2>/dev/null || true
 
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
