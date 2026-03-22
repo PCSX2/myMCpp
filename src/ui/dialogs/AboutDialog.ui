@@ -126,7 +126,7 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
      <item>
       <widget class="QLabel" name="linksLabel">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/SternXD/myMCpp&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;GitHub Repository&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://github.com/SternXD/myMCpp/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Documentation&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;#licenses&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Licenses&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/PCSX2/myMCpp&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;GitHub Repository&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://github.com/PCSX2/myMCpp/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Documentation&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;#licenses&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Licenses&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>

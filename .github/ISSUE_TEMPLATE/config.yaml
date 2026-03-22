@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Discussions
-    url: https://github.com/SternXD/myMCpp/discussions
+    url: https://github.com/PCSX2/myMCpp/discussions
     about: Use Discussions for questions, ideas, or general support.
   - name: Wiki
-    url: https://github.com/SternXD/myMCpp/wiki
+    url: https://github.com/PCSX2/myMCpp/wiki
     about: Use the Wiki for documentation and information about the project.
