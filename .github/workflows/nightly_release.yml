@@ -1,71 +1,149 @@
+# Release workflow for myMCpp (on each push to master).
+# Inspired by PCSX2's release workflow.
+
 name: 🌙 Nightly Builds
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
+  push:
+    branches:
+      - master
 
 permissions:
   contents: write
 
 jobs:
+  cut_release:
+    if: github.repository == 'PCSX2/myMCpp'
+    name: 'Create tag and draft release'
+    runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.release_meta.outputs.new_tag }}
+      release_name: ${{ steps.release_meta.outputs.release_name }}
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Tag, notes, and draft release
+        id: release_meta
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --tags --no-recurse-submodules
+
+          SHA="${{ github.sha }}"
+
+          bump_patch() {
+            local t="${1#v}"
+            local major minor patch
+            IFS=. read -r major minor patch <<< "${t%%-*}"
+            major=${major:-0}
+            minor=${minor:-0}
+            patch=${patch:-0}
+            echo "v$((major)).$((minor)).$((patch + 1))"
+          }
+
+          LATEST="$(git tag -l 'v[0-9]*' --sort=-version:refname | head -1 || true)"
+          if [ -z "$LATEST" ]; then LATEST="v0.0.0"; fi
+          TAG="$(bump_patch "$LATEST")"
+          NAME="myMCpp ${TAG}"
+          PRERELEASE=true
+
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+
+          git tag -fa "$TAG" -m "$NAME" "$SHA"
+          git push -f origin "refs/tags/$TAG"
+
+          gh api "repos/${{ github.repository }}/releases/generate-notes" \
+            -f tag_name="$TAG" \
+            -f target_commitish="$SHA" \
+            --jq .body > "$GITHUB_WORKSPACE/release-notes.md"
+
+          gh release delete "$TAG" --yes 2>/dev/null || true
+          EXTRA=""
+          if [ "$PRERELEASE" = true ]; then EXTRA="--prerelease"; fi
+          gh release create "$TAG" \
+            --draft \
+            $EXTRA \
+            --title "$NAME" \
+            --notes-file "$GITHUB_WORKSPACE/release-notes.md" \
+            --target "$SHA"
+
+          echo "new_tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "release_name=${NAME}" >> "$GITHUB_OUTPUT"
+
   build_linux_clang:
-    name: "🐧 Linux (Clang, Nightly)"
+    if: github.repository == 'PCSX2/myMCpp'
+    name: '🐧 Linux (Clang, Nightly)'
+    needs: cut_release
     uses: ./.github/workflows/linux_build.yml
     with:
-      jobName: "Linux Clang Nightly Build"
-      artifactPrefixName: "myMCpp-nightly-linux-x64-clang"
+      jobName: 'Linux Clang Nightly Build'
+      artifactPrefixName: 'myMCpp-nightly-linux-x64-clang'
       compiler: clang
       fetchTags: true
     secrets: inherit
 
   build_linux_gcc:
-    name: "🐧 Linux (GCC, Nightly)"
+    if: github.repository == 'PCSX2/myMCpp'
+    name: '🐧 Linux (GCC, Nightly)'
+    needs: cut_release
     uses: ./.github/workflows/linux_build.yml
     with:
-      jobName: "Linux GCC Nightly Build"
-      artifactPrefixName: "myMCpp-nightly-linux-x64-gcc"
+      jobName: 'Linux GCC Nightly Build'
+      artifactPrefixName: 'myMCpp-nightly-linux-x64-gcc'
       compiler: gcc
       fetchTags: true
     secrets: inherit
 
   build_macos:
-    name: "🍎 macOS (Nightly)"
+    if: github.repository == 'PCSX2/myMCpp'
+    name: '🍎 macOS (Nightly)'
+    needs: cut_release
     uses: ./.github/workflows/macos_build.yml
     with:
-      jobName: "macOS Nightly Build"
-      artifactPrefixName: "myMCpp-nightly-macos-universal"
+      jobName: 'macOS Nightly Build'
+      artifactPrefixName: 'myMCpp-nightly-macos-universal'
       fetchTags: true
     secrets: inherit
 
   build_windows_x64_clang:
-    name: "🪟 Windows x64 (Clang, Nightly)"
+    if: github.repository == 'PCSX2/myMCpp'
+    name: '🪟 Windows x64 (Clang, Nightly)'
+    needs: cut_release
     uses: ./.github/workflows/windows_build.yml
     with:
-      jobName: "Windows x64 Clang Nightly Build"
-      artifactPrefixName: "myMCpp-nightly-windows-x64-clang"
+      jobName: 'Windows x64 Clang Nightly Build'
+      artifactPrefixName: 'myMCpp-nightly-windows-x64-clang'
       platform: x64
       compiler: clang
       fetchTags: true
     secrets: inherit
 
   build_windows_x64_msvc:
-    name: "🪟 Windows x64 (MSVC, Nightly)"
+    if: github.repository == 'PCSX2/myMCpp'
+    name: '🪟 Windows x64 (MSVC, Nightly)'
+    needs: cut_release
     uses: ./.github/workflows/windows_build.yml
     with:
-      jobName: "Windows x64 MSVC Nightly Build"
-      artifactPrefixName: "myMCpp-nightly-windows-x64-msvc"
+      jobName: 'Windows x64 MSVC Nightly Build'
+      artifactPrefixName: 'myMCpp-nightly-windows-x64-msvc'
       platform: x64
       compiler: msvc
       fetchTags: true
     secrets: inherit
 
   build_windows_arm64_clang:
-    name: "🪟 Windows ARM64 (Clang, Nightly)"
+    if: github.repository == 'PCSX2/myMCpp'
+    name: '🪟 Windows ARM64 (Clang, Nightly)'
+    needs: cut_release
     uses: ./.github/workflows/windows_build.yml
     with:
-      jobName: "Windows ARM64 Clang Nightly Build"
-      artifactPrefixName: "myMCpp-nightly-windows-arm64-clang"
+      jobName: 'Windows ARM64 Clang Nightly Build'
+      artifactPrefixName: 'myMCpp-nightly-windows-arm64-clang'
       os: windows-11-arm
       platform: ARM64
       compiler: clang
@@ -73,21 +151,25 @@ jobs:
     secrets: inherit
 
   build_windows_arm64_msvc:
-    name: "🪟 Windows ARM64 (MSVC, Nightly)"
+    if: github.repository == 'PCSX2/myMCpp'
+    name: '🪟 Windows ARM64 (MSVC, Nightly)'
+    needs: cut_release
     uses: ./.github/workflows/windows_build.yml
     with:
-      jobName: "Windows ARM64 MSVC Nightly Build"
-      artifactPrefixName: "myMCpp-nightly-windows-arm64-msvc"
+      jobName: 'Windows ARM64 MSVC Nightly Build'
+      artifactPrefixName: 'myMCpp-nightly-windows-arm64-msvc'
       os: windows-11-arm
       platform: ARM64
       compiler: msvc
       fetchTags: true
     secrets: inherit
 
-  nightly_release:
-    name: "📦 Create Nightly Pre-Release"
+  upload_and_publish:
+    if: github.repository == 'PCSX2/myMCpp'
+    name: '📦 Upload assets and publish release'
     runs-on: ubuntu-latest
     needs:
+      - cut_release
       - build_linux_clang
       - build_linux_gcc
       - build_macos
@@ -95,20 +177,8 @@ jobs:
       - build_windows_x64_msvc
       - build_windows_arm64_clang
       - build_windows_arm64_msvc
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6.0.2
-
-      - name: Determine nightly tag
-        id: nightly_tag
-        shell: bash
-        run: |
-          DATE="$(date +'%Y%m%d')"
-          TAG="nightly-${DATE}"
-          NAME="myMCpp Nightly ${DATE}"
-          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
-          echo "name=${NAME}" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v6.0.2
 
       - name: Download all artifacts
         uses: actions/download-artifact@v8.0.1
@@ -120,29 +190,25 @@ jobs:
 
       - name: Prepare release assets
         shell: bash
+        env:
+          TAG: ${{ needs.cut_release.outputs.new_tag }}
         run: |
+          set -euo pipefail
           mkdir -p release-assets
-          TAG="${{ steps.nightly_tag.outputs.tag }}"
 
           for dir in artifacts/*/; do
             dirname="$(basename "$dir")"
 
-            # Skip symbol artifacts
             if [[ "$dirname" == *"-symbols" ]]; then
               continue
             fi
 
             echo "Processing: $dirname"
 
-            # Windows artifacts: zip the directory contents
             if [[ "$dirname" == *"windows"* ]]; then
               asset_name="myMCpp-${TAG}-${dirname#myMCpp-nightly-}.zip"
               echo "  -> Creating $asset_name"
-              cd "$dir"
-              zip -r "../../release-assets/$asset_name" ./*
-              cd ../..
-
-            # macOS artifacts: move the .tar.xz as-is
+              (cd "$dir" && zip -r "../../release-assets/$asset_name" ./*)
             elif [[ "$dirname" == *"macos"* ]]; then
               for f in "$dir"*.tar.xz; do
                 if [ -f "$f" ]; then
@@ -151,8 +217,6 @@ jobs:
                   cp "$f" "release-assets/$asset_name"
                 fi
               done
-
-            # Linux artifacts: move AppImage as-is
             elif [[ "$dirname" == *"linux"* ]]; then
               for f in "$dir"*.AppImage; do
                 if [ -f "$f" ]; then
@@ -168,17 +232,23 @@ jobs:
           echo "=== Final release assets ==="
           ls -la release-assets/
 
-      - name: Create GitHub pre-release with assets
-        uses: softprops/action-gh-release@v2.5.0
-        with:
-          tag_name: ${{ steps.nightly_tag.outputs.tag }}
-          name: ${{ steps.nightly_tag.outputs.name }}
-          target_commitish: ${{ github.sha }}
-          prerelease: true
-          draft: false
-          make_latest: false
-          generate_release_notes: true
-          files: |
-            release-assets/*
+      - name: Upload release assets
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.cut_release.outputs.new_tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(release-assets/*)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No release assets to upload."
+            exit 1
+          fi
+          gh release upload "$TAG" "${files[@]}" --clobber
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.cut_release.outputs.new_tag }}
+        run: gh release edit "$TAG" --draft=false
