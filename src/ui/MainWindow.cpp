@@ -660,19 +660,19 @@ void MainWindow::onAbout()
 
 void MainWindow::onGitHubRepository()
 {
-	QDesktopServices::openUrl(QUrl("https://github.com/SternXD/myMCpp"));
+	QDesktopServices::openUrl(QUrl("https://github.com/PCSX2/myMCpp"));
 }
 
 void MainWindow::onDocumentation()
 {
-	QDesktopServices::openUrl(QUrl("https://github.com/SternXD/myMCpp/wiki"));
+	QDesktopServices::openUrl(QUrl("https://github.com/PCSX2/myMCpp/wiki"));
 }
 
 void MainWindow::onCheckForUpdates()
 {
 	QMessageBox::information(this, tr("Check for Updates"),
 		tr("TBD\n\n"
-		   "For updates, visit: https://github.com/SternXD/myMCpp/releases"));
+		   "For updates, visit: https://github.com/PCSX2/myMCpp/releases"));
 }
 
 void MainWindow::onAboutQt()
