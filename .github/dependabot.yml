@@ -1,0 +1,15 @@
+# Dependabot configuration
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "CI"
+      include: "scope"
+    groups:
+      ci-deps:
+        patterns:
+          - "*"
