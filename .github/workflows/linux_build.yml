@@ -78,7 +78,7 @@ jobs:
         run: echo "timestamp=$(date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
 
       - name: Cache ccache
-        uses: actions/cache@v5.0.1
+        uses: actions/cache@v5.0.4
         with:
           path: .ccache
           key: ${{ inputs.os }} ${{ inputs.platform }} ${{ inputs.compiler }} ccache ${{ steps.ccache_cache_timestamp.outputs.timestamp }}
@@ -259,7 +259,7 @@ jobs:
           echo "appimage-path=${APPIMAGE_NAME}" >> $GITHUB_OUTPUT
 
       - name: Upload AppImage artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.artifact-metadata.outputs.artifact-name }}-AppImage
           path: ${{ steps.create-appimage.outputs.appimage-path }}
