@@ -24,7 +24,7 @@ public:
 	void importSave(PS2MemoryCard* card, const QString& filename);
 	bool exportSave(PS2MemoryCard* card, const QString& savePath, const QString& filename, bool showSuccessDialog = true);
 	void deleteSave(PS2MemoryCard* card, const QString& savePath);
-	void formatCard(PS2MemoryCard* card, const QString& cardPath, int sizeMB = 8);
+	void formatCard(PS2MemoryCard* card, const QString& cardPath, int sizeMB = -1);
 
 	void setStatusBar(QStatusBar* statusBar);
 
