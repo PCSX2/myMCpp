@@ -30,7 +30,7 @@ public:
 	void shutdown() override;
 	bool isInitialized() const override { return m_initialized; }
 
-	void setVSync(bool enabled);
+	void setVSync(bool enabled) override;
 
 	void setIcon(std::shared_ptr<PS2Icon::Icon> icon) override;
 	bool hasValidIcon() const override { return m_icon != nullptr; }
