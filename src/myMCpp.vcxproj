@@ -179,7 +179,13 @@
       <Command>
 if not exist "$(TargetDir)translations" mkdir "$(TargetDir)translations"
 
-set "QT_BIN=C:\Qt\6.10.2\msvc2022_64\bin"
+set "QT_BIN=$(QtToolsPath)"
+if not exist "%QT_BIN%\qmake.exe" if defined QTDIR set "QT_BIN=%QTDIR%\bin"
+
+if not exist "%QT_BIN%\lrelease.exe" (
+  echo Qt lrelease not found at "%QT_BIN%". Skipping translation generation.
+  goto :after_lrelease
+)
 
 "%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_af-ZA.ts" -qm "$(TargetDir)translations\myMCpp_af-ZA.qm"
 "%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_ar-SA.ts" -qm "$(TargetDir)translations\myMCpp_ar-SA.qm"
@@ -214,7 +220,14 @@ set "QT_BIN=C:\Qt\6.10.2\msvc2022_64\bin"
 "%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_zh-CN.ts" -qm "$(TargetDir)translations\myMCpp_zh-CN.qm"
 "%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_zh-TW.ts" -qm "$(TargetDir)translations\myMCpp_zh-TW.qm"
 
+:after_lrelease
 xcopy /Y /E /I "$(ProjectDir)..\resources" "$(TargetDir)resources"
+
+if exist "%QT_BIN%\windeployqt.exe" (
+  "%QT_BIN%\windeployqt.exe" --no-compiler-runtime "$(TargetPath)"
+) else (
+  echo Qt windeployqt not found at "%QT_BIN%". Qt DLLs/plugins will not be deployed.
+)
       </Command>
       <Message>Generating translations and copying resources to output...</Message>
     </PostBuildEvent>
