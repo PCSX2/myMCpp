@@ -225,6 +225,8 @@ void CardActionHandler::formatCard(PS2MemoryCard* card, const QString& cardPath,
 		return;
 	}
 
+	int effectiveSizeMB = sizeMB;
+
 	int ret = QMessageBox::warning(parentWidget, tr("Format Card"),
 		tr("WARNING: This will erase ALL data on the memory card!\n\n"
 		   "Are you sure you want to continue?"),
@@ -235,8 +237,20 @@ void CardActionHandler::formatCard(PS2MemoryCard* card, const QString& cardPath,
 	{
 		try
 		{
+			if (effectiveSizeMB <= 0)
+			{
+				const auto info = card->getCardInfo();
+				effectiveSizeMB = static_cast<int>(info.imageSizeBytes / (1024ull * 1024ull));
+				if (effectiveSizeMB <= 0)
+				{
+					throw std::runtime_error("Invalid memory card size");
+				}
+			}
+
+			const bool disableEcc = !card->hasEcc();
+
 			card->close();
-			card->create(cardPath.toStdString(), sizeMB);
+			card->create(cardPath.toStdString(), effectiveSizeMB, disableEcc);
 
 			if (statusBar)
 			{
@@ -244,7 +258,7 @@ void CardActionHandler::formatCard(PS2MemoryCard* card, const QString& cardPath,
 			}
 
 			QMessageBox::information(parentWidget, tr("Success"),
-				tr("Memory card formatted successfully (%1 MB)").arg(sizeMB));
+				tr("Memory card formatted successfully (%1 MB)").arg(effectiveSizeMB));
 		}
 		catch (const std::exception& e)
 		{
