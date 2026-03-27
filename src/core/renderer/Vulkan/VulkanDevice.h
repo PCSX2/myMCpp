@@ -47,4 +47,7 @@ private:
 #ifdef __linux__
 	void* m_platformDisplay = nullptr; // Display* on Linux/X11
 #endif
+#ifndef NDEBUG
+	VkDebugUtilsMessengerEXT m_debugMessenger = VK_NULL_HANDLE;
+#endif
 };
