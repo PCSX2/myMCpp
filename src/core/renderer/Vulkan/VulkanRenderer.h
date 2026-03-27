@@ -105,6 +105,7 @@ private:
 
 	bool createCommandBuffers();
 	bool uploadTexture();
+	void writeDescriptorSets();
 	void updateBackgroundVertexData();
 
 	void prepareVertexData();

@@ -28,7 +28,37 @@ bool VulkanResources::createCommandPool(VkDevice device, uint32_t queueFamily)
 	return true;
 }
 
-bool VulkanResources::createSyncObjects(VkDevice device)
+bool VulkanResources::recreateRenderFinishedSemaphores(VkDevice device, uint32_t swapchainImageCount)
+{
+	for (VkSemaphore s : m_renderFinishedSemaphores)
+	{
+		if (s != VK_NULL_HANDLE)
+			vkDestroySemaphore(device, s, nullptr);
+	}
+	m_renderFinishedSemaphores.clear();
+	m_renderFinishedSemaphores.resize(swapchainImageCount);
+
+	VkSemaphoreCreateInfo semaphoreInfo{};
+	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+	for (uint32_t i = 0; i < swapchainImageCount; ++i)
+	{
+		if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_renderFinishedSemaphores[i]) != VK_SUCCESS)
+		{
+			Logger::error("VK: Failed to create render-finished semaphore {}", i);
+			for (uint32_t j = 0; j < i; ++j)
+			{
+				vkDestroySemaphore(device, m_renderFinishedSemaphores[j], nullptr);
+				m_renderFinishedSemaphores[j] = VK_NULL_HANDLE;
+			}
+			m_renderFinishedSemaphores.clear();
+			return false;
+		}
+	}
+	return true;
+}
+
+bool VulkanResources::createSyncObjects(VkDevice device, uint32_t swapchainImageCount)
 {
 	VkSemaphoreCreateInfo semaphoreInfo{};
 	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -40,13 +70,15 @@ bool VulkanResources::createSyncObjects(VkDevice device)
 	for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 	{
 		if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS ||
-			vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_renderFinishedSemaphores[i]) != VK_SUCCESS ||
 			vkCreateFence(device, &fenceInfo, nullptr, &m_inFlightFences[i]) != VK_SUCCESS)
 		{
 			Logger::error("VK: Failed to create synchronization objects for frame {}", i);
 			return false;
 		}
 	}
+
+	if (!recreateRenderFinishedSemaphores(device, swapchainImageCount))
+		return false;
 
 	VkFenceCreateInfo singleTimeFenceInfo{};
 	singleTimeFenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -72,17 +104,19 @@ void VulkanResources::destroy(VkDevice device)
 		m_singleTimeFence = VK_NULL_HANDLE;
 	}
 
+	for (VkSemaphore s : m_renderFinishedSemaphores)
+	{
+		if (s != VK_NULL_HANDLE)
+			vkDestroySemaphore(device, s, nullptr);
+	}
+	m_renderFinishedSemaphores.clear();
+
 	for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 	{
 		if (m_inFlightFences[i] != VK_NULL_HANDLE)
 		{
 			vkDestroyFence(device, m_inFlightFences[i], nullptr);
 			m_inFlightFences[i] = VK_NULL_HANDLE;
-		}
-		if (m_renderFinishedSemaphores[i] != VK_NULL_HANDLE)
-		{
-			vkDestroySemaphore(device, m_renderFinishedSemaphores[i], nullptr);
-			m_renderFinishedSemaphores[i] = VK_NULL_HANDLE;
 		}
 		if (m_imageAvailableSemaphores[i] != VK_NULL_HANDLE)
 		{

@@ -44,21 +44,7 @@ void VulkanSwapchain::destroy(VkDevice device)
 		m_renderPass = VK_NULL_HANDLE;
 	}
 
-	if (m_depthImageView != VK_NULL_HANDLE)
-	{
-		vkDestroyImageView(device, m_depthImageView, nullptr);
-		m_depthImageView = VK_NULL_HANDLE;
-	}
-	if (m_depthImage != VK_NULL_HANDLE)
-	{
-		vkDestroyImage(device, m_depthImage, nullptr);
-		m_depthImage = VK_NULL_HANDLE;
-	}
-	if (m_depthMemory != VK_NULL_HANDLE)
-	{
-		vkFreeMemory(device, m_depthMemory, nullptr);
-		m_depthMemory = VK_NULL_HANDLE;
-	}
+	destroyDepthResources(device);
 
 	for (auto imageView : m_imageViews)
 	{
@@ -111,7 +97,7 @@ bool VulkanSwapchain::createSwapchain(VulkanDevice& device, uint32_t width, uint
 	VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
 	for (const auto& mode : presentModes)
 	{
-		if (mode == VK_PRESENT_MODE_MAILBOX_KHR)
+		if (mode == VK_PRESENT_MODE_FIFO_KHR)
 		{
 			presentMode = mode;
 			break;
@@ -200,9 +186,10 @@ VkFormat VulkanSwapchain::findDepthFormat(VkPhysicalDevice physicalDevice)
 
 	for (VkFormat format : candidates)
 	{
-		VkFormatProperties props;
-		vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
-		if (props.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+		VkFormatProperties2 props{};
+		props.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
+		vkGetPhysicalDeviceFormatProperties2(physicalDevice, format, &props);
+		if (props.formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
 		{
 			return format;
 		}
@@ -210,68 +197,110 @@ VkFormat VulkanSwapchain::findDepthFormat(VkPhysicalDevice physicalDevice)
 	return VK_FORMAT_D32_SFLOAT;
 }
 
+void VulkanSwapchain::destroyDepthResources(VkDevice device)
+{
+	for (auto v : m_depthImageViews)
+	{
+		if (v != VK_NULL_HANDLE)
+			vkDestroyImageView(device, v, nullptr);
+	}
+	m_depthImageViews.clear();
+
+	for (auto img : m_depthImages)
+	{
+		if (img != VK_NULL_HANDLE)
+			vkDestroyImage(device, img, nullptr);
+	}
+	m_depthImages.clear();
+
+	for (auto mem : m_depthMemories)
+	{
+		if (mem != VK_NULL_HANDLE)
+			vkFreeMemory(device, mem, nullptr);
+	}
+	m_depthMemories.clear();
+}
+
 bool VulkanSwapchain::createDepthResources(VulkanDevice& device)
 {
+	destroyDepthResources(device.getDevice());
+
 	m_depthFormat = findDepthFormat(device.getPhysicalDevice());
 
-	VkImageCreateInfo imageInfo{};
-	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	imageInfo.imageType = VK_IMAGE_TYPE_2D;
-	imageInfo.extent.width = m_extent.width;
-	imageInfo.extent.height = m_extent.height;
-	imageInfo.extent.depth = 1;
-	imageInfo.mipLevels = 1;
-	imageInfo.arrayLayers = 1;
-	imageInfo.format = m_depthFormat;
-	imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	const size_t n = m_images.size();
+	m_depthImages.resize(n);
+	m_depthMemories.resize(n);
+	m_depthImageViews.resize(n);
 
-	if (vkCreateImage(device.getDevice(), &imageInfo, nullptr, &m_depthImage) != VK_SUCCESS)
+	for (size_t i = 0; i < n; ++i)
 	{
-		Logger::error("VK: Failed to create depth image");
-		return false;
-	}
+		m_depthImages[i] = VK_NULL_HANDLE;
+		m_depthMemories[i] = VK_NULL_HANDLE;
+		m_depthImageViews[i] = VK_NULL_HANDLE;
 
-	VkMemoryRequirements memRequirements;
-	vkGetImageMemoryRequirements(device.getDevice(), m_depthImage, &memRequirements);
+		VkImageCreateInfo imageInfo{};
+		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		imageInfo.imageType = VK_IMAGE_TYPE_2D;
+		imageInfo.extent.width = m_extent.width;
+		imageInfo.extent.height = m_extent.height;
+		imageInfo.extent.depth = 1;
+		imageInfo.mipLevels = 1;
+		imageInfo.arrayLayers = 1;
+		imageInfo.format = m_depthFormat;
+		imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+		imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	VkMemoryAllocateInfo allocInfo{};
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = device.findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		if (vkCreateImage(device.getDevice(), &imageInfo, nullptr, &m_depthImages[i]) != VK_SUCCESS)
+		{
+			Logger::error("VK: Failed to create depth image");
+			destroyDepthResources(device.getDevice());
+			return false;
+		}
 
-	if (allocInfo.memoryTypeIndex == UINT32_MAX)
-	{
-		Logger::error("VK: Failed to find suitable memory type for depth buffer");
-		return false;
-	}
+		VkMemoryRequirements memRequirements;
+		vkGetImageMemoryRequirements(device.getDevice(), m_depthImages[i], &memRequirements);
 
-	if (vkAllocateMemory(device.getDevice(), &allocInfo, nullptr, &m_depthMemory) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to allocate depth image memory");
-		return false;
-	}
+		VkMemoryAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+		allocInfo.allocationSize = memRequirements.size;
+		allocInfo.memoryTypeIndex = device.findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-	vkBindImageMemory(device.getDevice(), m_depthImage, m_depthMemory, 0);
+		if (allocInfo.memoryTypeIndex == UINT32_MAX)
+		{
+			Logger::error("VK: Failed to find suitable memory type for depth buffer");
+			destroyDepthResources(device.getDevice());
+			return false;
+		}
 
-	VkImageViewCreateInfo viewInfo{};
-	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-	viewInfo.image = m_depthImage;
-	viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-	viewInfo.format = m_depthFormat;
-	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-	viewInfo.subresourceRange.baseMipLevel = 0;
-	viewInfo.subresourceRange.levelCount = 1;
-	viewInfo.subresourceRange.baseArrayLayer = 0;
-	viewInfo.subresourceRange.layerCount = 1;
+		if (vkAllocateMemory(device.getDevice(), &allocInfo, nullptr, &m_depthMemories[i]) != VK_SUCCESS)
+		{
+			Logger::error("VK: Failed to allocate depth image memory");
+			destroyDepthResources(device.getDevice());
+			return false;
+		}
 
-	if (vkCreateImageView(device.getDevice(), &viewInfo, nullptr, &m_depthImageView) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create depth image view");
-		return false;
+		vkBindImageMemory(device.getDevice(), m_depthImages[i], m_depthMemories[i], 0);
+
+		VkImageViewCreateInfo viewInfo{};
+		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		viewInfo.image = m_depthImages[i];
+		viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		viewInfo.format = m_depthFormat;
+		viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		viewInfo.subresourceRange.baseMipLevel = 0;
+		viewInfo.subresourceRange.levelCount = 1;
+		viewInfo.subresourceRange.baseArrayLayer = 0;
+		viewInfo.subresourceRange.layerCount = 1;
+
+		if (vkCreateImageView(device.getDevice(), &viewInfo, nullptr, &m_depthImageViews[i]) != VK_SUCCESS)
+		{
+			Logger::error("VK: Failed to create depth image view");
+			destroyDepthResources(device.getDevice());
+			return false;
+		}
 	}
 
 	Logger::info("VK: Depth buffer created successfully");
@@ -280,52 +309,58 @@ bool VulkanSwapchain::createDepthResources(VulkanDevice& device)
 
 bool VulkanSwapchain::createRenderPass(VkDevice device)
 {
-	VkAttachmentDescription colorAttachment{};
-	colorAttachment.format = m_format;
-	colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-	colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-	colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+	std::array<VkAttachmentDescription2, 2> attachments{};
+	attachments[0].sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2;
+	attachments[0].format = m_format;
+	attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
+	attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+	attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-	VkAttachmentReference colorAttachmentRef{};
-	colorAttachmentRef.attachment = 0;
-	colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	attachments[1].sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2;
+	attachments[1].format = m_depthFormat;
+	attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
+	attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	attachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	attachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-	VkAttachmentDescription depthAttachment{};
-	depthAttachment.format = m_depthFormat;
-	depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-	depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	VkAttachmentReference2 colorRef{};
+	colorRef.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2;
+	colorRef.attachment = 0;
+	colorRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	colorRef.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
-	VkAttachmentReference depthAttachmentRef{};
-	depthAttachmentRef.attachment = 1;
-	depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	VkAttachmentReference2 depthRef{};
+	depthRef.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2;
+	depthRef.attachment = 1;
+	depthRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	depthRef.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 
-	VkSubpassDescription subpass{};
+	VkSubpassDescription2 subpass{};
+	subpass.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2;
 	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 	subpass.colorAttachmentCount = 1;
-	subpass.pColorAttachments = &colorAttachmentRef;
-	subpass.pDepthStencilAttachment = &depthAttachmentRef;
+	subpass.pColorAttachments = &colorRef;
+	subpass.pDepthStencilAttachment = &depthRef;
 
-	VkSubpassDependency dependency{};
+	VkSubpassDependency2 dependency{};
+	dependency.sType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2;
 	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
 	dependency.dstSubpass = 0;
 	dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-	dependency.srcAccessMask = 0;
 	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
 	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+	dependency.dependencyFlags = 0;
+	dependency.viewOffset = 0;
 
-	std::array<VkAttachmentDescription, 2> attachments = {colorAttachment, depthAttachment};
-
-	VkRenderPassCreateInfo renderPassInfo{};
-	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+	VkRenderPassCreateInfo2 renderPassInfo{};
+	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2;
 	renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 	renderPassInfo.pAttachments = attachments.data();
 	renderPassInfo.subpassCount = 1;
@@ -333,7 +368,7 @@ bool VulkanSwapchain::createRenderPass(VkDevice device)
 	renderPassInfo.dependencyCount = 1;
 	renderPassInfo.pDependencies = &dependency;
 
-	if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS)
+	if (vkCreateRenderPass2(device, &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS)
 	{
 		Logger::error("VK: Failed to create render pass");
 		return false;
@@ -350,7 +385,7 @@ bool VulkanSwapchain::createFramebuffers(VkDevice device)
 	{
 		std::array<VkImageView, 2> attachments = {
 			m_imageViews[i],
-			m_depthImageView};
+			m_depthImageViews[i]};
 
 		VkFramebufferCreateInfo framebufferInfo{};
 		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -371,73 +406,76 @@ bool VulkanSwapchain::createFramebuffers(VkDevice device)
 	return true;
 }
 
-void VulkanSwapchain::setVSync(VulkanDevice& device, bool enabled)
+bool VulkanSwapchain::setVSync(VulkanDevice& device, bool enabled)
 {
 	VkPresentModeKHR newPresentMode = enabled ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_MAILBOX_KHR;
 
-	if (newPresentMode != m_presentMode && m_swapchain != VK_NULL_HANDLE)
+	if (newPresentMode == m_presentMode || m_swapchain == VK_NULL_HANDLE)
+		return false;
+
+	Logger::info("VK: Recreating swapchain with VSync {}", enabled ? "enabled" : "disabled");
+
+	vkDeviceWaitIdle(device.getDevice());
+
+	VkSwapchainKHR oldSwapchain = m_swapchain;
+
+	VkSurfaceCapabilitiesKHR capabilities;
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device.getPhysicalDevice(), device.getSurface(), &capabilities);
+
+	VkSwapchainCreateInfoKHR createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+	createInfo.pNext = nullptr;
+	createInfo.surface = device.getSurface();
+	createInfo.minImageCount = capabilities.minImageCount + 1;
+	createInfo.imageFormat = m_format;
+	createInfo.imageColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+	createInfo.imageExtent = m_extent;
+	createInfo.imageArrayLayers = 1;
+	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+	createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	createInfo.preTransform = capabilities.currentTransform;
+	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+	createInfo.presentMode = newPresentMode;
+	createInfo.clipped = VK_TRUE;
+	createInfo.oldSwapchain = oldSwapchain;
+
+	VkSwapchainKHR newSwapchain;
+	if (vkCreateSwapchainKHR(device.getDevice(), &createInfo, nullptr, &newSwapchain) != VK_SUCCESS)
 	{
-		Logger::info("VK: Recreating swapchain with VSync {}", enabled ? "enabled" : "disabled");
-
-		vkDeviceWaitIdle(device.getDevice());
-
-		VkSwapchainKHR oldSwapchain = m_swapchain;
-
-		VkSurfaceCapabilitiesKHR capabilities;
-		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device.getPhysicalDevice(), device.getSurface(), &capabilities);
-
-		VkSwapchainCreateInfoKHR createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		createInfo.pNext = nullptr;
-		createInfo.surface = device.getSurface();
-		createInfo.minImageCount = capabilities.minImageCount + 1;
-		createInfo.imageFormat = m_format;
-		createInfo.imageColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-		createInfo.imageExtent = m_extent;
-		createInfo.imageArrayLayers = 1;
-		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-		createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		createInfo.preTransform = capabilities.currentTransform;
-		createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-		createInfo.presentMode = newPresentMode;
-		createInfo.clipped = VK_TRUE;
-		createInfo.oldSwapchain = oldSwapchain;
-
-		VkSwapchainKHR newSwapchain;
-		if (vkCreateSwapchainKHR(device.getDevice(), &createInfo, nullptr, &newSwapchain) != VK_SUCCESS)
-		{
-			Logger::error("VK: Failed to recreate swapchain for VSync change");
-			return;
-		}
-
-		m_swapchain = newSwapchain;
-		m_presentMode = newPresentMode;
-
-		for (auto imageView : m_imageViews)
-		{
-			vkDestroyImageView(device.getDevice(), imageView, nullptr);
-		}
-		m_imageViews.clear();
-
-		for (auto framebuffer : m_framebuffers)
-		{
-			vkDestroyFramebuffer(device.getDevice(), framebuffer, nullptr);
-		}
-		m_framebuffers.clear();
-
-		uint32_t imageCount;
-		vkGetSwapchainImagesKHR(device.getDevice(), m_swapchain, &imageCount, nullptr);
-		m_images.resize(imageCount);
-		vkGetSwapchainImagesKHR(device.getDevice(), m_swapchain, &imageCount, m_images.data());
-		if (!createImageViews(device.getDevice()) || !createFramebuffers(device.getDevice()))
-		{
-			Logger::error("VK: Failed to recreate swapchain resources for VSync change");
-			return;
-		}
-
-		if (oldSwapchain != VK_NULL_HANDLE)
-		{
-			vkDestroySwapchainKHR(device.getDevice(), oldSwapchain, nullptr);
-		}
+		Logger::error("VK: Failed to recreate swapchain for VSync change");
+		return false;
 	}
+
+	m_swapchain = newSwapchain;
+	m_presentMode = newPresentMode;
+
+	for (auto imageView : m_imageViews)
+	{
+		vkDestroyImageView(device.getDevice(), imageView, nullptr);
+	}
+	m_imageViews.clear();
+
+	for (auto framebuffer : m_framebuffers)
+	{
+		vkDestroyFramebuffer(device.getDevice(), framebuffer, nullptr);
+	}
+	m_framebuffers.clear();
+
+	destroyDepthResources(device.getDevice());
+
+	uint32_t imageCount;
+	vkGetSwapchainImagesKHR(device.getDevice(), m_swapchain, &imageCount, nullptr);
+	m_images.resize(imageCount);
+	vkGetSwapchainImagesKHR(device.getDevice(), m_swapchain, &imageCount, m_images.data());
+	if (!createImageViews(device.getDevice()) || !createDepthResources(device) || !createFramebuffers(device.getDevice()))
+	{
+		Logger::error("VK: Failed to recreate swapchain resources for VSync change");
+		return false;
+	}
+
+	if (oldSwapchain != VK_NULL_HANDLE)
+	{
+		vkDestroySwapchainKHR(device.getDevice(), oldSwapchain, nullptr);
+	}
+	return true;
 }
