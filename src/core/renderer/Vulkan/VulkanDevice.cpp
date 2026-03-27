@@ -23,6 +23,21 @@
 #include "Logger.h"
 #include <vector>
 
+#ifndef NDEBUG
+static VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(VkDebugUtilsMessageSeverityFlagEXT severity,
+	VkDebugUtilsMessageTypeFlagsEXT /*type*/, const VkDebugUtilsMessengerCallbackDataEXT* data, void* /*ud*/)
+{
+	if (data && data->pMessage)
+	{
+		if (severity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+			Logger::error("VK validation: {}", data->pMessage);
+		else if (severity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+			Logger::warn("VK validation: {}", data->pMessage);
+	}
+	return VK_FALSE;
+}
+#endif
+
 VulkanDevice::VulkanDevice() = default;
 
 VulkanDevice::~VulkanDevice()
@@ -62,6 +77,16 @@ void VulkanDevice::destroy()
 	}
 	if (m_instance != VK_NULL_HANDLE)
 	{
+#ifndef NDEBUG
+		if (m_debugMessenger != VK_NULL_HANDLE)
+		{
+			auto destroyFn = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
+				vkGetInstanceProcAddr(m_instance, "vkDestroyDebugUtilsMessengerEXT"));
+			if (destroyFn)
+				destroyFn(m_instance, m_debugMessenger, nullptr);
+			m_debugMessenger = VK_NULL_HANDLE;
+		}
+#endif
 		vkDestroyInstance(m_instance, nullptr);
 		m_instance = VK_NULL_HANDLE;
 	}
@@ -95,6 +120,10 @@ bool VulkanDevice::createInstance()
 		VK_KHR_XLIB_SURFACE_EXTENSION_NAME,
 		VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME,
 #endif
+#ifndef NDEBUG
+		,
+		VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
+#endif
 	};
 
 	VkInstanceCreateInfo createInfo{};
@@ -103,11 +132,46 @@ bool VulkanDevice::createInstance()
 	createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
 	createInfo.ppEnabledExtensionNames = extensions.data();
 
+#ifndef NDEBUG
+	const char* layers[] = {"VK_LAYER_KHRONOS_validation"};
+	createInfo.enabledLayerCount = 1;
+	createInfo.ppEnabledLayerNames = layers;
+
+	VkDebugUtilsMessengerCreateInfoEXT dbgInfo{};
+	dbgInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+	dbgInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+	                          VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+	dbgInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+	                      VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+	                      VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+	dbgInfo.pfnUserCallback = vulkanDebugCallback;
+	createInfo.pNext = &dbgInfo;
+#endif
+
 	if (vkCreateInstance(&createInfo, nullptr, &m_instance) != VK_SUCCESS)
 	{
 		Logger::error("VK: Failed to create Vulkan instance");
 		return false;
 	}
+
+#ifndef NDEBUG
+	{
+		auto createFn = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
+			vkGetInstanceProcAddr(m_instance, "vkCreateDebugUtilsMessengerEXT"));
+		if (createFn)
+		{
+			VkDebugUtilsMessengerCreateInfoEXT dbgCreate{};
+			dbgCreate.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+			dbgCreate.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+			                            VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+			dbgCreate.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+			                        VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+			                        VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+			dbgCreate.pfnUserCallback = vulkanDebugCallback;
+			createFn(m_instance, &dbgCreate, nullptr, &m_debugMessenger);
+		}
+	}
+#endif
 
 	return true;
 }
@@ -255,18 +319,25 @@ bool VulkanDevice::selectPhysicalDevice()
 
 	for (const auto& device : devices)
 	{
-		VkPhysicalDeviceProperties props;
-		vkGetPhysicalDeviceProperties(device, &props);
+		VkPhysicalDeviceProperties2 props2{};
+		props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+		vkGetPhysicalDeviceProperties2(device, &props2);
+		const VkPhysicalDeviceProperties& props = props2.properties;
 
 		uint32_t queueFamilyCount = 0;
-		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+		vkGetPhysicalDeviceQueueFamilyProperties2(device, &queueFamilyCount, nullptr);
 
-		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+		std::vector<VkQueueFamilyProperties2> queueFamilies(queueFamilyCount);
+		for (uint32_t q = 0; q < queueFamilyCount; ++q)
+		{
+			queueFamilies[q].sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
+			queueFamilies[q].pNext = nullptr;
+		}
+		vkGetPhysicalDeviceQueueFamilyProperties2(device, &queueFamilyCount, queueFamilies.data());
 
 		for (uint32_t i = 0; i < queueFamilyCount; ++i)
 		{
-			if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+			if (queueFamilies[i].queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT)
 			{
 				VkBool32 presentSupport = false;
 				vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentSupport);
@@ -295,16 +366,18 @@ bool VulkanDevice::createLogicalDevice()
 	float queuePriority = 1.0f;
 	queueCreateInfo.pQueuePriorities = &queuePriority;
 
-	VkPhysicalDeviceFeatures deviceFeatures{};
+	VkPhysicalDeviceFeatures2 features2{};
+	features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+	vkGetPhysicalDeviceFeatures2(m_physicalDevice, &features2);
 
 	std::vector<const char*> extensions = {
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
 	VkDeviceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	createInfo.pNext = &features2;
 	createInfo.queueCreateInfoCount = 1;
 	createInfo.pQueueCreateInfos = &queueCreateInfo;
-	createInfo.pEnabledFeatures = &deviceFeatures;
 	createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
 	createInfo.ppEnabledExtensionNames = extensions.data();
 
@@ -334,8 +407,10 @@ bool VulkanDevice::createLogicalDevice()
 
 uint32_t VulkanDevice::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const
 {
-	VkPhysicalDeviceMemoryProperties memProperties;
-	vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &memProperties);
+	VkPhysicalDeviceMemoryProperties2 memProperties2{};
+	memProperties2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
+	vkGetPhysicalDeviceMemoryProperties2(m_physicalDevice, &memProperties2);
+	const VkPhysicalDeviceMemoryProperties& memProperties = memProperties2.memoryProperties;
 
 	for (uint32_t i = 0; i < memProperties.memoryTypeCount; ++i)
 	{
