@@ -100,7 +100,8 @@ bool VulkanRenderer::initialize()
 	if (!m_vulkanResources.createBackgroundVertexBuffer(m_vulkanDevice))
 		return false;
 
-	if (!m_vulkanResources.createSyncObjects(m_vulkanDevice.getDevice()))
+	if (!m_vulkanResources.createSyncObjects(m_vulkanDevice.getDevice(),
+			static_cast<uint32_t>(m_vulkanSwapchain.getImages().size())))
 		return false;
 
 	if (!createCommandBuffers())
@@ -325,6 +326,13 @@ void VulkanRenderer::resize(uint32_t width, uint32_t height)
 	m_imagesInFlight.clear();
 	m_imagesInFlight.resize(m_vulkanSwapchain.getImages().size(), VK_NULL_HANDLE);
 
+	if (!m_vulkanResources.recreateRenderFinishedSemaphores(m_vulkanDevice.getDevice(),
+			static_cast<uint32_t>(m_vulkanSwapchain.getImages().size())))
+	{
+		Logger::error("VK: Failed to recreate render-finished semaphores after resize");
+		return;
+	}
+
 	if (!createCommandBuffers())
 	{
 		Logger::error("VK: Failed to recreate command buffers");
@@ -429,6 +437,44 @@ void VulkanRenderer::prepareVertexData()
 	vkUnmapMemory(device, m_vertexMemory);
 
 	Logger::debug("VK: Vertex buffer created (host-visible) for animation updates");
+}
+
+void VulkanRenderer::writeDescriptorSets()
+{
+	if (m_descriptorSet == VK_NULL_HANDLE || m_uniformBuffer == VK_NULL_HANDLE || m_textureView == VK_NULL_HANDLE)
+		return;
+
+	VkDevice device = m_vulkanDevice.getDevice();
+	const VkDeviceSize uboSize = 320;
+
+	VkDescriptorBufferInfo bufferDescInfo{};
+	bufferDescInfo.buffer = m_uniformBuffer;
+	bufferDescInfo.offset = 0;
+	bufferDescInfo.range = uboSize;
+
+	VkDescriptorImageInfo imageDescInfo{};
+	imageDescInfo.sampler = m_textureSampler;
+	imageDescInfo.imageView = m_textureView;
+	imageDescInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+	VkWriteDescriptorSet descriptorWrites[2]{};
+	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[0].dstSet = m_descriptorSet;
+	descriptorWrites[0].dstBinding = 0;
+	descriptorWrites[0].dstArrayElement = 0;
+	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descriptorWrites[0].descriptorCount = 1;
+	descriptorWrites[0].pBufferInfo = &bufferDescInfo;
+
+	descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[1].dstSet = m_descriptorSet;
+	descriptorWrites[1].dstBinding = 1;
+	descriptorWrites[1].dstArrayElement = 0;
+	descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descriptorWrites[1].descriptorCount = 1;
+	descriptorWrites[1].pImageInfo = &imageDescInfo;
+
+	vkUpdateDescriptorSets(device, 2, descriptorWrites, 0, nullptr);
 }
 
 void VulkanRenderer::updateUniformBuffer()
@@ -603,38 +649,7 @@ void VulkanRenderer::updateUniformBuffer()
 		descriptorWrites[1].descriptorCount = 1;
 		descriptorWrites[1].pImageInfo = &imageDescInfo;
 
-		vkUpdateDescriptorSets(device, 2, descriptorWrites, 0, nullptr);
-	}
-	else if (m_descriptorSet != VK_NULL_HANDLE && m_textureView != VK_NULL_HANDLE)
-	{
-		VkDescriptorBufferInfo bufferDescInfo{};
-		bufferDescInfo.buffer = m_uniformBuffer;
-		bufferDescInfo.offset = 0;
-		bufferDescInfo.range = uboSize;
-
-		VkDescriptorImageInfo imageDescInfo{};
-		imageDescInfo.sampler = m_textureSampler;
-		imageDescInfo.imageView = m_textureView;
-		imageDescInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-		VkWriteDescriptorSet descriptorWrites[2]{};
-		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[0].dstSet = m_descriptorSet;
-		descriptorWrites[0].dstBinding = 0;
-		descriptorWrites[0].dstArrayElement = 0;
-		descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptorWrites[0].descriptorCount = 1;
-		descriptorWrites[0].pBufferInfo = &bufferDescInfo;
-
-		descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[1].dstSet = m_descriptorSet;
-		descriptorWrites[1].dstBinding = 1;
-		descriptorWrites[1].dstArrayElement = 0;
-		descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		descriptorWrites[1].descriptorCount = 1;
-		descriptorWrites[1].pImageInfo = &imageDescInfo;
-
-		vkUpdateDescriptorSets(device, 2, descriptorWrites, 0, nullptr);
+		writeDescriptorSets();
 	}
 
 	void* data;
@@ -773,6 +788,7 @@ bool VulkanRenderer::uploadTexture()
 	}
 	Logger::debug("VK: Texture image view created, calling updateUniformBuffer");
 
+	writeDescriptorSets();
 	updateUniformBuffer();
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
@@ -874,7 +890,10 @@ bool VulkanRenderer::createCommandBuffers()
 		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 		renderPassInfo.pClearValues = clearValues.data();
 
-		vkCmdBeginRenderPass(m_commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+		VkSubpassBeginInfo subpassBegin{};
+		subpassBegin.sType = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO;
+		subpassBegin.contents = VK_SUBPASS_CONTENTS_INLINE;
+		vkCmdBeginRenderPass2(m_commandBuffers[i], &renderPassInfo, &subpassBegin);
 
 		VkBuffer bgBuffer = m_vulkanResources.getBackgroundVertexBuffer();
 		if (m_background.shouldRender && m_vulkanPipeline.getBackgroundPipeline() != VK_NULL_HANDLE && bgBuffer != VK_NULL_HANDLE)
@@ -919,7 +938,9 @@ bool VulkanRenderer::createCommandBuffers()
 			vkCmdDraw(m_commandBuffers[i], m_vertexCount, 1, 0, 0);
 		}
 
-		vkCmdEndRenderPass(m_commandBuffers[i]);
+		VkSubpassEndInfo subpassEnd{};
+		subpassEnd.sType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO;
+		vkCmdEndRenderPass2(m_commandBuffers[i], &subpassEnd);
 
 		if (vkEndCommandBuffer(m_commandBuffers[i]) != VK_SUCCESS)
 		{
@@ -948,7 +969,6 @@ void VulkanRenderer::submitFrame()
 
 		VkFence fence = m_vulkanResources.getInFlightFence(m_currentFrame);
 		VkSemaphore imageAvailable = m_vulkanResources.getImageAvailableSemaphore(m_currentFrame);
-		VkSemaphore renderFinished = m_vulkanResources.getRenderFinishedSemaphore(m_currentFrame);
 		vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
 
 		uint32_t imageIndex;
@@ -965,6 +985,8 @@ void VulkanRenderer::submitFrame()
 			Logger::error("VK: Failed to acquire next image: {}", static_cast<int>(result));
 			return;
 		}
+
+		VkSemaphore renderFinished = m_vulkanResources.getRenderFinishedSemaphore(imageIndex);
 
 		if (m_imagesInFlight[imageIndex] != VK_NULL_HANDLE)
 		{
@@ -1023,13 +1045,31 @@ void VulkanRenderer::submitFrame()
 
 void VulkanRenderer::setVSync(bool enabled)
 {
-	if (m_vulkanDevice.getDevice() != VK_NULL_HANDLE)
-	{
-		m_vulkanSwapchain.setVSync(m_vulkanDevice, enabled);
+	if (m_vulkanDevice.getDevice() == VK_NULL_HANDLE || !m_initialized)
+		return;
 
-		if (m_config)
+	VkDevice device = m_vulkanDevice.getDevice();
+	if (m_vulkanSwapchain.setVSync(m_vulkanDevice, enabled))
+	{
+		vkDeviceWaitIdle(device);
+		m_imagesInFlight.clear();
+		m_imagesInFlight.resize(m_vulkanSwapchain.getImages().size(), VK_NULL_HANDLE);
+		if (!m_vulkanResources.recreateRenderFinishedSemaphores(device,
+				static_cast<uint32_t>(m_vulkanSwapchain.getImages().size())))
 		{
-			m_config->setVSync(enabled);
+			Logger::error("VK: Failed to recreate render-finished semaphores after VSync change");
 		}
+		if (!m_commandBuffers.empty())
+		{
+			vkFreeCommandBuffers(device, m_vulkanResources.getCommandPool(),
+				static_cast<uint32_t>(m_commandBuffers.size()), m_commandBuffers.data());
+			m_commandBuffers.clear();
+		}
+		if (!createCommandBuffers())
+			Logger::error("VK: Failed to recreate command buffers after VSync change");
+		m_iconChanged = true;
 	}
+
+	if (m_config)
+		m_config->setVSync(enabled);
 }

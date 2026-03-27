@@ -31,7 +31,7 @@ public:
 	const std::vector<VkFramebuffer>& getFramebuffers() const { return m_framebuffers; }
 	VkFormat getDepthFormat() const { return m_depthFormat; }
 
-	void setVSync(VulkanDevice& device, bool enabled);
+	bool setVSync(VulkanDevice& device, bool enabled);
 
 private:
 	bool createSwapchain(VulkanDevice& device, uint32_t width, uint32_t height);
@@ -39,6 +39,7 @@ private:
 	bool createDepthResources(VulkanDevice& device);
 	bool createRenderPass(VkDevice device);
 	bool createFramebuffers(VkDevice device);
+	void destroyDepthResources(VkDevice device);
 	VkFormat findDepthFormat(VkPhysicalDevice physicalDevice);
 
 	VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
@@ -47,9 +48,9 @@ private:
 	VkFormat m_format = VK_FORMAT_UNDEFINED;
 	VkExtent2D m_extent = {0, 0};
 
-	VkImage m_depthImage = VK_NULL_HANDLE;
-	VkDeviceMemory m_depthMemory = VK_NULL_HANDLE;
-	VkImageView m_depthImageView = VK_NULL_HANDLE;
+	std::vector<VkImage> m_depthImages;
+	std::vector<VkDeviceMemory> m_depthMemories;
+	std::vector<VkImageView> m_depthImageViews;
 	VkFormat m_depthFormat = VK_FORMAT_UNDEFINED;
 
 	VkRenderPass m_renderPass = VK_NULL_HANDLE;

@@ -6,6 +6,7 @@
 #include <vulkan/vulkan.h>
 #include <cstdint>
 #include <array>
+#include <vector>
 #include "Logger.h"
 
 class VulkanDevice;
@@ -44,7 +45,8 @@ public:
 	VulkanResources& operator=(const VulkanResources&) = delete;
 
 	bool createCommandPool(VkDevice device, uint32_t queueFamily);
-	bool createSyncObjects(VkDevice device);
+	bool createSyncObjects(VkDevice device, uint32_t swapchainImageCount);
+	bool recreateRenderFinishedSemaphores(VkDevice device, uint32_t swapchainImageCount);
 	void destroy(VkDevice device);
 
 	VkCommandBuffer beginSingleTimeCommands(VkDevice device);
@@ -64,14 +66,14 @@ public:
 
 	VkCommandPool getCommandPool() const { return m_commandPool; }
 	VkSemaphore getImageAvailableSemaphore(uint32_t frameIndex) const { return m_imageAvailableSemaphores[frameIndex]; }
-	VkSemaphore getRenderFinishedSemaphore(uint32_t frameIndex) const { return m_renderFinishedSemaphores[frameIndex]; }
+	VkSemaphore getRenderFinishedSemaphore(uint32_t imageIndex) const { return m_renderFinishedSemaphores[imageIndex]; }
 	VkFence getInFlightFence(uint32_t frameIndex) const { return m_inFlightFences[frameIndex]; }
 	VkBuffer getBackgroundVertexBuffer() const { return m_bgVertexBuffer; }
 
 private:
 	VkCommandPool m_commandPool = VK_NULL_HANDLE;
 	std::array<VkSemaphore, MAX_FRAMES_IN_FLIGHT> m_imageAvailableSemaphores{};
-	std::array<VkSemaphore, MAX_FRAMES_IN_FLIGHT> m_renderFinishedSemaphores{};
+	std::vector<VkSemaphore> m_renderFinishedSemaphores;
 	std::array<VkFence, MAX_FRAMES_IN_FLIGHT> m_inFlightFences{};
 	VkFence m_singleTimeFence = VK_NULL_HANDLE;
 
