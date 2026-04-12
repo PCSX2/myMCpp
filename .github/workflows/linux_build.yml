@@ -112,7 +112,7 @@ jobs:
             wget
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v4.3.0
+        uses: jurplel/install-qt-action@v4.3.1
         with:
           version: '6.10.2'
           host: 'linux'

@@ -78,7 +78,7 @@ jobs:
 
       - name: Install Qt (x64)
         if: inputs.platform == 'x64'
-        uses: jurplel/install-qt-action@v4.3.0
+        uses: jurplel/install-qt-action@v4.3.1
         with:
           version: '6.10.2'
           host: 'windows'
@@ -89,7 +89,7 @@ jobs:
 
       - name: Install Qt (ARM64)
         if: inputs.platform == 'ARM64'
-        uses: jurplel/install-qt-action@v4.3.0
+        uses: jurplel/install-qt-action@v4.3.1
         with:
           version: '6.10.2'
           host: 'windows_arm64'
