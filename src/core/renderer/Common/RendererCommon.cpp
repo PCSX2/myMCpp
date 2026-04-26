@@ -352,9 +352,22 @@ namespace TextureUtils
 
 	std::vector<uint8_t> convertPS2TextureToRGBA(const uint16_t* textureData, uint32_t width, uint32_t height)
 	{
-		std::vector<uint8_t> rgba(width * height * 4);
+		if (!textureData || width == 0 || height == 0)
+		{
+			Logger::warn("TextureUtils: Invalid texture input (ptr={}, width={}, height={})", (const void*)textureData, width, height);
+			return {};
+		}
 
-		for (size_t i = 0; i < width * height; ++i)
+		const size_t pixelCount = static_cast<size_t>(width) * static_cast<size_t>(height);
+		if (pixelCount > std::numeric_limits<size_t>::max() / 4)
+		{
+			Logger::error("TextureUtils: Texture size overflow (width={}, height={})", width, height);
+			return {};
+		}
+
+		std::vector<uint8_t> rgba(pixelCount * 4);
+
+		for (size_t i = 0; i < pixelCount; ++i)
 		{
 			uint16_t pixel = textureData[i];
 			uint8_t r5 = static_cast<uint8_t>((pixel >> 0) & 0x1F); // Red (bits 0-4)

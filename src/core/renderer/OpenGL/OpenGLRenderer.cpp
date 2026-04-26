@@ -301,6 +301,12 @@ void OpenGLRenderer::setupTexture()
 		}
 
 		auto rgba = TextureUtils::convertPS2TextureToRGBA(textureData, texWidth, texHeight);
+		if (rgba.empty())
+		{
+			Logger::error("GL: Texture conversion returned empty data");
+			m_context->releaseCurrent();
+			return;
+		}
 
 		m_resources.uploadTexture(rgba.data(), texWidth, texHeight);
 
