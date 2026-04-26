@@ -242,20 +242,21 @@ namespace PS2Icon
 
 	size_t Icon::loadTexture(const uint8_t* data, size_t length, size_t offset)
 	{
+		constexpr uint16_t DEFAULT_TEXEL = 0xFFFF;
+		const size_t texturePixelCount = static_cast<size_t>(TEXTURE_WIDTH) * static_cast<size_t>(TEXTURE_HEIGHT);
+
 		// Check if texture data exists (bit 2 = 0x04)
 		if (!(textureFlags & 0x04))
 		{
 			Logger::info("PS2Icon: No texture data (textureFlags=0x{:02X})", textureFlags);
-			texture.resize(1);
-			texture[0] = 0xFFFF;
+			texture.assign(texturePixelCount, DEFAULT_TEXEL);
 			return offset;
 		}
 
 		if (offset >= length)
 		{
 			Logger::warn("PS2Icon: Texture flag set but no data remaining");
-			texture.resize(1);
-			texture[0] = 0xFFFF;
+			texture.assign(texturePixelCount, DEFAULT_TEXEL);
 			return offset;
 		}
 

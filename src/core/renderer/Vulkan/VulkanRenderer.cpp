@@ -695,6 +695,12 @@ bool VulkanRenderer::uploadTexture()
 	}
 
 	auto rgba = TextureUtils::convertPS2TextureToRGBA(textureData, texWidth, texHeight);
+	if (rgba.empty())
+	{
+		Logger::warn("VK: Texture conversion returned empty data");
+		return false;
+	}
+
 	Logger::debug("VK: Texture converted to RGBA, size={} bytes", rgba.size());
 	VkDeviceSize imageSize = rgba.size();
 

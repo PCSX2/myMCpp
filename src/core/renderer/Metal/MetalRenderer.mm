@@ -236,7 +236,14 @@ void MetalRenderer::render()
 		uint32_t width = m_icon->getTextureWidth();
 		uint32_t height = m_icon->getTextureHeight();
 		auto rgbaData = TextureUtils::convertPS2TextureToRGBA(m_icon->getTextureData(), width, height);
-		m_impl->resources.uploadTexture(m_impl->device.getDevice(), rgbaData.data(), width, height);
+		if (!rgbaData.empty())
+		{
+			m_impl->resources.uploadTexture(m_impl->device.getDevice(), rgbaData.data(), width, height);
+		}
+		else
+		{
+			Logger::warn("MTL: Texture conversion returned empty data");
+		}
 		m_iconChanged = false;
 	}
 
