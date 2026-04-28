@@ -21,10 +21,9 @@
 #endif
 
 #include "Logger.h"
-#include <vector>
 
 #ifndef NDEBUG
-static VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(VkDebugUtilsMessageSeverityFlagEXT severity,
+static VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
 	VkDebugUtilsMessageTypeFlagsEXT /*type*/, const VkDebugUtilsMessengerCallbackDataEXT* data, void* /*ud*/)
 {
 	if (data && data->pMessage)
@@ -120,10 +119,6 @@ bool VulkanDevice::createInstance()
 		VK_KHR_XLIB_SURFACE_EXTENSION_NAME,
 		VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME,
 #endif
-#ifndef NDEBUG
-		,
-		VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-#endif
 	};
 
 	VkInstanceCreateInfo createInfo{};
@@ -133,19 +128,58 @@ bool VulkanDevice::createInstance()
 	createInfo.ppEnabledExtensionNames = extensions.data();
 
 #ifndef NDEBUG
-	const char* layers[] = {"VK_LAYER_KHRONOS_validation"};
-	createInfo.enabledLayerCount = 1;
-	createInfo.ppEnabledLayerNames = layers;
+	bool enableDebugValidation = false;
+	uint32_t extensionCount = 0;
+	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+	if (extensionCount > 0)
+		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, availableExtensions.data());
 
-	VkDebugUtilsMessengerCreateInfoEXT dbgInfo{};
-	dbgInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-	dbgInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-	                          VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-	dbgInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-	                      VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-	                      VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-	dbgInfo.pfnUserCallback = vulkanDebugCallback;
-	createInfo.pNext = &dbgInfo;
+	const bool hasDebugUtilsExtension = std::any_of(availableExtensions.begin(), availableExtensions.end(),
+		[](const VkExtensionProperties& extension) {
+			return std::strcmp(extension.extensionName, VK_EXT_DEBUG_UTILS_EXTENSION_NAME) == 0;
+		});
+
+	uint32_t layerCount = 0;
+	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+	std::vector<VkLayerProperties> availableLayers(layerCount);
+	if (layerCount > 0)
+		vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+	const bool hasValidationLayer = std::any_of(availableLayers.begin(), availableLayers.end(),
+		[](const VkLayerProperties& layer) {
+			return std::strcmp(layer.layerName, "VK_LAYER_KHRONOS_validation") == 0;
+		});
+
+	if (hasValidationLayer && hasDebugUtilsExtension)
+	{
+		enableDebugValidation = true;
+		extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+		createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+		createInfo.ppEnabledExtensionNames = extensions.data();
+
+		const char* layers[] = {"VK_LAYER_KHRONOS_validation"};
+		createInfo.enabledLayerCount = 1;
+		createInfo.ppEnabledLayerNames = layers;
+
+		VkDebugUtilsMessengerCreateInfoEXT dbgInfo{};
+		dbgInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+		dbgInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+		                          VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+		dbgInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+		                      VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+		                      VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+		dbgInfo.pfnUserCallback = vulkanDebugCallback;
+		createInfo.pNext = &dbgInfo;
+	}
+	else if (!hasValidationLayer)
+	{
+		Logger::warn("VK: Validation layer VK_LAYER_KHRONOS_validation not available, continuing without validation");
+	}
+	else
+	{
+		Logger::warn("VK: Extension VK_EXT_debug_utils not available, continuing without validation");
+	}
 #endif
 
 	if (vkCreateInstance(&createInfo, nullptr, &m_instance) != VK_SUCCESS)
@@ -155,6 +189,7 @@ bool VulkanDevice::createInstance()
 	}
 
 #ifndef NDEBUG
+	if (enableDebugValidation)
 	{
 		auto createFn = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
 			vkGetInstanceProcAddr(m_instance, "vkCreateDebugUtilsMessengerEXT"));
