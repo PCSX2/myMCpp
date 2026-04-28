@@ -15,7 +15,6 @@ target_include_directories(myMCpp-cli PUBLIC
 target_link_libraries(myMCpp-cli PUBLIC
     myMCpp-common
     myMCpp-core
-    Qt6::Core
 )
 
 if(MSVC)
