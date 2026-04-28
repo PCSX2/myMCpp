@@ -1,4 +1,5 @@
 set(UI_SOURCES
+    QtMain.cpp
     MainWindow.cpp
     DiscordRPCManager.cpp
     Themes.cpp
@@ -19,6 +20,7 @@ set(UI_SOURCES
 )
 
 set(UI_HEADERS
+    QtMain.h
     MainWindow.h
     DiscordRPCManager.h
     Themes.h

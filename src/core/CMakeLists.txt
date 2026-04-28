@@ -79,8 +79,6 @@ target_include_directories(myMCpp-core PUBLIC
 
 target_link_libraries(myMCpp-core PUBLIC
     myMCpp-common
-    Qt6::Core
-    Qt6::Widgets
     nlohmann_json::nlohmann_json
     OpenGL::GL
     glfw

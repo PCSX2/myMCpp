@@ -1,23 +1,17 @@
 // SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
-#include "MainWindow.h"
 #include "ps2mc_cli.h"
 #include "Config.h"
 #include "version.h"
 #include "BuildVersion.h"
-#if !defined(__APPLE__)
-#include <QVulkanInstance>
-#endif
+#include "QtMain.h"
 #include <filesystem>
 #include "Logger.h"
 #include "ResourcePath.h"
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
-#include <QTranslator>
-#include <QLibraryInfo>
-#include "TranslationManager.h"
 
 #if defined(_WIN32)
 #include <Windows.h>
@@ -28,6 +22,35 @@
 #endif
 
 namespace fs = std::filesystem;
+
+#if !defined(__APPLE__)
+static fs::path getExecutableDir(const char* argv0)
+{
+#if defined(_WIN32)
+	char modulePath[MAX_PATH] = {};
+	const DWORD length = GetModuleFileNameA(nullptr, modulePath, MAX_PATH);
+	if (length > 0)
+	{
+		return fs::path(modulePath).parent_path();
+	}
+#endif
+	if (argv0 != nullptr && argv0[0] != '\0')
+	{
+		std::error_code ec;
+		fs::path resolved = fs::weakly_canonical(fs::path(argv0), ec);
+		if (!ec && !resolved.empty())
+		{
+			if (resolved.has_parent_path())
+				return resolved.parent_path();
+			return resolved;
+		}
+	}
+
+	std::error_code ec;
+	fs::path current = fs::current_path(ec);
+	return ec ? fs::path(".") : current;
+}
+#endif
 
 static int appMain(int argc, char* argv[])
 {
@@ -83,17 +106,11 @@ static int appMain(int argc, char* argv[])
 		return cli.execute(argc, argv);
 	}
 
-	QApplication app(argc, argv);
-
 	Logger::info("Main: myMCpp version {} ({}, hash {}, date {})",
 		myMCpp_VERSION_STRING,
 		BuildVersion::GitRev,
 		BuildVersion::GitHash,
 		BuildVersion::GitDate);
-
-	app.setApplicationName(MYMCpp_APP_NAME);
-	app.setApplicationVersion(myMCpp_VERSION_STRING);
-	app.setOrganizationName("myMCpp");
 
 	Config config;
 	fs::path config_path;
@@ -151,37 +168,12 @@ static int appMain(int argc, char* argv[])
 		config.setResourcesPath("resources");
 	}
 #else
-	config.setResourcesPath((fs::path(QCoreApplication::applicationDirPath().toStdString()) / "resources").string());
+	config.setResourcesPath((getExecutableDir(argc > 0 ? argv[0] : nullptr) / "resources").string());
 #endif
 	ResourcePath::set(config.getResourcesPath());
 	Logger::info("Main: Resources path: {}", ResourcePath::get().string());
 
-#if !defined(__APPLE__)
-	QVulkanInstance vulkanInstance;
-#if defined(QT_DEBUG)
-	vulkanInstance.setLayers({"VK_LAYER_KHRONOS_validation"});
-#endif
-	if (!vulkanInstance.create())
-	{
-		Logger::info("Main: Failed to create Vulkan instance");
-	}
-#endif
-
-	// Load translations
-	TranslationManager::instance().init(&app, &config);
-	TranslationManager::instance().loadLanguage(config.getLanguage());
-
-	QTranslator qtTranslator;
-	if (qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
-	{
-		app.installTranslator(&qtTranslator);
-	}
-
-
-	MainWindow window(&config);
-	window.show();
-
-	return app.exec();
+	return runQtMainApp(argc, argv, config);
 }
 
 #if defined(_WIN32)

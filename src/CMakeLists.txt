@@ -13,13 +13,8 @@ if(WIN32)
 endif()
 
 target_link_libraries(myMCpp PRIVATE
-    myMCpp-core
     myMCpp-qt
     myMCpp-cli
-    Qt6::Core
-    Qt6::Gui
-    Qt6::GuiPrivate
-    Qt6::Widgets
 )
 
 # Took inspiration from https://github.com/PCSX2/pcsx2/blob/master/pcsx2-qt/CMakeLists.txt for the translation generation
@@ -52,14 +47,6 @@ else()
             COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${QM_FILE}" "${QM_OUTPUT_DIR}/${QM_FILE_NAME}")
     endforeach()
 endif()
-
-target_include_directories(myMCpp PRIVATE
-    ${Qt6Gui_PRIVATE_INCLUDE_DIRS}
-    ${CMAKE_SOURCE_DIR}/src/core
-    ${CMAKE_SOURCE_DIR}/src/core/formats
-    ${CMAKE_SOURCE_DIR}/src/common
-    ${CMAKE_SOURCE_DIR}/src/cli
-)
 
 if(ENABLE_VULKAN)
     target_include_directories(myMCpp PRIVATE ${vulkan-headers_SOURCE_DIR}/include)
@@ -145,7 +132,6 @@ if(APPLE)
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${CMAKE_BINARY_DIR}/default.metallib
                 $<TARGET_FILE_DIR:myMCpp>/../Resources/shaders/Metal/default.metallib
-            COMMENT "Copying Metal library to bundle..."
         )
     endif()
     
@@ -167,7 +153,6 @@ if(APPLE)
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/resources
             $<TARGET_FILE_DIR:myMCpp>/../Resources
-        COMMENT "Copying resources to app bundle..."
     )
 endif()
 
