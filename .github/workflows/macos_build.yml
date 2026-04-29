@@ -90,12 +90,13 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4.3.1
         with:
-          version: '6.10.2'
+          version: '6.11.0'
           host: 'mac'
           target: 'desktop'
           arch: 'clang_64'
           modules: 'qtimageformats'
           cache: true
+          use-official: true
 
       - name: Configure CMake
         run: |

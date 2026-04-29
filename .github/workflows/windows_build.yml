@@ -80,24 +80,27 @@ jobs:
         if: inputs.platform == 'x64'
         uses: jurplel/install-qt-action@v4.3.1
         with:
-          version: '6.10.2'
+          version: '6.11.0'
           host: 'windows'
           target: 'desktop'
           arch: 'win64_msvc2022_64'
           modules: 'qtimageformats'
           cache: true
+          aqtsource: 'git+https://github.com/miurahr/aqtinstall.git'
+          use-official: true
 
       - name: Install Qt (ARM64)
         if: inputs.platform == 'ARM64'
         uses: jurplel/install-qt-action@v4.3.1
         with:
-          version: '6.10.2'
+          version: '6.11.0'
           host: 'windows_arm64'
           target: 'desktop'
           arch: 'win64_msvc2022_arm64'
           modules: 'qtimageformats'
           cache: true
           aqtsource: 'git+https://github.com/miurahr/aqtinstall.git'
+          use-official: true
 
       - name: Configure CMake (MSVC)
         if: inputs.compiler == 'msvc'
