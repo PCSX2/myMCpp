@@ -201,6 +201,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="QtMain.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="DiscordRPCManager.cpp" />
     <ClCompile Include="Themes.cpp" />
@@ -220,6 +221,7 @@
     <ClCompile Include="TranslationManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="QtMain.h" />
     <QtMoc Include="MainWindow.h" />
     <QtMoc Include="DiscordRPCManager.h" />
     <ClInclude Include="Themes.h" />

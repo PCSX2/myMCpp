@@ -29,6 +29,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="QtMain.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="MainWindow.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -82,6 +85,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="QtMain.h">
+      <Filter>headers</Filter>
+    </ClInclude>
     <QtMoc Include="MainWindow.h">
       <Filter>headers</Filter>
     </QtMoc>
