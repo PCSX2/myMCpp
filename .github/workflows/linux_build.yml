@@ -31,6 +31,10 @@ on:
         required: false
         type: boolean
         default: false
+      platform:
+        required: false
+        type: string
+        default: x64
 
 jobs:
   build_linux:
@@ -111,7 +115,8 @@ jobs:
             imagemagick \
             wget
 
-      - name: Install Qt
+      - name: Install Qt (x64)
+        if: inputs.platform != 'arm64'
         uses: jurplel/install-qt-action@v4.3.1
         with:
           version: '6.11.0'
@@ -122,13 +127,33 @@ jobs:
           cache: true
           use-official: true
 
+      - name: Install Qt (ARM64)
+        if: inputs.platform == 'arm64'
+        uses: jurplel/install-qt-action@v4.3.1
+        with:
+          version: '6.11.0'
+          host: 'linux_arm64'
+          target: 'desktop'
+          arch: 'linux_gcc_arm64'
+          modules: 'qtimageformats'
+          cache: true
+          use-official: true
+
       - name: Configure CMake (Clang)
         if: inputs.compiler == 'clang'
         run: |
           if [ "${{ inputs.buildType }}" = "Debug" ]; then
-            PRESET="linux-dbg"
+            if [ "${{ inputs.platform }}" = "arm64" ]; then
+              PRESET="linux-arm64-dbg"
+            else
+              PRESET="linux-x64-dbg"
+            fi
           else
-            PRESET="linux-rel"
+            if [ "${{ inputs.platform }}" = "arm64" ]; then
+              PRESET="linux-arm64-rel"
+            else
+              PRESET="linux-x64-rel"
+            fi
           fi
           echo "PRESET=$PRESET" >> $GITHUB_ENV
           cmake --preset $PRESET \
@@ -142,9 +167,17 @@ jobs:
         if: inputs.compiler == 'gcc'
         run: |
           if [ "${{ inputs.buildType }}" = "Debug" ]; then
-            PRESET="linux-gcc-dbg"
+            if [ "${{ inputs.platform }}" = "arm64" ]; then
+              PRESET="linux-arm64-gcc-dbg"
+            else
+              PRESET="linux-x64-gcc-dbg"
+            fi
           else
-            PRESET="linux-gcc-rel"
+            if [ "${{ inputs.platform }}" = "arm64" ]; then
+              PRESET="linux-arm64-gcc-rel"
+            else
+              PRESET="linux-x64-gcc-rel"
+            fi
           fi
           echo "PRESET=$PRESET" >> $GITHUB_ENV
           cmake --preset $PRESET \

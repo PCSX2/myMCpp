@@ -8,21 +8,45 @@ on:
       - master
 
 jobs:
-  build_linux_clang:
-    name: "🐧 Linux (Clang)"
+  build_linux_x64_clang:
+    name: "🐧 Linux x64 (Clang)"
     uses: ./.github/workflows/linux_build.yml
     with:
-      jobName: "Linux Clang Build"
+      jobName: "Linux x64 Clang Build"
       artifactPrefixName: "myMCpp-linux-x64-clang"
+      platform: x64
       compiler: clang
     secrets: inherit
 
-  build_linux_gcc:
-    name: "🐧 Linux (GCC)"
+  build_linux_x64_gcc:
+    name: "🐧 Linux x64 (GCC)"
     uses: ./.github/workflows/linux_build.yml
     with:
-      jobName: "Linux GCC Build"
+      jobName: "Linux x64 GCC Build"
       artifactPrefixName: "myMCpp-linux-x64-gcc"
+      platform: x64
+      compiler: gcc
+    secrets: inherit
+
+  build_linux_arm64_clang:
+    name: "🐧 Linux ARM64 (Clang)"
+    uses: ./.github/workflows/linux_build.yml
+    with:
+      jobName: "Linux ARM64 Clang Build"
+      artifactPrefixName: "myMCpp-linux-arm64-clang"
+      os: ubuntu-24.04-arm
+      platform: arm64
+      compiler: clang
+    secrets: inherit
+
+  build_linux_arm64_gcc:
+    name: "🐧 Linux ARM64 (GCC)"
+    uses: ./.github/workflows/linux_build.yml
+    with:
+      jobName: "Linux ARM64 GCC Build"
+      artifactPrefixName: "myMCpp-linux-arm64-gcc"
+      os: ubuntu-24.04-arm
+      platform: arm64
       compiler: gcc
     secrets: inherit
 

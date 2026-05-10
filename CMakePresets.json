@@ -72,11 +72,11 @@
             }
         },
         {
-            "name": "linux-rel",
-            "displayName": "Linux Release",
-            "description": "Release build for Linux with Clang and Ninja",
+            "name": "linux-x64-rel",
+            "displayName": "Linux x64 Release",
+            "description": "Release build for Linux x64 with Clang and Ninja",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/linux-rel",
+            "binaryDir": "${sourceDir}/build/linux-x64-rel",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "MinSizeRel",
                 "CMAKE_C_COMPILER": "clang",
@@ -85,11 +85,11 @@
             }
         },
         {
-            "name": "linux-dbg",
-            "displayName": "Linux Debug",
-            "description": "Debug build for Linux with Clang and Ninja",
+            "name": "linux-x64-dbg",
+            "displayName": "Linux x64 Debug",
+            "description": "Debug build for Linux x64 with Clang and Ninja",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/linux-dbg",
+            "binaryDir": "${sourceDir}/build/linux-x64-dbg",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_COMPILER": "clang",
@@ -98,11 +98,11 @@
             }
         },
         {
-            "name": "linux-gcc-rel",
-            "displayName": "Linux GCC Release",
-            "description": "Release build for Linux with GCC and Ninja",
+            "name": "linux-x64-gcc-rel",
+            "displayName": "Linux x64 GCC Release",
+            "description": "Release build for Linux x64 with GCC and Ninja",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/linux-gcc-rel",
+            "binaryDir": "${sourceDir}/build/linux-x64-gcc-rel",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "MinSizeRel",
                 "CMAKE_C_COMPILER": "gcc",
@@ -111,11 +111,63 @@
             }
         },
         {
-            "name": "linux-gcc-dbg",
-            "displayName": "Linux GCC Debug",
-            "description": "Debug build for Linux with GCC and Ninja",
+            "name": "linux-x64-gcc-dbg",
+            "displayName": "Linux x64 GCC Debug",
+            "description": "Debug build for Linux x64 with GCC and Ninja",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/linux-gcc-dbg",
+            "binaryDir": "${sourceDir}/build/linux-x64-gcc-dbg",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "ENABLE_VULKAN": "ON"
+            }
+        },
+        {
+            "name": "linux-arm64-rel",
+            "displayName": "Linux ARM64 Release",
+            "description": "Release build for Linux ARM64 with Clang and Ninja",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux-arm64-rel",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "MinSizeRel",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "ENABLE_VULKAN": "ON"
+            }
+        },
+        {
+            "name": "linux-arm64-dbg",
+            "displayName": "Linux ARM64 Debug",
+            "description": "Debug build for Linux ARM64 with Clang and Ninja",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux-arm64-dbg",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "ENABLE_VULKAN": "ON"
+            }
+        },
+        {
+            "name": "linux-arm64-gcc-rel",
+            "displayName": "Linux ARM64 GCC Release",
+            "description": "Release build for Linux ARM64 with GCC and Ninja",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux-arm64-gcc-rel",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "MinSizeRel",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "ENABLE_VULKAN": "ON"
+            }
+        },
+        {
+            "name": "linux-arm64-gcc-dbg",
+            "displayName": "Linux ARM64 GCC Debug",
+            "description": "Debug build for Linux ARM64 with GCC and Ninja",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux-arm64-gcc-dbg",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_COMPILER": "gcc",
@@ -182,23 +234,43 @@
             "jobs": 0
         },
         {
-            "name": "linux-rel",
-            "configurePreset": "linux-rel",
+            "name": "linux-x64-rel",
+            "configurePreset": "linux-x64-rel",
             "jobs": 0
         },
         {
-            "name": "linux-dbg",
-            "configurePreset": "linux-dbg",
+            "name": "linux-x64-dbg",
+            "configurePreset": "linux-x64-dbg",
             "jobs": 0
         },
         {
-            "name": "linux-gcc-rel",
-            "configurePreset": "linux-gcc-rel",
+            "name": "linux-x64-gcc-rel",
+            "configurePreset": "linux-x64-gcc-rel",
             "jobs": 0
         },
         {
-            "name": "linux-gcc-dbg",
-            "configurePreset": "linux-gcc-dbg",
+            "name": "linux-x64-gcc-dbg",
+            "configurePreset": "linux-x64-gcc-dbg",
+            "jobs": 0
+        },
+        {
+            "name": "linux-arm64-rel",
+            "configurePreset": "linux-arm64-rel",
+            "jobs": 0
+        },
+        {
+            "name": "linux-arm64-dbg",
+            "configurePreset": "linux-arm64-dbg",
+            "jobs": 0
+        },
+        {
+            "name": "linux-arm64-gcc-rel",
+            "configurePreset": "linux-arm64-gcc-rel",
+            "jobs": 0
+        },
+        {
+            "name": "linux-arm64-gcc-dbg",
+            "configurePreset": "linux-arm64-gcc-dbg",
             "jobs": 0
         },
         {
