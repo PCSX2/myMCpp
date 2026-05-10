@@ -94,29 +94,23 @@ int eccCheck(std::vector<uint8_t>& data, std::array<uint8_t, 3>& ecc)
 	uint8_t lp0_diff = (computed[1] ^ ecc[1]) & 0x7F;
 	uint8_t lp1_diff = (computed[2] ^ ecc[2]) & 0x7F;
 
-	if (cp_diff == 0 && lp0_diff == 0 && lp1_diff == 0)
-	{
-		return ECC_CHECK_OK;
-	}
+	uint8_t lp_comp = lp0_diff ^ lp1_diff;
+	uint8_t cp_comp = static_cast<uint8_t>((cp_diff >> 4) ^ (cp_diff & 0x07));
 
-	if (popcount(cp_diff) == 1 && popcount(lp0_diff) == 1 && popcount(lp1_diff) == 1)
+	if (lp_comp == 0x7F && cp_comp == 0x07)
 	{
-		uint8_t byte_pos = lp0_diff ^ lp1_diff;
-		if (byte_pos < data.size())
+		if (lp1_diff < data.size())
 		{
-			uint8_t bit_pos = 0;
-			for (int i = 0; i < 7; i++)
-			{
-				if (cp_diff & (1 << i))
-				{
-					bit_pos |= (1 << (i < 3 ? i : i - 4));
-				}
-			}
-			data[byte_pos] ^= (1 << bit_pos);
-
+			data[lp1_diff] = static_cast<uint8_t>(data[lp1_diff] ^ (1u << (cp_diff >> 4)));
 			ecc = eccCalculate(data);
 			return ECC_CHECK_CORRECTED;
 		}
+	}
+
+	if ((cp_diff == 0 && lp0_diff == 0 && lp1_diff == 0) || (popcount(lp_comp) + popcount(cp_comp) == 1))
+	{
+		ecc = computed;
+		return ECC_CHECK_CORRECTED;
 	}
 
 	return ECC_CHECK_FAILED;
