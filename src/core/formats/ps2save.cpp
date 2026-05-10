@@ -772,7 +772,11 @@ void PS2SaveFile::Impl::loadEms(std::ifstream& file)
 	}
 	uint32_t fileCount = dirent.length - 2;
 	entries.clear();
-	entries.reserve(fileCount);
+	entries.reserve(static_cast<size_t>(fileCount) + 1);
+	PS2SaveEntry dirSlot;
+	dirSlot.dirEntry = dirent;
+	dirSlot.data.clear();
+	entries.push_back(std::move(dirSlot));
 	for (uint32_t i = 0; i < fileCount; ++i)
 	{
 		auto entRaw = readFixed(file, PS2MC_DIRENT_LENGTH);
@@ -795,12 +799,23 @@ void PS2SaveFile::Impl::loadEms(std::ifstream& file)
 
 void PS2SaveFile::Impl::saveEms(std::ofstream& file)
 {
+	const bool hasDirHeader = !entries.empty() && (entries[0].dirEntry.mode & DF_DIR);
+	const size_t numFiles = hasDirHeader ? entries.size() - 1 : entries.size();
+
 	PS2McDirEntry root{};
+	if (hasDirHeader)
+	{
+		root = entries[0].dirEntry;
+	}
+	else
+	{
+		root.name = entries.empty() ? "SAVE" : entries[0].dirEntry.name;
+		root.created = timeToTod(time(nullptr));
+		root.modified = root.created;
+	}
 	root.mode = DF_RWX | DF_DIR | DF_0400 | DF_EXISTS;
-	root.length = static_cast<uint32_t>(entries.size() + 2);
-	root.name = entries.empty() ? "SAVE" : entries[0].dirEntry.name;
-	root.created = timeToTod(time(nullptr));
-	root.modified = root.created;
+	root.length = static_cast<uint32_t>(numFiles + 2);
+
 	file.write(reinterpret_cast<const char*>(packDirEntry(root).data()), PS2MC_DIRENT_LENGTH);
 
 	PS2McDirEntry dot = root;
@@ -810,8 +825,9 @@ void PS2SaveFile::Impl::saveEms(std::ofstream& file)
 	dotdot.name = "..";
 	file.write(reinterpret_cast<const char*>(packDirEntry(dotdot).data()), PS2MC_DIRENT_LENGTH);
 
-	for (const auto& e : entries)
+	for (size_t idx = hasDirHeader ? 1 : 0; idx < entries.size(); ++idx)
 	{
+		const auto& e = entries[idx];
 		auto ent = e.dirEntry;
 		ent.mode = DF_RWX | DF_FILE | DF_0400 | DF_EXISTS;
 		auto packed = packDirEntry(ent);

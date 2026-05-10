@@ -94,6 +94,7 @@ public:
 	PS2McDirEntry find_entry(const std::string& path, uint32_t& parent_cluster);
 	std::vector<PS2McDirEntry> read_dirents(uint32_t dir_cluster);
 	void write_dirents(uint32_t dir_cluster, const std::vector<PS2McDirEntry>& entries);
+	void syncParentDirectoryEntryLength(uint32_t child_dir_cluster);
 	uint32_t allocate_cluster();
 	std::vector<uint32_t> allocate_clusters(uint32_t count);
 	void free_cluster_chain(uint32_t start_cluster);
@@ -274,7 +275,7 @@ std::vector<uint32_t> PS2MemoryCard::Impl::read_fat_cluster(uint32_t fat_cluster
 void PS2MemoryCard::Impl::read_fat_from_card()
 {
 	fat.clear();
-	fat.resize(allocatable_cluster_end, PS2MC_FAT_CHAIN_END);
+	fat.resize(allocatable_cluster_end, PS2MC_FAT_CHAIN_END_UNALLOC);
 
 	uint32_t fat_entry = 0;
 
@@ -349,7 +350,7 @@ void PS2MemoryCard::Impl::read_superblock()
 
 	for (int i = 0; i < 32; ++i)
 	{
-		indirect_fat_cluster_list[i] = readLE<uint32_t>(sb_page, 76 + i * 4);
+		indirect_fat_cluster_list[i] = readLE<uint32_t>(sb_page, 80 + i * 4);
 	}
 
 	if (sb_page.size() > 0x44 + 4)
@@ -591,7 +592,7 @@ void PS2MemoryCard::Impl::write_dirents(uint32_t dir_cluster, const std::vector<
 			if (next >= fat.size() || next == PS2MC_FAT_CHAIN_END_UNALLOC || next == PS2MC_FAT_CHAIN_END)
 			{
 				uint32_t new_cluster = allocate_cluster();
-				fat[current_cluster] = (fat[current_cluster] & ~PS2MC_FAT_CLUSTER_MASK) | new_cluster;
+				fat[current_cluster] = (fat[current_cluster] & ~PS2MC_FAT_CLUSTER_MASK) | (new_cluster | PS2MC_FAT_ALLOCATED_BIT);
 				fat[new_cluster] = PS2MC_FAT_CHAIN_END;
 				current_cluster = new_cluster;
 			}
@@ -604,6 +605,42 @@ void PS2MemoryCard::Impl::write_dirents(uint32_t dir_cluster, const std::vector<
 		{
 			break;
 		}
+	}
+}
+
+void PS2MemoryCard::Impl::syncParentDirectoryEntryLength(uint32_t child_dir_cluster)
+{
+	auto child = read_dirents(child_dir_cluster);
+	if (child.empty() || child[0].name != ".")
+	{
+		return;
+	}
+	const uint32_t newLen = child[0].length;
+	const uint32_t ancestor = child[0].cluster;
+	const uint32_t slot = child[0].dirEntry;
+
+	auto ancestor_entries = read_dirents(ancestor);
+	bool updated = false;
+	if (slot < ancestor_entries.size() && (ancestor_entries[slot].mode & DF_DIR) && ancestor_entries[slot].cluster == child_dir_cluster)
+	{
+		ancestor_entries[slot].length = newLen;
+		updated = true;
+	}
+	else
+	{
+		for (auto& e : ancestor_entries)
+		{
+			if ((e.mode & DF_DIR) && (e.mode & DF_EXISTS) && e.cluster == child_dir_cluster)
+			{
+				e.length = newLen;
+				updated = true;
+				break;
+			}
+		}
+	}
+	if (updated)
+	{
+		write_dirents(ancestor, ancestor_entries);
 	}
 }
 
@@ -634,7 +671,7 @@ std::vector<uint32_t> PS2MemoryCard::Impl::allocate_clusters(uint32_t count)
 
 		if (i > 0)
 		{
-			fat[clusters[i - 1]] = cluster;
+			fat[clusters[i - 1]] = cluster | PS2MC_FAT_ALLOCATED_BIT;
 		}
 	}
 
@@ -650,11 +687,19 @@ void PS2MemoryCard::Impl::free_cluster_chain(uint32_t start_cluster)
 {
 	uint32_t current = start_cluster;
 
-	while (current != PS2MC_FAT_CHAIN_END && current < fat.size())
+	while (current < fat.size())
 	{
-		uint32_t next = fat[current] & PS2MC_FAT_CLUSTER_MASK;
+		const uint32_t raw = fat[current];
+		const uint32_t masked = raw & PS2MC_FAT_CLUSTER_MASK;
+
 		fat[current] = PS2MC_FAT_CHAIN_END_UNALLOC;
-		current = next;
+
+		if (raw == PS2MC_FAT_CHAIN_END || masked >= fat.size() || masked == PS2MC_FAT_CHAIN_END_UNALLOC)
+		{
+			break;
+		}
+
+		current = masked;
 	}
 
 	modified = true;
@@ -770,9 +815,10 @@ void PS2MemoryCard::Impl::calculate_fat_layout(uint32_t& first_ifc, uint32_t& in
 	uint32_t fat_clusters = (allocatable_clusters_est + epc - 1) / epc;
 	uint32_t indirect_fat_clusters = (fat_clusters + epc - 1) / epc;
 	if (indirect_fat_clusters > 32)
+	{
 		indirect_fat_clusters = 32;
-
-	fat_clusters = indirect_fat_clusters * epc;
+		fat_clusters = indirect_fat_clusters * epc;
+	}
 
 	allocatable_cluster_offset = first_ifc + indirect_fat_clusters + fat_clusters;
 
@@ -839,6 +885,19 @@ void PS2MemoryCard::Impl::write_superblock(uint32_t first_ifc, uint32_t indirect
 	sb[337] = 0x2B;
 
 	write_page(0, sb);
+
+	const uint64_t backup2_offset = static_cast<uint64_t>(good_block2) * pages_per_erase_block * raw_page_size;
+	std::vector<uint8_t> erased_page(raw_page_size, 0xFF);
+	file.seekp(static_cast<std::streamoff>(backup2_offset));
+	for (uint32_t i = 0; i < pages_per_erase_block; ++i)
+	{
+		file.write(reinterpret_cast<const char*>(erased_page.data()),
+			static_cast<std::streamsize>(erased_page.size()));
+		if (!file)
+		{
+			throw PS2McIOError("Failed to initialize backup erase block");
+		}
+	}
 }
 
 void PS2MemoryCard::Impl::init_indirect_fat_clusters(uint32_t first_ifc, uint32_t indirect_fat_clusters, uint32_t epc)
@@ -875,7 +934,7 @@ void PS2MemoryCard::Impl::init_root_directory()
 
 	std::vector<PS2McDirEntry> rootEntries;
 
-	PS2McDirEntry dot;
+	PS2McDirEntry dot{};
 	dot.mode = DF_DIR | DF_EXISTS | DF_RWX | DF_0400;
 	dot.name = ".";
 	dot.cluster = 0;
@@ -884,7 +943,7 @@ void PS2MemoryCard::Impl::init_root_directory()
 	dot.modified = dot.created;
 	rootEntries.push_back(dot);
 
-	PS2McDirEntry dotdot;
+	PS2McDirEntry dotdot{};
 	dotdot.mode = DF_DIR | DF_EXISTS | DF_WRITE | DF_EXECUTE | DF_0400 | DF_HIDDEN;
 	dotdot.name = "..";
 	dotdot.cluster = 0;
@@ -1272,7 +1331,8 @@ void PS2MemoryCard::makeDir(const std::string& path)
 	{
 		try
 		{
-			auto entry = pImpl->find_entry(path, pImpl->rootdir_fat_cluster);
+			uint32_t unusedParent = 0;
+			auto entry = pImpl->find_entry(path, unusedParent);
 			if (entry.mode & DF_EXISTS)
 			{
 				return;
@@ -1299,39 +1359,48 @@ void PS2MemoryCard::makeDir(const std::string& path)
 
 		uint32_t dir_cluster = pImpl->allocate_cluster();
 
+		auto parent_entries = pImpl->read_dirents(parent_cluster);
+		const uint32_t slot_for_new_dir = static_cast<uint32_t>(parent_entries.size());
+
+		const auto now = timeToTod(time(nullptr));
+
 		PS2McDirEntry new_dir_entry = {};
-		new_dir_entry.mode = DF_DIR | DF_EXISTS | DF_RWX;
+		new_dir_entry.mode = DF_DIR | DF_EXISTS | DF_RWX | DF_0400;
 		new_dir_entry.name = dir_name;
 		new_dir_entry.cluster = dir_cluster;
-		new_dir_entry.length = 0;
-		new_dir_entry.created = timeToTod(time(nullptr));
-		new_dir_entry.modified = new_dir_entry.created;
+		new_dir_entry.length = 2;
+		new_dir_entry.created = now;
+		new_dir_entry.modified = now;
 
 		std::vector<PS2McDirEntry> new_dir_entries;
 
 		PS2McDirEntry dot_entry = {};
-		dot_entry.mode = DF_DIR | DF_EXISTS | DF_RWX;
+		dot_entry.mode = DF_DIR | DF_EXISTS | DF_RWX | DF_0400;
 		dot_entry.name = ".";
-		dot_entry.cluster = dir_cluster;
-		dot_entry.length = 0;
-		dot_entry.created = new_dir_entry.created;
-		dot_entry.modified = new_dir_entry.modified;
-		dot_entry.dirEntry = 0;
+		dot_entry.cluster = parent_cluster;
+		dot_entry.length = 2;
+		dot_entry.created = now;
+		dot_entry.modified = now;
+		dot_entry.dirEntry = slot_for_new_dir;
 		new_dir_entries.push_back(dot_entry);
 
 		PS2McDirEntry dotdot_entry = {};
-		dotdot_entry.mode = DF_DIR | DF_EXISTS | DF_RWX;
+		dotdot_entry.mode = DF_DIR | DF_EXISTS | DF_RWX | DF_0400;
 		dotdot_entry.name = "..";
-		dotdot_entry.cluster = parent_cluster;
+		dotdot_entry.cluster = 0;
 		dotdot_entry.length = 0;
-		dotdot_entry.created = new_dir_entry.created;
-		dotdot_entry.modified = new_dir_entry.modified;
+		dotdot_entry.created = now;
+		dotdot_entry.modified = now;
 		dotdot_entry.dirEntry = 0;
 		new_dir_entries.push_back(dotdot_entry);
 
 		pImpl->write_dirents(dir_cluster, new_dir_entries);
-		auto parent_entries = pImpl->read_dirents(parent_cluster);
+
 		parent_entries.push_back(new_dir_entry);
+		if (!parent_entries.empty() && (parent_entries[0].mode & DF_DIR))
+		{
+			parent_entries[0].length = static_cast<uint32_t>(parent_entries.size());
+		}
 
 		pImpl->write_dirents(parent_cluster, parent_entries);
 
@@ -1360,7 +1429,8 @@ void PS2MemoryCard::writeFile(const std::string& path, const std::vector<uint8_t
 	{
 		try
 		{
-			auto entry = pImpl->find_entry(path, pImpl->rootdir_fat_cluster);
+			uint32_t unusedParent = 0;
+			auto entry = pImpl->find_entry(path, unusedParent);
 			if (entry.mode & DF_EXISTS)
 			{
 				throw PS2McIOError("File already exists: " + path);
@@ -1387,7 +1457,11 @@ void PS2MemoryCard::writeFile(const std::string& path, const std::vector<uint8_t
 
 		// Calculate clusters needed
 		uint32_t clusters_needed = (static_cast<uint32_t>(data.size()) + pImpl->cluster_size - 1) / pImpl->cluster_size;
-		auto file_clusters = pImpl->allocate_clusters(clusters_needed);
+		std::vector<uint32_t> file_clusters;
+		if (clusters_needed > 0)
+		{
+			file_clusters = pImpl->allocate_clusters(clusters_needed);
+		}
 
 		uint32_t offset = 0;
 		for (uint32_t cluster : file_clusters)
@@ -1408,16 +1482,21 @@ void PS2MemoryCard::writeFile(const std::string& path, const std::vector<uint8_t
 		}
 
 		PS2McDirEntry file_entry = {};
-		file_entry.mode = DF_FILE | DF_EXISTS | DF_RWX;
+		file_entry.mode = DF_FILE | DF_EXISTS | DF_RWX | DF_0400;
 		file_entry.name = file_name;
-		file_entry.cluster = file_clusters[0];
+		file_entry.cluster = file_clusters.empty() ? PS2MC_FAT_CHAIN_END : file_clusters[0];
 		file_entry.length = static_cast<uint32_t>(data.size());
 		file_entry.created = timeToTod(time(nullptr));
 		file_entry.modified = file_entry.created;
 
 		auto parent_entries = pImpl->read_dirents(parent_cluster);
 		parent_entries.push_back(file_entry);
+		if (!parent_entries.empty() && (parent_entries[0].mode & DF_DIR) && parent_entries[0].name == ".")
+		{
+			parent_entries[0].length = static_cast<uint32_t>(parent_entries.size());
+		}
 		pImpl->write_dirents(parent_cluster, parent_entries);
+		pImpl->syncParentDirectoryEntryLength(parent_cluster);
 
 		pImpl->write_fat_to_card();
 
@@ -1540,7 +1619,7 @@ bool PS2MemoryCard::importSaveFile(PS2SaveFile& save, bool ignoreExisting, const
 
 		try
 		{
-			uint32_t dummy;
+			uint32_t dummy = 0;
 			pImpl->find_entry(savePath, dummy);
 
 			if (!ignoreExisting)
@@ -1563,25 +1642,68 @@ bool PS2MemoryCard::importSaveFile(PS2SaveFile& save, bool ignoreExisting, const
 
 			writeFile(filePath, entry.data);
 
-			uint32_t parent_cluster = 0;
-			auto currentEntry = pImpl->find_entry(filePath, parent_cluster);
-			auto parentEntries = pImpl->read_dirents(parent_cluster);
+			uint32_t parent_cluster_inner = 0;
+			auto currentEntry = pImpl->find_entry(filePath, parent_cluster_inner);
+			auto parentEntries = pImpl->read_dirents(parent_cluster_inner);
 			bool updated = false;
 			for (auto& pe : parentEntries)
 			{
 				if (pe.name == currentEntry.name)
 				{
+					const uint16_t psuMode = entry.dirEntry.mode;
+					constexpr uint16_t typeMask = DF_FILE | DF_DIR | DF_EXISTS;
+					pe.mode = static_cast<uint16_t>((psuMode & ~typeMask) | (pe.mode & typeMask));
+					if ((pe.mode & DF_EXISTS) && (pe.mode & (DF_FILE | DF_DIR)) && !(pe.mode & DF_PSX))
+					{
+						pe.mode |= DF_0400;
+					}
+					pe.unused = entry.dirEntry.unused;
 					pe.created = entry.dirEntry.created;
 					pe.modified = entry.dirEntry.modified;
-					pe.mode = (entry.dirEntry.mode & ~DF_DIR) | DF_EXISTS | DF_FILE;
+					pe.attr = entry.dirEntry.attr;
 					updated = true;
 					break;
 				}
 			}
 			if (updated)
 			{
-				pImpl->write_dirents(parent_cluster, parentEntries);
+				pImpl->write_dirents(parent_cluster_inner, parentEntries);
+				pImpl->syncParentDirectoryEntryLength(parent_cluster_inner);
 			}
+		}
+
+		{
+			uint32_t saveParentCluster = 0;
+			(void)pImpl->find_entry(savePath, saveParentCluster);
+
+			auto parentRows = pImpl->read_dirents(saveParentCluster);
+			const auto& hdr = entries[0].dirEntry;
+			constexpr uint16_t typeMask = DF_FILE | DF_DIR | DF_EXISTS;
+			for (auto& row : parentRows)
+			{
+				if (row.name == saveDirName && (row.mode & DF_DIR))
+				{
+					row.mode = static_cast<uint16_t>((hdr.mode & ~typeMask) | (row.mode & typeMask));
+					if ((row.mode & DF_EXISTS) && (row.mode & DF_DIR) && !(row.mode & DF_PSX))
+					{
+						row.mode |= DF_0400;
+					}
+					row.unused = hdr.unused;
+					row.created = hdr.created;
+					row.modified = hdr.modified;
+					row.attr = hdr.attr;
+					break;
+				}
+			}
+			pImpl->write_dirents(saveParentCluster, parentRows);
+		}
+
+		uint32_t rootParent = pImpl->rootdir_fat_cluster;
+		auto finalRoot = pImpl->read_dirents(rootParent);
+		if (!finalRoot.empty() && (finalRoot[0].mode & DF_DIR))
+		{
+			finalRoot[0].length = static_cast<uint32_t>(finalRoot.size());
+			pImpl->write_dirents(rootParent, finalRoot);
 		}
 
 		pImpl->write_fat_to_card();
