@@ -1,0 +1,66 @@
+name: Crowdin Sync
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Every day at midnight UTC.
+  workflow_dispatch:
+
+concurrency:
+  group: crowdin-sync
+  cancel-in-progress: false
+
+jobs:
+  crowdin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install Crowdin CLI
+        run: npm install -g @crowdin/cli@4.14.2
+
+      - name: Upload source strings
+        run: crowdin upload sources
+        env:
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+
+      - name: Download translations
+        run: crowdin download
+        env:
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+
+      - name: Detect translation changes
+        id: changes
+        run: |
+          if git diff --quiet -- src/ui/Translations; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: crowdin/translations
+          delete-branch: true
+          commit-message: "[ci skip] Update translations"
+          title: "translations: sync Crowdin translations"
+          body: |
+            Automated translation sync from Crowdin.
