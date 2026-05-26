@@ -6,17 +6,17 @@
     <message>
       <location filename="../Settings/AdvancedSettingsWidget.cpp" line="+19"/>
       <source>Debug Logging</source>
-      <translation type="unfinished">Debug Logging</translation>
+      <translation>Registros para Debug</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Enable verbose logging to standard output for debugging purposes.</source>
-      <translation type="unfinished">Enable verbose logging to standard output for debugging purposes.</translation>
+      <translation>Ativar registros detalhados para realizar ‘debugging’.</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Advanced</source>
-      <translation type="unfinished">Advanced</translation>
+      <translation>Avançado</translation>
     </message>
   </context>
   <context>
@@ -24,27 +24,27 @@
     <message>
       <location filename="../Settings/BehaviorSettingsWidget.cpp" line="+19"/>
       <source>Warn Before Deleting</source>
-      <translation type="unfinished">Warn Before Deleting</translation>
+      <translation>Avisar Antes de Deletar</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Show a warning dialog when attempting to delete files from a memory card.</source>
-      <translation type="unfinished">Show a warning dialog when attempting to delete files from a memory card.</translation>
+      <translation>Mostrar um aviso ao tentar deletar arquivos de um cartão de memória.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Hide to System Tray</source>
-      <translation type="unfinished">Hide to System Tray</translation>
+      <translation>Ocultar para a Bandeja do Sistema</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Minimize the application to the system tray instead of the taskbar.</source>
-      <translation type="unfinished">Minimize the application to the system tray instead of the taskbar.</translation>
+      <translation>Minimiza a aplicação para a bandeja do sistema ao invés da barra de tarefas.</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Behavior</source>
-      <translation type="unfinished">Behavior</translation>
+      <translation>Comportamento</translation>
     </message>
   </context>
   <context>
@@ -52,7 +52,7 @@
     <message>
       <location filename="../CardActionHandler.cpp" line="+28"/>
       <source>Opened: %1</source>
-      <translation type="unfinished">Opened: %1</translation>
+      <translation>Aberto: %1</translation>
     </message>
     <message>
       <location line="+7"/>
@@ -63,22 +63,22 @@
       <location line="+36"/>
       <location line="+37"/>
       <source>Error</source>
-      <translation>Erro</translation>
+      <translation>Error</translation>
     </message>
     <message>
       <location line="-215"/>
       <source>Failed to open memory card: %1</source>
-      <translation type="unfinished">Failed to open memory card: %1</translation>
+      <translation>Falha ao abrir cartão de memória: %1</translation>
     </message>
     <message>
       <location line="+14"/>
       <source>Created: %1</source>
-      <translation type="unfinished">Created: %1</translation>
+      <translation>Criado: %1</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>Failed to create memory card: %1</source>
-      <translation type="unfinished">Failed to create memory card: %1</translation>
+      <translation>Falha ao criar cartão de memória: %1</translation>
     </message>
     <message>
       <location line="+9"/>
@@ -87,7 +87,7 @@
       <location line="+36"/>
       <location line="+37"/>
       <source>No memory card open</source>
-      <translation>Nenhum Cartão de Memória aberto</translation>
+      <translation>Nenhum cartão de memória aberto</translation>
     </message>
     <message>
       <location line="-149"/>
@@ -96,17 +96,17 @@
       <location line="+36"/>
       <location line="+37"/>
       <source>Warning</source>
-      <translation type="unfinished">Warning</translation>
+      <translation>Aviso</translation>
     </message>
     <message>
       <location line="-142"/>
       <source>File not found: %1</source>
-      <translation type="unfinished">File not found: %1</translation>
+      <translation>Arquivo não encontrado: %1</translation>
     </message>
     <message>
       <location line="+13"/>
       <source>Save file is empty or contains no valid entries</source>
-      <translation type="unfinished">Save file is empty or contains no valid entries</translation>
+      <translation>Jogo salvo está vazio ou não contém entradas válidas</translation>
     </message>
     <message>
       <location line="+10"/>
@@ -114,118 +114,117 @@
       <location line="+41"/>
       <location line="+78"/>
       <source>Success</source>
-      <translation type="unfinished">Success</translation>
+      <translation>Sucesso</translation>
     </message>
     <message>
       <location line="-140"/>
       <source>Successfully imported save: %1</source>
-      <translation type="unfinished">Successfully imported save: %1</translation>
+      <translation>Jogo salvo importado com sucesso: %1</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Imported: %1</source>
-      <translation type="unfinished">Imported: %1</translation>
+      <translation>Importado: %1</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Save Exists</source>
-      <translation type="unfinished">Save Exists</translation>
+      <translation>Jogo Salvo Existe</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Save &apos;%1&apos; already exists. Overwrite?</source>
-      <translation type="unfinished">Save &apos;%1&apos; already exists. Overwrite?</translation>
+      <translation>Jogo salvo &apos;%1&apos; já existe. Sobrescrever?</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>Successfully imported and overwrote existing save</source>
-      <translation type="unfinished">Successfully imported and overwrote existing save</translation>
+      <translation>Jogo Salvo existente importado e sobrescrito com sucesso</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Imported (overwrite): %1</source>
-      <translation type="unfinished">Imported (overwrite): %1</translation>
+      <translation>Importado (sobrescrito): %1</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>Failed to import save: %1</source>
-      <translation type="unfinished">Failed to import save: %1</translation>
+      <translation>Falha ao importar jogo salvo: %1</translation>
     </message>
     <message>
       <location line="+26"/>
       <source>Successfully exported save to:
 %1</source>
-      <translation type="unfinished">Successfully exported save to:
-%1</translation>
+      <translation>Jogo salvo exportado com sucesso para: %1</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Exported: %1</source>
-      <translation type="unfinished">Exported: %1</translation>
+      <translation>Exportado: %1</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Failed to export save: %1</source>
-      <translation type="unfinished">Failed to export save: %1</translation>
+      <translation>Falha ao exportar jogo salvo: %1</translation>
     </message>
     <message>
       <location line="+18"/>
       <source>Confirm Delete</source>
-      <translation type="unfinished">Confirm Delete</translation>
+      <translation>Confirmar Deleção</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Delete this save?
 
 %1</source>
-      <translation type="unfinished">Delete this save?
+      <translation>Deletar este jogo salvo?
 
-%1</translation>
+ %1</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>Deleted: %1</source>
-      <translation type="unfinished">Deleted: %1</translation>
+      <translation>Deletado: %1</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Failed to delete save:
 
 %1</source>
-      <translation type="unfinished">Failed to delete save:
+      <translation>Falha ao deletar jogo salvo:
 
 %1</translation>
     </message>
     <message>
       <location line="+13"/>
       <source>Format Card</source>
-      <translation type="unfinished">Format Card</translation>
+      <translation>Formatar Cartão</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>WARNING: This will erase ALL data on the memory card!
 
 Are you sure you want to continue?</source>
-      <translation type="unfinished">WARNING: This will erase ALL data on the memory card!
+      <translation>AVISO: Essa ação apagará TODOS os dados no cartão de memória!
 
-Are you sure you want to continue?</translation>
+Tem certeza que deseja continuar?</translation>
     </message>
     <message>
       <location line="+14"/>
       <source>Card formatted successfully</source>
-      <translation type="unfinished">Card formatted successfully</translation>
+      <translation>Cartão formatado com sucesso</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Memory card formatted successfully (%1 MB)</source>
-      <translation type="unfinished">Memory card formatted successfully (%1 MB)</translation>
+      <translation>Cartão de Memória formatado com sucesso (%1 MB)</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Failed to format card:
 
 %1</source>
-      <translation type="unfinished">Failed to format card:
+      <translation>Falha ao formatar cartão:
 
 %1</translation>
     </message>
@@ -235,27 +234,27 @@ Are you sure you want to continue?</translation>
     <message>
       <location filename="../Settings/FilesSettingsWidget.cpp" line="+23"/>
       <source>Memory Card Directory</source>
-      <translation type="unfinished">Memory Card Directory</translation>
+      <translation>Diretório do Cartão de Memória</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>The default directory where memory card images are stored.</source>
-      <translation type="unfinished">The default directory where memory card images are stored.</translation>
+      <translation>O diretório padrão onde imagens de cartão de memória são salvas.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Browse Directory</source>
-      <translation type="unfinished">Browse Directory</translation>
+      <translation>Explorar Diretório</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Open a file dialog to select the memory card directory.</source>
-      <translation type="unfinished">Open a file dialog to select the memory card directory.</translation>
+      <translation>Abre o sistema de arquivos no diretório do cartão de memória.</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Files</source>
-      <translation type="unfinished">Files</translation>
+      <translation>Arquivos</translation>
     </message>
     <message>
       <location line="+29"/>
@@ -268,137 +267,137 @@ Are you sure you want to continue?</translation>
     <message>
       <location filename="../Settings/InterfaceSettingsWidget.cpp" line="+25"/>
       <source>Language</source>
-      <translation type="unfinished">Language</translation>
+      <translation>Linguagem</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Select the language for the application interface.</source>
-      <translation type="unfinished">Select the language for the application interface.</translation>
+      <translation>Escolha a linguagem para a interface da aplicação.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Theme</source>
-      <translation type="unfinished">Theme</translation>
+      <translation>Tema</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Select the color theme for the application.</source>
-      <translation type="unfinished">Select the color theme for the application.</translation>
+      <translation>Escolha o tema da aplicação.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Thumbnail Size</source>
-      <translation type="unfinished">Thumbnail Size</translation>
+      <translation>Tamanho de Ícone</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Adjust the size of the save icons in the main view.</source>
-      <translation type="unfinished">Adjust the size of the save icons in the main view.</translation>
+      <translation>Ajusta o tamanho dos ícones de jogos salvos na visualização principal.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Renderer</source>
-      <translation type="unfinished">Renderer</translation>
+      <translation>Renderizador</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Select the graphics API used for rendering the 3D icons.</source>
-      <translation type="unfinished">Select the graphics API used for rendering the 3D icons.</translation>
+      <translation>Escolha a API gráfica utilizada para renderizar os ícones 3D.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Camera Angle</source>
-      <translation type="unfinished">Camera Angle</translation>
+      <translation>Ângulo de Câmera</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Change the camera angle used to view the 3D icons.</source>
-      <translation type="unfinished">Change the camera angle used to view the 3D icons.</translation>
+      <translation>Mude o ângulo da câmera utilizada para visualizar os ícones 3D.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Lighting Mode</source>
-      <translation type="unfinished">Lighting Mode</translation>
+      <translation>Modo de Iluminação</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Select how the icons are lit.</source>
-      <translation type="unfinished">Select how the icons are lit.</translation>
+      <translation>Escolha como os ícones serão iluminados.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Animate Icons</source>
-      <translation type="unfinished">Animate Icons</translation>
+      <translation>Animar Ícones</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Enable rotating animations for the 3D icons.</source>
-      <translation type="unfinished">Enable rotating animations for the 3D icons.</translation>
+      <translation>Habilita animações de rotação para os ícones 3D.</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>None</source>
-      <translation type="unfinished">None</translation>
+      <translation>Nenhum</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Dark (Default)</source>
-      <translation type="unfinished">Dark (Default)</translation>
+      <translation>Escuro (Padrão)</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Light</source>
-      <translation type="unfinished">Light</translation>
+      <translation>Claro</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Windows Vista</source>
-      <translation type="unfinished">Windows Vista</translation>
+      <translation>Windows Vista</translation>
     </message>
     <message>
       <location line="+16"/>
       <source>Default</source>
-      <translation type="unfinished">Default</translation>
+      <translation>Padrão</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Flat</source>
-      <translation type="unfinished">Flat</translation>
+      <translation>Plano</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Near</source>
-      <translation type="unfinished">Near</translation>
+      <translation>Próximo</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>High</source>
-      <translation type="unfinished">High</translation>
+      <translation>Alto</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Icon Lighting</source>
-      <translation type="unfinished">Icon Lighting</translation>
+      <translation>Iluminação de Ícone</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Lighting Off</source>
-      <translation type="unfinished">Lighting Off</translation>
+      <translation>Iluminação Desligada</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Alternate 1</source>
-      <translation type="unfinished">Alternate 1</translation>
+      <translation>Opção 1</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Alternate 2</source>
-      <translation type="unfinished">Alternate 2</translation>
+      <translation>Opção 2</translation>
     </message>
     <message>
       <location line="+10"/>
       <source>Interface</source>
-      <translation type="unfinished">Interface</translation>
+      <translation>Interface</translation>
     </message>
   </context>
   <context>
@@ -406,7 +405,7 @@ Are you sure you want to continue?</translation>
     <message>
       <location filename="../MainWindow.cpp" line="+63"/>
       <source>Settings...</source>
-      <translation type="unfinished">Settings...</translation>
+      <translation>Configurações...</translation>
     </message>
     <message>
       <location line="+22"/>
@@ -442,12 +441,12 @@ Are you sure you want to continue?</translation>
     <message>
       <location line="+18"/>
       <source>Import Save</source>
-      <translation>Importar jogo salvo</translation>
+      <translation>Importar Jogo Salvo</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>PS2 Save Files (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;All Files (*.*)</source>
-      <translation>Arquivo de jogo salvo PS2 (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;Todos os Arquivos (*.*)</translation>
+      <translation>Arquivos de Jogo Salvo PS2 (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;Todos os Arquivos (*.*)</translation>
     </message>
     <message>
       <location line="+15"/>
@@ -472,27 +471,27 @@ Are you sure you want to continue?</translation>
     <message>
       <location line="+15"/>
       <source>Delete</source>
-      <translation>Excluir</translation>
+      <translation>Deletar</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Please select a save to delete</source>
-      <translation>Por favor, escolha um jogo salvo para excluir</translation>
+      <translation>Por favor, escolha um jogo salvo para deletar</translation>
     </message>
     <message>
       <location line="+9"/>
       <source>Delete Save</source>
-      <translation>Excluir jogo salvo</translation>
+      <translation>Deletar jogo salvo</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Are you sure you want to delete &apos;%1&apos;?</source>
-      <translation>Você tem certeza que quer excluir &apos;%1&apos;?</translation>
+      <translation>Você tem certeza que quer deletar &apos;%1&apos;?</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>Deleted %1</source>
-      <translation>Excluiu %1</translation>
+      <translation>Deletou %1</translation>
     </message>
     <message>
       <location line="+71"/>
@@ -517,12 +516,12 @@ https://github.com/SternXD/myMCpp/releases</translation>
     <message>
       <location line="+4"/>
       <source>Memory card open</source>
-      <translation>Cartão de Memória aberto</translation>
+      <translation>Cartão de memória aberto</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>No memory card open</source>
-      <translation>Nenhum Cartão de Memória aberto</translation>
+      <translation>Nenhum cartão de memória aberto</translation>
     </message>
     <message>
       <location line="+32"/>
@@ -539,7 +538,7 @@ https://github.com/SternXD/myMCpp/releases</translation>
       <location line="-40"/>
       <location line="+44"/>
       <source>Error</source>
-      <translation>Erro</translation>
+      <translation>Error</translation>
     </message>
     <message>
       <location line="-43"/>
@@ -568,12 +567,12 @@ https://github.com/SternXD/myMCpp/releases</translation>
     <message>
       <location filename="../widgets/MemoryCardBrowser.cpp" line="+93"/>
       <source>Error</source>
-      <translation>Erro</translation>
+      <translation>Error</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Failed to read memory card: %1</source>
-      <translation type="unfinished">Failed to read memory card: %1</translation>
+      <translation>Erro ao ler cartão de memória: %1</translation>
     </message>
   </context>
   <context>
@@ -582,25 +581,25 @@ https://github.com/SternXD/myMCpp/releases</translation>
       <location filename="../widgets/SaveDetailsPanel.cpp" line="+92"/>
       <source>Size: %1
 Modified: %2</source>
-      <translation type="unfinished">Size: %1
-Modified: %2</translation>
+      <translation>Tamanho: %1
+Modificado: %2</translation>
     </message>
     <message>
       <location line="+17"/>
       <source>
 Files: %1</source>
-      <translation type="unfinished">
-Files: %1</translation>
+      <translation>
+Arquivos: %1</translation>
     </message>
     <message>
       <location line="+73"/>
       <source>No save selected</source>
-      <translation type="unfinished">No save selected</translation>
+      <translation>Nenhum jogo salvo selecionado</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>No details available</source>
-      <translation type="unfinished">No details available</translation>
+      <translation>Sem detalhes disponíveis</translation>
     </message>
   </context>
   <context>
@@ -608,42 +607,42 @@ Files: %1</translation>
     <message>
       <location filename="../Settings/SettingsWindow.cpp" line="+34"/>
       <source>Interface</source>
-      <translation type="unfinished">Interface</translation>
+      <translation>Interface</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>&lt;strong&gt;Interface Settings&lt;/strong&gt;&lt;hr&gt;These options control how the software looks throughout the application.</source>
-      <translation type="unfinished">&lt;strong&gt;Interface Settings&lt;/strong&gt;&lt;hr&gt;These options control how the software looks throughout the application.</translation>
+      <translation>&lt;strong&gt;Configurações da Interface&lt;/strong&gt;&lt;hr&gt;Essas opções controlam a aparência do software por toda a aplicação.</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Behavior</source>
-      <translation type="unfinished">Behavior</translation>
+      <translation>Comportamento</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>&lt;strong&gt;Behavior Settings&lt;/strong&gt;&lt;hr&gt;Configure how the application behaves, including warnings and shutdown confirmations.</source>
-      <translation type="unfinished">&lt;strong&gt;Behavior Settings&lt;/strong&gt;&lt;hr&gt;Configure how the application behaves, including warnings and shutdown confirmations.</translation>
+      <translation>&lt;strong&gt;Configurações de Comportamento&lt;strong&gt;&lt;hr&gt;Configura como a aplicação se comporta, incluindo avisos e confirmações de desligamento.</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Files</source>
-      <translation type="unfinished">Files</translation>
+      <translation>Arquivos</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>&lt;strong&gt;File Settings&lt;/strong&gt;&lt;hr&gt;Manage default paths for memory cards and other resources.</source>
-      <translation type="unfinished">&lt;strong&gt;File Settings&lt;/strong&gt;&lt;hr&gt;Manage default paths for memory cards and other resources.</translation>
+      <translation>&lt;strong&gt;Configurações de Arquivo&lt;/strong&gt;&lt;hr&gt;Gerenciar caminhos padrão para cartões de memória e outros recursos.</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Advanced</source>
-      <translation type="unfinished">Advanced</translation>
+      <translation>Avançado</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>&lt;strong&gt;Advanced Settings&lt;/strong&gt;&lt;hr&gt;Advanced options for debugging and developer tools.</source>
-      <translation type="unfinished">&lt;strong&gt;Advanced Settings&lt;/strong&gt;&lt;hr&gt;Advanced options for debugging and developer tools.</translation>
+      <translation>&lt;strong&gt;Configurações Avançadas&lt;/strong&gt;&lt;hr&gt;Opções avançadas para debugging e ferramentas de desenvolvedor.</translation>
     </message>
   </context>
 </TS>
