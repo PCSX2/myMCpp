@@ -1,5 +1,13 @@
+project_id_env: CROWDIN_PROJECT_ID
+api_token_env: CROWDIN_PERSONAL_TOKEN
+
+base_path: .
+
+preserve_hierarchy: true
+
 pull_request_title: 'translations: sync Crowdin translations'
 commit_message: '[ci skip]'
+
 files:
   - source: /src/ui/Translations/myMCpp_en.ts
     translation: /src/ui/Translations/myMCpp_%locale%.ts
