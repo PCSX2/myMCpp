@@ -290,7 +290,8 @@ void PS2SaveFile::Impl::loadMaxDrive(std::ifstream& file)
 		if (off + l > decompressed.size())
 			throw PS2SaveError("MAX file truncated");
 		std::vector<uint8_t> data(decompressed.begin() + off, decompressed.begin() + off + l);
-		off += roundUp(static_cast<int>(l) + 8, 16) - 8;
+		off += l;
+		off = roundUp(static_cast<int>(off) + 8, 16) - 8;
 
 		PS2McDirEntry ent{};
 		ent.mode = DF_RWX | DF_FILE | DF_0400 | DF_EXISTS;
@@ -716,8 +717,12 @@ void PS2SaveFile::Impl::loadPsv(std::ifstream& file)
 void PS2SaveFile::Impl::saveMaxDrive(std::ofstream& file)
 {
 	std::vector<uint8_t> blob;
-	for (auto& e : entries)
+	const bool hasDirHeader = !entries.empty() && (entries[0].dirEntry.mode & DF_DIR);
+	const size_t firstFileIdx = hasDirHeader ? 1 : 0;
+
+	for (size_t i = firstFileIdx; i < entries.size(); ++i)
 	{
+		const auto& e = entries[i];
 		const auto& ent = e.dirEntry;
 		const auto& data = e.data;
 		uint32_t len = static_cast<uint32_t>(data.size());
@@ -730,8 +735,7 @@ void PS2SaveFile::Impl::saveMaxDrive(std::ofstream& file)
 		std::memcpy(blob.data() + cur, &len, 4);
 		std::memcpy(blob.data() + cur + 4, name, 32);
 		std::memcpy(blob.data() + cur + 36, data.data(), len);
-		size_t padded = roundUp(static_cast<int>(len) + 8, 16) - 8;
-		blob.resize(cur + 36 + padded);
+		blob.resize(roundUp(static_cast<int>(cur + 36 + len) + 8, 16) - 8);
 	}
 	uint32_t length = static_cast<uint32_t>(blob.size());
 	auto compressed = lzariCompress(blob);
@@ -739,13 +743,18 @@ void PS2SaveFile::Impl::saveMaxDrive(std::ofstream& file)
 	char dirname[32] = {0};
 	if (!entries.empty())
 	{
-		const size_t copyLen = std::min(entries[0].dirEntry.name.size(), sizeof(dirname) - 1);
-		std::memcpy(dirname, entries[0].dirEntry.name.c_str(), copyLen);
+		std::string dName = hasDirHeader ? entries[0].dirEntry.name : title;
+		if (dName.empty())
+		{
+			dName = entries[0].dirEntry.name;
+		}
+		const size_t copyLen = std::min(dName.size(), sizeof(dirname) - 1);
+		std::memcpy(dirname, dName.c_str(), copyLen);
 		dirname[copyLen] = '\0';
 	}
 	char iconsys[32] = {0};
 	uint32_t clen = static_cast<uint32_t>(compressed.size()) + 4; // include CRC field itself
-	uint32_t dirlen = static_cast<uint32_t>(entries.size());
+	uint32_t dirlen = static_cast<uint32_t>(hasDirHeader ? entries.size() - 1 : entries.size());
 	uint32_t crc = 0; // omitted
 	file.write(PS2SAVE_MAX_MAGIC, 12);
 	file.write(reinterpret_cast<const char*>(&crc), 4);
@@ -888,9 +897,12 @@ std::string makeLongname(const std::string& dirname, const PS2SaveFile& save)
 	std::string title = save.getTitle();
 
 	uint32_t crc = 0xFFFFFFFF;
-	for (const auto& entry : save.getEntries())
+	const auto& entries = save.getEntries();
+	const bool hasDirHeader = !entries.empty() && (entries[0].dirEntry.mode & DF_DIR);
+	const size_t firstFileIdx = hasDirHeader ? 1 : 0;
+	for (size_t i = firstFileIdx; i < entries.size(); ++i)
 	{
-		for (uint8_t byte : entry.data)
+		for (uint8_t byte : entries[i].data)
 		{
 			crc ^= byte;
 			for (int bit = 0; bit < 8; ++bit)
