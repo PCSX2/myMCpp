@@ -159,6 +159,16 @@ SaveFormat PS2SaveFile::detectFormat(const std::string& filename)
 	}
 	if (std::memcmp(magic, PS2SAVE_SPS_MAGIC, 13) == 0)
 	{
+		size_t dotPos = filename.find_last_of('.');
+		if (dotPos != std::string::npos)
+		{
+			std::string ext = filename.substr(dotPos);
+			std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+			if (ext == ".xps")
+			{
+				return SaveFormat::XPORT;
+			}
+		}
 		return SaveFormat::SHARKPORT;
 	}
 	if (std::memcmp(magic, PS2SAVE_CBS_MAGIC, 4) == 0)
@@ -311,10 +321,12 @@ void PS2SaveFile::Impl::loadMaxDrive(std::ifstream& file)
 
 void PS2SaveFile::Impl::loadSharkPort(std::ifstream& file)
 {
+	const std::string fmtName = (format == SaveFormat::XPORT) ? "X-Port" : "SharkPort";
+
 	auto magic = readFixed(file, 17);
 	if (std::memcmp(magic.data(), PS2SAVE_SPS_MAGIC, 13) != 0)
 	{
-		throw PS2SaveError("Not a SharkPort save");
+		throw PS2SaveError("Not a " + fmtName + " save");
 	}
 
 	uint32_t savetype = 0;
@@ -345,12 +357,14 @@ void PS2SaveFile::Impl::loadSharkPort(std::ifstream& file)
 	uint32_t dirlen = 0;
 	file.read(reinterpret_cast<char*>(&dirlen), 4);
 
-	uint16_t dirmode = 0;
-	file.read(reinterpret_cast<char*>(&dirmode), 2);
 	readFixed(file, 8); // skip 8 bytes
 
-	auto created_data = readFixed(file, 8);
+	uint16_t dirmode = 0;
+	file.read(reinterpret_cast<char*>(&dirmode), 2);
 
+	readFixed(file, 2); // skip 2 bytes
+
+	auto created_data = readFixed(file, 8);
 
 	auto modified_data = readFixed(file, 8);
 
@@ -361,7 +375,7 @@ void PS2SaveFile::Impl::loadSharkPort(std::ifstream& file)
 
 	if (!(dirmode & DF_DIR) || dirlen < 2)
 	{
-		throw PS2SaveError("Invalid SharkPort directory header");
+		throw PS2SaveError("Invalid " + fmtName + " directory header");
 	}
 
 	entries.clear();
@@ -398,7 +412,7 @@ void PS2SaveFile::Impl::loadSharkPort(std::ifstream& file)
 
 		if (!(fmode & DF_FILE))
 		{
-			throw PS2SaveError("Non-file in SharkPort directory");
+			throw PS2SaveError("Non-file in " + fmtName + " directory");
 		}
 
 		auto fdata = readFixed(file, fsize);
@@ -414,7 +428,10 @@ void PS2SaveFile::Impl::loadSharkPort(std::ifstream& file)
 	}
 
 	title = dirname;
-	format = SaveFormat::SHARKPORT;
+	if (format != SaveFormat::XPORT)
+	{
+		format = SaveFormat::SHARKPORT;
+	}
 }
 
 namespace
