@@ -508,20 +508,20 @@ void PS2SaveFile::Impl::loadCodeBreaker(std::ifstream& file)
 	std::vector<uint8_t> header = readFixed(file, hlen - 12);
 
 	uint32_t dlen = 0, flen = 0;
-	std::memcpy(&dlen, header.data(), 4);
+	std::memcpy(&dlen, header.data() + 0, 4);
 	std::memcpy(&flen, header.data() + 4, 4);
 
 	char dirname[32];
 	std::memcpy(dirname, header.data() + 8, 32);
 
-	auto created_data = readFixed(file, 8);
+	std::vector<uint8_t> created_data(header.begin() + 40, header.begin() + 48);
 	PS2McTod created = unpackTod(created_data);
 
-	auto modified_data = readFixed(file, 8);
+	std::vector<uint8_t> modified_data(header.begin() + 48, header.begin() + 56);
 	PS2McTod modified = unpackTod(modified_data);
 
 	uint32_t dirmode = 0;
-	std::memcpy(&dirmode, header.data() + 44, 4);
+	std::memcpy(&dirmode, header.data() + 64, 4);
 
 	if (!(dirmode & DF_DIR))
 	{
@@ -533,7 +533,25 @@ void PS2SaveFile::Impl::loadCodeBreaker(std::ifstream& file)
 	if (todToTime(modified) == 0)
 		modified = timeToTod(std::time(nullptr));
 
-	auto body = readFixed(file, flen);
+	size_t remaining = 0;
+	{
+		auto cur = file.tellg();
+		file.seekg(0, std::ios::end);
+		remaining = static_cast<size_t>(file.tellg() - cur);
+		file.seekg(cur, std::ios::beg);
+	}
+
+	size_t body_len = flen;
+	if (body_len > remaining)
+	{
+		body_len = remaining;
+	}
+	if (body_len != flen && body_len != flen - hlen)
+	{
+		throw PS2SaveError("Unexpected EOF");
+	}
+
+	auto body = readFixed(file, body_len);
 
 	std::vector<uint8_t> rc4_key(std::begin(PS2SAVE_CBS_RC4S), std::end(PS2SAVE_CBS_RC4S));
 	auto decrypted = rc4_crypt(rc4_key, body);
@@ -560,14 +578,14 @@ void PS2SaveFile::Impl::loadCodeBreaker(std::ifstream& file)
 			break;
 
 		uint32_t fsize = 0;
-		std::memcpy(&fsize, decompressed.data() + off + 8, 4);
+		std::memcpy(&fsize, decompressed.data() + off + 16, 4);
 		uint16_t fmode = 0;
-		std::memcpy(&fmode, decompressed.data() + off + 12, 2);
+		std::memcpy(&fmode, decompressed.data() + off + 20, 2);
 
-		auto fcreated_data = std::vector<uint8_t>(decompressed.data() + off + 14,
-			decompressed.data() + off + 18);
-		auto fmodified_data = std::vector<uint8_t>(decompressed.data() + off + 18,
-			decompressed.data() + off + 22);
+		std::vector<uint8_t> fcreated_data(decompressed.begin() + off + 0,
+			decompressed.begin() + off + 8);
+		std::vector<uint8_t> fmodified_data(decompressed.begin() + off + 8,
+			decompressed.begin() + off + 16);
 
 		char fname[32];
 		std::memcpy(fname, decompressed.data() + off + 32, 32);
@@ -590,14 +608,14 @@ void PS2SaveFile::Impl::loadCodeBreaker(std::ifstream& file)
 		PS2McDirEntry ent;
 		ent.mode = fmode | DF_EXISTS;
 		ent.length = fsize;
-		ent.name = zeroTerminate(std::string(fname));
+		ent.name = zeroTerminate(std::string(fname, 32));
 		ent.created = fcreated;
 		ent.modified = fmodified;
 
 		entries.push_back({ent, std::move(fdata)});
 	}
 
-	title = zeroTerminate(std::string(dirname));
+	title = zeroTerminate(std::string(dirname, 32));
 	format = SaveFormat::CODEBREAKER;
 }
 
