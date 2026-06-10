@@ -627,10 +627,11 @@ void PS2SaveFile::Impl::loadPsv(std::ifstream& file)
 		throw PS2SaveError("Not a PSV file");
 	}
 
-	uint32_t version = 0, savetype = 0;
+	uint32_t version = 0, next_section_size = 0, savetype = 0;
 	file.read(reinterpret_cast<char*>(&version), 4);
 	readFixed(file, 40); // signature
 	readFixed(file, 8); // reserved
+	file.read(reinterpret_cast<char*>(&next_section_size), 4);
 	file.read(reinterpret_cast<char*>(&savetype), 4);
 
 	if (version != 0)
@@ -663,7 +664,7 @@ void PS2SaveFile::Impl::loadPsv(std::ifstream& file)
 		auto root_created_data = readFixed(file, 8);
 		auto root_modified_data = readFixed(file, 8);
 		uint32_t root_size = 0;
-		uint16_t root_mode = 0;
+		uint32_t root_mode = 0;
 		file.read(reinterpret_cast<char*>(&root_size), 4);
 		file.read(reinterpret_cast<char*>(&root_mode), 4);
 
@@ -675,9 +676,7 @@ void PS2SaveFile::Impl::loadPsv(std::ifstream& file)
 			throw PS2SaveError("PSV root is not a directory");
 		}
 
-
-
-		title = zeroTerminate(std::string(reinterpret_cast<const char*>(root_filename.data())));
+		title = zeroTerminate(std::string(reinterpret_cast<const char*>(root_filename.data()), 32));
 
 		entries.clear();
 		entries.reserve(files_count);
@@ -688,7 +687,7 @@ void PS2SaveFile::Impl::loadPsv(std::ifstream& file)
 			auto file_created_data = readFixed(file, 8);
 			auto file_modified_data = readFixed(file, 8);
 			uint32_t file_size = 0;
-			uint16_t file_mode = 0;
+			uint32_t file_mode = 0;
 			file.read(reinterpret_cast<char*>(&file_size), 4);
 			file.read(reinterpret_cast<char*>(&file_mode), 4);
 
@@ -699,9 +698,9 @@ void PS2SaveFile::Impl::loadPsv(std::ifstream& file)
 			file.read(reinterpret_cast<char*>(&file_offset), 4);
 
 			PS2McDirEntry ent;
-			ent.mode = file_mode | DF_EXISTS;
+			ent.mode = static_cast<uint16_t>(file_mode | DF_EXISTS);
 			ent.length = file_size;
-			ent.name = zeroTerminate(std::string(reinterpret_cast<const char*>(filename_buf.data())));
+			ent.name = zeroTerminate(std::string(reinterpret_cast<const char*>(filename_buf.data()), 32));
 			ent.created = unpackTod(file_created_data);
 			ent.modified = unpackTod(file_modified_data);
 
@@ -724,13 +723,14 @@ void PS2SaveFile::Impl::loadPsv(std::ifstream& file)
 		file.read(reinterpret_cast<char*>(&save_size), 4);
 		file.read(reinterpret_cast<char*>(&save_offset), 4);
 		readFixed(file, 20); // reserved
-		file.read(reinterpret_cast<char*>(&save_offset), 4); // actual offset
+		uint32_t unused_next = 0;
+		file.read(reinterpret_cast<char*>(&unused_next), 4);
 		readFixed(file, 4); // reserved
 
 		std::vector<uint8_t> prod_code(20);
 		file.read(reinterpret_cast<char*>(prod_code.data()), 20);
 
-		title = zeroTerminate(std::string(reinterpret_cast<const char*>(prod_code.data())));
+		title = zeroTerminate(std::string(reinterpret_cast<const char*>(prod_code.data()), 20));
 
 		entries.clear();
 		uint16_t mode = DF_RWX | DF_FILE | DF_0080 | DF_0400 | DF_EXISTS;
