@@ -6,6 +6,7 @@
 #include <array>
 
 const int ARITH_BITS = 15;
+const int CODE_BITS = ARITH_BITS + 2;
 const int QUADRANT1 = 1 << ARITH_BITS;
 const int QUADRANT2 = QUADRANT1 * 2;
 const int QUADRANT3 = QUADRANT1 * 3;
@@ -101,10 +102,12 @@ void LzariCodec::Impl::flush_bits()
 
 int LzariCodec::Impl::input_bit()
 {
-	if (bitin_pos >= bitin_size)
-		return 0; // padding with zeros
 	if (bitcnt == 0)
 	{
+		if (bitin_pos >= bitin_size)
+		{
+			return 0; // padding with zeros
+		}
 		bitbuf = bitin[bitin_pos++];
 		bitcnt = 8;
 	}
@@ -224,10 +227,10 @@ void LzariCodec::Impl::update_model_decode(int symbol)
 
 void LzariCodec::Impl::encode_symbol(int symbol)
 {
-	int range = high - low;
-	int total = sym_cum[0];
-	high = low + (range * sym_cum[symbol - 1]) / total;
-	low = low + (range * sym_cum[symbol]) / total;
+	int64_t range = high - low;
+	int64_t total = sym_cum[0];
+	high = static_cast<int>(low + (range * sym_cum[symbol - 1]) / total);
+	low = static_cast<int>(low + (range * sym_cum[symbol]) / total);
 
 	for (;;)
 	{
@@ -263,16 +266,16 @@ void LzariCodec::Impl::encode_symbol(int symbol)
 
 int LzariCodec::Impl::decode_symbol()
 {
-	int range = high - low;
-	int total = sym_cum[MAX_CHAR];
-	int n = ((code - low + 1) * total - 1) / range;
+	int64_t range = high - low;
+	int64_t total = sym_cum[MAX_CHAR];
+	int n = static_cast<int>(((static_cast<int64_t>(code - low + 1) * total) - 1) / range);
 
 	int i = 1;
 	while (sym_cum[i] <= n)
 		++i; // sym_cum is ascending in decode mode
 	int symbol = MAX_CHAR + 1 - i;
-	high = low + (range * sym_cum[i]) / total;
-	low = low + (range * sym_cum[i - 1]) / total;
+	high = static_cast<int>(low + (range * sym_cum[i]) / total);
+	low = static_cast<int>(low + (range * sym_cum[i - 1]) / total);
 
 	for (;;)
 	{
@@ -300,17 +303,18 @@ int LzariCodec::Impl::decode_symbol()
 		high <<= 1;
 		code = (code << 1) + input_bit();
 	}
+	int ret = sym_to_char[symbol];
 	update_model_decode(symbol);
-	return sym_to_char[symbol];
+	return ret;
 }
 
 void LzariCodec::Impl::encode_position(int position)
 {
 	// position is 0..N-1 representing distance-1
-	int range = high - low;
-	int total = position_cum[0];
-	high = low + (range * position_cum[position]) / total;
-	low = low + (range * position_cum[position + 1]) / total;
+	int64_t range = high - low;
+	int64_t total = position_cum[0];
+	high = static_cast<int>(low + (range * position_cum[position]) / total);
+	low = static_cast<int>(low + (range * position_cum[position + 1]) / total);
 
 	for (;;)
 	{
@@ -345,9 +349,9 @@ void LzariCodec::Impl::encode_position(int position)
 
 int LzariCodec::Impl::decode_position()
 {
-	int range = high - low;
-	int total = position_cum[0];
-	int n = ((code - low + 1) * total - 1) / range;
+	int64_t range = high - low;
+	int64_t total = position_cum[0];
+	int n = static_cast<int>(((static_cast<int64_t>(code - low + 1) * total) - 1) / range);
 
 	// binary search position_cum.
 	int c = 1, s = N;
@@ -366,8 +370,8 @@ int LzariCodec::Impl::decode_position()
 			break;
 	}
 	int position = s - 1;
-	high = low + (range * position_cum[position]) / total;
-	low = low + (range * position_cum[position + 1]) / total;
+	high = static_cast<int>(low + (range * position_cum[position]) / total);
+	low = static_cast<int>(low + (range * position_cum[position + 1]) / total);
 
 	for (;;)
 	{
@@ -504,7 +508,7 @@ std::vector<uint8_t> LzariCodec::Impl::decompress(const std::vector<uint8_t>& in
 	low = 0;
 	high = QUADRANT4;
 	code = 0;
-	for (int i = 0; i < ARITH_BITS; ++i)
+	for (int i = 0; i < CODE_BITS; ++i)
 	{
 		code = (code << 1) + input_bit();
 	}

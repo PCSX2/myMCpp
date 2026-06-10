@@ -436,11 +436,12 @@ int PS2McCommandLine::cmdImport(const std::vector<std::string>& args)
 			std::string saveName = save.getTitle();
 			if (saveName.empty())
 			{
-				// Get directory name from first entry
+				// Get directory name from first entry if it's a directory
 				const auto& entries = save.getEntries();
 				if (!entries.empty())
 				{
-					saveName = entries[0].dirEntry.name;
+					const bool hasDir = (entries[0].dirEntry.mode & DF_DIR) != 0;
+					saveName = hasDir ? entries[0].dirEntry.name : "";
 				}
 				if (saveName.empty())
 				{

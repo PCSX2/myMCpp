@@ -95,7 +95,12 @@ void CardActionHandler::importSave(PS2MemoryCard* card, const QString& filename)
 			return;
 		}
 
-		std::string saveName = entries[0].dirEntry.name;
+		const bool hasDirHeader = !entries.empty() && (entries[0].dirEntry.mode & DF_DIR);
+		std::string saveName = hasDirHeader ? entries[0].dirEntry.name : saveFile.getTitle();
+		if (saveName.empty())
+		{
+			saveName = entries[0].dirEntry.name;
+		}
 
 		bool result = card->importSaveFile(saveFile, false, "");
 

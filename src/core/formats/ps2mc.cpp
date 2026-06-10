@@ -1607,7 +1607,26 @@ bool PS2MemoryCard::importSaveFile(PS2SaveFile& save, bool ignoreExisting, const
 			throw PS2McError("Save file contains no entries");
 		}
 
-		const auto& dirEntry = entries[0].dirEntry;
+		const bool hasDirHeader = (entries[0].dirEntry.mode & DF_DIR) != 0;
+		PS2McDirEntry dirEntry{};
+		if (hasDirHeader)
+		{
+			dirEntry = entries[0].dirEntry;
+		}
+		else
+		{
+			dirEntry.name = save.getTitle();
+			if (dirEntry.name.empty())
+			{
+				dirEntry.name = entries[0].dirEntry.name;
+			}
+			dirEntry.mode = DF_DIR | DF_EXISTS | DF_RWX | DF_0400;
+			dirEntry.created = entries[0].dirEntry.created;
+			dirEntry.modified = dirEntry.created;
+			dirEntry.unused = 0;
+			dirEntry.attr = 0;
+		}
+
 		std::string saveDirName = targetDir.empty() ? dirEntry.name : targetDir;
 
 		if (!saveDirName.empty() && saveDirName[0] == '/')
@@ -1635,7 +1654,8 @@ bool PS2MemoryCard::importSaveFile(PS2SaveFile& save, bool ignoreExisting, const
 
 		makeDir(savePath);
 
-		for (size_t i = 1; i < entries.size(); ++i)
+		const size_t firstFileIdx = hasDirHeader ? 1 : 0;
+		for (size_t i = firstFileIdx; i < entries.size(); ++i)
 		{
 			const auto& entry = entries[i];
 			std::string filePath = savePath + "/" + entry.dirEntry.name;
@@ -1677,21 +1697,20 @@ bool PS2MemoryCard::importSaveFile(PS2SaveFile& save, bool ignoreExisting, const
 			(void)pImpl->find_entry(savePath, saveParentCluster);
 
 			auto parentRows = pImpl->read_dirents(saveParentCluster);
-			const auto& hdr = entries[0].dirEntry;
 			constexpr uint16_t typeMask = DF_FILE | DF_DIR | DF_EXISTS;
 			for (auto& row : parentRows)
 			{
 				if (row.name == saveDirName && (row.mode & DF_DIR))
 				{
-					row.mode = static_cast<uint16_t>((hdr.mode & ~typeMask) | (row.mode & typeMask));
+					row.mode = static_cast<uint16_t>((dirEntry.mode & ~typeMask) | (row.mode & typeMask));
 					if ((row.mode & DF_EXISTS) && (row.mode & DF_DIR) && !(row.mode & DF_PSX))
 					{
 						row.mode |= DF_0400;
 					}
-					row.unused = hdr.unused;
-					row.created = hdr.created;
-					row.modified = hdr.modified;
-					row.attr = hdr.attr;
+					row.unused = dirEntry.unused;
+					row.created = dirEntry.created;
+					row.modified = dirEntry.modified;
+					row.attr = dirEntry.attr;
 					break;
 				}
 			}
