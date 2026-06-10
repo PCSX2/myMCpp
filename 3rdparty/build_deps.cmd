@@ -43,14 +43,21 @@ if defined VisualStudioVersion (
     )
 )
 if "%VS_GENERATOR%"=="" (
-    if exist "%ProgramFiles%\Microsoft Visual Studio\2026" (
-        set VS_GENERATOR=Visual Studio 18 2026
-    ) else if exist "%ProgramFiles%\Microsoft Visual Studio\2022" (
-        set VS_GENERATOR=Visual Studio 17 2022
-    ) else (
-        echo ERROR: Could not find Visual Studio installation.
-        exit /b 1
+    if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" (
+        for /f "usebackq tokens=*" %%i in (`call "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -version "[18, 19)" -latest -property installationPath`) do set "VSINSTPATH=%%i"
+        if defined VSINSTPATH (
+            set "VS_GENERATOR=Visual Studio 18 2026"
+        ) else (
+            for /f "usebackq tokens=*" %%i in (`call "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17, 18)" -latest -property installationPath`) do set "VSINSTPATH=%%i"
+            if defined VSINSTPATH (
+                set "VS_GENERATOR=Visual Studio 17 2022"
+            )
+        )
     )
+)
+if "%VS_GENERATOR%"=="" (
+    echo ERROR: Could not find Visual Studio installation.
+    exit /b 1
 )
 
 echo.

@@ -13,7 +13,7 @@ on:
       os:
         required: false
         type: string
-        default: windows-latest
+        default: windows-2025-vs2026
       platform:
         required: false
         type: string
@@ -106,10 +106,20 @@ jobs:
         if: inputs.compiler == 'msvc'
         shell: cmd
         run: |
+          set VS_VER=2022
+          if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" (
+            for /f "usebackq tokens=*" %%i in (`call "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -version "[18, 19)" -latest -property installationPath`) do set "VS2026PATH=%%i"
+            if defined VS2026PATH (
+              set VS_VER=2026
+            ) else (
+              for /f "usebackq tokens=*" %%i in (`call "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17, 18)" -latest -property installationPath`) do set "VS2022PATH=%%i"
+              if defined VS2022PATH set VS_VER=2022
+            )
+          )
           if "${{ inputs.buildType }}" == "Debug" (
-            set PRESET=win-dbg-2022
+            set PRESET=win-dbg-%VS_VER%
           ) else (
-            set PRESET=win-rel-2022
+            set PRESET=win-rel-%VS_VER%
           )
           echo PRESET=%PRESET%>> %GITHUB_ENV%
           cmake --preset %PRESET% ^
