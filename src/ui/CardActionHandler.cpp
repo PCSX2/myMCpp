@@ -67,56 +67,67 @@ void CardActionHandler::closeCard()
 	}
 }
 
-void CardActionHandler::importSave(PS2MemoryCard* card, const QString& filename)
+
+CardActionHandler::ImportResult CardActionHandler::importSave(PS2MemoryCard* card, const std::shared_ptr<PS2SaveFile>& saveFile, const QString& filename, bool showDialogs, bool forceOverwrite)
 {
 	if (!card)
 	{
-		QMessageBox::warning(parentWidget, tr("Warning"), tr("No memory card open"));
-		return;
+		if (showDialogs)
+		{
+			QMessageBox::warning(parentWidget, tr("Warning"), tr("No memory card open"));
+		}
+		return ImportResult::Failed;
 	}
 
-	if (!QFileInfo(filename).exists())
+	if (!saveFile)
 	{
-		QMessageBox::critical(parentWidget, tr("Error"),
-			tr("File not found: %1").arg(filename));
-		return;
+		return ImportResult::Failed;
 	}
 
 	try
 	{
-		PS2SaveFile saveFile;
-		saveFile.load(filename.toStdString());
-
-		const auto& entries = saveFile.getEntries();
+		const auto& entries = saveFile->getEntries();
 		if (entries.empty())
 		{
-			QMessageBox::warning(parentWidget, tr("Warning"),
-				tr("Save file is empty or contains no valid entries"));
-			return;
+			if (showDialogs)
+			{
+				QMessageBox::warning(parentWidget, tr("Warning"),
+					tr("Save file is empty or contains no valid entries"));
+			}
+			return ImportResult::Failed;
 		}
 
 		const bool hasDirHeader = !entries.empty() && (entries[0].dirEntry.mode & DF_DIR);
-		std::string saveName = hasDirHeader ? entries[0].dirEntry.name : saveFile.getTitle();
+		std::string saveName = hasDirHeader ? entries[0].dirEntry.name : saveFile->getTitle();
 		if (saveName.empty())
 		{
 			saveName = entries[0].dirEntry.name;
 		}
 
-		bool result = card->importSaveFile(saveFile, false, "");
+		bool result = card->importSaveFile(*saveFile, forceOverwrite, "");
 
 		if (result)
 		{
-			QMessageBox::information(parentWidget, tr("Success"),
-				tr("Successfully imported save: %1")
-					.arg(QString::fromStdString(saveName)));
+			if (showDialogs)
+			{
+				QMessageBox::information(parentWidget, tr("Success"),
+					tr("Successfully imported save: %1")
+						.arg(QString::fromStdString(saveName)));
+			}
 
 			if (statusBar)
 			{
 				statusBar->showMessage(tr("Imported: %1").arg(QString::fromStdString(saveName)), 3000);
 			}
+			return ImportResult::Success;
 		}
 		else
 		{
+			if (!showDialogs)
+			{
+				return ImportResult::Failed;
+			}
+
 			auto reply = QMessageBox::question(parentWidget, tr("Save Exists"),
 				tr("Save '%1' already exists. Overwrite?")
 					.arg(QString::fromStdString(saveName)),
@@ -124,7 +135,7 @@ void CardActionHandler::importSave(PS2MemoryCard* card, const QString& filename)
 
 			if (reply == QMessageBox::Yes)
 			{
-				result = card->importSaveFile(saveFile, true, "");
+				result = card->importSaveFile(*saveFile, true, "");
 
 				if (result)
 				{
@@ -137,15 +148,28 @@ void CardActionHandler::importSave(PS2MemoryCard* card, const QString& filename)
 												   .arg(QString::fromStdString(saveName)),
 							3000);
 					}
+					return ImportResult::Success;
 				}
+				else
+				{
+					return ImportResult::Failed;
+				}
+			}
+			else
+			{
+				return ImportResult::Skipped;
 			}
 		}
 	}
 	catch (const std::exception& e)
 	{
-		QMessageBox::critical(parentWidget, tr("Error"),
-			tr("Failed to import save: %1").arg(e.what()));
+		if (showDialogs)
+		{
+			QMessageBox::critical(parentWidget, tr("Error"),
+				tr("Failed to import save: %1").arg(e.what()));
+		}
 	}
+	return ImportResult::Failed;
 }
 
 bool CardActionHandler::exportSave(PS2MemoryCard* card, const QString& savePath, const QString& outputFilename, bool showSuccessDialog)

@@ -7,6 +7,7 @@
 #include <QObject>
 
 class PS2MemoryCard;
+class PS2SaveFile;
 class QWidget;
 class QStatusBar;
 
@@ -21,7 +22,14 @@ public:
 	PS2MemoryCard* createCard(const QString& filename, int sizeMB = 8, bool disableEcc = false);
 	void closeCard();
 
-	void importSave(PS2MemoryCard* card, const QString& filename);
+	enum class ImportResult
+	{
+		Success,
+		Skipped,
+		Failed
+	};
+
+	ImportResult importSave(PS2MemoryCard* card, const std::shared_ptr<PS2SaveFile>& saveFile, const QString& filename, bool showDialogs = true, bool forceOverwrite = false);
 	bool exportSave(PS2MemoryCard* card, const QString& savePath, const QString& filename, bool showSuccessDialog = true);
 	void deleteSave(PS2MemoryCard* card, const QString& savePath);
 	void formatCard(PS2MemoryCard* card, const QString& cardPath, int sizeMB = -1);

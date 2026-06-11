@@ -471,6 +471,7 @@ void MemoryCardBrowser::dropEvent(QDropEvent* event)
 	if (mimeData->hasUrls())
 	{
 		QList<QUrl> urls = mimeData->urls();
+		QStringList saveFiles;
 		for (const QUrl& url : urls)
 		{
 			QString file = url.toLocalFile();
@@ -486,7 +487,7 @@ void MemoryCardBrowser::dropEvent(QDropEvent* event)
 
 				if (isSaveFile)
 				{
-					emit saveFileDropped(file);
+					saveFiles.append(file);
 				}
 				else
 				{
@@ -497,6 +498,11 @@ void MemoryCardBrowser::dropEvent(QDropEvent* event)
 			{
 				emit importFileRequested(m_currentPath, file);
 			}
+		}
+
+		if (!saveFiles.isEmpty())
+		{
+			emit saveFilesDropped(saveFiles);
 		}
 	}
 }

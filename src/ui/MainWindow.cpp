@@ -7,8 +7,9 @@
 #include "CardActionHandler.h"
 #include "NewCardDialog.h"
 #include "dialogs/AboutDialog.h"
-#include "dialogs/ExportSavesDialog.h"
+#include "dialogs/ImportExportSavesDialog.h"
 #include "ps2mc.h"
+#include "ps2save.h"
 #include "Settings/SettingsWindow.h"
 #include "DiscordRPCManager.h"
 #include "Config.h"
@@ -139,20 +140,13 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->cardBrowser, &MemoryCardBrowser::renameRequested,
 		this, &MainWindow::onRenameEntry);
 
-	connect(ui->cardBrowser, &MemoryCardBrowser::saveFileDropped, this, [this](const QString& path) {
-		if (memoryCard)
-		{
-			actionHandler->importSave(memoryCard.get(), path);
-			updateCardView();
-			ui->statusBar->showMessage(tr("Imported %1").arg(path), 5000);
-		}
-	});
+	connect(ui->cardBrowser, &MemoryCardBrowser::saveFilesDropped, this, &MainWindow::importSaveFiles);
 
 	connect(ui->cardBrowser, &MemoryCardBrowser::exportSaveRequested, this, [this](const QString& savePath) {
 		if (!memoryCard)
 			return;
 
-		ExportSavesDialog nameDialog({savePath}, this);
+		ImportExportSavesDialog nameDialog({savePath}, this);
 		if (nameDialog.exec() != QDialog::Accepted)
 			return;
 
@@ -262,7 +256,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		if (!memoryCard || savePaths.isEmpty())
 			return;
 
-		ExportSavesDialog nameDialog(savePaths, this);
+		ImportExportSavesDialog nameDialog(savePaths, this);
 		if (nameDialog.exec() != QDialog::Accepted)
 			return;
 
@@ -482,24 +476,161 @@ void MainWindow::onImportSave()
 		return;
 	}
 
-	QString filename = QFileDialog::getOpenFileName(
+	QStringList filenames = QFileDialog::getOpenFileNames(
 		this,
 		tr("Import Save"),
 		"",
 		tr("PS2 Save Files (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;All Files (*.*)"));
 
-	if (filename.isEmpty())
+	if (!filenames.isEmpty())
+	{
+		importSaveFiles(filenames);
+	}
+}
+
+void MainWindow::importSaveFiles(const QStringList& paths)
+{
+	if (!memoryCard || paths.isEmpty())
+		return;
+
+	bool forceOverwrite = m_config ? m_config->getForceImport() : false;
+
+	QList<ImportExportSavesDialog::ImportItem> importItems;
+	for (const QString& filepath : paths)
+	{
+		ImportExportSavesDialog::ImportItem item;
+		item.filePath = filepath;
+
+		try
+		{
+			auto save = std::make_shared<PS2SaveFile>();
+			save->load(filepath.toStdString());
+
+			std::string saveName = save->getTitle();
+			if (saveName.empty())
+			{
+				const auto& entries = save->getEntries();
+				if (!entries.empty())
+				{
+					const bool hasDir = (entries[0].dirEntry.mode & DF_DIR) != 0;
+					saveName = hasDir ? entries[0].dirEntry.name : "";
+				}
+				if (saveName.empty())
+				{
+					saveName = QFileInfo(filepath).baseName().toStdString();
+				}
+			}
+
+			item.gameTitle = QString::fromStdString(saveName);
+
+			const auto& entries = save->getEntries();
+			std::string dirId;
+			if (!entries.empty())
+			{
+				const bool hasDirHeader = (entries[0].dirEntry.mode & DF_DIR);
+				dirId = hasDirHeader ? entries[0].dirEntry.name : save->getTitle();
+				if (dirId.empty())
+				{
+					dirId = entries[0].dirEntry.name;
+				}
+			}
+			if (dirId.empty())
+			{
+				dirId = QFileInfo(filepath).baseName().toStdString();
+			}
+
+			item.directoryId = QString::fromStdString(dirId);
+
+			if (memoryCard)
+			{
+				try
+				{
+					memoryCard->getEntry("/" + dirId);
+					item.exists = true;
+					item.overwriteSelected = forceOverwrite;
+				}
+				catch (...)
+				{
+					item.exists = false;
+				}
+			}
+
+			item.saveFile = save;
+		}
+		catch (const std::exception& e)
+		{
+			item.corrupt = true;
+			item.errorText = QString::fromStdString(e.what());
+			item.gameTitle = QFileInfo(filepath).fileName();
+		}
+
+		importItems.append(item);
+	}
+
+	ImportExportSavesDialog dialog(importItems, this);
+	if (dialog.exec() != QDialog::Accepted)
 	{
 		return;
 	}
 
-	actionHandler->importSave(memoryCard.get(), filename);
-	if (m_discordRpc)
+	int ok = 0;
+	int skipped = 0;
+	int failed = 0;
+	QStringList failedNames;
+
+	for (const auto& item : importItems)
+	{
+		if (!item.importSelected || item.corrupt)
+			continue;
+
+		if (item.exists && !item.overwriteSelected)
+		{
+			skipped++;
+			continue;
+		}
+
+		CardActionHandler::ImportResult res = actionHandler->importSave(
+			memoryCard.get(), item.saveFile, item.filePath, false, item.overwriteSelected);
+
+		if (res == CardActionHandler::ImportResult::Success)
+		{
+			ok++;
+		}
+		else
+		{
+			failed++;
+			failedNames.append(QFileInfo(item.filePath).fileName());
+		}
+	}
+
+	if (failed > 0)
+	{
+		QMessageBox::warning(this, tr("Import"),
+			tr("Imported %1 save(s); %2 failed:\n%3").arg(ok).arg(failed).arg(failedNames.join("\n")));
+	}
+	else
+	{
+		if (skipped > 0)
+		{
+			QMessageBox::information(this, tr("Import"),
+				tr("Successfully imported %1 save(s) (skipped %2 duplicate(s))").arg(ok).arg(skipped));
+		}
+		else
+		{
+			QMessageBox::information(this, tr("Import"),
+				tr("Successfully imported %1 save(s)").arg(ok));
+		}
+	}
+
+	ui->statusBar->showMessage(failed == 0 ? tr("Imported %1 saves").arg(ok) : tr("Imported %1, %2 failed").arg(ok).arg(failed), 5000);
+
+	if (m_discordRpc && ok > 0)
 	{
 		m_discordRpc->setTemporaryPresence(
 			tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
-			tr("Imported Save: %1").arg(QFileInfo(filename).fileName()));
+			tr("Imported %1 Saves").arg(ok));
 	}
+
 	updateCardView();
 }
 
