@@ -606,6 +606,21 @@ void PS2MemoryCard::Impl::write_dirents(uint32_t dir_cluster, const std::vector<
 			break;
 		}
 	}
+
+	// Terminate the FAT chain at the current cluster if there was an old chain pointing further
+	uint32_t next = fat[current_cluster] & PS2MC_FAT_CLUSTER_MASK;
+	if (next != PS2MC_FAT_CHAIN_END && next != PS2MC_FAT_CHAIN_END_UNALLOC && next < fat.size())
+	{
+		fat[current_cluster] = PS2MC_FAT_CHAIN_END;
+
+		// Free all subsequent clusters in the old chain
+		while (next != PS2MC_FAT_CHAIN_END && next != PS2MC_FAT_CHAIN_END_UNALLOC && next < fat.size())
+		{
+			uint32_t temp = fat[next] & PS2MC_FAT_CLUSTER_MASK;
+			fat[next] = PS2MC_FAT_CHAIN_END_UNALLOC;
+			next = temp;
+		}
+	}
 }
 
 void PS2MemoryCard::Impl::syncParentDirectoryEntryLength(uint32_t child_dir_cluster)
@@ -1580,6 +1595,9 @@ void PS2MemoryCard::remove(const std::string& path)
 		}
 
 		pImpl->write_dirents(parent_cluster, parent_entries);
+
+		pImpl->write_fat_to_card();
+		pImpl->file.flush();
 
 		pImpl->modified = true;
 	}
