@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="src">
@@ -65,7 +65,7 @@
     <ClCompile Include="dialogs\AboutDialog.cpp">
       <Filter>src\dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="dialogs\ExportSavesDialog.cpp">
+    <ClCompile Include="dialogs\ImportExportSavesDialog.cpp">
       <Filter>src\dialogs</Filter>
     </ClCompile>
     <ClCompile Include="Settings\GeneralSettingsWidget.cpp">
@@ -121,7 +121,7 @@
     <QtMoc Include="dialogs\AboutDialog.h">
       <Filter>headers\dialogs</Filter>
     </QtMoc>
-    <QtMoc Include="dialogs\ExportSavesDialog.h">
+    <QtMoc Include="dialogs\ImportExportSavesDialog.h">
       <Filter>headers\dialogs</Filter>
     </QtMoc>
     <QtMoc Include="Settings\GeneralSettingsWidget.h">
@@ -176,7 +176,7 @@
     <QtUic Include="dialogs\AboutDialog.ui">
       <Filter>ui\dialogs</Filter>
     </QtUic>
-    <QtUic Include="dialogs\ExportSavesDialog.ui">
+    <QtUic Include="dialogs\ImportExportSavesDialog.ui">
       <Filter>ui\dialogs</Filter>
     </QtUic>
     <QtUic Include="dialogs\NewCardDialog.ui">

@@ -62,6 +62,7 @@ private:
 	void updateForceImportWarning();
 	void closeCard();
 	void importFileToCard(const QString& savePath, const QString& hostFilePath);
+	void importSaveFiles(const QStringList& paths);
 
 	std::unique_ptr<Ui::MainWindow> ui;
 

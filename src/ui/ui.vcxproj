@@ -52,7 +52,7 @@
     <ClCompile Include="dialogs\NewCardDialog.cpp" />
     <ClCompile Include="Settings\SettingsWidget.cpp" />
     <ClCompile Include="dialogs\AboutDialog.cpp" />
-    <ClCompile Include="dialogs\ExportSavesDialog.cpp" />
+    <ClCompile Include="dialogs\ImportExportSavesDialog.cpp" />
     <ClCompile Include="Settings\GeneralSettingsWidget.cpp" />
     <ClCompile Include="Settings\GraphicsSettingsWidget.cpp" />
     <ClCompile Include="Settings\FilesSettingsWidget.cpp" />
@@ -72,7 +72,7 @@
     <QtMoc Include="dialogs\NewCardDialog.h" />
     <QtMoc Include="Settings\SettingsWidget.h" />
     <QtMoc Include="dialogs\AboutDialog.h" />
-    <QtMoc Include="dialogs\ExportSavesDialog.h" />
+    <QtMoc Include="dialogs\ImportExportSavesDialog.h" />
     <QtMoc Include="Settings\GeneralSettingsWidget.h" />
     <QtMoc Include="Settings\GraphicsSettingsWidget.h" />
     <QtMoc Include="Settings\FilesSettingsWidget.h" />
@@ -87,7 +87,7 @@
     <QtUic Include="Settings\GraphicsSettingsWidget.ui" />
     <QtUic Include="Settings\SettingsWindow.ui" />
     <QtUic Include="dialogs\AboutDialog.ui" />
-    <QtUic Include="dialogs\ExportSavesDialog.ui" />
+    <QtUic Include="dialogs\ImportExportSavesDialog.ui" />
     <QtUic Include="dialogs\NewCardDialog.ui" />
     <QtUic Include="widgets\MemoryCardBrowser.ui" />
     <QtUic Include="widgets\SaveDetailsPanel.ui" />

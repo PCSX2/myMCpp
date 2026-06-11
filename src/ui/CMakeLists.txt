@@ -11,7 +11,7 @@ set(UI_SOURCES
     dialogs/NewCardDialog.cpp
     Settings/SettingsWidget.cpp
     dialogs/AboutDialog.cpp
-    dialogs/ExportSavesDialog.cpp
+    dialogs/ImportExportSavesDialog.cpp
     Settings/GeneralSettingsWidget.cpp
     Settings/GraphicsSettingsWidget.cpp
     Settings/FilesSettingsWidget.cpp
@@ -32,7 +32,7 @@ set(UI_HEADERS
     dialogs/NewCardDialog.h
     Settings/SettingsWidget.h
     dialogs/AboutDialog.h
-    dialogs/ExportSavesDialog.h
+    dialogs/ImportExportSavesDialog.h
     Settings/GeneralSettingsWidget.h
     Settings/GraphicsSettingsWidget.h
     Settings/FilesSettingsWidget.h

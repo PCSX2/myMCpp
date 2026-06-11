@@ -32,7 +32,7 @@ public:
 	QString getCurrentPath() const { return m_currentPath; }
 
 signals:
-	void saveFileDropped(const QString& filePath);
+	void saveFilesDropped(const QStringList& filePaths);
 	void pathChanged(const QString& newPath);
 	void exportSaveRequested(const QString& savePath);
 	void exportFileRequested(const QString& savePath, const QString& fileName);
