@@ -28,8 +28,9 @@ public:
 	VkQueue getGraphicsQueue() const { return m_graphicsQueue; }
 	uint32_t getGraphicsQueueFamily() const { return m_graphicsQueueFamily; }
 	VmaAllocator getAllocator() const { return m_allocator; }
+	bool supportsMemoryPriority() const { return m_supportsMemoryPriority; }
 
-	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const;
+	void setAllocationPriority(VmaAllocationCreateInfo& allocInfo, float priority) const;
 
 private:
 	bool createInstance();
@@ -44,6 +45,7 @@ private:
 	VkQueue m_graphicsQueue = VK_NULL_HANDLE;
 	uint32_t m_graphicsQueueFamily = 0;
 	VmaAllocator m_allocator = VK_NULL_HANDLE;
+	bool m_supportsMemoryPriority = false;
 #ifdef __linux__
 	void* m_platformDisplay = nullptr; // Display* on Linux/X11
 #endif

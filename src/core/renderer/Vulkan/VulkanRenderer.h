@@ -80,14 +80,24 @@ private:
 
 	std::shared_ptr<PS2Icon::Icon> m_icon;
 	VkBuffer m_vertexBuffer;
-	VkDeviceMemory m_vertexMemory;
+	VmaAllocation m_vertexAllocation = VK_NULL_HANDLE;
+	VmaAllocationInfo m_vertexAllocInfo{};
+	VkDeviceSize m_vertexBufferSize = 0;
 	VkBuffer m_uniformBuffer;
-	VkDeviceMemory m_uniformMemory;
+	VmaAllocation m_uniformAllocation = VK_NULL_HANDLE;
+	VmaAllocationInfo m_uniformAllocInfo{};
 
 	VkImage m_textureImage;
-	VkDeviceMemory m_textureMemory;
+	VmaAllocation m_textureAllocation = VK_NULL_HANDLE;
+	uint32_t m_textureWidth = 0;
+	uint32_t m_textureHeight = 0;
 	VkImageView m_textureView;
 	VkSampler m_textureSampler;
+
+	VkBuffer m_stagingBuffer = VK_NULL_HANDLE;
+	VmaAllocation m_stagingAllocation = VK_NULL_HANDLE;
+	VmaAllocationInfo m_stagingAllocInfo{};
+	VkDeviceSize m_stagingBufferSize = 0;
 
 	VkDescriptorPool m_descriptorPool;
 	VkDescriptorSet m_descriptorSet;
@@ -103,12 +113,18 @@ private:
 	BackgroundState m_background;
 	Config* m_config;
 
-	bool createCommandBuffers();
+	bool allocateCommandBuffers();
+	bool createDescriptorResources();
+	bool recordCommandBuffer(uint32_t imageIndex);
 	bool uploadTexture();
 	void writeDescriptorSets();
 	void updateBackgroundVertexData();
+	bool rebuildPerImageResources();
 
 	void prepareVertexData();
 	void updateUniformBuffer();
 	void submitFrame();
+
+	bool swapchainNeedsRecreate() const;
+	bool recreateSwapchain();
 };

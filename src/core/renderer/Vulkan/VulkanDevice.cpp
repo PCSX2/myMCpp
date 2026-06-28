@@ -107,7 +107,7 @@ bool VulkanDevice::createInstance()
 	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 	appInfo.pEngineName = "myMCpp";
 	appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-	appInfo.apiVersion = VK_API_VERSION_1_3;
+	appInfo.apiVersion = VK_API_VERSION_1_1;
 
 	std::vector<const char*> extensions = {
 		VK_KHR_SURFACE_EXTENSION_NAME,
@@ -401,12 +401,55 @@ bool VulkanDevice::createLogicalDevice()
 	float queuePriority = 1.0f;
 	queueCreateInfo.pQueuePriorities = &queuePriority;
 
+	uint32_t extensionCount = 0;
+	vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, nullptr);
+	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+	if (extensionCount > 0)
+		vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, availableExtensions.data());
+
+	auto hasExtension = [&](const char* name) {
+		for (const auto& ext : availableExtensions)
+		{
+			if (std::strcmp(ext.extensionName, name) == 0)
+				return true;
+		}
+		return false;
+	};
+
+	VkPhysicalDeviceMemoryPriorityFeaturesEXT memPriorityFeatures{};
+	memPriorityFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT;
+
+	VkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT pageableFeatures{};
+	pageableFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PAGEABLE_DEVICE_LOCAL_MEMORY_FEATURES_EXT;
+
 	VkPhysicalDeviceFeatures2 features2{};
 	features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+
+	void** chain = &features2.pNext;
+	if (hasExtension(VK_EXT_MEMORY_PRIORITY_EXTENSION_NAME))
+	{
+		*chain = &memPriorityFeatures;
+		chain = &memPriorityFeatures.pNext;
+	}
+	if (hasExtension(VK_EXT_PAGEABLE_DEVICE_LOCAL_MEMORY_EXTENSION_NAME))
+		*chain = &pageableFeatures;
+
 	vkGetPhysicalDeviceFeatures2(m_physicalDevice, &features2);
 
-	std::vector<const char*> extensions = {
-		VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+	const bool supportsMemoryPriority = hasExtension(VK_EXT_MEMORY_PRIORITY_EXTENSION_NAME) && memPriorityFeatures.memoryPriority == VK_TRUE;
+	const bool supportsPageable = hasExtension(VK_EXT_PAGEABLE_DEVICE_LOCAL_MEMORY_EXTENSION_NAME) && pageableFeatures.pageableDeviceLocalMemory == VK_TRUE && supportsMemoryPriority;
+
+	std::vector<const char*> extensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+	if (supportsMemoryPriority)
+	{
+		memPriorityFeatures.memoryPriority = VK_TRUE;
+		extensions.push_back(VK_EXT_MEMORY_PRIORITY_EXTENSION_NAME);
+	}
+	if (supportsPageable)
+	{
+		pageableFeatures.pageableDeviceLocalMemory = VK_TRUE;
+		extensions.push_back(VK_EXT_PAGEABLE_DEVICE_LOCAL_MEMORY_EXTENSION_NAME);
+	}
 
 	VkDeviceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -422,13 +465,17 @@ bool VulkanDevice::createLogicalDevice()
 		return false;
 	}
 
+	m_supportsMemoryPriority = supportsMemoryPriority;
+
 	vkGetDeviceQueue(m_device, m_graphicsQueueFamily, 0, &m_graphicsQueue);
 
 	VmaAllocatorCreateInfo allocatorInfo{};
 	allocatorInfo.physicalDevice = m_physicalDevice;
 	allocatorInfo.device = m_device;
 	allocatorInfo.instance = m_instance;
-	allocatorInfo.vulkanApiVersion = VK_API_VERSION_1_3;
+	allocatorInfo.vulkanApiVersion = VK_API_VERSION_1_1;
+	if (m_supportsMemoryPriority)
+		allocatorInfo.flags |= VMA_ALLOCATOR_CREATE_EXT_MEMORY_PRIORITY_BIT;
 
 	if (vmaCreateAllocator(&allocatorInfo, &m_allocator) != VK_SUCCESS)
 	{
@@ -440,19 +487,8 @@ bool VulkanDevice::createLogicalDevice()
 	return true;
 }
 
-uint32_t VulkanDevice::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const
+void VulkanDevice::setAllocationPriority(VmaAllocationCreateInfo& allocInfo, float priority) const
 {
-	VkPhysicalDeviceMemoryProperties2 memProperties2{};
-	memProperties2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
-	vkGetPhysicalDeviceMemoryProperties2(m_physicalDevice, &memProperties2);
-	const VkPhysicalDeviceMemoryProperties& memProperties = memProperties2.memoryProperties;
-
-	for (uint32_t i = 0; i < memProperties.memoryTypeCount; ++i)
-	{
-		if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
-			return i;
-	}
-
-	Logger::error("VK: Failed to find suitable memory type");
-	return UINT32_MAX;
+	if (m_supportsMemoryPriority)
+		allocInfo.priority = priority;
 }
