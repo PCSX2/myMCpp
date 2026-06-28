@@ -8,7 +8,6 @@
 #include "QtMain.h"
 #include <filesystem>
 #include "Logger.h"
-#include "ResourcePath.h"
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
@@ -17,40 +16,7 @@
 #include <Windows.h>
 #endif
 
-#if defined(__APPLE__)
-#include "CocoaTools.h"
-#endif
-
 namespace fs = std::filesystem;
-
-#if !defined(__APPLE__)
-static fs::path getExecutableDir(const char* argv0)
-{
-#if defined(_WIN32)
-	char modulePath[MAX_PATH] = {};
-	const DWORD length = GetModuleFileNameA(nullptr, modulePath, MAX_PATH);
-	if (length > 0)
-	{
-		return fs::path(modulePath).parent_path();
-	}
-#endif
-	if (argv0 != nullptr && argv0[0] != '\0')
-	{
-		std::error_code ec;
-		fs::path resolved = fs::weakly_canonical(fs::path(argv0), ec);
-		if (!ec && !resolved.empty())
-		{
-			if (resolved.has_parent_path())
-				return resolved.parent_path();
-			return resolved;
-		}
-	}
-
-	std::error_code ec;
-	fs::path current = fs::current_path(ec);
-	return ec ? fs::path(".") : current;
-}
-#endif
 
 static int appMain(int argc, char* argv[])
 {
@@ -157,21 +123,6 @@ static int appMain(int argc, char* argv[])
 	{
 		Logger::info("Main: Failed to load config, using defaults");
 	}
-
-#if defined(__APPLE__)
-	if (auto bundlePath = CocoaTools::GetResourcePath())
-	{
-		config.setResourcesPath(*bundlePath);
-	}
-	else
-	{
-		config.setResourcesPath("resources");
-	}
-#else
-	config.setResourcesPath((getExecutableDir(argc > 0 ? argv[0] : nullptr) / "resources").string());
-#endif
-	ResourcePath::set(config.getResourcesPath());
-	Logger::info("Main: Resources path: {}", ResourcePath::get().string());
 
 	return runQtMainApp(argc, argv, config);
 }
