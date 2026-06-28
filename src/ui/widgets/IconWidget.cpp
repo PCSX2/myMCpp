@@ -296,6 +296,9 @@ void IconWidget::applyConfigToRenderer(PS2IconSys* iconSys)
 
 void IconWidget::startRendering()
 {
+	if (m_renderLoopEnabled && m_renderTimer.isActive())
+		return;
+
 	Logger::info("IconWidget::startRendering {}", (void*)this);
 	m_renderLoopEnabled = true;
 
@@ -317,16 +320,7 @@ void IconWidget::startRendering()
 	if (interval <= 0)
 		interval = 16;
 
-	if (m_renderTimer.isActive())
-	{
-		m_renderTimer.stop();
-		m_renderTimer.start(interval, this);
-	}
-	else
-	{
-		m_renderTimer.start(interval, this);
-	}
-
+	m_renderTimer.start(interval, this);
 	renderFrame();
 }
 
@@ -567,6 +561,7 @@ void IconWidget::resizeEvent(QResizeEvent* event)
 		m_renderer->resize(
 			static_cast<uint32_t>(event->size().width() * dpr),
 			static_cast<uint32_t>(event->size().height() * dpr));
+		renderFrame();
 	}
 }
 

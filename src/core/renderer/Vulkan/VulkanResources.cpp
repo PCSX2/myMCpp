@@ -67,7 +67,7 @@ bool VulkanResources::createSyncObjects(VkDevice device, uint32_t swapchainImage
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-	for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+	for (uint32_t i = 0; i < frameCount; ++i)
 	{
 		if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS ||
 			vkCreateFence(device, &fenceInfo, nullptr, &m_inFlightFences[i]) != VK_SUCCESS)
@@ -82,7 +82,7 @@ bool VulkanResources::createSyncObjects(VkDevice device, uint32_t swapchainImage
 
 	VkFenceCreateInfo singleTimeFenceInfo{};
 	singleTimeFenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	singleTimeFenceInfo.flags = 0; // Not signaled
+	singleTimeFenceInfo.flags = 0;
 
 	if (vkCreateFence(device, &singleTimeFenceInfo, nullptr, &m_singleTimeFence) != VK_SUCCESS)
 	{
@@ -90,13 +90,13 @@ bool VulkanResources::createSyncObjects(VkDevice device, uint32_t swapchainImage
 		return false;
 	}
 
-	Logger::info("VK: Created sync objects for {} frames in flight", MAX_FRAMES_IN_FLIGHT);
+	Logger::info("VK: Created sync objects for {} frames", frameCount);
 	return true;
 }
 
-void VulkanResources::destroy(VkDevice device)
+void VulkanResources::destroy(VkDevice device, VmaAllocator allocator)
 {
-	destroyBackgroundVertexBuffer(device);
+	destroyBackgroundVertexBuffer(allocator);
 
 	if (m_singleTimeFence != VK_NULL_HANDLE)
 	{
@@ -111,7 +111,7 @@ void VulkanResources::destroy(VkDevice device)
 	}
 	m_renderFinishedSemaphores.clear();
 
-	for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+	for (uint32_t i = 0; i < frameCount; ++i)
 	{
 		if (m_inFlightFences[i] != VK_NULL_HANDLE)
 		{
@@ -168,8 +168,7 @@ void VulkanResources::endSingleTimeCommands(VkDevice device, VkQueue queue, VkCo
 }
 
 bool VulkanResources::createImage(VulkanDevice& device, uint32_t width, uint32_t height, VkFormat format,
-	VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties,
-	VkImage& image, VkDeviceMemory& imageMemory)
+	VkImageUsageFlags usage, float priority, VkImage& image, VmaAllocation& allocation)
 {
 	VkImageCreateInfo imageInfo{};
 	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -180,35 +179,22 @@ bool VulkanResources::createImage(VulkanDevice& device, uint32_t width, uint32_t
 	imageInfo.mipLevels = 1;
 	imageInfo.arrayLayers = 1;
 	imageInfo.format = format;
-	imageInfo.tiling = tiling;
+	imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
 	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	imageInfo.usage = usage;
 	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 
-	if (vkCreateImage(device.getDevice(), &imageInfo, nullptr, &image) != VK_SUCCESS)
+	VmaAllocationCreateInfo allocInfo{};
+	allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+	device.setAllocationPriority(allocInfo, priority);
+
+	if (vmaCreateImage(device.getAllocator(), &imageInfo, &allocInfo, &image, &allocation, nullptr) != VK_SUCCESS)
 	{
 		Logger::error("VK: Failed to create image");
 		return false;
 	}
 
-	VkMemoryRequirements memRequirements;
-	vkGetImageMemoryRequirements(device.getDevice(), image, &memRequirements);
-
-	VkMemoryAllocateInfo allocInfo{};
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = device.findMemoryType(memRequirements.memoryTypeBits, properties);
-
-	if (allocInfo.memoryTypeIndex == UINT32_MAX || vkAllocateMemory(device.getDevice(), &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to allocate image memory");
-		vkDestroyImage(device.getDevice(), image, nullptr);
-		image = VK_NULL_HANDLE;
-		return false;
-	}
-
-	vkBindImageMemory(device.getDevice(), image, imageMemory, 0);
 	return true;
 }
 
@@ -247,6 +233,13 @@ bool VulkanResources::transitionImageLayout(VkDevice device, VkQueue queue, VkIm
 		sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 	}
+	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+	{
+		barrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+	}
 	else
 	{
 		Logger::error("VK: Unsupported layout transition");
@@ -282,65 +275,51 @@ bool VulkanResources::copyBufferToImage(VkDevice device, VkQueue queue, VkBuffer
 	return true;
 }
 
-bool VulkanResources::createBackgroundVertexBuffer(VulkanDevice& device)
+bool VulkanResources::createMappedBuffer(VulkanDevice& device, VkDeviceSize size, VkBufferUsageFlags usage, float priority,
+	VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& mapped)
 {
-	destroyBackgroundVertexBuffer(device.getDevice());
-
 	VkBufferCreateInfo bufferInfo{};
 	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufferInfo.size = sizeof(VulkanBGVertex) * 4;
-	bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+	bufferInfo.size = size;
+	bufferInfo.usage = usage;
 	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	if (vkCreateBuffer(device.getDevice(), &bufferInfo, nullptr, &m_bgVertexBuffer) != VK_SUCCESS)
+	VmaAllocationCreateInfo allocInfo{};
+	allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+	allocInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
+	device.setAllocationPriority(allocInfo, priority);
+
+	return vmaCreateBuffer(device.getAllocator(), &bufferInfo, &allocInfo, &buffer, &allocation, &mapped) == VK_SUCCESS;
+}
+
+bool VulkanResources::createBackgroundVertexBuffer(VulkanDevice& device)
+{
+	destroyBackgroundVertexBuffer(device.getAllocator());
+
+	if (!createMappedBuffer(device, sizeof(VulkanBGVertex) * 4, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 0.5f,
+			m_bgVertexBuffer, m_bgVertexAllocation, m_bgVertexAllocInfo))
 	{
 		Logger::error("VK: Failed to create background vertex buffer");
 		return false;
 	}
 
-	VkMemoryRequirements memReq;
-	vkGetBufferMemoryRequirements(device.getDevice(), m_bgVertexBuffer, &memReq);
-
-	VkMemoryAllocateInfo allocInfo{};
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = memReq.size;
-	allocInfo.memoryTypeIndex = device.findMemoryType(memReq.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-	if (allocInfo.memoryTypeIndex == UINT32_MAX || vkAllocateMemory(device.getDevice(), &allocInfo, nullptr, &m_bgVertexMemory) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to allocate background vertex memory");
-		vkDestroyBuffer(device.getDevice(), m_bgVertexBuffer, nullptr);
-		m_bgVertexBuffer = VK_NULL_HANDLE;
-		return false;
-	}
-
-	vkBindBufferMemory(device.getDevice(), m_bgVertexBuffer, m_bgVertexMemory, 0);
 	return true;
 }
 
-void VulkanResources::updateBackgroundVertexData(VkDevice device, const VulkanBGVertex* vertices, size_t count)
+void VulkanResources::updateBackgroundVertexData(const VulkanBGVertex* vertices, size_t count)
 {
-	if (m_bgVertexMemory == VK_NULL_HANDLE || !vertices || count == 0)
+	if (m_bgVertexAllocation == VK_NULL_HANDLE || !vertices || count == 0)
 		return;
 
-	void* data = nullptr;
-	if (vkMapMemory(device, m_bgVertexMemory, 0, sizeof(VulkanBGVertex) * count, 0, &data) == VK_SUCCESS)
-	{
-		std::memcpy(data, vertices, sizeof(VulkanBGVertex) * count);
-		vkUnmapMemory(device, m_bgVertexMemory);
-	}
+	std::memcpy(m_bgVertexAllocInfo.pMappedData, vertices, sizeof(VulkanBGVertex) * count);
 }
 
-void VulkanResources::destroyBackgroundVertexBuffer(VkDevice device)
+void VulkanResources::destroyBackgroundVertexBuffer(VmaAllocator allocator)
 {
 	if (m_bgVertexBuffer != VK_NULL_HANDLE)
 	{
-		vkDestroyBuffer(device, m_bgVertexBuffer, nullptr);
+		vmaDestroyBuffer(allocator, m_bgVertexBuffer, m_bgVertexAllocation);
 		m_bgVertexBuffer = VK_NULL_HANDLE;
-	}
-	if (m_bgVertexMemory != VK_NULL_HANDLE)
-	{
-		vkFreeMemory(device, m_bgVertexMemory, nullptr);
-		m_bgVertexMemory = VK_NULL_HANDLE;
+		m_bgVertexAllocation = VK_NULL_HANDLE;
 	}
 }

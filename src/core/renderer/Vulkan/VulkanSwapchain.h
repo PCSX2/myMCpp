@@ -4,6 +4,7 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include <vk_mem_alloc.h>
 #include <cstdint>
 #include <vector>
 
@@ -19,7 +20,7 @@ public:
 	VulkanSwapchain& operator=(const VulkanSwapchain&) = delete;
 
 	bool create(VulkanDevice& device, uint32_t width, uint32_t height);
-	void destroy(VkDevice device);
+	void destroy(VkDevice device, VmaAllocator allocator);
 	bool recreate(VulkanDevice& device, uint32_t width, uint32_t height);
 
 	VkSwapchainKHR getSwapchain() const { return m_swapchain; }
@@ -34,12 +35,14 @@ public:
 	bool setVSync(VulkanDevice& device, bool enabled);
 
 private:
-	bool createSwapchain(VulkanDevice& device, uint32_t width, uint32_t height);
+	bool createSwapchain(VulkanDevice& device, uint32_t width, uint32_t height,
+		VkSwapchainKHR oldSwapchain = VK_NULL_HANDLE);
+	bool rebuildAttachments(VulkanDevice& device, VkSwapchainKHR oldSwapchain);
 	bool createImageViews(VkDevice device);
 	bool createDepthResources(VulkanDevice& device);
 	bool createRenderPass(VkDevice device);
 	bool createFramebuffers(VkDevice device);
-	void destroyDepthResources(VkDevice device);
+	void destroyDepthResources(VkDevice device, VmaAllocator allocator);
 	VkFormat findDepthFormat(VkPhysicalDevice physicalDevice);
 
 	VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
@@ -49,7 +52,7 @@ private:
 	VkExtent2D m_extent = {0, 0};
 
 	std::vector<VkImage> m_depthImages;
-	std::vector<VkDeviceMemory> m_depthMemories;
+	std::vector<VmaAllocation> m_depthAllocations;
 	std::vector<VkImageView> m_depthImageViews;
 	VkFormat m_depthFormat = VK_FORMAT_UNDEFINED;
 

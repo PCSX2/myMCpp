@@ -159,7 +159,6 @@ bool VulkanPipeline::createPipelineCache(VkDevice device)
 		return false;
 	}
 
-	Logger::info("VK: Pipeline cache created");
 	return true;
 }
 
@@ -385,7 +384,6 @@ bool VulkanPipeline::createMainPipeline(VkDevice device, VkRenderPass renderPass
 		return false;
 	}
 
-	Logger::info("VK: Graphics pipeline created with dynamic viewport/scissor");
 	return true;
 }
 
@@ -550,6 +548,5 @@ bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass rend
 
 	vkDestroyShaderModule(device, bgVert, nullptr);
 	vkDestroyShaderModule(device, bgFrag, nullptr);
-	Logger::info("VK: Background pipeline created with dynamic viewport/scissor");
 	return true;
 }
