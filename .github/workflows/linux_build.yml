@@ -123,7 +123,7 @@ jobs:
           host: 'linux'
           target: 'desktop'
           arch: 'linux_gcc_64'
-          modules: 'qtimageformats'
+          modules: 'qtimageformats qtwaylandcompositor'
           cache: true
           use-official: true
 
@@ -135,7 +135,7 @@ jobs:
           host: 'linux_arm64'
           target: 'desktop'
           arch: 'linux_gcc_arm64'
-          modules: 'qtimageformats'
+          modules: 'qtimageformats qtwaylandcompositor'
           cache: true
           use-official: true
 
@@ -273,7 +273,8 @@ jobs:
           echo "Using QMAKE: $QMAKE_PATH"
           
           echo "Running linuxdeploy to create AppDir..."
-          EXTRA_QT_MODULES="core;gui;widgets;xcbqpa" \
+          EXTRA_QT_MODULES="core;gui;widgets;waylandclient;waylandcompositor;xcbqpa" \
+          EXTRA_PLATFORM_PLUGINS="libqwayland.so" \
           DEPLOY_PLATFORM_THEMES="1" \
           QMAKE="$QMAKE_PATH" \
           NO_STRIP="1" \
@@ -283,6 +284,12 @@ jobs:
           echo "Copying resources into AppDir..."
           if [ -d "${BUILD_DIR}/resources" ]; then
             cp -a "${BUILD_DIR}/resources" "$OUTDIR/usr/bin"
+          fi
+
+          echo "Copying translations into AppDir..."
+          if [ -d "${BUILD_DIR}/translations" ]; then
+            rm -fr "$OUTDIR/usr/bin/translations" "$OUTDIR/usr/translations"
+            cp -a "${BUILD_DIR}/translations" "$OUTDIR/usr/bin"
           fi
           
           echo "Generating AppImage..."
