@@ -273,7 +273,7 @@ jobs:
           echo "Using QMAKE: $QMAKE_PATH"
           
           echo "Running linuxdeploy to create AppDir..."
-          EXTRA_QT_MODULES="core;gui;widgets;waylandclient;waylandcompositor;xcbqpa" \
+          EXTRA_QT_MODULES="core;gui;svg;widgets;waylandclient;waylandcompositor;xcbqpa" \
           EXTRA_PLATFORM_PLUGINS="libqwayland.so" \
           DEPLOY_PLATFORM_THEMES="1" \
           QMAKE="$QMAKE_PATH" \

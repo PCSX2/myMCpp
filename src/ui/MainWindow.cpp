@@ -61,6 +61,9 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	, m_settingsWindow(nullptr)
 	, m_discordRpc(std::make_unique<DiscordRPCManager>(this))
 {
+	if (m_config)
+		Themes::UpdateApplicationTheme(m_config);
+
 	ui->setupUi(this);
 	QString baseTitle = QStringLiteral("%1 v%2")
 	                        .arg(QString::fromUtf8(MYMCpp_APP_NAME))
@@ -345,7 +348,6 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 
 	if (m_config)
 	{
-		Themes::UpdateApplicationTheme(m_config);
 		m_discordRpc->setEnabled(m_config->getDiscordRPCEnabled());
 		if (m_discordRpc && !currentCardPath.isEmpty())
 		{

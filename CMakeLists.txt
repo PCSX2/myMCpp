@@ -27,7 +27,7 @@ include_directories("${CMAKE_BINARY_DIR}/generated")
 add_subdirectory(3rdparty)
 
 # System dependencies
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets LinguistTools)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets LinguistTools Svg)
 if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10.0)
     set(QT_NO_PRIVATE_MODULE_WARNING ON)
     find_package(Qt6 COMPONENTS CorePrivate GuiPrivate WidgetsPrivate REQUIRED)
