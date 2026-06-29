@@ -7,6 +7,7 @@
 #include <vector>
 #include <memory>
 #include <array>
+#include <cstdint>
 
 // PS2 icon.sys structure
 struct IconSysColor
