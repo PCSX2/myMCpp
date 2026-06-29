@@ -74,6 +74,7 @@ target_link_libraries(myMCpp-qt PUBLIC
     Qt6::Gui
     Qt6::GuiPrivate
     Qt6::Widgets
+    Qt6::Svg
 )
 
 if(TARGET discord-rpc)

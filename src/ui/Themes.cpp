@@ -3,9 +3,7 @@
 
 #include "Themes.h"
 #include "Config.h"
-#include "ResourcePath.h"
 
-#include <QtCore/QFile>
 #include <QtGui/QPalette>
 #include <QtGui/QPixmapCache>
 #include <QtGui/QStyleHints>
@@ -61,15 +59,6 @@ bool Themes::IsDarkApplicationTheme()
 
 void Themes::SetIconThemeFromStyle()
 {
-	// Add resource icon path to search paths
-	QString iconsPath = QString::fromStdString(ResourcePath::icons().string());
-	QStringList paths = QIcon::themeSearchPaths();
-	if (!paths.contains(iconsPath))
-	{
-		paths.prepend(iconsPath);
-		QIcon::setThemeSearchPaths(paths);
-	}
-
 	const bool dark = IsDarkApplicationTheme();
 	QIcon::setThemeName(dark ? QStringLiteral("white") : QStringLiteral("black"));
 }

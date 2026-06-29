@@ -2,5 +2,49 @@
 	<qresource>
 		<file>icons/AppIcon.png</file>
 		<file>icons/qt.svg</file>
+		<file>icons/black/index.theme</file>
+		<file>icons/white/index.theme</file>
+		<file>icons/black/svg/book-marked-fill.svg</file>
+		<file>icons/black/svg/bug-line.svg</file>
+		<file>icons/black/svg/close-circle-fill.svg</file>
+		<file>icons/black/svg/computer-line.svg</file>
+		<file>icons/black/svg/discord.svg</file>
+		<file>icons/black/svg/equalizer-line.svg</file>
+		<file>icons/black/svg/export-fill.svg</file>
+		<file>icons/black/svg/file-info-fill.svg</file>
+		<file>icons/black/svg/fire-fill.svg</file>
+		<file>icons/black/svg/folder-open-line.svg</file>
+		<file>icons/black/svg/github.svg</file>
+		<file>icons/black/svg/import-fill.svg</file>
+		<file>icons/black/svg/list-unordered.svg</file>
+		<file>icons/black/svg/memcard-close.svg</file>
+		<file>icons/black/svg/memcard-line.svg</file>
+		<file>icons/black/svg/memcard-new.svg</file>
+		<file>icons/black/svg/refresh-fill.svg</file>
+		<file>icons/black/svg/save-fill.svg</file>
+		<file>icons/black/svg/settings-fill.svg</file>
+		<file>icons/black/svg/tools-line.svg</file>
+		<file>icons/black/svg/trash-fill.svg</file>
+		<file>icons/white/svg/book-marked-fill.svg</file>
+		<file>icons/white/svg/bug-line.svg</file>
+		<file>icons/white/svg/close-circle-fill.svg</file>
+		<file>icons/white/svg/computer-line.svg</file>
+		<file>icons/white/svg/discord.svg</file>
+		<file>icons/white/svg/equalizer-line.svg</file>
+		<file>icons/white/svg/export-fill.svg</file>
+		<file>icons/white/svg/file-info-fill.svg</file>
+		<file>icons/white/svg/fire-fill.svg</file>
+		<file>icons/white/svg/folder-open-line.svg</file>
+		<file>icons/white/svg/github.svg</file>
+		<file>icons/white/svg/import-fill.svg</file>
+		<file>icons/white/svg/list-unordered.svg</file>
+		<file>icons/white/svg/memcard-close.svg</file>
+		<file>icons/white/svg/memcard-line.svg</file>
+		<file>icons/white/svg/memcard-new.svg</file>
+		<file>icons/white/svg/refresh-fill.svg</file>
+		<file>icons/white/svg/save-fill.svg</file>
+		<file>icons/white/svg/settings-fill.svg</file>
+		<file>icons/white/svg/tools-line.svg</file>
+		<file>icons/white/svg/trash-fill.svg</file>
 	</qresource>
 </RCC>
