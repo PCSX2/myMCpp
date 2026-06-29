@@ -119,7 +119,7 @@ jobs:
         if: inputs.platform != 'arm64'
         uses: jurplel/install-qt-action@v4.3.1
         with:
-          version: '6.11.0'
+          version: '6.11.1'
           host: 'linux'
           target: 'desktop'
           arch: 'linux_gcc_64'
@@ -131,7 +131,7 @@ jobs:
         if: inputs.platform == 'arm64'
         uses: jurplel/install-qt-action@v4.3.1
         with:
-          version: '6.11.0'
+          version: '6.11.1'
           host: 'linux_arm64'
           target: 'desktop'
           arch: 'linux_gcc_arm64'
