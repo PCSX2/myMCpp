@@ -7,7 +7,7 @@
 	<string>myMCpp</string>
 
 	<key>CFBundleIdentifier</key>
-	<string>xyz.sternserv.myMCpp</string>
+	<string>net.mymcpp.myMCpp</string>
 
 	<key>CFBundleName</key>
 	<string>myMCpp</string>
@@ -60,7 +60,7 @@
 	<array>
 		<dict>
 			<key>UTTypeIdentifier</key>
-			<string>net.pcsx2.memcard</string>
+			<string>net.mymcpp.memcard</string>
 			<key>UTTypeDescription</key>
 			<string>PlayStation 2 Memory Card</string>
 			<key>UTTypeConformsTo</key>
