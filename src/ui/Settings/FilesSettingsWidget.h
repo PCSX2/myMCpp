@@ -5,11 +5,6 @@
 
 #include "SettingsWidget.h"
 
-class QLineEdit;
-class QPushButton;
-class QListWidget;
-class QGroupBox;
-
 class SettingsWindow;
 namespace Ui
 {
@@ -30,7 +25,6 @@ public:
 
 private slots:
 	void onBrowseMemoryCardPath();
-	void onClearRecentFiles();
 	void onBrowseImportExportPath();
 
 protected:
