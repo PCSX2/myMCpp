@@ -502,6 +502,11 @@ void OpenGLRenderer::resize(uint32_t width, uint32_t height)
 {
 	m_width = width;
 	m_height = height;
+
+	if (m_context)
+	{
+		m_context->resize(width, height);
+	}
 }
 
 void OpenGLRenderer::setVSync(bool enabled)

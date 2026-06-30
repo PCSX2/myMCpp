@@ -80,9 +80,10 @@ std::unique_ptr<GLContext> GLContext::Create(const WindowInfo& windowInfo, std::
 
 	contextBeingCreated = nullptr;
 
-	context->releaseCurrent();
+	const char* version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+	Logger::info("GLContext: Created successfully with OpenGL {}", version ? version : "unknown");
 
-	Logger::info("GLContext: Created successfully with OpenGL {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+	context->releaseCurrent();
 
 	return context;
 }
