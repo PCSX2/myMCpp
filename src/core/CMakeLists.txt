@@ -123,7 +123,7 @@ if(ENABLE_VULKAN)
     if(TARGET SPIRV-Tools-opt)
         target_link_libraries(myMCpp-core PRIVATE SPIRV-Tools-opt)
     endif()
-    
+
     if(APPLE)
         target_link_libraries(myMCpp-core PUBLIC MoltenVK::MoltenVK)
     endif()
@@ -134,7 +134,7 @@ if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
     target_include_directories(myMCpp-core PUBLIC ${X11_INCLUDE_DIR} ${X11_Xrandr_INCLUDE_PATH})
     target_link_libraries(myMCpp-core PUBLIC ${X11_LIBRARIES} ${X11_Xrandr_LIB})
-    
+
     find_package(Wayland REQUIRED COMPONENTS Client Egl)
     target_link_libraries(myMCpp-core PUBLIC Wayland::Client Wayland::Egl)
 endif()
@@ -150,7 +150,7 @@ if(APPLE)
         ${COCOA_LIBRARY}
         ${QUARTZCORE_LIBRARY}
     )
-    
+
     set_source_files_properties(
         renderer/Metal/MetalRenderer.mm
         renderer/Metal/MetalDevice.mm
@@ -159,54 +159,9 @@ if(APPLE)
         renderer/OpenGL/GLContextAGL.mm
         PROPERTIES COMPILE_FLAGS "-fobjc-arc"
     )
-    
-    set(METAL_SHADERS
-        ${CMAKE_SOURCE_DIR}/resources/shaders/Metal/IconShared.metal
-        ${CMAKE_SOURCE_DIR}/resources/shaders/Metal/background_ps.metal
-        ${CMAKE_SOURCE_DIR}/resources/shaders/Metal/background_vs.metal
-        ${CMAKE_SOURCE_DIR}/resources/shaders/Metal/icon_ps.metal
-        ${CMAKE_SOURCE_DIR}/resources/shaders/Metal/icon_vs.metal
-    )
-    
-    if(CMAKE_GENERATOR MATCHES "Xcode")
-        set_target_properties(myMCpp-core PROPERTIES
-            XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO INCLUDE_SOURCE
-        )
-        foreach(shader IN LISTS METAL_SHADERS)
-            target_sources(myMCpp-core PRIVATE ${shader})
-            set_source_files_properties(${shader} PROPERTIES LANGUAGE METAL)
-        endforeach()
-    endif()
 
-    set(METAL_AIR_FILES)
-    set(METALLIB_OUTPUT ${CMAKE_BINARY_DIR}/default.metallib)
-
-    foreach(shader IN LISTS METAL_SHADERS)
-        get_filename_component(shader_name ${shader} NAME_WE)
-        set(air_file ${CMAKE_BINARY_DIR}/Metal/${shader_name}.air)
-        list(APPEND METAL_AIR_FILES ${air_file})
-
-        add_custom_command(
-            OUTPUT ${air_file}
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/Metal
-            COMMAND xcrun metal -ffast-math -std=macos-metal2.0 -target air64-apple-macos10.13
-                $<$<NOT:$<CONFIG:Release,MinSizeRel>>:-gline-tables-only>
-                -I ${CMAKE_SOURCE_DIR}/resources/shaders/Metal
-                -o ${air_file} -c ${shader}
-            DEPENDS ${shader} ${CMAKE_SOURCE_DIR}/resources/shaders/Metal/IconShared.metal
-            COMMENT "Compiling Metal shader ${shader_name}"
-        )
-    endforeach()
-
-    add_custom_command(
-        OUTPUT ${METALLIB_OUTPUT}
-        COMMAND xcrun metallib -o ${METALLIB_OUTPUT} ${METAL_AIR_FILES}
-        DEPENDS ${METAL_AIR_FILES}
-        COMMENT "Linking Metal library"
-    )
-
-    add_custom_target(CompileMetalShaders DEPENDS ${METALLIB_OUTPUT})
-    add_dependencies(myMCpp-core CompileMetalShaders)
+    include(MetalShaders)
+    myMCpp_compile_metal(myMCpp-core)
 endif()
 
 target_link_libraries(myMCpp-core PRIVATE zlib)

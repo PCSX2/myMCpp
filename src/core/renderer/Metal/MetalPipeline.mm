@@ -31,19 +31,20 @@ bool MetalPipeline::initialize(id<MTLDevice> device)
 
 	if (!library)
 	{
-		if (error)
-		{
-			Logger::warn("MTL: Failed to load metallib from {}: {}. Falling back to default library.",
-				metallibPath.string(),
-				[[error description] UTF8String]);
-		}
-		else
-		{
-			Logger::warn("MTL: Metallib not available at {}. Falling back to default library.", metallibPath.string());
-		}
-
-		error = nil;
 		library = [device newDefaultLibrary];
+		if (!library)
+		{
+			if (error)
+			{
+				Logger::error("MTL: Failed to load metallib from {}: {}.",
+					metallibPath.string(),
+					[[error description] UTF8String]);
+			}
+			else
+			{
+				Logger::error("MTL: Metallib not available at {}.", metallibPath.string());
+			}
+		}
 	}
 
 	if (!library)
