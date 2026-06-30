@@ -17,6 +17,7 @@
 #include "Themes.h"
 #include "version.h"
 #include "BuildVersion.h"
+#include "QtUtils.h"
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -166,8 +167,9 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 			return;
 		QString suggestedName = filenames[0];
 		QString filter = suggestedName.endsWith(QLatin1String(".max"), Qt::CaseInsensitive) ? tr("MAX Drive Format (*.max);;EMS/PSU Format (*.psu);;All Files (*.*)") : tr("EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)");
+		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
 		QString path = QFileDialog::getSaveFileName(this, tr("Export Save"),
-			QDir::homePath() + QLatin1Char('/') + suggestedName, filter);
+			exportDir + QLatin1Char('/') + suggestedName, filter);
 		if (!path.isEmpty())
 			actionHandler->exportSave(memoryCard.get(), savePath, path);
 	});
@@ -176,10 +178,11 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		if (!memoryCard)
 			return;
 
+		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
 		QString filename = QFileDialog::getSaveFileName(
 			this,
 			tr("Export File"),
-			fileName,
+			exportDir + QLatin1Char('/') + fileName,
 			tr("All Files (*.*)"));
 
 		if (!filename.isEmpty())
@@ -226,7 +229,8 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->cardBrowser, &MemoryCardBrowser::importArbitraryFileRequested, this, [this](const QString& targetDir) {
 		if (!memoryCard)
 			return;
-		QString fileName = QFileDialog::getOpenFileName(this, tr("Import File"), "", tr("All Files (*.*)"));
+		const QString importDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
+		QString fileName = QFileDialog::getOpenFileName(this, tr("Import File"), importDir, tr("All Files (*.*)"));
 		if (!fileName.isEmpty())
 		{
 			importFileToCard(targetDir, fileName);
@@ -272,10 +276,11 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 			return;
 
 		QStringList filenames = nameDialog.getFilenames();
+		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
 		QString targetDir = QFileDialog::getExistingDirectory(
 			this,
 			tr("Export Selected Saves"),
-			QString());
+			exportDir);
 
 		if (targetDir.isEmpty())
 			return;
@@ -382,10 +387,11 @@ void MainWindow::changeEvent(QEvent* event)
 
 void MainWindow::onOpenMemoryCard()
 {
+	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->getMemoryCardFolder());
 	QString filename = QFileDialog::getOpenFileName(
 		this,
 		tr("Open Memory Card"),
-		"",
+		memoryCardDir,
 		tr("All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd *.bin *.mc);;"
 		   "PCSX2 Memory Card (*.ps2);;"
 		   "PS3 Virtual Memory Card (*.vm2 *.vmc);;"
@@ -435,10 +441,11 @@ void MainWindow::onCreateMemoryCard()
 	int sizeMB = optionsDialog.getCardSizeMB();
 	bool disableEcc = optionsDialog.getDisableEcc();
 
+	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->getMemoryCardFolder());
 	QString filename = QFileDialog::getSaveFileName(
 		this,
 		tr("Create Memory Card"),
-		"Mcd001.ps2",
+		memoryCardDir + QStringLiteral("/Mcd001.ps2"),
 		tr("PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)"));
 
 	if (filename.isEmpty())
@@ -486,10 +493,11 @@ void MainWindow::onImportSave()
 		return;
 	}
 
+	const QString importDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
 	QStringList filenames = QFileDialog::getOpenFileNames(
 		this,
 		tr("Import Save"),
-		"",
+		importDir,
 		tr("PS2 Save Files (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;All Files (*.*)"));
 
 	if (!filenames.isEmpty())
@@ -653,10 +661,11 @@ void MainWindow::onExportSave()
 		return;
 	}
 
+	const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
 	QString filename = QFileDialog::getSaveFileName(
 		this,
 		tr("Export Save"),
-		"",
+		exportDir,
 		tr("EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)"));
 
 	if (filename.isEmpty())
@@ -1079,10 +1088,11 @@ void MainWindow::onSaveAs()
 	if (!memoryCard)
 		return;
 
+	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->getMemoryCardFolder());
 	QString filename = QFileDialog::getSaveFileName(
 		this,
 		tr("Save Memory Card As"),
-		QFileInfo(currentCardPath).baseName() + ".ps2",
+		memoryCardDir + QLatin1Char('/') + QFileInfo(currentCardPath).baseName() + ".ps2",
 		tr("PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)"));
 
 	if (filename.isEmpty())
@@ -1218,10 +1228,11 @@ void MainWindow::onEccTool()
 
 	QString dialogTitle = hasEcc ? tr("Remove ECC and Save As...") : tr("Add ECC and Save As...");
 
+	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->getMemoryCardFolder());
 	QString filename = QFileDialog::getSaveFileName(
 		this,
 		dialogTitle,
-		defaultName,
+		memoryCardDir + QLatin1Char('/') + defaultName,
 		tr("All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)"));
 
 	if (filename.isEmpty())

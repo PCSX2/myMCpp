@@ -37,7 +37,7 @@ SettingsWindow::SettingsWindow(Config* config, QWidget* parent)
 
 	addSettingsWidget(new FilesSettingsWidget(this), tr("Files"),
 		QIcon::fromTheme("folder-open-line"),
-		tr("<strong>File Settings</strong><hr>Manage default paths for memory cards, import/export settings, and recent files."));
+		tr("<strong>File Settings</strong><hr>Manage default paths for memory cards and import/export."));
 
 	addSettingsWidget(new AdvancedSettingsWidget(this), tr("Advanced"),
 		QIcon::fromTheme("equalizer-line"),

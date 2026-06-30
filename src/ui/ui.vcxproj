@@ -78,6 +78,7 @@
     <QtMoc Include="Settings\FilesSettingsWidget.h" />
     <QtMoc Include="Settings\AdvancedSettingsWidget.h" />
     <QtMoc Include="TranslationManager.h" />
+    <ClInclude Include="QtUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="MainWindow.ui" />

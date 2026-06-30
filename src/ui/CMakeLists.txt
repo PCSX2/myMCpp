@@ -38,6 +38,7 @@ set(UI_HEADERS
     Settings/FilesSettingsWidget.h
     Settings/AdvancedSettingsWidget.h
     TranslationManager.h
+    QtUtils.h
 )
 
 file(GLOB_RECURSE UI_FILES
