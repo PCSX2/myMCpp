@@ -46,6 +46,20 @@ bool CocoaTools::CreateMetalLayer(WindowInfo* wi)
 	return true;
 }
 
+void CocoaTools::SetDrawableSize(WindowInfo* wi, uint32_t width, uint32_t height)
+{
+	if (!wi || !wi->surface_handle || width == 0 || height == 0)
+		return;
+
+	if (![NSThread isMainThread])
+	{
+		dispatch_sync(dispatch_get_main_queue(), [wi, width, height] { SetDrawableSize(wi, width, height); });
+		return;
+	}
+
+	((__bridge CAMetalLayer*)wi->surface_handle).drawableSize = CGSizeMake(width, height);
+}
+
 void CocoaTools::DestroyMetalLayer(WindowInfo* wi)
 {
 	if (!wi)
