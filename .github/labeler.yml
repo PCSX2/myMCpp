@@ -13,12 +13,13 @@
 "Build | Project System":
   - changed-files:
     - any-glob-to-any-file:
-      - 'CMakeLists.txt'
+      - '**/CMakeLists.txt'
+      - 'CMakePresets.json'
       - 'cmake/**/*'
       - '.github/**/*'
       - 'scripts/**/*'
 
-"Linux":
+"OS: Linux":
   - changed-files:
     - any-glob-to-any-file:
       - '**/*EGL*'
@@ -26,14 +27,14 @@
       - '**/*Wayland*'
       - '**/*X11*'
 
-"Windows":
+"OS: Windows":
   - changed-files:
     - any-glob-to-any-file:
       - '**/*WGL*'
       - '**/*win32*'
       - 'resources/myMCpp.rc'
 
-"macOS":
+"OS: macOS":
   - changed-files:
     - any-glob-to-any-file:
       - 'src/core/renderer/Metal/**/*'
@@ -46,21 +47,21 @@
     - any-glob-to-any-file:
       - 'src/cli/**/*'
 
-"Vulkan":
+"Renderer: Vulkan":
   - changed-files:
     - any-glob-to-any-file:
       - '**/vulkan*'
       - '**/Vulkan*'
       - 'src/core/renderer/Vulkan/**/*'
 
-"OpenGL":
+"Renderer: OpenGL":
   - changed-files:
     - any-glob-to-any-file:
       - '**/opengl*'
       - '**/OpenGL*'
       - 'src/core/renderer/OpenGL/**/*'
 
-"Metal":
+"Renderer: Metal":
   - changed-files:
     - any-glob-to-any-file:
       - '**/metal*'
