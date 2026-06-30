@@ -183,6 +183,7 @@
             "binaryDir": "${sourceDir}/build/macos-rel",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "MinSizeRel",
+                "CMAKE_OSX_DEPLOYMENT_TARGET": "13.0",
                 "ENABLE_VULKAN": "ON"
             }
         },
@@ -194,6 +195,7 @@
             "binaryDir": "${sourceDir}/build/macos-dbg",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_OSX_DEPLOYMENT_TARGET": "13.0",
                 "ENABLE_VULKAN": "ON"
             }
         }

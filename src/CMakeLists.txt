@@ -64,34 +64,34 @@ if(WIN32)
     set_target_properties(myMCpp PROPERTIES
         WIN32_EXECUTABLE TRUE
     )
-    
+
     get_target_property(_qmake_executable Qt6::qmake IMPORTED_LOCATION)
     get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
     find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
-    
+
     if(WINDEPLOYQT_EXECUTABLE)
         add_custom_command(TARGET myMCpp POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E echo "Running windeployqt to deploy Qt dependencies..."
             COMMAND "${WINDEPLOYQT_EXECUTABLE}"
-                --no-compiler-runtime
-                "$<TARGET_FILE:myMCpp>"
+            --no-compiler-runtime
+            "$<TARGET_FILE:myMCpp>"
             VERBATIM
         )
     endif()
-    
+
     add_custom_command(TARGET myMCpp POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E echo "Copying zlib DLL to output directory..."
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:zlib>
-            $<TARGET_FILE_DIR:myMCpp>
+        $<TARGET_FILE:zlib>
+        $<TARGET_FILE_DIR:myMCpp>
         VERBATIM
     )
-    
+
     add_custom_command(TARGET myMCpp POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E echo "Copying resources folder to output directory..."
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/resources
-            $<TARGET_FILE_DIR:myMCpp>/resources
+        ${CMAKE_SOURCE_DIR}/resources
+        $<TARGET_FILE_DIR:myMCpp>/resources
         VERBATIM
     )
 endif()
@@ -99,8 +99,8 @@ endif()
 if(UNIX AND NOT APPLE)
     add_custom_command(TARGET myMCpp POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/resources
-            $<TARGET_FILE_DIR:myMCpp>/resources
+        ${CMAKE_SOURCE_DIR}/resources
+        $<TARGET_FILE_DIR:myMCpp>/resources
         COMMENT "Copying resources folder to output directory..."
     )
 endif()
@@ -111,36 +111,27 @@ if(APPLE)
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/resources/Info.plist.in"
         OUTPUT_NAME myMCpp
     )
-    
+
     set(MACOS_ICON "${CMAKE_SOURCE_DIR}/resources/icons/AppIcon.icns")
     target_sources(myMCpp PRIVATE ${MACOS_ICON})
     set_source_files_properties(${MACOS_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources/icons)
-    
+
     get_target_property(_qt_core_loc Qt6::Core LOCATION)
     get_filename_component(_qt_framework_dir "${_qt_core_loc}" DIRECTORY)
     get_filename_component(_qt_lib_dir "${_qt_framework_dir}/../../.." ABSOLUTE)
-    
+
     set_target_properties(myMCpp PROPERTIES
         BUILD_RPATH "${_qt_lib_dir};/opt/homebrew/lib"
         INSTALL_RPATH "@executable_path/../Frameworks"
         BUILD_WITH_INSTALL_RPATH FALSE
     )
-    
-    if(NOT CMAKE_GENERATOR MATCHES "Xcode" AND TARGET CompileMetalShaders)
-        add_dependencies(myMCpp CompileMetalShaders)
-        add_custom_command(TARGET myMCpp POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${CMAKE_BINARY_DIR}/default.metallib
-                $<TARGET_FILE_DIR:myMCpp>/../Resources/shaders/Metal/default.metallib
-        )
-    endif()
-    
+
     option(SKIP_POSTPROCESS_BUNDLE "Skip running macdeployqt" OFF)
     if(NOT SKIP_POSTPROCESS_BUNDLE)
         get_target_property(QT_QMAKE_LOCATION Qt6::qmake IMPORTED_LOCATION)
         get_filename_component(QT_BIN_DIR "${QT_QMAKE_LOCATION}" DIRECTORY)
         get_filename_component(QT_LIB_DIR "${QT_BIN_DIR}/../lib" ABSOLUTE)
-        
+
         add_custom_target(myMCpp-postprocess-bundle ALL
             COMMAND Qt6::macdeployqt "$<TARGET_FILE_DIR:myMCpp>/../.." -no-strip -always-overwrite -libpath=${QT_LIB_DIR}
             COMMAND codesign --force --deep --sign - "$<TARGET_FILE_DIR:myMCpp>/../.."
@@ -148,12 +139,15 @@ if(APPLE)
         )
         add_dependencies(myMCpp-postprocess-bundle myMCpp)
     endif()
-    
+
     add_custom_command(TARGET myMCpp POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/resources
-            $<TARGET_FILE_DIR:myMCpp>/../Resources
+        ${CMAKE_SOURCE_DIR}/resources
+        $<TARGET_FILE_DIR:myMCpp>/../Resources
     )
+
+    include(MetalShaders)
+    myMCpp_bundle_metal(myMCpp)
 endif()
 
 if(MSVC)
