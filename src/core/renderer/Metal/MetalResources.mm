@@ -22,6 +22,8 @@ MetalResources::~MetalResources()
 
 bool MetalResources::initialize(id<MTLDevice> device)
 {
+	m_error.Clear();
+
 	for (int i = 0; i < kMaxFramesInFlight; i++)
 	{
 		m_renderSemaphores[i] = dispatch_semaphore_create(1);
@@ -34,9 +36,7 @@ bool MetalResources::initialize(id<MTLDevice> device)
 		m_frames[i].backgroundBuffer = [device newBufferWithLength:kBackgroundBufferBytes options:MTLResourceStorageModeShared];
 
 		if (!m_frames[i].vertexBuffer || !m_frames[i].uniformBuffer || !m_frames[i].backgroundBuffer)
-		{
-			return false;
-		}
+			return m_error.Fail("MTL: Failed to create frame buffers");
 	}
 
 	MTLSamplerDescriptor* samplerDesc = [[MTLSamplerDescriptor alloc] init];
@@ -47,9 +47,7 @@ bool MetalResources::initialize(id<MTLDevice> device)
 	m_samplerState = [device newSamplerStateWithDescriptor:samplerDesc];
 
 	if (!m_samplerState)
-	{
-		return false;
-	}
+		return m_error.Fail("MTL: Failed to create sampler state");
 
 	return true;
 }

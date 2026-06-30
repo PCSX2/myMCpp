@@ -14,16 +14,15 @@ VulkanResources::~VulkanResources() = default;
 
 bool VulkanResources::createCommandPool(VkDevice device, uint32_t queueFamily)
 {
+	m_error.Clear();
+
 	VkCommandPoolCreateInfo poolInfo{};
 	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 	poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 	poolInfo.queueFamilyIndex = queueFamily;
 
 	if (vkCreateCommandPool(device, &poolInfo, nullptr, &m_commandPool) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create command pool");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create command pool");
 
 	return true;
 }
@@ -45,14 +44,13 @@ bool VulkanResources::recreateRenderFinishedSemaphores(VkDevice device, uint32_t
 	{
 		if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_renderFinishedSemaphores[i]) != VK_SUCCESS)
 		{
-			Logger::error("VK: Failed to create render-finished semaphore {}", i);
 			for (uint32_t j = 0; j < i; ++j)
 			{
 				vkDestroySemaphore(device, m_renderFinishedSemaphores[j], nullptr);
 				m_renderFinishedSemaphores[j] = VK_NULL_HANDLE;
 			}
 			m_renderFinishedSemaphores.clear();
-			return false;
+			return m_error.Fail("VK: Failed to create render-finished semaphore " + std::to_string(i));
 		}
 	}
 	return true;
@@ -60,6 +58,8 @@ bool VulkanResources::recreateRenderFinishedSemaphores(VkDevice device, uint32_t
 
 bool VulkanResources::createSyncObjects(VkDevice device, uint32_t swapchainImageCount)
 {
+	m_error.Clear();
+
 	VkSemaphoreCreateInfo semaphoreInfo{};
 	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -69,12 +69,16 @@ bool VulkanResources::createSyncObjects(VkDevice device, uint32_t swapchainImage
 
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS ||
-			vkCreateFence(device, &fenceInfo, nullptr, &m_inFlightFences[i]) != VK_SUCCESS)
-		{
-			Logger::error("VK: Failed to create synchronization objects for frame {}", i);
-			return false;
-		}
+		m_imageAvailableSemaphores[i] = VK_NULL_HANDLE;
+		m_inFlightFences[i] = VK_NULL_HANDLE;
+
+		const VkResult semResult = vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_imageAvailableSemaphores[i]);
+		if (semResult != VK_SUCCESS)
+			return m_error.Fail("VK: Failed to create semaphore for frame " + std::to_string(i) + " (VkResult " + std::to_string(static_cast<int>(semResult)) + ")");
+
+		const VkResult fenceResult = vkCreateFence(device, &fenceInfo, nullptr, &m_inFlightFences[i]);
+		if (fenceResult != VK_SUCCESS)
+			return m_error.Fail("VK: Failed to create fence for frame " + std::to_string(i) + " (VkResult " + std::to_string(static_cast<int>(fenceResult)) + ")");
 	}
 
 	if (!recreateRenderFinishedSemaphores(device, swapchainImageCount))
@@ -85,10 +89,7 @@ bool VulkanResources::createSyncObjects(VkDevice device, uint32_t swapchainImage
 	singleTimeFenceInfo.flags = 0;
 
 	if (vkCreateFence(device, &singleTimeFenceInfo, nullptr, &m_singleTimeFence) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create single-time command fence");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create single-time command fence");
 
 	Logger::info("VK: Created sync objects for {} frames", frameCount);
 	return true;
@@ -189,10 +190,10 @@ bool VulkanResources::createImage(VulkanDevice& device, uint32_t width, uint32_t
 	allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
 	device.setAllocationPriority(allocInfo, priority);
 
-	if (vmaCreateImage(device.getAllocator(), &imageInfo, &allocInfo, &image, &allocation, nullptr) != VK_SUCCESS)
+	const VkResult result = vmaCreateImage(device.getAllocator(), &imageInfo, &allocInfo, &image, &allocation, nullptr);
+	if (result != VK_SUCCESS)
 	{
-		Logger::error("VK: Failed to create image");
-		return false;
+		return m_error.Fail("VK: Failed to create image (" + std::to_string(width) + "x" + std::to_string(height) + ", VkResult " + std::to_string(static_cast<int>(result)) + ")");
 	}
 
 	return true;
@@ -289,19 +290,24 @@ bool VulkanResources::createMappedBuffer(VulkanDevice& device, VkDeviceSize size
 	allocInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
 	device.setAllocationPriority(allocInfo, priority);
 
-	return vmaCreateBuffer(device.getAllocator(), &bufferInfo, &allocInfo, &buffer, &allocation, &mapped) == VK_SUCCESS;
+	const VkResult result = vmaCreateBuffer(device.getAllocator(), &bufferInfo, &allocInfo, &buffer, &allocation, &mapped);
+	if (result != VK_SUCCESS)
+	{
+		return m_error.Fail("VK: Failed to create buffer (size " + std::to_string(size) + ", VkResult " + std::to_string(static_cast<int>(result)) + ")");
+	}
+
+	return true;
 }
 
 bool VulkanResources::createBackgroundVertexBuffer(VulkanDevice& device)
 {
+	m_error.Clear();
+
 	destroyBackgroundVertexBuffer(device.getAllocator());
 
 	if (!createMappedBuffer(device, sizeof(VulkanBGVertex) * 4, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 0.5f,
 			m_bgVertexBuffer, m_bgVertexAllocation, m_bgVertexAllocInfo))
-	{
-		Logger::error("VK: Failed to create background vertex buffer");
 		return false;
-	}
 
 	return true;
 }

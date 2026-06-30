@@ -46,6 +46,7 @@ call "$(SolutionDir)scripts\generate_svnrev.cmd" "$(SolutionDir)" "$(SolutionDir
     <ClCompile Include="sjis.cpp" />
     <ClCompile Include="lzari.cpp" />
     <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="Error.cpp" />
     <ClCompile Include="WindowInfo.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="BuildVersion.cpp" />
@@ -58,6 +59,7 @@ call "$(SolutionDir)scripts\generate_svnrev.cmd" "$(SolutionDir)" "$(SolutionDir
     <ClInclude Include="sjis.h" />
     <ClInclude Include="lzari.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="Error.h" />
     <ClInclude Include="WindowInfo.h" />
     <ClInclude Include="Config.h" />
   </ItemGroup>

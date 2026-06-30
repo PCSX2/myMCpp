@@ -4,6 +4,7 @@
 #pragma once
 
 #include <Metal/Metal.h>
+#include "../../../common/Error.h"
 
 class MetalPipeline
 {
@@ -15,12 +16,15 @@ public:
 	bool createBackgroundPipeline(id<MTLDevice> device);
 	void shutdown();
 
+	const Error& GetError() const { return m_error; }
+
 	id<MTLRenderPipelineState> getPipelineState() const { return m_pipelineState; }
 	id<MTLRenderPipelineState> getBackgroundPipelineState() const { return m_bgPipelineState; }
 	id<MTLDepthStencilState> getDepthStencilState() const { return m_depthStencilState; }
 	id<MTLDepthStencilState> getBackgroundDepthStencilState() const { return m_bgDepthStencilState; }
 
 private:
+	Error m_error;
 	id<MTLLibrary> m_library = nil;
 	id<MTLRenderPipelineState> m_pipelineState = nil;
 	id<MTLRenderPipelineState> m_bgPipelineState = nil;

@@ -46,14 +46,24 @@ VulkanDevice::~VulkanDevice()
 
 bool VulkanDevice::create(const WindowInfo& windowInfo)
 {
+	m_error.Clear();
 	if (!createInstance())
 		return false;
 	if (!createSurface(windowInfo))
+	{
+		destroy();
 		return false;
+	}
 	if (!selectPhysicalDevice())
+	{
+		destroy();
 		return false;
+	}
 	if (!createLogicalDevice())
+	{
+		destroy();
 		return false;
+	}
 	return true;
 }
 
@@ -183,10 +193,7 @@ bool VulkanDevice::createInstance()
 #endif
 
 	if (vkCreateInstance(&createInfo, nullptr, &m_instance) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create Vulkan instance");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create Vulkan instance");
 
 #ifndef NDEBUG
 	if (enableDebugValidation)
@@ -214,25 +221,16 @@ bool VulkanDevice::createInstance()
 bool VulkanDevice::createSurface(const WindowInfo& windowInfo)
 {
 	if (windowInfo.type != WindowInfo::Type::Surfaceless && !windowInfo.window_handle)
-	{
-		Logger::error("VK: No native window handle available");
-		return false;
-	}
+		return m_error.Fail("VK: No native window handle available");
 
 #if defined(_WIN32)
 	if (windowInfo.type != WindowInfo::Type::Win32)
-	{
-		Logger::error("VK: Invalid window type for Windows");
-		return false;
-	}
+		return m_error.Fail("VK: Invalid window type for Windows");
 
 	HWND hwnd = reinterpret_cast<HWND>(windowInfo.window_handle);
 
 	if (!IsWindow(hwnd))
-	{
-		Logger::error("VK: Window handle is invalid");
-		return false;
-	}
+		return m_error.Fail("VK: Window handle is invalid");
 
 	VkWin32SurfaceCreateInfoKHR createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
@@ -242,10 +240,7 @@ bool VulkanDevice::createSurface(const WindowInfo& windowInfo)
 	VkResult result = vkCreateWin32SurfaceKHR(m_instance, &createInfo, nullptr, &m_surface);
 
 	if (result != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create window surface: {}", static_cast<int>(result));
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create window surface (VkResult " + std::to_string(static_cast<int>(result)) + ")");
 
 	Logger::info("VK: Win32 surface created successfully");
 	return true;
@@ -258,10 +253,7 @@ bool VulkanDevice::createSurface(const WindowInfo& windowInfo)
 		createInfo.surface = static_cast<wl_surface*>(windowInfo.window_handle);
 
 		if (vkCreateWaylandSurfaceKHR(m_instance, &createInfo, nullptr, &m_surface) != VK_SUCCESS)
-		{
-			Logger::error("VK: Failed to create Wayland surface");
-			return false;
-		}
+			return m_error.Fail("VK: Failed to create Wayland surface");
 		Logger::info("VK: Wayland surface created successfully");
 		return true;
 	}
@@ -274,10 +266,7 @@ bool VulkanDevice::createSurface(const WindowInfo& windowInfo)
 		{
 			display = XOpenDisplay(nullptr);
 			if (!display)
-			{
-				Logger::error("VK: Failed to open X display");
-				return false;
-			}
+				return m_error.Fail("VK: Failed to open X display");
 			ownDisplay = true;
 		}
 
@@ -288,10 +277,9 @@ bool VulkanDevice::createSurface(const WindowInfo& windowInfo)
 
 		if (vkCreateXlibSurfaceKHR(m_instance, &createInfo, nullptr, &m_surface) != VK_SUCCESS)
 		{
-			Logger::error("VK: Failed to create Xlib surface");
 			if (ownDisplay)
 				XCloseDisplay(display);
-			return false;
+			return m_error.Fail("VK: Failed to create Xlib surface");
 		}
 
 		if (ownDisplay)
@@ -301,22 +289,13 @@ bool VulkanDevice::createSurface(const WindowInfo& windowInfo)
 		return true;
 	}
 	else
-	{
-		Logger::error("VK: Unknown or invalid window type for Linux");
-		return false;
-	}
+		return m_error.Fail("VK: Unknown or invalid window type for Linux");
 #elif defined(__APPLE__)
 	if (windowInfo.type != WindowInfo::Type::MacOS)
-	{
-		Logger::error("VK: Invalid window type for macOS");
-		return false;
-	}
+		return m_error.Fail("VK: Invalid window type for macOS");
 
 	if (!windowInfo.surface_handle)
-	{
-		Logger::error("VK: Metal layer not created for MoltenVK");
-		return false;
-	}
+		return m_error.Fail("VK: Metal layer not created for MoltenVK");
 
 	VkMetalSurfaceCreateInfoEXT createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
@@ -325,16 +304,12 @@ bool VulkanDevice::createSurface(const WindowInfo& windowInfo)
 	VkResult result = vkCreateMetalSurfaceEXT(m_instance, &createInfo, nullptr, &m_surface);
 
 	if (result != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create Metal surface: {}", static_cast<int>(result));
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create Metal surface (VkResult " + std::to_string(static_cast<int>(result)) + ")");
 
 	Logger::info("VK: Metal surface created successfully for MoltenVK");
 	return true;
 #else
-	Logger::error("VK: Vulkan surface creation not implemented for this platform");
-	return false;
+	return m_error.Fail("VK: Vulkan surface creation not implemented for this platform");
 #endif
 }
 
@@ -344,10 +319,7 @@ bool VulkanDevice::selectPhysicalDevice()
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
 
 	if (deviceCount == 0)
-	{
-		Logger::error("VK: No Vulkan devices found");
-		return false;
-	}
+		return m_error.Fail("VK: No Vulkan devices found");
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
@@ -381,15 +353,14 @@ bool VulkanDevice::selectPhysicalDevice()
 				{
 					m_physicalDevice = device;
 					m_graphicsQueueFamily = i;
-					Logger::info("VK: Selected device: {}", props.deviceName);
+					Logger::info("VK: Using device: {}", props.deviceName);
 					return true;
 				}
 			}
 		}
 	}
 
-	Logger::error("VK: No suitable GPU found");
-	return false;
+	return m_error.Fail("VK: No suitable device found");
 }
 
 bool VulkanDevice::createLogicalDevice()
@@ -460,10 +431,7 @@ bool VulkanDevice::createLogicalDevice()
 	createInfo.ppEnabledExtensionNames = extensions.data();
 
 	if (vkCreateDevice(m_physicalDevice, &createInfo, nullptr, &m_device) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create logical device");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create logical device");
 
 	m_supportsMemoryPriority = supportsMemoryPriority;
 
@@ -478,10 +446,7 @@ bool VulkanDevice::createLogicalDevice()
 		allocatorInfo.flags |= VMA_ALLOCATOR_CREATE_EXT_MEMORY_PRIORITY_BIT;
 
 	if (vmaCreateAllocator(&allocatorInfo, &m_allocator) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create VMA allocator");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create VMA allocator");
 
 	Logger::info("VK: VMA allocator created successfully");
 	return true;

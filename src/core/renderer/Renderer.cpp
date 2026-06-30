@@ -36,33 +36,39 @@ std::unique_ptr<Renderer> RendererFactory::createRenderer(
 }
 
 #if defined(ENABLE_VULKAN)
-std::unique_ptr<Renderer> RendererFactory::createVulkanRenderer(const WindowInfo& windowInfo, Config* config)
+std::unique_ptr<Renderer> RendererFactory::createVulkanRenderer(const WindowInfo& windowInfo, Config* config, Error* error)
 {
 	auto renderer = std::make_unique<VulkanRenderer>(windowInfo, config);
 	if (!renderer->initialize())
 	{
+		if (error)
+			*error = renderer->GetError();
 		return nullptr;
 	}
 	return renderer;
 }
 #endif
 
-std::unique_ptr<Renderer> RendererFactory::createOpenGLRenderer(const WindowInfo& windowInfo, Config* config)
+std::unique_ptr<Renderer> RendererFactory::createOpenGLRenderer(const WindowInfo& windowInfo, Config* config, Error* error)
 {
 	auto renderer = std::make_unique<OpenGLRenderer>(windowInfo, config);
 	if (!renderer->initialize())
 	{
+		if (error)
+			*error = renderer->GetError();
 		return nullptr;
 	}
 	return renderer;
 }
 
 #if defined(__APPLE__)
-std::unique_ptr<Renderer> RendererFactory::createMetalRenderer(const WindowInfo& windowInfo, Config* config)
+std::unique_ptr<Renderer> RendererFactory::createMetalRenderer(const WindowInfo& windowInfo, Config* config, Error* error)
 {
 	auto renderer = std::make_unique<MetalRenderer>(windowInfo, config);
 	if (!renderer->initialize())
 	{
+		if (error)
+			*error = renderer->GetError();
 		return nullptr;
 	}
 	return renderer;

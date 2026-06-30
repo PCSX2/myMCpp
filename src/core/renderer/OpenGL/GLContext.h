@@ -8,6 +8,8 @@
 #include <memory>
 #include <string>
 
+class Error;
+
 class GLContext
 {
 public:
@@ -19,7 +21,7 @@ public:
 
 	virtual ~GLContext();
 
-	static std::unique_ptr<GLContext> Create(const WindowInfo& windowInfo, std::string* error = nullptr);
+	static std::unique_ptr<GLContext> Create(const WindowInfo& windowInfo, Error* error = nullptr);
 
 	virtual bool initialize() = 0;
 	virtual bool makeCurrent() = 0;
@@ -33,10 +35,15 @@ public:
 	uint32_t getWidth() const { return m_width; }
 	uint32_t getHeight() const { return m_height; }
 
+	void setCreationError(Error* error) { m_creationError = error; }
+
 protected:
 	GLContext(const WindowInfo& windowInfo);
+
+	bool failCreation(std::string message);
 
 	WindowInfo m_windowInfo;
 	uint32_t m_width;
 	uint32_t m_height;
+	Error* m_creationError = nullptr;
 };

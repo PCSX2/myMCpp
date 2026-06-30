@@ -16,6 +16,7 @@
 #pragma clang diagnostic pop
 #endif
 #include "Logger.h"
+#include "../../../common/Error.h"
 #include <cstring>
 
 extern "C" {
@@ -58,14 +59,14 @@ GLContextWGL::~GLContextWGL()
 	cleanup();
 }
 
-std::unique_ptr<GLContext> GLContextWGL::Create(const WindowInfo& windowInfo, std::string* error)
+std::unique_ptr<GLContext> GLContextWGL::Create(const WindowInfo& windowInfo, Error* error)
 {
 	std::unique_ptr<GLContextWGL> context(new GLContextWGL(windowInfo));
 
 	if (!context)
 	{
 		if (error)
-			*error = "Failed to allocate GLContextWGL";
+			*error = Error::CreateString("GL: Failed to allocate GLContextWGL");
 		return nullptr;
 	}
 
@@ -80,14 +81,10 @@ bool GLContextWGL::initialize()
 			return true;
 
 		if (!createWindow())
-		{
-			Logger::error("GL: Failed to create window");
 			return false;
-		}
 
 		if (!createContext())
 		{
-			Logger::error("GL: Failed to create context");
 			cleanup();
 			return false;
 		}
@@ -98,7 +95,7 @@ bool GLContextWGL::initialize()
 	}
 	catch (const std::exception& e)
 	{
-		Logger::error("GL: Exception during initialization: {}", e.what());
+		failCreation(std::string("GL: Exception during initialization: ") + e.what());
 		cleanup();
 		return false;
 	}
@@ -112,16 +109,12 @@ bool GLContextWGL::createWindow()
 		{
 			m_hwnd = reinterpret_cast<HWND>(m_windowInfo.window_handle);
 			if (!m_hwnd)
-			{
-				Logger::error("GL: External window handle is null");
-				return false;
-			}
+				return failCreation("GL: External window handle is null");
 
 			m_hdc = GetDC(m_hwnd);
 			if (!m_hdc)
 			{
-				Logger::error("GL: Failed to get device context for external window: {}", GetLastError());
-				return false;
+				return failCreation("GL: Failed to get device context for external window (Win32 error " + std::to_string(GetLastError()) + ")");
 			}
 
 			Logger::info("GL: Using external window for OpenGL context");
@@ -149,15 +142,12 @@ bool GLContextWGL::createWindow()
 			this);
 
 		if (!m_hwnd)
-		{
-			Logger::error("GL: Failed to create window: {}", GetLastError());
-			return false;
-		}
+			return failCreation("GL: Failed to create window (Win32 error " + std::to_string(GetLastError()) + ")");
 
 		m_hdc = GetDC(m_hwnd);
 		if (!m_hdc)
 		{
-			Logger::error("GL: Failed to get device context: {}", GetLastError());
+			failCreation("GL: Failed to get device context (Win32 error " + std::to_string(GetLastError()) + ")");
 			DestroyWindow(m_hwnd);
 			m_hwnd = nullptr;
 			return false;
@@ -168,8 +158,7 @@ bool GLContextWGL::createWindow()
 	}
 	catch (const std::exception& e)
 	{
-		Logger::error("GL: Exception creating window: {}", e.what());
-		return false;
+		return failCreation(std::string("GL: Exception creating window: ") + e.what());
 	}
 }
 
@@ -195,30 +184,18 @@ bool GLContextWGL::createContext()
 
 			int pixelFormat = ChoosePixelFormat(m_hdc, &pfd);
 			if (pixelFormat == 0)
-			{
-				Logger::error("GL: Failed to choose pixel format: {}", GetLastError());
-				return false;
-			}
+				return failCreation("GL: Failed to choose pixel format (Win32 error " + std::to_string(GetLastError()) + ")");
 
 			if (!SetPixelFormat(m_hdc, pixelFormat, &pfd))
-			{
-				Logger::error("GL: Failed to set pixel format: {}", GetLastError());
-				return false;
-			}
+				return failCreation("GL: Failed to set pixel format (Win32 error " + std::to_string(GetLastError()) + ")");
 		}
 
 		m_hglrc = wglCreateContext(m_hdc);
 		if (!m_hglrc)
-		{
-			Logger::error("GL: Failed to create GL context: {}", GetLastError());
-			return false;
-		}
+			return failCreation("GL: Failed to create GL context (Win32 error " + std::to_string(GetLastError()) + ")");
 
 		if (!wglMakeCurrent(m_hdc, m_hglrc))
-		{
-			Logger::error("GL: Failed to make context current for VSync setup: {}", GetLastError());
-			return false;
-		}
+			return failCreation("GL: Failed to make context current for VSync setup (Win32 error " + std::to_string(GetLastError()) + ")");
 
 		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
 
@@ -239,8 +216,7 @@ bool GLContextWGL::createContext()
 	}
 	catch (const std::exception& e)
 	{
-		Logger::error("GL: Exception creating context: {}", e.what());
-		return false;
+		return failCreation(std::string("GL: Exception creating context: ") + e.what());
 	}
 }
 
@@ -252,17 +228,13 @@ bool GLContextWGL::makeCurrent()
 			return false;
 
 		if (!wglMakeCurrent(m_hdc, m_hglrc))
-		{
-			Logger::error("GL: Failed to make context current: {}", GetLastError());
-			return false;
-		}
+			return failCreation("GL: Failed to make context current (Win32 error " + std::to_string(GetLastError()) + ")");
 
 		return true;
 	}
 	catch (const std::exception& e)
 	{
-		Logger::error("GL: Exception making context current: {}", e.what());
-		return false;
+		return failCreation(std::string("GL: Exception making context current: ") + e.what());
 	}
 }
 

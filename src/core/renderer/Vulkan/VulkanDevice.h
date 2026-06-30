@@ -6,6 +6,7 @@
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
 #include <cstdint>
+#include "../../../common/Error.h"
 
 struct WindowInfo;
 
@@ -20,6 +21,8 @@ public:
 
 	bool create(const WindowInfo& windowInfo);
 	void destroy();
+
+	const Error& GetError() const { return m_error; }
 
 	VkInstance getInstance() const { return m_instance; }
 	VkSurfaceKHR getSurface() const { return m_surface; }
@@ -37,6 +40,8 @@ private:
 	bool createSurface(const WindowInfo& windowInfo);
 	bool selectPhysicalDevice();
 	bool createLogicalDevice();
+
+	Error m_error;
 
 	VkInstance m_instance = VK_NULL_HANDLE;
 	VkSurfaceKHR m_surface = VK_NULL_HANDLE;

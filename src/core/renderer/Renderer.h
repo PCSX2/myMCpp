@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <memory>
 #include <vector>
+#include "../../common/Error.h"
 #include "WindowInfo.h"
 
 class Config;
@@ -38,6 +39,8 @@ class Renderer
 public:
 	virtual ~Renderer() = default;
 
+	const Error& GetError() const { return m_error; }
+
 	virtual bool initialize() = 0;
 	virtual void shutdown() = 0;
 	virtual bool isInitialized() const = 0;
@@ -65,6 +68,9 @@ public:
 
 	virtual uint32_t getVertexCount() const = 0;
 	virtual uint32_t getFrameCount() const = 0;
+
+protected:
+	Error m_error;
 };
 
 class RendererFactory
@@ -84,15 +90,18 @@ public:
 
 	static std::unique_ptr<Renderer> createVulkanRenderer(
 		const WindowInfo& windowInfo,
-		Config* config = nullptr);
+		Config* config = nullptr,
+		Error* error = nullptr);
 
 	static std::unique_ptr<Renderer> createOpenGLRenderer(
 		const WindowInfo& windowInfo,
-		Config* config = nullptr);
+		Config* config = nullptr,
+		Error* error = nullptr);
 
 	static std::unique_ptr<Renderer> createMetalRenderer(
 		const WindowInfo& windowInfo,
-		Config* config = nullptr);
+		Config* config = nullptr,
+		Error* error = nullptr);
 
 	static void registerRenderer(Renderer* renderer);
 	static void unregisterRenderer(Renderer* renderer);

@@ -9,6 +9,7 @@
 #include <wayland-egl.h>
 #include <wayland-client.h>
 #include "Logger.h"
+#include "../../../common/Error.h"
 #include <cstring>
 
 GLContextEGL::GLContextEGL(const WindowInfo& windowInfo)
@@ -26,14 +27,14 @@ GLContextEGL::~GLContextEGL()
 	cleanup();
 }
 
-std::unique_ptr<GLContext> GLContextEGL::Create(const WindowInfo& windowInfo, std::string* error)
+std::unique_ptr<GLContext> GLContextEGL::Create(const WindowInfo& windowInfo, Error* error)
 {
 	std::unique_ptr<GLContextEGL> context(new GLContextEGL(windowInfo));
 
 	if (!context)
 	{
 		if (error)
-			*error = "Failed to allocate GLContextEGL";
+			*error = Error::CreateString("GL: Failed to allocate GLContextEGL");
 		return nullptr;
 	}
 
@@ -46,28 +47,22 @@ bool GLContextEGL::initialize()
 		return true;
 
 	if (!initializeDisplay())
-	{
-		Logger::error("GL: Failed to initialize display");
 		return false;
-	}
 
 	if (!chooseConfig())
 	{
-		Logger::error("GL: Failed to choose config");
 		cleanup();
 		return false;
 	}
 
 	if (!createSurface())
 	{
-		Logger::error("GL: Failed to create surface");
 		cleanup();
 		return false;
 	}
 
 	if (!createContext())
 	{
-		Logger::error("GL: Failed to create context");
 		cleanup();
 		return false;
 	}
@@ -89,15 +84,12 @@ bool GLContextEGL::initializeDisplay()
 	}
 
 	if (m_display == EGL_NO_DISPLAY)
-	{
-		Logger::error("GL: Failed to get EGL display");
-		return false;
-	}
+		return failCreation("GL: Failed to get EGL display");
 
 	EGLint major, minor;
 	if (!eglInitialize(m_display, &major, &minor))
 	{
-		Logger::error("GL: Failed to initialize EGL: {}", eglGetError());
+		failCreation("GL: Failed to initialize EGL (EGL error " + std::to_string(eglGetError()) + ")");
 		m_display = EGL_NO_DISPLAY;
 		return false;
 	}
@@ -121,10 +113,7 @@ bool GLContextEGL::chooseConfig()
 
 	EGLint numConfigs;
 	if (!eglChooseConfig(m_display, configAttribs, &m_config, 1, &numConfigs) || numConfigs == 0)
-	{
-		Logger::error("GL: Failed to choose EGL config: {}", eglGetError());
-		return false;
-	}
+		return failCreation("GL: Failed to choose EGL config (EGL error " + std::to_string(eglGetError()) + ")");
 
 	Logger::info("GL: EGL config chosen");
 	return true;
@@ -133,10 +122,7 @@ bool GLContextEGL::chooseConfig()
 bool GLContextEGL::createSurface()
 {
 	if (!m_windowInfo.window_handle)
-	{
-		Logger::error("GL: No native window handle provided");
-		return false;
-	}
+		return failCreation("GL: No native window handle provided");
 
 	EGLNativeWindowType nativeWindow = reinterpret_cast<EGLNativeWindowType>(m_windowInfo.window_handle);
 
@@ -145,20 +131,14 @@ bool GLContextEGL::createSurface()
 		struct wl_surface* surf = reinterpret_cast<struct wl_surface*>(m_windowInfo.window_handle);
 		m_waylandWindow = wl_egl_window_create(surf, m_width, m_height);
 		if (!m_waylandWindow)
-		{
-			Logger::error("GL: Failed to create wl_egl_window");
-			return false;
-		}
+			return failCreation("GL: Failed to create wl_egl_window");
 		nativeWindow = reinterpret_cast<EGLNativeWindowType>(m_waylandWindow);
 	}
 
 	m_surface = eglCreateWindowSurface(m_display, m_config, nativeWindow, nullptr);
 
 	if (m_surface == EGL_NO_SURFACE)
-	{
-		Logger::error("GL: Failed to create EGL surface: {}", eglGetError());
-		return false;
-	}
+		return failCreation("GL: Failed to create EGL surface (EGL error " + std::to_string(eglGetError()) + ")");
 
 	Logger::info("GL: EGL surface created");
 	return true;
@@ -167,10 +147,7 @@ bool GLContextEGL::createSurface()
 bool GLContextEGL::createContext()
 {
 	if (!eglBindAPI(EGL_OPENGL_API))
-	{
-		Logger::error("GL: Failed to bind OpenGL API: {}", eglGetError());
-		return false;
-	}
+		return failCreation("GL: Failed to bind OpenGL API (EGL error " + std::to_string(eglGetError()) + ")");
 
 	const EGLint contextAttribs[] = {
 		EGL_CONTEXT_MAJOR_VERSION, 3,
@@ -180,10 +157,7 @@ bool GLContextEGL::createContext()
 
 	m_context = eglCreateContext(m_display, m_config, EGL_NO_CONTEXT, contextAttribs);
 	if (m_context == EGL_NO_CONTEXT)
-	{
-		Logger::error("GL: Failed to create EGL context: {}", eglGetError());
-		return false;
-	}
+		return failCreation("GL: Failed to create EGL context (EGL error " + std::to_string(eglGetError()) + ")");
 
 	Logger::info("GL: EGL context created");
 	return true;
@@ -195,10 +169,7 @@ bool GLContextEGL::makeCurrent()
 		return false;
 
 	if (!eglMakeCurrent(m_display, m_surface, m_surface, m_context))
-	{
-		Logger::error("GL: Failed to make context current: {}", eglGetError());
-		return false;
-	}
+		return failCreation("GL: Failed to make context current (EGL error " + std::to_string(eglGetError()) + ")");
 
 	return true;
 }

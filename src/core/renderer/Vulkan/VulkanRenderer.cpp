@@ -63,43 +63,40 @@ bool VulkanRenderer::initialize()
 	if (!m_windowInfo.surface_handle)
 	{
 		if (!CocoaTools::CreateMetalLayer(&m_windowInfo))
-		{
-			Logger::error("VK: Failed to create Metal layer for MoltenVK");
-			return false;
-		}
+			return m_error.Fail("VK: Failed to create Metal layer for MoltenVK");
 	}
 	CocoaTools::SetDrawableSize(&m_windowInfo, m_width, m_height);
 #endif
 
 	if (!m_vulkanDevice.create(m_windowInfo))
-		return false;
+		return m_error.Assign(m_vulkanDevice.GetError());
 
 	if (!m_vulkanSwapchain.create(m_vulkanDevice, m_width, m_height))
-		return false;
+		return m_error.Assign(m_vulkanSwapchain.GetError());
 
 	VkRenderPass renderPass = m_vulkanSwapchain.getRenderPass();
 
 	if (!m_vulkanPipeline.createPipelineCache(m_vulkanDevice.getDevice()))
-		return false;
+		return m_error.Assign(m_vulkanPipeline.GetError());
 
 	if (!m_vulkanPipeline.createMainPipeline(m_vulkanDevice.getDevice(), renderPass))
-		return false;
+		return m_error.Assign(m_vulkanPipeline.GetError());
 
 	if (!m_vulkanPipeline.createBackgroundPipeline(m_vulkanDevice.getDevice(), renderPass))
-		return false;
+		return m_error.Assign(m_vulkanPipeline.GetError());
 
 	if (!createDescriptorResources())
 		return false;
 
 	if (!m_vulkanResources.createCommandPool(m_vulkanDevice.getDevice(), m_vulkanDevice.getGraphicsQueueFamily()))
-		return false;
+		return m_error.Assign(m_vulkanResources.GetError());
 
 	if (!m_vulkanResources.createBackgroundVertexBuffer(m_vulkanDevice))
-		return false;
+		return m_error.Assign(m_vulkanResources.GetError());
 
 	if (!m_vulkanResources.createSyncObjects(m_vulkanDevice.getDevice(),
 			static_cast<uint32_t>(m_vulkanSwapchain.getImages().size())))
-		return false;
+		return m_error.Assign(m_vulkanResources.GetError());
 
 	if (!allocateCommandBuffers())
 		return false;
@@ -113,13 +110,10 @@ bool VulkanRenderer::initialize()
 
 void VulkanRenderer::shutdown()
 {
-	if (!m_initialized)
-		return;
-
 	VkDevice device = m_vulkanDevice.getDevice();
-	VmaAllocator allocator = m_vulkanDevice.getAllocator();
 	if (device != VK_NULL_HANDLE)
 	{
+		VmaAllocator allocator = m_vulkanDevice.getAllocator();
 		vkDeviceWaitIdle(device);
 
 		if (!m_commandBuffers.empty())
@@ -129,25 +123,48 @@ void VulkanRenderer::shutdown()
 			m_commandBuffers.clear();
 		}
 
-		if (m_vertexBuffer != VK_NULL_HANDLE)
-			vmaDestroyBuffer(allocator, m_vertexBuffer, m_vertexAllocation);
-		if (m_uniformBuffer != VK_NULL_HANDLE)
-			vmaDestroyBuffer(allocator, m_uniformBuffer, m_uniformAllocation);
-		if (m_textureSampler != VK_NULL_HANDLE)
-			vkDestroySampler(device, m_textureSampler, nullptr);
-		if (m_textureView != VK_NULL_HANDLE)
-			vkDestroyImageView(device, m_textureView, nullptr);
-		if (m_textureImage != VK_NULL_HANDLE)
-			vmaDestroyImage(allocator, m_textureImage, m_textureAllocation);
-		if (m_stagingBuffer != VK_NULL_HANDLE)
-			vmaDestroyBuffer(allocator, m_stagingBuffer, m_stagingAllocation);
-		if (m_descriptorPool != VK_NULL_HANDLE)
-			vkDestroyDescriptorPool(device, m_descriptorPool, nullptr);
-
 		m_vulkanResources.destroy(device, allocator);
 		m_vulkanPipeline.destroy(device);
 		m_vulkanSwapchain.destroy(device, allocator);
+
+		if (m_vertexBuffer != VK_NULL_HANDLE)
+		{
+			vmaDestroyBuffer(allocator, m_vertexBuffer, m_vertexAllocation);
+			m_vertexBuffer = VK_NULL_HANDLE;
+		}
+		if (m_uniformBuffer != VK_NULL_HANDLE)
+		{
+			vmaDestroyBuffer(allocator, m_uniformBuffer, m_uniformAllocation);
+			m_uniformBuffer = VK_NULL_HANDLE;
+		}
+		if (m_textureSampler != VK_NULL_HANDLE)
+		{
+			vkDestroySampler(device, m_textureSampler, nullptr);
+			m_textureSampler = VK_NULL_HANDLE;
+		}
+		if (m_textureView != VK_NULL_HANDLE)
+		{
+			vkDestroyImageView(device, m_textureView, nullptr);
+			m_textureView = VK_NULL_HANDLE;
+		}
+		if (m_textureImage != VK_NULL_HANDLE)
+		{
+			vmaDestroyImage(allocator, m_textureImage, m_textureAllocation);
+			m_textureImage = VK_NULL_HANDLE;
+		}
+		if (m_stagingBuffer != VK_NULL_HANDLE)
+		{
+			vmaDestroyBuffer(allocator, m_stagingBuffer, m_stagingAllocation);
+			m_stagingBuffer = VK_NULL_HANDLE;
+		}
+		if (m_descriptorPool != VK_NULL_HANDLE)
+		{
+			vkDestroyDescriptorPool(device, m_descriptorPool, nullptr);
+			m_descriptorPool = VK_NULL_HANDLE;
+		}
 	}
+
+	m_vulkanDevice.destroy();
 	m_initialized = false;
 }
 
@@ -423,7 +440,7 @@ void VulkanRenderer::prepareVertexData()
 		if (!m_vulkanResources.createMappedBuffer(m_vulkanDevice, requiredSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 0.5f,
 				m_vertexBuffer, m_vertexAllocation, m_vertexAllocInfo))
 		{
-			Logger::error("VK: Failed to create vertex buffer");
+			Logger::error("{}", m_vulkanResources.GetError().GetDescription());
 			return;
 		}
 
@@ -479,10 +496,7 @@ bool VulkanRenderer::createDescriptorResources()
 
 	if (!m_vulkanResources.createMappedBuffer(m_vulkanDevice, uboSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0.5f,
 			m_uniformBuffer, m_uniformAllocation, m_uniformAllocInfo))
-	{
-		Logger::error("VK: Failed to create uniform buffer");
-		return false;
-	}
+		return m_error.Assign(m_vulkanResources.GetError());
 
 	VkSamplerCreateInfo samplerInfo{};
 	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
@@ -502,18 +516,12 @@ bool VulkanRenderer::createDescriptorResources()
 	samplerInfo.maxLod = VK_LOD_CLAMP_NONE;
 
 	if (vkCreateSampler(device, &samplerInfo, nullptr, &m_textureSampler) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create texture sampler");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create texture sampler");
 
 	if (!m_vulkanResources.createImage(m_vulkanDevice, 1, 1, VK_FORMAT_R8G8B8A8_UNORM,
 			VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, 0.5f,
 			m_textureImage, m_textureAllocation))
-	{
-		Logger::error("VK: Failed to create placeholder texture");
-		return false;
-	}
+		return m_error.Assign(m_vulkanResources.GetError());
 
 	m_textureWidth = 1;
 	m_textureHeight = 1;
@@ -530,10 +538,7 @@ bool VulkanRenderer::createDescriptorResources()
 	viewInfo.subresourceRange.layerCount = 1;
 
 	if (vkCreateImageView(device, &viewInfo, nullptr, &m_textureView) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create placeholder texture view");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create placeholder texture view");
 
 	VkDescriptorPoolSize poolSizes[2]{};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -548,10 +553,7 @@ bool VulkanRenderer::createDescriptorResources()
 	poolInfo.maxSets = 1;
 
 	if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create descriptor pool");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create descriptor pool");
 
 	VkDescriptorSetLayout layout = m_vulkanPipeline.getDescriptorSetLayout();
 	VkDescriptorSetAllocateInfo allocInfoDesc{};
@@ -561,10 +563,7 @@ bool VulkanRenderer::createDescriptorResources()
 	allocInfoDesc.pSetLayouts = &layout;
 
 	if (vkAllocateDescriptorSets(device, &allocInfoDesc, &m_descriptorSet) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to allocate descriptor set");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to allocate descriptor set");
 
 	writeDescriptorSets();
 	return true;
@@ -627,7 +626,7 @@ bool VulkanRenderer::uploadTexture()
 		if (!m_vulkanResources.createMappedBuffer(m_vulkanDevice, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 0.0f,
 				m_stagingBuffer, m_stagingAllocation, m_stagingAllocInfo))
 		{
-			Logger::error("VK: Failed to create texture staging buffer");
+			Logger::error("{}", m_vulkanResources.GetError().GetDescription());
 			m_stagingBuffer = VK_NULL_HANDLE;
 			return false;
 		}
@@ -651,7 +650,7 @@ bool VulkanRenderer::uploadTexture()
 				VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, 0.5f,
 				m_textureImage, m_textureAllocation))
 		{
-			Logger::error("VK: Failed to create texture image");
+			Logger::error("{}", m_vulkanResources.GetError().GetDescription());
 			return false;
 		}
 		m_textureWidth = texWidth;
@@ -751,9 +750,8 @@ bool VulkanRenderer::allocateCommandBuffers()
 
 	if (vkAllocateCommandBuffers(device, &allocInfo, m_commandBuffers.data()) != VK_SUCCESS)
 	{
-		Logger::error("VK: Failed to allocate command buffers");
 		m_commandBuffers.clear();
-		return false;
+		return m_error.Fail("VK: Failed to allocate command buffers");
 	}
 
 	return true;

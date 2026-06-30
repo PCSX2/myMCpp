@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <string>
+#include "../../../common/Error.h"
 
 typedef unsigned int GLuint;
 typedef int GLint;
@@ -23,6 +24,8 @@ public:
 	bool loadBackgroundShaders();
 	void destroy();
 
+	const Error& GetError() const { return m_error; }
+
 	GLuint getIconProgram() const { return m_iconProgram; }
 	GLuint getBackgroundProgram() const { return m_backgroundProgram; }
 
@@ -33,10 +36,11 @@ public:
 	GLint getAlphaOverrideLocation() const { return m_alphaOverrideLocation; }
 
 private:
-	static std::string readShaderFile(const std::string& filename);
-	static GLuint compileShader(const std::string& source, GLenum shaderType);
-	static GLuint linkProgram(GLuint vertexShader, GLuint fragmentShader);
+	std::string readShaderFile(const std::string& filename);
+	GLuint compileShader(const std::string& source, GLenum shaderType);
+	GLuint linkProgram(GLuint vertexShader, GLuint fragmentShader);
 
+	Error m_error;
 	GLuint m_iconProgram = 0;
 	GLuint m_backgroundProgram = 0;
 

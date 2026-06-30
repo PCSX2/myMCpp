@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include "../../../common/Error.h"
 
 typedef unsigned int GLuint;
 typedef int GLint;
@@ -38,6 +39,8 @@ public:
 	bool createTexture();
 	void destroy();
 
+	const Error& GetError() const { return m_error; }
+
 	void uploadVertexData(const OpenGLVertex* vertices, uint32_t count);
 	void uploadTexture(const uint8_t* rgba, uint32_t width, uint32_t height);
 	void updateUniformBuffer(const void* data, size_t size);
@@ -49,6 +52,7 @@ public:
 	GLuint getUBO() const { return m_UBO; }
 
 private:
+	Error m_error;
 	GLuint m_iconVAO = 0;
 	GLuint m_iconVBO = 0;
 	GLuint m_iconEBO = 0;

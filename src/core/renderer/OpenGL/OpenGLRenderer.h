@@ -58,6 +58,8 @@ private:
 	void prepareVertexData();
 	void setupTexture();
 	void updateBackgroundVertexData();
+	bool failInit(Error error, bool log = true);
+	void releaseGL();
 
 	bool m_initialized;
 	uint32_t m_width;

@@ -32,7 +32,7 @@ GLContextAGL::~GLContextAGL()
 	m_view = nil;
 }
 
-std::unique_ptr<GLContext> GLContextAGL::Create(const WindowInfo& windowInfo, [[maybe_unused]] std::string* error)
+std::unique_ptr<GLContext> GLContextAGL::Create(const WindowInfo& windowInfo, [[maybe_unused]] Error* error)
 {
 	auto context = std::unique_ptr<GLContextAGL>(new GLContextAGL(windowInfo));
 

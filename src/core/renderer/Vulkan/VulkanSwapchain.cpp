@@ -16,6 +16,8 @@ VulkanSwapchain::~VulkanSwapchain() = default;
 
 bool VulkanSwapchain::create(VulkanDevice& device, uint32_t width, uint32_t height)
 {
+	m_error.Clear();
+
 	if (!createSwapchain(device, width, height))
 		return false;
 	if (!createImageViews(device.getDevice()))
@@ -193,10 +195,7 @@ bool VulkanSwapchain::createSwapchain(VulkanDevice& device, uint32_t width, uint
 	createInfo.oldSwapchain = oldSwapchain;
 
 	if (vkCreateSwapchainKHR(device.getDevice(), &createInfo, nullptr, &m_swapchain) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create swapchain");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create swapchain");
 
 	vkGetSwapchainImagesKHR(device.getDevice(), m_swapchain, &imageCount, nullptr);
 	m_images.resize(imageCount);
@@ -229,10 +228,7 @@ bool VulkanSwapchain::createImageViews(VkDevice device)
 		viewCreateInfo.subresourceRange.layerCount = 1;
 
 		if (vkCreateImageView(device, &viewCreateInfo, nullptr, &m_imageViews[i]) != VK_SUCCESS)
-		{
-			Logger::error("VK: Failed to create image view");
-			return false;
-		}
+			return m_error.Fail("VK: Failed to create image view");
 	}
 	return true;
 }
@@ -312,9 +308,8 @@ bool VulkanSwapchain::createDepthResources(VulkanDevice& device)
 
 		if (vmaCreateImage(device.getAllocator(), &imageInfo, &allocInfo, &m_depthImages[i], &m_depthAllocations[i], nullptr) != VK_SUCCESS)
 		{
-			Logger::error("VK: Failed to create depth image");
 			destroyDepthResources(device.getDevice(), device.getAllocator());
-			return false;
+			return m_error.Fail("VK: Failed to create depth image");
 		}
 
 		VkImageViewCreateInfo viewInfo{};
@@ -330,9 +325,8 @@ bool VulkanSwapchain::createDepthResources(VulkanDevice& device)
 
 		if (vkCreateImageView(device.getDevice(), &viewInfo, nullptr, &m_depthImageViews[i]) != VK_SUCCESS)
 		{
-			Logger::error("VK: Failed to create depth image view");
 			destroyDepthResources(device.getDevice(), device.getAllocator());
-			return false;
+			return m_error.Fail("VK: Failed to create depth image view");
 		}
 	}
 
@@ -401,10 +395,7 @@ bool VulkanSwapchain::createRenderPass(VkDevice device)
 	renderPassInfo.pDependencies = &dependency;
 
 	if (vkCreateRenderPass2(device, &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create render pass");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create render pass");
 
 	return true;
 }
@@ -429,10 +420,7 @@ bool VulkanSwapchain::createFramebuffers(VkDevice device)
 		framebufferInfo.layers = 1;
 
 		if (vkCreateFramebuffer(device, &framebufferInfo, nullptr, &m_framebuffers[i]) != VK_SUCCESS)
-		{
-			Logger::error("VK: Failed to create framebuffer");
-			return false;
-		}
+			return m_error.Fail("VK: Failed to create framebuffer");
 	}
 
 	return true;

@@ -135,22 +135,13 @@ bool MetalRenderer::initialize()
 		return true;
 
 	if (!m_impl)
-	{
-		Logger::error("MTL: Internal renderer state was not created");
-		return false;
-	}
+		return m_error.Fail("MTL: Internal renderer state was not created");
 
 	if (!m_impl->device.initialize())
-	{
-		Logger::error("MTL: Failed to initialize device");
-		return false;
-	}
+		return m_error.Assign(m_impl->device.GetError());
 
 	if (!CocoaTools::CreateMetalLayer(&m_windowInfo))
-	{
-		Logger::error("MTL: Failed to create Metal layer");
-		return false;
-	}
+		return m_error.Fail("MTL: Failed to create Metal layer");
 
 	m_impl->metalLayer = (__bridge CAMetalLayer*)m_windowInfo.surface_handle;
 	m_impl->metalLayer.device = m_impl->device.getDevice();
@@ -158,22 +149,13 @@ bool MetalRenderer::initialize()
 	m_impl->metalLayer.framebufferOnly = YES;
 
 	if (!m_impl->pipeline.initialize(m_impl->device.getDevice()))
-	{
-		Logger::error("MTL: Failed to initialize pipeline");
-		return false;
-	}
+		return m_error.Assign(m_impl->pipeline.GetError());
 
 	if (!m_impl->pipeline.createBackgroundPipeline(m_impl->device.getDevice()))
-	{
-		Logger::error("MTL: Failed to create background pipeline");
-		return false;
-	}
+		return m_error.Assign(m_impl->pipeline.GetError());
 
 	if (!m_impl->resources.initialize(m_impl->device.getDevice()))
-	{
-		Logger::error("MTL: Failed to initialize resources");
-		return false;
-	}
+		return m_error.Assign(m_impl->resources.GetError());
 
 	resize(m_windowInfo.surface_width, m_windowInfo.surface_height);
 
@@ -188,15 +170,17 @@ bool MetalRenderer::initialize()
 
 void MetalRenderer::shutdown()
 {
-	if (m_initialized && m_impl)
-	{
+	if (!m_impl)
+		return;
+
+	if (m_windowInfo.surface_handle)
 		CocoaTools::DestroyMetalLayer(&m_windowInfo);
-		m_impl->resources.shutdown();
-		m_impl->pipeline.shutdown();
-		m_impl->device.shutdown();
-		m_impl->metalLayer = nil;
-		m_initialized = false;
-	}
+
+	m_impl->resources.shutdown();
+	m_impl->pipeline.shutdown();
+	m_impl->device.shutdown();
+	m_impl->metalLayer = nil;
+	m_initialized = false;
 }
 
 void MetalRenderer::setIcon(std::shared_ptr<PS2Icon::Icon> icon)

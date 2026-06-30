@@ -14,17 +14,15 @@
 #include <glslang/Public/ResourceLimits.h>
 #include <SPIRV/GlslangToSpv.h>
 
+namespace fs = std::filesystem;
+
 namespace
 {
 	bool InitializeGlslang()
 	{
 		static bool initialized = false;
 		if (!initialized)
-		{
 			initialized = glslang::InitializeProcess();
-			if (!initialized)
-				Logger::error("VK: Failed to initialize glslang");
-		}
 		return initialized;
 	}
 
@@ -40,63 +38,51 @@ namespace
 			return EShLangFragment;
 		return EShLangVertex;
 	}
-
-	bool CompileGlslToSpirv(const fs::path& path, std::vector<uint32_t>& spirv)
-	{
-		if (!InitializeGlslang())
-			return false;
-
-		std::ifstream file(path);
-		if (!file.is_open())
-		{
-			Logger::error("VK: Failed to open GLSL shader file: {}", path.string());
-			return false;
-		}
-
-		std::stringstream buffer;
-		buffer << file.rdbuf();
-		const std::string source = buffer.str();
-
-		const std::string pathStr = path.string();
-		const char* cstr = source.c_str();
-
-		EShLanguage stage = GetShaderStage(pathStr.c_str());
-		glslang::TShader shader(stage);
-		shader.setStrings(&cstr, 1);
-		shader.setEntryPoint("main");
-		shader.setSourceEntryPoint("main");
-		shader.setEnvInput(glslang::EShSourceGlsl, stage, glslang::EShClientVulkan, 1);
-		shader.setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_2);
-		shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_5);
-
-		EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
-
-		const TBuiltInResource* resources = GetDefaultResources();
-		if (!resources)
-		{
-			Logger::error("VK: glslang::GetDefaultResources() returned null for {}", pathStr);
-			return false;
-		}
-
-		if (!shader.parse(resources, 100, false, messages))
-		{
-			Logger::error("VK: GLSL shader parse failed for {}:\n{}", pathStr, shader.getInfoLog());
-			return false;
-		}
-
-		glslang::TProgram program;
-		program.addShader(&shader);
-
-		if (!program.link(messages))
-		{
-			Logger::error("VK: GLSL program link failed for {}:\n{}", pathStr, program.getInfoLog());
-			return false;
-		}
-
-		glslang::GlslangToSpv(*program.getIntermediate(stage), spirv);
-		return true;
-	}
 } // namespace
+
+bool VulkanPipeline::compileGlslToSpirv(const fs::path& path, std::vector<uint32_t>& spirv)
+{
+	if (!InitializeGlslang())
+		return m_error.Fail("VK: Failed to initialize glslang");
+
+	std::ifstream file(path);
+	if (!file.is_open())
+		return m_error.Fail("VK: Failed to open GLSL shader file: " + path.string());
+
+	std::stringstream buffer;
+	buffer << file.rdbuf();
+	const std::string source = buffer.str();
+
+	const std::string pathStr = path.string();
+	const char* cstr = source.c_str();
+
+	EShLanguage stage = GetShaderStage(pathStr.c_str());
+	glslang::TShader shader(stage);
+	shader.setStrings(&cstr, 1);
+	shader.setEntryPoint("main");
+	shader.setSourceEntryPoint("main");
+	shader.setEnvInput(glslang::EShSourceGlsl, stage, glslang::EShClientVulkan, 1);
+	shader.setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_2);
+	shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_5);
+
+	EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
+
+	const TBuiltInResource* resources = GetDefaultResources();
+	if (!resources)
+		return m_error.Fail("VK: glslang::GetDefaultResources() returned null for " + pathStr);
+
+	if (!shader.parse(resources, 100, false, messages))
+		return m_error.Fail("VK: GLSL shader parse failed for " + pathStr + ":\n" + shader.getInfoLog());
+
+	glslang::TProgram program;
+	program.addShader(&shader);
+
+	if (!program.link(messages))
+		return m_error.Fail("VK: GLSL program link failed for " + pathStr + ":\n" + program.getInfoLog());
+
+	glslang::GlslangToSpv(*program.getIntermediate(stage), spirv);
+	return true;
+}
 
 VulkanPipeline::VulkanPipeline() = default;
 
@@ -148,16 +134,15 @@ void VulkanPipeline::destroy(VkDevice device)
 
 bool VulkanPipeline::createPipelineCache(VkDevice device)
 {
+	m_error.Clear();
+
 	VkPipelineCacheCreateInfo cacheInfo{};
 	cacheInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 	cacheInfo.initialDataSize = 0;
 	cacheInfo.pInitialData = nullptr;
 
 	if (vkCreatePipelineCache(device, &cacheInfo, nullptr, &m_pipelineCache) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create pipeline cache");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create pipeline cache");
 
 	return true;
 }
@@ -170,9 +155,10 @@ VkShaderModule VulkanPipeline::createShaderModule(VkDevice device, const std::ve
 	createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
 	VkShaderModule shaderModule;
-	if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
+	const VkResult result = vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule);
+	if (result != VK_SUCCESS)
 	{
-		Logger::error("VK: Failed to create shader module");
+		m_error.Fail("VK: Failed to create shader module (VkResult " + std::to_string(static_cast<int>(result)) + ")");
 		return VK_NULL_HANDLE;
 	}
 
@@ -187,9 +173,9 @@ bool VulkanPipeline::createShaderModules(VkDevice device)
 	std::vector<uint32_t> vertSpirv;
 	std::vector<uint32_t> fragSpirv;
 
-	if (!CompileGlslToSpirv(vertPath, vertSpirv))
+	if (!compileGlslToSpirv(vertPath, vertSpirv))
 		return false;
-	if (!CompileGlslToSpirv(fragPath, fragSpirv))
+	if (!compileGlslToSpirv(fragPath, fragSpirv))
 		return false;
 
 	std::vector<char> vertCode(reinterpret_cast<char*>(vertSpirv.data()),
@@ -201,10 +187,7 @@ bool VulkanPipeline::createShaderModules(VkDevice device)
 	m_fragmentShader = createShaderModule(device, fragCode);
 
 	if (m_vertexShader == VK_NULL_HANDLE || m_fragmentShader == VK_NULL_HANDLE)
-	{
-		Logger::error("VK: Failed to create shader modules");
 		return false;
-	}
 
 	Logger::info("VK: Shader modules created successfully");
 	return true;
@@ -212,6 +195,8 @@ bool VulkanPipeline::createShaderModules(VkDevice device)
 
 bool VulkanPipeline::createMainPipeline(VkDevice device, VkRenderPass renderPass)
 {
+	m_error.Clear();
+
 	if (!createShaderModules(device))
 		return false;
 
@@ -322,10 +307,7 @@ bool VulkanPipeline::createMainPipeline(VkDevice device, VkRenderPass renderPass
 	layoutInfo.pBindings = bindings;
 
 	if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create descriptor set layout");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create descriptor set layout");
 
 	VkPushConstantRange pushConstantRange{};
 	pushConstantRange.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -340,10 +322,7 @@ bool VulkanPipeline::createMainPipeline(VkDevice device, VkRenderPass renderPass
 	pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
 	if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create pipeline layout");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create pipeline layout");
 
 	VkPipelineDepthStencilStateCreateInfo depthStencil{};
 	depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
@@ -379,25 +358,24 @@ bool VulkanPipeline::createMainPipeline(VkDevice device, VkRenderPass renderPass
 	pipelineInfo.subpass = 0;
 
 	if (vkCreateGraphicsPipelines(device, m_pipelineCache, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) != VK_SUCCESS)
-	{
-		Logger::error("VK: Failed to create graphics pipeline");
-		return false;
-	}
+		return m_error.Fail("VK: Failed to create graphics pipeline");
 
 	return true;
 }
 
 bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass renderPass)
 {
+	m_error.Clear();
+
 	fs::path vertPath = ResourcePath::shaders() / "Vulkan" / "background.vert.glsl";
 	fs::path fragPath = ResourcePath::shaders() / "Vulkan" / "background.frag.glsl";
 
 	std::vector<uint32_t> vertSpirv;
 	std::vector<uint32_t> fragSpirv;
 
-	if (!CompileGlslToSpirv(vertPath, vertSpirv))
+	if (!compileGlslToSpirv(vertPath, vertSpirv))
 		return false;
-	if (!CompileGlslToSpirv(fragPath, fragSpirv))
+	if (!compileGlslToSpirv(fragPath, fragSpirv))
 		return false;
 
 	std::vector<char> vertCode(reinterpret_cast<char*>(vertSpirv.data()),
@@ -408,10 +386,7 @@ bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass rend
 	VkShaderModule bgVert = createShaderModule(device, vertCode);
 	VkShaderModule bgFrag = createShaderModule(device, fragCode);
 	if (bgVert == VK_NULL_HANDLE || bgFrag == VK_NULL_HANDLE)
-	{
-		Logger::error("VK: Failed to create background shader modules");
 		return false;
-	}
 
 	VkPipelineShaderStageCreateInfo stages[2]{};
 	stages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -497,10 +472,9 @@ bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass rend
 
 	if (vkCreatePipelineLayout(device, &pl, nullptr, &m_bgPipelineLayout) != VK_SUCCESS)
 	{
-		Logger::error("VK: Failed to create background pipeline layout");
 		vkDestroyShaderModule(device, bgVert, nullptr);
 		vkDestroyShaderModule(device, bgFrag, nullptr);
-		return false;
+		return m_error.Fail("VK: Failed to create background pipeline layout");
 	}
 
 	VkPipelineDepthStencilStateCreateInfo bgDepth{};
@@ -538,12 +512,11 @@ bool VulkanPipeline::createBackgroundPipeline(VkDevice device, VkRenderPass rend
 
 	if (vkCreateGraphicsPipelines(device, m_pipelineCache, 1, &pi, nullptr, &m_bgPipeline) != VK_SUCCESS)
 	{
-		Logger::error("VK: Failed to create background pipeline");
 		vkDestroyPipelineLayout(device, m_bgPipelineLayout, nullptr);
 		m_bgPipelineLayout = VK_NULL_HANDLE;
 		vkDestroyShaderModule(device, bgVert, nullptr);
 		vkDestroyShaderModule(device, bgFrag, nullptr);
-		return false;
+		return m_error.Fail("VK: Failed to create background pipeline");
 	}
 
 	vkDestroyShaderModule(device, bgVert, nullptr);

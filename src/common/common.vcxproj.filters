@@ -14,6 +14,7 @@
     <ClCompile Include="sjis.cpp"><Filter>src</Filter></ClCompile>
     <ClCompile Include="lzari.cpp"><Filter>src</Filter></ClCompile>
     <ClCompile Include="Logger.cpp"><Filter>src</Filter></ClCompile>
+    <ClCompile Include="Error.cpp"><Filter>src</Filter></ClCompile>
     <ClCompile Include="WindowInfo.cpp"><Filter>src</Filter></ClCompile>
     <ClCompile Include="Config.cpp"><Filter>src</Filter></ClCompile>
     <ClCompile Include="BuildVersion.cpp"><Filter>src</Filter></ClCompile>
@@ -25,6 +26,7 @@
     <ClInclude Include="sjis.h"><Filter>headers</Filter></ClInclude>
     <ClInclude Include="lzari.h"><Filter>headers</Filter></ClInclude>
     <ClInclude Include="Logger.h"><Filter>headers</Filter></ClInclude>
+    <ClInclude Include="Error.h"><Filter>headers</Filter></ClInclude>
     <ClInclude Include="WindowInfo.h"><Filter>headers</Filter></ClInclude>
     <ClInclude Include="Config.h"><Filter>headers</Filter></ClInclude>
   </ItemGroup>

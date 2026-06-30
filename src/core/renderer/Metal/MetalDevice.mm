@@ -15,20 +15,17 @@ MetalDevice::~MetalDevice()
 
 bool MetalDevice::initialize()
 {
+	m_error.Clear();
+
 	m_device = MTLCreateSystemDefaultDevice();
 	if (!m_device)
-	{
-		Logger::error("MTL: Failed to create Metal device");
-		return false;
-	}
+		return m_error.Fail("MTL: Failed to create Metal device");
 
 	m_commandQueue = [m_device newCommandQueue];
 	if (!m_commandQueue)
-	{
-		Logger::error("MTL: Failed to create Metal command queue");
-		return false;
-	}
+		return m_error.Fail("MTL: Failed to create Metal command queue");
 
+	Logger::info("MTL: Using device: {}", [m_device.name UTF8String]);
 	return true;
 }
 
