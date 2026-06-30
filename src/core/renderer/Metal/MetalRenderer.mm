@@ -61,7 +61,6 @@ void MetalRendererImpl::updateBackgroundData(const MetalResources::FrameResource
 	setVert(3, 1.0f, -1.0f, background.colors[3]);  // BR
 
 	memcpy(frameRes.backgroundBuffer.contents, bgVerts, sizeof(bgVerts));
-	[frameRes.backgroundBuffer didModifyRange:NSMakeRange(0, sizeof(bgVerts))];
 }
 
 void MetalRendererImpl::updateVertexData(const MetalResources::FrameResources& frameRes, PS2Icon::Icon* icon,
@@ -88,7 +87,7 @@ void MetalRendererImpl::updateVertexData(const MetalResources::FrameResources& f
 	{
 		vertices = AnimationUtils::blendVertices(icon, weights, icon->getVertexCount());
 	}
-	vertexCount = vertices.size();
+	vertexCount = static_cast<uint32_t>(vertices.size());
 
 	if (vertexCount > 0)
 	{
@@ -96,7 +95,6 @@ void MetalRendererImpl::updateVertexData(const MetalResources::FrameResources& f
 		if (vertSize <= frameRes.vertexBuffer.length)
 		{
 			memcpy(frameRes.vertexBuffer.contents, vertices.data(), vertSize);
-			[frameRes.vertexBuffer didModifyRange:NSMakeRange(0, vertSize)];
 		}
 	}
 }
@@ -115,7 +113,6 @@ void MetalRendererImpl::updateUniformData(const MetalResources::FrameResources& 
 	UniformBufferUtils::UniformBufferData ubo = UniformBufferUtils::buildUniformBufferData(matrices, lighting, false);
 
 	memcpy(frameRes.uniformBuffer.contents, &ubo, sizeof(ubo));
-	[frameRes.uniformBuffer didModifyRange:NSMakeRange(0, sizeof(ubo))];
 }
 
 MetalRenderer::MetalRenderer(const WindowInfo& windowInfo, Config* config)
