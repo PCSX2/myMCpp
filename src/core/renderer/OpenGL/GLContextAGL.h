@@ -22,7 +22,7 @@ class GLContextAGL : public GLContext
 public:
 	~GLContextAGL() override;
 
-	static std::unique_ptr<GLContext> Create(const WindowInfo& windowInfo, std::string* error);
+	static std::unique_ptr<GLContext> Create(const WindowInfo& windowInfo, Error* error);
 
 	bool initialize() override;
 	bool makeCurrent() override;

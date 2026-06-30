@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <array>
 #include <vector>
+#include "../../../common/Error.h"
 
 class VulkanDevice;
 struct VulkanBGVertex;
@@ -27,6 +28,8 @@ public:
 	bool createSyncObjects(VkDevice device, uint32_t swapchainImageCount);
 	bool recreateRenderFinishedSemaphores(VkDevice device, uint32_t swapchainImageCount);
 	void destroy(VkDevice device, VmaAllocator allocator);
+
+	const Error& GetError() const { return m_error; }
 
 	VkCommandBuffer beginSingleTimeCommands(VkDevice device);
 	void endSingleTimeCommands(VkDevice device, VkQueue queue, VkCommandBuffer commandBuffer);
@@ -52,6 +55,7 @@ public:
 	VkBuffer getBackgroundVertexBuffer() const { return m_bgVertexBuffer; }
 
 private:
+	Error m_error;
 	VkCommandPool m_commandPool = VK_NULL_HANDLE;
 	std::array<VkSemaphore, frameCount> m_imageAvailableSemaphores{};
 	std::vector<VkSemaphore> m_renderFinishedSemaphores;

@@ -5,7 +5,9 @@
 
 #include <vulkan/vulkan.h>
 #include <cstdint>
+#include <filesystem>
 #include <vector>
+#include "../../../common/Error.h"
 
 class VulkanDevice;
 class VulkanSwapchain;
@@ -39,6 +41,8 @@ public:
 	bool createBackgroundPipeline(VkDevice device, VkRenderPass renderPass);
 	void destroy(VkDevice device);
 
+	const Error& GetError() const { return m_error; }
+
 	VkPipeline getGraphicsPipeline() const { return m_graphicsPipeline; }
 	VkPipelineLayout getPipelineLayout() const { return m_pipelineLayout; }
 	VkDescriptorSetLayout getDescriptorSetLayout() const { return m_descriptorSetLayout; }
@@ -47,8 +51,10 @@ public:
 
 private:
 	bool createShaderModules(VkDevice device);
+	bool compileGlslToSpirv(const std::filesystem::path& path, std::vector<uint32_t>& spirv);
 	VkShaderModule createShaderModule(VkDevice device, const std::vector<char>& code);
 
+	Error m_error;
 	VkPipelineCache m_pipelineCache = VK_NULL_HANDLE;
 	VkShaderModule m_vertexShader = VK_NULL_HANDLE;
 	VkShaderModule m_fragmentShader = VK_NULL_HANDLE;

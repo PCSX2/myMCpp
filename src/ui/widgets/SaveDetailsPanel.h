@@ -26,6 +26,9 @@ public:
 	void clear();
 	void refreshConfig();
 
+signals:
+	void iconWidgetChanged(IconWidget* widget);
+
 private:
 	void createIconWidget();
 	void updatePlayPauseButton();

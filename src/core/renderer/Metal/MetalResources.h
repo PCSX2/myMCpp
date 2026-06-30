@@ -8,6 +8,7 @@
 #include <vector>
 #include <cstdint>
 #include <array>
+#include "../../../common/Error.h"
 
 static const int kMaxFramesInFlight = 3;
 
@@ -19,6 +20,8 @@ public:
 
 	bool initialize(id<MTLDevice> device);
 	void shutdown();
+
+	const Error& GetError() const { return m_error; }
 
 	void uploadTexture(id<MTLDevice> device, const uint8_t* rgbaData, uint32_t width, uint32_t height);
 	id<MTLTexture> getTexture() const { return m_texture; }
@@ -39,6 +42,7 @@ public:
 	const FrameResources& getFrameResources(uint32_t index) const { return m_frames[index]; }
 
 private:
+	Error m_error;
 	id<MTLTexture> m_texture = nil;
 	id<MTLSamplerState> m_samplerState = nil;
 	id<MTLTexture> m_depthTexture = nil;

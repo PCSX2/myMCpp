@@ -2,6 +2,7 @@ set(COMMON_SOURCES
     sjis.cpp
     lzari.cpp
     Logger.cpp
+    Error.cpp
     WindowInfo.cpp
     Config.cpp
     BuildVersion.cpp
@@ -14,6 +15,7 @@ set(COMMON_HEADERS
     sjis.h
     lzari.h
     Logger.h
+    Error.h
     WindowInfo.h
     Config.h
 )
@@ -39,7 +41,7 @@ target_link_libraries(myMCpp-common PUBLIC
 if(APPLE)
     find_library(ICONV_LIBRARY iconv)
     target_link_libraries(myMCpp-common PUBLIC ${ICONV_LIBRARY})
-    
+
     set_source_files_properties(
         CocoaTools.mm
         PROPERTIES COMPILE_FLAGS "-fobjc-arc"

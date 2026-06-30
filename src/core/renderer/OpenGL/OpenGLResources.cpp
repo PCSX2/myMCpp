@@ -73,21 +73,21 @@ void OpenGLResources::destroy()
 
 bool OpenGLResources::createIconBuffers()
 {
+	m_error.Clear();
+
 	glGenVertexArrays(1, &m_iconVAO);
 	glGenBuffers(1, &m_iconVBO);
 	glGenBuffers(1, &m_iconEBO);
 
-	if (m_iconVAO == 0 || m_iconVBO == 0)
-	{
-		Logger::error("GL: Failed to create icon buffers");
-		return false;
-	}
+	if (m_iconVAO == 0 || m_iconVBO == 0 || m_iconEBO == 0)
+		return m_error.Fail("GL: Failed to create icon buffers");
 
 	return true;
 }
 
 bool OpenGLResources::createBackgroundBuffers()
 {
+	m_error.Clear();
 	float quadVertices[] = {
 		-1.0f, 1.0f, // top-left
 		-1.0f, -1.0f, // bottom-left
@@ -100,10 +100,7 @@ bool OpenGLResources::createBackgroundBuffers()
 	glGenBuffers(1, &m_backgroundColorVBO);
 
 	if (m_backgroundVAO == 0 || m_backgroundVBO == 0 || m_backgroundColorVBO == 0)
-	{
-		Logger::error("GL: Failed to create background buffers");
-		return false;
-	}
+		return m_error.Fail("GL: Failed to create background buffers");
 
 	glBindVertexArray(m_backgroundVAO);
 
@@ -131,12 +128,11 @@ bool OpenGLResources::createBackgroundBuffers()
 
 bool OpenGLResources::createUniformBuffer()
 {
+	m_error.Clear();
+
 	glGenBuffers(1, &m_UBO);
 	if (m_UBO == 0)
-	{
-		Logger::error("GL: Failed to create uniform buffer");
-		return false;
-	}
+		return m_error.Fail("GL: Failed to create uniform buffer");
 
 	glBindBuffer(GL_UNIFORM_BUFFER, m_UBO);
 	glBufferData(GL_UNIFORM_BUFFER, 512, nullptr, GL_DYNAMIC_DRAW);
@@ -147,12 +143,11 @@ bool OpenGLResources::createUniformBuffer()
 
 bool OpenGLResources::createTexture()
 {
+	m_error.Clear();
+
 	glGenTextures(1, &m_textureID);
 	if (m_textureID == 0)
-	{
-		Logger::error("GL: Failed to create texture");
-		return false;
-	}
+		return m_error.Fail("GL: Failed to create texture");
 
 	return true;
 }

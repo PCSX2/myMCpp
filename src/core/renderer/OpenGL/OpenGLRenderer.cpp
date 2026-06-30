@@ -20,6 +20,7 @@
 #pragma clang diagnostic pop
 #endif
 #include "OpenGLRenderer.h"
+#include "../../../common/Error.h"
 #include "ps2iconsys.h"
 #include "ps2icon.h"
 #include "../../../common/Config.h"
@@ -49,24 +50,51 @@ OpenGLRenderer::~OpenGLRenderer()
 	shutdown();
 }
 
+bool OpenGLRenderer::failInit(Error error, bool log)
+{
+	releaseGL();
+	if (!error.IsValid())
+		return m_error.Fail("GL: Renderer initialization failed");
+	if (log)
+		return m_error.Fail(error.GetDescription());
+	return m_error.Assign(std::move(error));
+}
+
+void OpenGLRenderer::releaseGL()
+{
+	try
+	{
+		if (m_context)
+		{
+			if (m_context->makeCurrent())
+			{
+				m_resources.destroy();
+				m_shader.destroy();
+			}
+			m_context->releaseCurrent();
+			m_context.reset();
+		}
+	}
+	catch (const std::exception& e)
+	{
+		Logger::error("GL: Error releasing OpenGL resources: {}", e.what());
+		m_context.reset();
+	}
+}
+
 bool OpenGLRenderer::initialize()
 {
 	try
 	{
-		std::string error;
+		Error error;
 		m_context = GLContext::Create(m_windowInfo, &error);
 		if (!m_context)
-		{
-			Logger::error("GL: Failed to create GL context: {}", error);
-			return false;
-		}
+			return error.IsValid() ? m_error.Assign(error) : m_error.Fail("GL: Failed to create OpenGL context");
 
+		m_context->setCreationError(&error);
 		if (!m_context->makeCurrent())
-		{
-			Logger::error("GL: Failed to make context current");
-			m_context.reset();
-			return false;
-		}
+			return failInit(error.IsValid() ? error : Error::CreateString("GL: Failed to make context current"), !error.IsValid());
+		m_context->setCreationError(nullptr);
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
@@ -83,52 +111,22 @@ bool OpenGLRenderer::initialize()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
 		if (!m_shader.loadIconShaders())
-		{
-			Logger::error("GL: Failed to setup icon shaders");
-			m_context->releaseCurrent();
-			m_context.reset();
-			return false;
-		}
+			return failInit(m_shader.GetError(), false);
 
 		if (!m_shader.loadBackgroundShaders())
-		{
-			Logger::error("GL: Failed to setup background shaders");
-			m_context->releaseCurrent();
-			m_context.reset();
-			return false;
-		}
+			return failInit(m_shader.GetError(), false);
 
 		if (!m_resources.createIconBuffers())
-		{
-			Logger::error("GL: Failed to create icon buffers");
-			m_context->releaseCurrent();
-			m_context.reset();
-			return false;
-		}
+			return failInit(m_resources.GetError(), false);
 
 		if (!m_resources.createBackgroundBuffers())
-		{
-			Logger::error("GL: Failed to create background buffers");
-			m_context->releaseCurrent();
-			m_context.reset();
-			return false;
-		}
+			return failInit(m_resources.GetError(), false);
 
 		if (!m_resources.createUniformBuffer())
-		{
-			Logger::error("GL: Failed to create uniform buffer");
-			m_context->releaseCurrent();
-			m_context.reset();
-			return false;
-		}
+			return failInit(m_resources.GetError(), false);
 
 		if (!m_resources.createTexture())
-		{
-			Logger::error("GL: Failed to create texture");
-			m_context->releaseCurrent();
-			m_context.reset();
-			return false;
-		}
+			return failInit(m_resources.GetError(), false);
 
 		m_context->releaseCurrent();
 
@@ -145,37 +143,15 @@ bool OpenGLRenderer::initialize()
 	}
 	catch (const std::exception& e)
 	{
-		Logger::error("GL: Initialization failed: {}", e.what());
-		if (m_context)
-		{
-			m_context->releaseCurrent();
-			m_context.reset();
-		}
-		return false;
+		return failInit(Error::CreateString(std::string("GL: Initialization failed: ") + e.what()));
 	}
 }
 
 void OpenGLRenderer::shutdown()
 {
-	if (!m_initialized)
-		return;
-
 	try
 	{
-		if (m_context)
-		{
-			m_context->makeCurrent();
-		}
-
-		m_resources.destroy();
-		m_shader.destroy();
-
-		if (m_context)
-		{
-			m_context->releaseCurrent();
-			m_context.reset();
-		}
-
+		releaseGL();
 		m_initialized = false;
 		Logger::info("GL: Shutdown complete");
 	}

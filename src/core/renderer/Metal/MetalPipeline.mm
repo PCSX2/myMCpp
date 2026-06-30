@@ -16,6 +16,8 @@ MetalPipeline::~MetalPipeline()
 
 bool MetalPipeline::initialize(id<MTLDevice> device)
 {
+	m_error.Clear();
+
 	fs::path resourcePath = ResourcePath::get();
 	fs::path metallibPath = resourcePath / "shaders" / "Metal" / "default.metallib";
 
@@ -36,31 +38,20 @@ bool MetalPipeline::initialize(id<MTLDevice> device)
 		{
 			if (error)
 			{
-				Logger::error("MTL: Failed to load metallib from {}: {}.",
-					metallibPath.string(),
-					[[error description] UTF8String]);
+				return m_error.Fail(std::string("MTL: Failed to load metallib from ") + metallibPath.string() + ": " + [[error description] UTF8String]);
 			}
-			else
-			{
-				Logger::error("MTL: Metallib not available at {}.", metallibPath.string());
-			}
+			return m_error.Fail("MTL: Metallib not available at " + metallibPath.string());
 		}
 	}
 
 	if (!library)
-	{
-		Logger::error("MTL: Failed to load shader library from metallib and default library fallback");
-		return false;
-	}
+		return m_error.Fail("MTL: Failed to load shader library from metallib and default library fallback");
 
 	id<MTLFunction> vertexFunc = [library newFunctionWithName:@"IconVSMain"];
 	id<MTLFunction> fragmentFunc = [library newFunctionWithName:@"IconPSMain"];
 
 	if (!vertexFunc || !fragmentFunc)
-	{
-		Logger::error("MTL: Failed to find shader entry points IconVSMain/IconPSMain");
-		return false;
-	}
+		return m_error.Fail("MTL: Failed to find shader entry points IconVSMain/IconPSMain");
 
 	MTLRenderPipelineDescriptor* psoDesc = [[MTLRenderPipelineDescriptor alloc] init];
 	psoDesc.vertexFunction = vertexFunc;
@@ -102,10 +93,7 @@ bool MetalPipeline::initialize(id<MTLDevice> device)
 
 	m_pipelineState = [device newRenderPipelineStateWithDescriptor:psoDesc error:&error];
 	if (!m_pipelineState)
-	{
-		Logger::error("MTL: Failed to create pipeline state: {}", [[error description] UTF8String]);
-		return false;
-	}
+		return m_error.Fail(std::string("MTL: Failed to create pipeline state: ") + [[error description] UTF8String]);
 
 	MTLDepthStencilDescriptor* depthDesc = [[MTLDepthStencilDescriptor alloc] init];
 	depthDesc.depthCompareFunction = MTLCompareFunctionLess;
@@ -119,20 +107,16 @@ bool MetalPipeline::initialize(id<MTLDevice> device)
 
 bool MetalPipeline::createBackgroundPipeline(id<MTLDevice> device)
 {
+	m_error.Clear();
+
 	if (!m_library)
-	{
-		Logger::error("MTL: No library loaded - call initialize first");
-		return false;
-	}
+		return m_error.Fail("MTL: No library loaded - call initialize first");
 
 	id<MTLFunction> vertexFunc = [m_library newFunctionWithName:@"BackgroundVSMain"];
 	id<MTLFunction> fragmentFunc = [m_library newFunctionWithName:@"BackgroundPSMain"];
 
 	if (!vertexFunc || !fragmentFunc)
-	{
-		Logger::error("MTL: Failed to find background shader entry points");
-		return false;
-	}
+		return m_error.Fail("MTL: Failed to find background shader entry points");
 
 	MTLRenderPipelineDescriptor* psoDesc = [[MTLRenderPipelineDescriptor alloc] init];
 	psoDesc.vertexFunction = vertexFunc;
@@ -166,16 +150,14 @@ bool MetalPipeline::createBackgroundPipeline(id<MTLDevice> device)
 	NSError* error = nil;
 	m_bgPipelineState = [device newRenderPipelineStateWithDescriptor:psoDesc error:&error];
 	if (!m_bgPipelineState)
-	{
-		Logger::error("MTL: Failed to create background pipeline state: {}", [[error description] UTF8String]);
-	}
+		return m_error.Fail(std::string("MTL: Failed to create background pipeline state: ") + [[error description] UTF8String]);
 
 	MTLDepthStencilDescriptor* depthDesc = [[MTLDepthStencilDescriptor alloc] init];
 	depthDesc.depthCompareFunction = MTLCompareFunctionAlways;
 	depthDesc.depthWriteEnabled = NO;
 	m_bgDepthStencilState = [device newDepthStencilStateWithDescriptor:depthDesc];
 
-	return m_bgPipelineState != nil;
+	return true;
 }
 
 void MetalPipeline::shutdown()

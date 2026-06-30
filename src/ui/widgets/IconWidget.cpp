@@ -4,6 +4,7 @@
 #include "IconWidget.h"
 #include "Config.h"
 #include "../../common/Logger.h"
+#include "../../common/Error.h"
 #include "../common/WindowInfo.h"
 #include <QResizeEvent>
 #include <QMouseEvent>
@@ -99,27 +100,16 @@ IconWidget::IconWidget(Config* config, QWidget* parent)
 	setAttribute(Qt::WA_PaintOnScreen);
 	setAttribute(Qt::WA_DontCreateNativeAncestors, true);
 	setFocusPolicy(Qt::NoFocus);
-	printPlatformInfo();
-	Logger::info("IconWidget constructed: {}", (void*)this);
 }
 
 IconWidget::~IconWidget()
 {
-	Logger::info("IconWidget destructor start: {}", (void*)this);
 	stopRendering();
 	if (m_renderer)
 	{
-		Logger::info("IconWidget shutting down renderer");
 		m_renderer->shutdown();
 		m_renderer.reset();
 	}
-	Logger::info("IconWidget destructor end: {}", (void*)this);
-}
-
-void IconWidget::printPlatformInfo()
-{
-	QString platform = QGuiApplication::platformName();
-	qInfo() << "IconWidget: Platform:" << platform;
 }
 
 bool IconWidget::loadIcon(const std::vector<uint8_t>& iconData)
@@ -129,17 +119,17 @@ bool IconWidget::loadIcon(const std::vector<uint8_t>& iconData)
 		m_icon = std::make_shared<PS2Icon::Icon>();
 		if (!m_icon->load(iconData))
 		{
-			QString err = QString::fromStdString(m_icon->getError());
+			const QString err = QString::fromStdString(m_icon->getError());
 			m_icon.reset();
+			Logger::warn("IconWidget: Failed to load icon: {}", err.toStdString());
 			emit iconLoadFailed(err);
 			return false;
 		}
 
-		ensureRenderer();
-		if (m_renderer)
-		{
-			m_renderer->setIcon(m_icon);
-		}
+		if (!ensureRenderer())
+			return false;
+
+		m_renderer->setIcon(m_icon);
 
 		emit iconLoaded();
 
@@ -163,6 +153,7 @@ bool IconWidget::loadIcon(const std::vector<uint8_t>& iconData)
 	}
 	catch (const std::exception& e)
 	{
+		Logger::warn("IconWidget: Exception loading icon: {}", e.what());
 		emit iconLoadFailed(QString::fromStdString(e.what()));
 		return false;
 	}
@@ -299,7 +290,6 @@ void IconWidget::startRendering()
 	if (m_renderLoopEnabled && m_renderTimer.isActive())
 		return;
 
-	Logger::info("IconWidget::startRendering {}", (void*)this);
 	m_renderLoopEnabled = true;
 
 	int maxFps = m_config ? m_config->getMaxFPS() : 30;
@@ -326,7 +316,6 @@ void IconWidget::startRendering()
 
 void IconWidget::stopRendering()
 {
-	Logger::info("IconWidget::stopRendering {}", (void*)this);
 	m_renderLoopEnabled = false;
 	if (m_renderTimer.isActive())
 	{
@@ -334,10 +323,10 @@ void IconWidget::stopRendering()
 	}
 }
 
-void IconWidget::ensureRenderer()
+bool IconWidget::ensureRenderer()
 {
 	if (m_renderer)
-		return;
+		return true;
 
 	winId();
 
@@ -379,7 +368,9 @@ void IconWidget::ensureRenderer()
 			if (!wi.window_handle)
 			{
 				Logger::info("IconWidget: Wayland surface not ready yet");
-				return;
+				if (m_icon)
+					emit iconLoadFailed(tr("Wayland surface is not ready yet"));
+				return false;
 			}
 		}
 		else if (QGuiApplication::platformName().startsWith("xcb", Qt::CaseInsensitive))
@@ -398,43 +389,56 @@ void IconWidget::ensureRenderer()
 		if (!wi.window_handle && wi.type != WindowInfo::Type::Surfaceless)
 		{
 			Logger::error("IconWidget: Invalid window handle, postponing renderer creation");
-			return;
+			if (m_icon)
+				emit iconLoadFailed(tr("Native window is not available yet"));
+			return false;
 		}
 
 		Logger::info("IconWidget: Creating renderer: {}", rendererType);
 
+		Error rendererError;
+
 		if (rendererType == "opengl")
 		{
-			m_renderer = RendererFactory::createOpenGLRenderer(wi, m_config);
+			m_renderer = RendererFactory::createOpenGLRenderer(wi, m_config, &rendererError);
 		}
 #if defined(__APPLE__)
 		else if (rendererType == "metal")
 		{
-			m_renderer = RendererFactory::createMetalRenderer(wi, m_config);
+			m_renderer = RendererFactory::createMetalRenderer(wi, m_config, &rendererError);
 		}
 #endif
 		else
 		{
 #if defined(ENABLE_VULKAN)
-			m_renderer = RendererFactory::createVulkanRenderer(wi, m_config);
+			m_renderer = RendererFactory::createVulkanRenderer(wi, m_config, &rendererError);
 #endif
 		}
 
 		if (!m_renderer)
 		{
-			qWarning() << "IconWidget: renderer creation failed";
-			return;
+			if (m_icon)
+			{
+				const QString msg = rendererError.IsValid() ? QString::fromStdString(rendererError.GetDescription()) : tr("Failed to initialize renderer");
+				emit iconLoadFailed(msg);
+			}
+			return false;
 		}
 
 		if (m_icon)
 		{
 			m_renderer->setIcon(m_icon);
 		}
+
+		return true;
 	}
 	catch (const std::exception& e)
 	{
-		qWarning() << "IconWidget: exception creating renderer:" << e.what();
+		Logger::warn("IconWidget: exception creating renderer: {}", e.what());
 		m_renderer.reset();
+		if (m_icon)
+			emit iconLoadFailed(QString::fromStdString(e.what()));
+		return false;
 	}
 }
 
@@ -446,7 +450,8 @@ void IconWidget::recreateRenderer()
 		m_renderer.reset();
 	}
 
-	ensureRenderer();
+	if (!ensureRenderer())
+		return;
 
 	if (m_renderer && m_icon)
 	{
@@ -473,7 +478,7 @@ void IconWidget::renderFrame()
 	}
 	catch (const std::exception& e)
 	{
-		qWarning() << "IconWidget: render exception, recreating renderer:" << e.what();
+		Logger::warn("IconWidget: render exception, recreating renderer: {}", e.what());
 		recreateRenderer();
 	}
 }

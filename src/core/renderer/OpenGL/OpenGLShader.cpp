@@ -45,7 +45,7 @@ std::string OpenGLShader::readShaderFile(const std::string& filename)
 	std::ifstream file(filename);
 	if (!file.is_open())
 	{
-		Logger::error("GL: Failed to open shader file: {}", filename);
+		m_error.Fail("GL: Failed to open shader file: " + filename);
 		return "";
 	}
 	std::stringstream buffer;
@@ -66,8 +66,8 @@ GLuint OpenGLShader::compileShader(const std::string& source, GLenum shaderType)
 	if (!success)
 	{
 		glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-		Logger::error("GL: Shader compilation failed:\n{}", infoLog);
 		glDeleteShader(shader);
+		m_error.Fail(std::string("GL: Shader compilation failed:\n") + infoLog);
 		return 0;
 	}
 
@@ -87,8 +87,8 @@ GLuint OpenGLShader::linkProgram(GLuint vertexShader, GLuint fragmentShader)
 	if (!success)
 	{
 		glGetProgramInfoLog(program, 512, nullptr, infoLog);
-		Logger::error("GL: Program linking failed:\n{}", infoLog);
 		glDeleteProgram(program);
+		m_error.Fail(std::string("GL: Program linking failed:\n") + infoLog);
 		return 0;
 	}
 
@@ -99,39 +99,33 @@ GLuint OpenGLShader::linkProgram(GLuint vertexShader, GLuint fragmentShader)
 
 bool OpenGLShader::loadIconShaders()
 {
+	m_error.Clear();
+
 	fs::path vertexShaderPath = ResourcePath::shaders() / "OpenGL" / "icon.vert";
 	fs::path fragmentShaderPath = ResourcePath::shaders() / "OpenGL" / "icon.frag";
 
 	std::string vertSource = readShaderFile(vertexShaderPath.string());
-	std::string fragSource = readShaderFile(fragmentShaderPath.string());
-
-	if (vertSource.empty() || fragSource.empty())
-	{
-		Logger::error("GL: Failed to load icon shader sources");
+	if (vertSource.empty())
 		return false;
-	}
+
+	std::string fragSource = readShaderFile(fragmentShaderPath.string());
+	if (fragSource.empty())
+		return false;
 
 	GLuint vertexShader = compileShader(vertSource, GL_VERTEX_SHADER);
 	if (vertexShader == 0)
-	{
-		Logger::error("GL: Failed to compile icon vertex shader");
 		return false;
-	}
 
 	GLuint fragmentShader = compileShader(fragSource, GL_FRAGMENT_SHADER);
 	if (fragmentShader == 0)
 	{
 		glDeleteShader(vertexShader);
-		Logger::error("GL: Failed to compile icon fragment shader");
 		return false;
 	}
 
 	m_iconProgram = linkProgram(vertexShader, fragmentShader);
 	if (m_iconProgram == 0)
-	{
-		Logger::error("GL: Failed to link icon shader program");
 		return false;
-	}
 
 	m_uboBlockIndex = glGetUniformBlockIndex(m_iconProgram, "UniformBufferObject");
 	m_texSamplerLocation = glGetUniformLocation(m_iconProgram, "texSampler");
@@ -145,39 +139,33 @@ bool OpenGLShader::loadIconShaders()
 
 bool OpenGLShader::loadBackgroundShaders()
 {
+	m_error.Clear();
+
 	fs::path bgVertexShaderPath = ResourcePath::shaders() / "OpenGL" / "background.vert";
 	fs::path bgFragmentShaderPath = ResourcePath::shaders() / "OpenGL" / "background.frag";
 
 	std::string bgVertSource = readShaderFile(bgVertexShaderPath.string());
-	std::string bgFragSource = readShaderFile(bgFragmentShaderPath.string());
-
-	if (bgVertSource.empty() || bgFragSource.empty())
-	{
-		Logger::error("GL: Failed to load background shader sources");
+	if (bgVertSource.empty())
 		return false;
-	}
+
+	std::string bgFragSource = readShaderFile(bgFragmentShaderPath.string());
+	if (bgFragSource.empty())
+		return false;
 
 	GLuint bgVertexShader = compileShader(bgVertSource, GL_VERTEX_SHADER);
 	if (bgVertexShader == 0)
-	{
-		Logger::error("GL: Failed to compile background vertex shader");
 		return false;
-	}
 
 	GLuint bgFragmentShader = compileShader(bgFragSource, GL_FRAGMENT_SHADER);
 	if (bgFragmentShader == 0)
 	{
 		glDeleteShader(bgVertexShader);
-		Logger::error("GL: Failed to compile background fragment shader");
 		return false;
 	}
 
 	m_backgroundProgram = linkProgram(bgVertexShader, bgFragmentShader);
 	if (m_backgroundProgram == 0)
-	{
-		Logger::error("GL: Failed to link background shader program");
 		return false;
-	}
 
 	Logger::info("GL: Background shaders loaded and compiled successfully");
 	return true;

@@ -7,6 +7,7 @@
 #include <vk_mem_alloc.h>
 #include <cstdint>
 #include <vector>
+#include "../../../common/Error.h"
 
 class VulkanDevice;
 
@@ -22,6 +23,8 @@ public:
 	bool create(VulkanDevice& device, uint32_t width, uint32_t height);
 	void destroy(VkDevice device, VmaAllocator allocator);
 	bool recreate(VulkanDevice& device, uint32_t width, uint32_t height);
+
+	const Error& GetError() const { return m_error; }
 
 	VkSwapchainKHR getSwapchain() const { return m_swapchain; }
 	VkRenderPass getRenderPass() const { return m_renderPass; }
@@ -45,6 +48,7 @@ private:
 	void destroyDepthResources(VkDevice device, VmaAllocator allocator);
 	VkFormat findDepthFormat(VkPhysicalDevice physicalDevice);
 
+	Error m_error;
 	VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
 	std::vector<VkImage> m_images;
 	std::vector<VkImageView> m_imageViews;

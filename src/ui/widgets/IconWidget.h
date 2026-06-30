@@ -61,8 +61,7 @@ protected:
 	void wheelEvent(QWheelEvent* event) override;
 
 private:
-	void printPlatformInfo();
-	void ensureRenderer();
+	bool ensureRenderer();
 	void recreateRenderer();
 	void renderFrame();
 

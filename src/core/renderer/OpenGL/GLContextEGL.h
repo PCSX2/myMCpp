@@ -15,7 +15,7 @@
 class GLContextEGL : public GLContext
 {
 public:
-	static std::unique_ptr<GLContext> Create(const WindowInfo& windowInfo, std::string* error = nullptr);
+	static std::unique_ptr<GLContext> Create(const WindowInfo& windowInfo, Error* error = nullptr);
 
 	~GLContextEGL() override;
 

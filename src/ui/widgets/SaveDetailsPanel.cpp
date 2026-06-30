@@ -141,9 +141,6 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 			if (iconWidget)
 				iconWidget->hide();
 		}
-		else
-		{
-		}
 
 		if (!iconData.empty() && iconWidget)
 		{
@@ -242,6 +239,8 @@ void SaveDetailsPanel::createIconWidget()
 	iconWidget->setSizePolicy(sp);
 	ui->iconLayout->insertWidget(0, iconWidget);
 	iconWidget->hide();
+
+	emit iconWidgetChanged(iconWidget);
 }
 
 void SaveDetailsPanel::refreshConfig()

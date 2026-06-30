@@ -4,6 +4,7 @@
 #include "MainWindow.h"
 #include "MemoryCardBrowser.h"
 #include "SaveDetailsPanel.h"
+#include "IconWidget.h"
 #include "CardActionHandler.h"
 #include "NewCardDialog.h"
 #include "dialogs/AboutDialog.h"
@@ -82,6 +83,13 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	else
 		setWindowTitle(baseTitle);
 	ui->detailsPanel->setConfig(config);
+	connect(ui->detailsPanel, &SaveDetailsPanel::iconWidgetChanged, this,
+		[this](IconWidget* iconWidget) {
+			connect(iconWidget, &IconWidget::iconLoadFailed, this,
+				[this](const QString& reason) {
+					ui->statusBar->showMessage(tr("Icon preview unavailable: %1").arg(reason), 8000);
+				});
+		});
 	actionHandler = std::make_unique<CardActionHandler>(this);
 
 	setWindowIcon(QIcon(":/icons/AppIcon.png"));
