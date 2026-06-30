@@ -8,7 +8,6 @@
 #define GL_SILENCE_DEPRECATION
 #import <Cocoa/Cocoa.h>
 #import <OpenGL/OpenGL.h>
-#import <OpenGL/gl3.h>
 #include <dlfcn.h>
 
 #include "Logger.h"
@@ -25,10 +24,12 @@ GLContextAGL::~GLContextAGL()
 		[NSOpenGLContext clearCurrentContext];
 		m_context = nil;
 	}
-	if (m_pixelFormat)
+	if (m_glView)
 	{
-		m_pixelFormat = nil;
+		[m_glView removeFromSuperview];
+		m_glView = nil;
 	}
+	m_view = nil;
 }
 
 std::unique_ptr<GLContext> GLContextAGL::Create(const WindowInfo& windowInfo, [[maybe_unused]] std::string* error)
@@ -53,23 +54,34 @@ bool GLContextAGL::initialize()
 		NSOpenGLPFANoRecovery,
 		0};
 
-	m_pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
-	if (!m_pixelFormat)
+	NSOpenGLPixelFormat* pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+	if (!pixelFormat)
 	{
 		Logger::error("GLContextAGL: Failed to create pixel format");
 		return false;
 	}
 
-	m_context = [[NSOpenGLContext alloc] initWithFormat:m_pixelFormat shareContext:nil];
+	if (!m_view)
+	{
+		Logger::error("GLContextAGL: No host view for OpenGL rendering");
+		return false;
+	}
+
+	m_glView = [[NSOpenGLView alloc] initWithFrame:m_view.bounds pixelFormat:pixelFormat];
+	if (!m_glView)
+	{
+		Logger::error("GLContextAGL: Failed to create OpenGL view");
+		return false;
+	}
+
+	m_glView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+	[m_view addSubview:m_glView];
+
+	m_context = [m_glView openGLContext];
 	if (!m_context)
 	{
 		Logger::error("GLContextAGL: Failed to create OpenGL context");
 		return false;
-	}
-
-	if (m_view)
-	{
-		[m_context setView:m_view];
 	}
 
 	GLint swapInterval = 1;

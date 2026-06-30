@@ -8,11 +8,11 @@
 #if defined(__APPLE__)
 #if defined(__OBJC__)
 @class NSOpenGLContext;
-@class NSOpenGLPixelFormat;
+@class NSOpenGLView;
 @class NSView;
 #else
 typedef void NSOpenGLContext;
-typedef void NSOpenGLPixelFormat;
+typedef void NSOpenGLView;
 typedef void NSView;
 #endif
 #endif
@@ -37,6 +37,6 @@ private:
 	GLContextAGL(const WindowInfo& windowInfo);
 
 	NSOpenGLContext* m_context = nullptr;
-	NSOpenGLPixelFormat* m_pixelFormat = nullptr;
+	NSOpenGLView* m_glView = nullptr;
 	NSView* m_view = nullptr;
 };
