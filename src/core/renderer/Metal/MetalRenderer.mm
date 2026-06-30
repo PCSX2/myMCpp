@@ -339,10 +339,7 @@ void MetalRenderer::resize(uint32_t width, uint32_t height)
 	if (!m_impl)
 		return;
 
-	if (m_impl->metalLayer)
-	{
-		m_impl->metalLayer.drawableSize = CGSizeMake(width, height);
-	}
+	CocoaTools::SetDrawableSize(&m_windowInfo, width, height);
 
 	if (width == 0 || height == 0)
 	{

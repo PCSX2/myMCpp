@@ -68,6 +68,7 @@ bool VulkanRenderer::initialize()
 			return false;
 		}
 	}
+	CocoaTools::SetDrawableSize(&m_windowInfo, m_width, m_height);
 #endif
 
 	if (!m_vulkanDevice.create(m_windowInfo))
@@ -281,6 +282,10 @@ void VulkanRenderer::resize(uint32_t width, uint32_t height)
 {
 	if (!m_initialized)
 		return;
+
+#ifdef __APPLE__
+	CocoaTools::SetDrawableSize(&m_windowInfo, width, height);
+#endif
 
 	m_width = width;
 	m_height = height;
@@ -936,7 +941,7 @@ void VulkanRenderer::submitFrame()
 
 	result = vkQueuePresentKHR(queue, &presentInfo);
 
-	if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
 	{
 		recreateSwapchain();
 		return;

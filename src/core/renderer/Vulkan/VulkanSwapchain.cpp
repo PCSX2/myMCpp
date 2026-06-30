@@ -162,7 +162,11 @@ bool VulkanSwapchain::createSwapchain(VulkanDevice& device, uint32_t width, uint
 	m_presentMode = presentMode;
 
 	VkExtent2D extent = capabilities.currentExtent;
-	if (extent.width == UINT32_MAX)
+	if (extent.width == UINT32_MAX || extent.width == 0 || extent.height == 0
+#if defined(__APPLE__)
+		|| (width > 0 && height > 0 && (extent.width != width || extent.height != height))
+#endif
+	)
 	{
 		extent.width = std::clamp(width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
 		extent.height = std::clamp(height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
