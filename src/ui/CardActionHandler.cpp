@@ -68,7 +68,7 @@ void CardActionHandler::closeCard()
 }
 
 
-CardActionHandler::ImportResult CardActionHandler::importSave(PS2MemoryCard* card, const std::shared_ptr<PS2SaveFile>& saveFile, const QString& filename, bool showDialogs, bool forceOverwrite)
+CardActionHandler::ImportResult CardActionHandler::importSave(PS2MemoryCard* card, const std::shared_ptr<PS2SaveFile>& saveFile, const QString& /*filename*/, bool showDialogs, bool forceOverwrite)
 {
 	if (!card)
 	{
