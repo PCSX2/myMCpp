@@ -13,8 +13,8 @@ static const char* const MAX_EXT = ".max";
 
 ImportExportSavesDialog::ImportExportSavesDialog(const QStringList& savePaths, QWidget* parent)
 	: QDialog(parent)
-	, ui(new Ui::ImportExportSavesDialog)
 	, m_mode(Mode::Export)
+	, ui(new Ui::ImportExportSavesDialog)
 {
 	ui->setupUi(this);
 	setWindowTitle(tr("Export File Names"));
@@ -70,9 +70,9 @@ ImportExportSavesDialog::ImportExportSavesDialog(const QStringList& savePaths, Q
 
 ImportExportSavesDialog::ImportExportSavesDialog(QList<ImportItem>& importItems, QWidget* parent)
 	: QDialog(parent)
-	, ui(new Ui::ImportExportSavesDialog)
 	, m_mode(Mode::Import)
 	, m_importItems(&importItems)
+	, ui(new Ui::ImportExportSavesDialog)
 {
 	ui->setupUi(this);
 	setWindowTitle(tr("Import Saves"));
