@@ -106,7 +106,7 @@ void MemoryCardBrowser::loadRootDirectory()
 					{
 						uint32_t saveSize = m_card->getSaveSize(savePath.toStdString());
 						double sizeKB = saveSize / 1024.0;
-						item->setText(1, QString("%1 KB").arg(static_cast<int>(sizeKB)));
+						item->setText(1, tr("%1 KB").arg(static_cast<int>(sizeKB)));
 					}
 					catch (...)
 					{
@@ -117,9 +117,9 @@ void MemoryCardBrowser::loadRootDirectory()
 				{
 					double sizeKB = entry.length / 1024.0;
 					if (sizeKB < 1.0)
-						item->setText(1, QString("%1 B").arg(entry.length));
+						item->setText(1, tr("%1 B").arg(entry.length));
 					else
-						item->setText(1, QString("%1 KB").arg(static_cast<int>(sizeKB)));
+						item->setText(1, tr("%1 KB").arg(static_cast<int>(sizeKB)));
 				}
 
 				item->setData(0, Qt::UserRole, QString::fromStdString(entry.name));
@@ -182,9 +182,9 @@ void MemoryCardBrowser::loadSaveDirectory(const QString& savePath)
 			{
 				double sizeKB = entry.length / 1024.0;
 				if (sizeKB < 1.0)
-					item->setText(1, QString("%1 B").arg(entry.length));
+					item->setText(1, tr("%1 B").arg(entry.length));
 				else
-					item->setText(1, QString("%1 KB").arg(static_cast<int>(sizeKB)));
+					item->setText(1, tr("%1 KB").arg(static_cast<int>(sizeKB)));
 			}
 			else
 			{
