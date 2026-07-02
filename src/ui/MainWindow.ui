@@ -52,7 +52,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>27</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -64,8 +64,8 @@
     <addaction name="actionClose"/>
     <addaction name="separator"/>
     <addaction name="actionSaveAs"/>
-    <addaction name="actionCardInfo"/>
     <addaction name="actionEccTool"/>
+    <addaction name="actionCardInfo"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -111,11 +111,11 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="contextMenuPolicy">
+    <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
+   </property>
    <property name="windowTitle">
     <string>Main Toolbar</string>
-   </property>
-   <property name="contextMenuPolicy">
-    <enum>Qt::NoContextMenu</enum>
    </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
@@ -150,11 +150,11 @@
    </property>
   </action>
   <action name="actionCreate">
-   <property name="text">
-    <string>&amp;Create Memory Card...</string>
-   </property>
    <property name="icon">
     <iconset theme="memcard-new"/>
+   </property>
+   <property name="text">
+    <string>&amp;Create Memory Card...</string>
    </property>
    <property name="statusTip">
     <string>Create a new PS2 memory card image</string>
@@ -184,14 +184,14 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
-   <property name="text">
-    <string>&amp;Save As...</string>
-   </property>
-   <property name="statusTip">
-    <string>Save the memory card to a new file</string>
-   </property>
    <property name="icon">
     <iconset theme="save-fill"/>
+   </property>
+   <property name="text">
+    <string>Save &amp;Copy As...</string>
+   </property>
+   <property name="statusTip">
+    <string>Save a copy to another file</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -201,9 +201,9 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
-  <property name="icon">
+   <property name="icon">
     <iconset theme="file-info-fill"/>
-  </property>
+   </property>
    <property name="text">
     <string>Card &amp;Info...</string>
    </property>
@@ -212,9 +212,9 @@
    </property>
   </action>
   <action name="actionExit">
-  <property name="icon">
-   <iconset theme="close-circle-fill"/>
-  </property>
+   <property name="icon">
+    <iconset theme="close-circle-fill"/>
+   </property>
    <property name="text">
     <string>E&amp;xit</string>
    </property>
@@ -229,11 +229,11 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
-   <property name="text">
-    <string>Select &amp;All</string>
-   </property>
    <property name="icon">
     <iconset theme="list-unordered"/>
+   </property>
+   <property name="text">
+    <string>Select &amp;All</string>
    </property>
    <property name="statusTip">
     <string>Select all saves</string>
@@ -253,7 +253,7 @@
     <string>&amp;Import Save...</string>
    </property>
    <property name="statusTip">
-    <string>Import a save file to the memory card</string>
+    <string>Import a save file to the open memory card</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
@@ -315,13 +315,13 @@
     <iconset theme="save-fill"/>
    </property>
    <property name="text">
-    <string>Remove &amp;ECC and Save As...</string>
+    <string>Save ECC &amp;Copy As...</string>
    </property>
    <property name="statusTip">
-    <string>Add or remove ECC from the memory card and save to a new file</string>
+    <string>Add or remove ECC from the memory card and save a copy to another file</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
+    <string>Ctrl+Shift+E</string>
    </property>
   </action>
   <action name="actionAscii">
@@ -364,11 +364,11 @@
    </property>
   </action>
   <action name="actionPreferences">
-   <property name="text">
-    <string>&amp;Preferences...</string>
-   </property>
    <property name="icon">
     <iconset theme="settings-fill"/>
+   </property>
+   <property name="text">
+    <string>&amp;Preferences...</string>
    </property>
    <property name="statusTip">
     <string>Configure application settings</string>

@@ -53,6 +53,16 @@ namespace
 			QFileInfo(cardPath).fileName(),
 			getCardTypeLabelFromPath(cardPath));
 	}
+
+	bool samePath(const QString& a, const QString& b)
+	{
+		if (a.isEmpty() || b.isEmpty())
+			return false;
+
+		const QString pathA = QFileInfo(a).canonicalFilePath();
+		const QString pathB = QFileInfo(b).canonicalFilePath();
+		return !pathA.isEmpty() && pathA == pathB;
+	}
 } // namespace
 
 MainWindow::MainWindow(Config* config, QWidget* parent)
@@ -404,6 +414,8 @@ void MainWindow::onOpenMemoryCard()
 		return;
 	}
 
+	const bool reloading = memoryCard && !currentCardPath.isEmpty() && samePath(currentCardPath, filename);
+
 	closeCard();
 
 	auto card = actionHandler->openCard(filename);
@@ -417,6 +429,11 @@ void MainWindow::onOpenMemoryCard()
 		ui->actionClose->setEnabled(true);
 		ui->actionSaveAs->setEnabled(true);
 		ui->actionCardInfo->setEnabled(true);
+		const bool hasEcc = memoryCard->hasEcc();
+		ui->actionEccTool->setText(hasEcc ? tr("Remove ECC and Save &Copy As...") : tr("Add ECC and Save &Copy As..."));
+		ui->actionEccTool->setStatusTip(hasEcc ?
+											tr("Remove ECC from the memory card and save a copy to another file") :
+											tr("Add ECC to the memory card and save a copy to another file"));
 		ui->actionEccTool->setEnabled(true);
 		ui->actionImport->setEnabled(true);
 		ui->actionExport->setEnabled(true);
@@ -426,6 +443,13 @@ void MainWindow::onOpenMemoryCard()
 		if (m_discordRpc)
 		{
 			m_discordRpc->setCardOpenContext(makeCardDisplayLabel(currentCardPath));
+		}
+
+		if (reloading)
+		{
+			ui->statusBar->showMessage(
+				tr("Reloaded %1").arg(QFileInfo(filename).fileName()),
+				5000);
 		}
 	}
 }
@@ -453,6 +477,24 @@ void MainWindow::onCreateMemoryCard()
 		return;
 	}
 
+	if (QFile::exists(filename))
+	{
+		const auto reply = QMessageBox::warning(
+			this,
+			tr("Create Memory Card"),
+			tr("'%1' already exists.\n\n"
+			   "Creating a memory card here will overwrite that file and erase any saves on it.\n\n"
+			   "Continue?")
+				.arg(QDir::toNativeSeparators(filename)),
+			QMessageBox::Yes | QMessageBox::No,
+			QMessageBox::No);
+
+		if (reply != QMessageBox::Yes)
+		{
+			return;
+		}
+	}
+
 	closeCard();
 
 	auto card = actionHandler->createCard(filename, sizeMB, disableEcc);
@@ -466,6 +508,11 @@ void MainWindow::onCreateMemoryCard()
 		ui->actionClose->setEnabled(true);
 		ui->actionSaveAs->setEnabled(true);
 		ui->actionCardInfo->setEnabled(true);
+		const bool hasEcc = memoryCard->hasEcc();
+		ui->actionEccTool->setText(hasEcc ? tr("Remove ECC and Save &Copy As...") : tr("Add ECC and Save &Copy As..."));
+		ui->actionEccTool->setStatusTip(hasEcc ?
+											tr("Remove ECC from the memory card and save a copy to another file") :
+											tr("Add ECC to the memory card and save a copy to another file"));
 		ui->actionEccTool->setEnabled(true);
 		ui->actionImport->setEnabled(true);
 		ui->actionExport->setEnabled(true);
@@ -626,7 +673,7 @@ void MainWindow::importSaveFiles(const QStringList& paths)
 		QMessageBox::warning(this, tr("Import"),
 			tr("Imported %1 save(s); %2 failed:\n%3").arg(ok).arg(failed).arg(failedNames.join("\n")));
 	}
-	else
+	else if (ok > 0)
 	{
 		if (skipped > 0)
 		{
@@ -640,7 +687,12 @@ void MainWindow::importSaveFiles(const QStringList& paths)
 		}
 	}
 
-	ui->statusBar->showMessage(failed == 0 ? tr("Imported %1 saves").arg(ok) : tr("Imported %1, %2 failed").arg(ok).arg(failed), 5000);
+	if (failed > 0)
+		ui->statusBar->showMessage(tr("Imported %1, %2 failed").arg(ok).arg(failed), 8000);
+	else if (ok > 0)
+		ui->statusBar->showMessage(tr("Imported %1 save(s)").arg(ok), 8000);
+	else
+		ui->statusBar->showMessage(tr("No saves imported"), 8000);
 
 	if (m_discordRpc && ok > 0)
 	{
@@ -1089,25 +1141,39 @@ void MainWindow::onSaveAs()
 		return;
 
 	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->getMemoryCardFolder());
+	const QFileInfo cardInfo(currentCardPath);
+	const QString suffix = cardInfo.suffix().isEmpty() ? "ps2" : cardInfo.suffix();
+	const QString defaultPath = memoryCardDir + QLatin1Char('/') + cardInfo.completeBaseName() + "_copy." + suffix;
+
 	QString filename = QFileDialog::getSaveFileName(
 		this,
-		tr("Save Memory Card As"),
-		memoryCardDir + QLatin1Char('/') + QFileInfo(currentCardPath).baseName() + ".ps2",
+		tr("Save Copy As..."),
+		defaultPath,
 		tr("PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)"));
 
 	if (filename.isEmpty())
 		return;
 
+	if (samePath(currentCardPath, filename))
+	{
+		QMessageBox::information(
+			this,
+			tr("Save Copy As"),
+			tr("That file is already open.\n\n"
+			   "Pick another name if you want a copy."));
+		return;
+	}
+
 	try
 	{
-		memoryCard->saveAs(filename.toStdString(), true);
+		memoryCard->saveAs(filename.toStdString(), memoryCard->hasEcc());
 		if (m_discordRpc)
 		{
 			m_discordRpc->setTemporaryPresence(
 				tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
-				tr("Saved As: %1").arg(QFileInfo(filename).fileName()));
+				tr("Copy saved: %1").arg(QFileInfo(filename).fileName()));
 		}
-		ui->statusBar->showMessage(tr("Saved to %1").arg(filename), 5000);
+		ui->statusBar->showMessage(tr("Copy saved to %1").arg(filename), 5000);
 	}
 	catch (const std::exception& e)
 	{
@@ -1220,23 +1286,31 @@ void MainWindow::onEccTool()
 
 	bool hasEcc = memoryCard->hasEcc();
 
-	QString defaultName;
-	if (hasEcc)
-		defaultName = "NoECC_" + QFileInfo(currentCardPath).fileName();
-	else
-		defaultName = "ECC_" + QFileInfo(currentCardPath).fileName();
-
-	QString dialogTitle = hasEcc ? tr("Remove ECC and Save As...") : tr("Add ECC and Save As...");
-
 	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->getMemoryCardFolder());
+	const QFileInfo cardInfo(currentCardPath);
+	const QString prefix = hasEcc ? "NoECC_" : "ECC_";
+	const QString defaultPath = memoryCardDir + QLatin1Char('/') + prefix + cardInfo.fileName();
+
+	QString dialogTitle = hasEcc ? tr("Remove ECC and Save Copy As...") : tr("Add ECC and Save Copy As...");
+
 	QString filename = QFileDialog::getSaveFileName(
 		this,
 		dialogTitle,
-		memoryCardDir + QLatin1Char('/') + defaultName,
+		defaultPath,
 		tr("All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)"));
 
 	if (filename.isEmpty())
 		return;
+
+	if (samePath(currentCardPath, filename))
+	{
+		QMessageBox::information(
+			this,
+			dialogTitle,
+			tr("That file is already open.\n\n"
+			   "Pick another name for the ECC copy."));
+		return;
+	}
 
 	try
 	{
@@ -1247,7 +1321,7 @@ void MainWindow::onEccTool()
 				tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
 				hasEcc ? tr("Removed ECC") : tr("Added ECC"));
 		}
-		ui->statusBar->showMessage(tr("Saved to %1").arg(filename), 5000);
+		ui->statusBar->showMessage(tr("ECC copy saved to %1").arg(filename), 5000);
 	}
 	catch (const std::exception& e)
 	{

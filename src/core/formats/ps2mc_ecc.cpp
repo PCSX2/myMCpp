@@ -155,8 +155,11 @@ int eccCheckPage(std::vector<uint8_t>& page, std::vector<uint8_t>& spare, int pa
 			chunk.resize(128, 0);
 		}
 
-		std::array<uint8_t, 3> ecc;
-		std::copy(spare.begin() + i * 3, spare.begin() + i * 3 + 3, ecc.begin());
+		std::array<uint8_t, 3> ecc = {0, 0, 0};
+		if (spare.size() >= static_cast<size_t>(i * 3 + 3))
+		{
+			std::copy(spare.begin() + i * 3, spare.begin() + i * 3 + 3, ecc.begin());
+		}
 
 		int check_result = eccCheck(chunk, ecc);
 		if (check_result != ECC_CHECK_OK)
