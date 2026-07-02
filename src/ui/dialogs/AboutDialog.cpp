@@ -49,7 +49,7 @@ AboutDialog::AboutDialog(QWidget* parent)
 		{
 			auto path = ResourcePath::get() / "licenses.html";
 			QDialog* licenseDialog = new QDialog(this);
-			licenseDialog->setWindowTitle("Third-Party Licenses");
+			licenseDialog->setWindowTitle(tr("Third-Party Licenses"));
 			licenseDialog->resize(800, 600);
 
 			QVBoxLayout* layout = new QVBoxLayout(licenseDialog);

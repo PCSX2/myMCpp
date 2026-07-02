@@ -34,20 +34,20 @@ namespace
 	{
 		const QString ext = QFileInfo(cardPath).suffix().toLower();
 		if (ext == QStringLiteral("ps2"))
-			return QStringLiteral("PCSX2");
+			return QCoreApplication::translate("MainWindow", "PCSX2");
 		if (ext == QStringLiteral("mc2") || ext == QStringLiteral("mcd"))
-			return QStringLiteral("MemCard PRO2");
+			return QCoreApplication::translate("MainWindow", "MemCard PRO2");
 		if (ext == QStringLiteral("vm2") || ext == QStringLiteral("vmc"))
-			return QStringLiteral("PS3 VMC");
+			return QCoreApplication::translate("MainWindow", "PS3 VMC");
 		if (ext == QStringLiteral("bin") || ext == QStringLiteral("mc"))
-			return QStringLiteral("Raw");
-		return QStringLiteral("Memory Card");
+			return QCoreApplication::translate("MainWindow", "Raw");
+		return QCoreApplication::translate("MainWindow", "Memory Card");
 	}
 
 	QString makeCardDisplayLabel(const QString& cardPath)
 	{
 		if (cardPath.isEmpty())
-			return QStringLiteral("Memory Card");
+			return QCoreApplication::translate("MainWindow", "Memory Card");
 
 		return QStringLiteral("%1 (%2)").arg(
 			QFileInfo(cardPath).fileName(),
@@ -1238,7 +1238,7 @@ void MainWindow::onCardInfo()
 			flagBits << tr("ERASE_ZEROES");
 		QString flagsText = tr("0x%1").arg(QString::number(info.cardFlags, 16).toUpper());
 		if (!flagBits.isEmpty())
-			flagsText += tr(" (") + flagBits.join(", ") + ")";
+			flagsText += tr(" (%1)").arg(flagBits.join(tr(", ")));
 		addRow(tr("Card Flags"), flagsText);
 
 		addRow(tr("ECC Layout"), info.withEcc ? tr("Yes (512+16)") : tr("No (512 only)"));

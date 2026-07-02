@@ -58,16 +58,16 @@ void DiscordRPCManager::setBrowsingContext(const QString& cardName, const QStrin
 		return;
 	}
 
-	const QString cleanCard = cardName.trimmed().isEmpty() ? QStringLiteral("Memory Card") : trimForPresence(cardName.trimmed(), 120);
-	const QString cleanName = highlightedName.trimmed().isEmpty() ? QStringLiteral("Browsing") : trimForPresence(highlightedName.trimmed(), 120);
+	const QString cleanCard = cardName.trimmed().isEmpty() ? tr("Memory Card") : trimForPresence(cardName.trimmed(), 120);
+	const QString cleanName = highlightedName.trimmed().isEmpty() ? tr("Browsing") : trimForPresence(highlightedName.trimmed(), 120);
 
-	QString state = QStringLiteral("Highlighted: %1").arg(cleanName);
+	QString state = tr("Highlighted: %1").arg(cleanName);
 	if (!highlightedPath.trimmed().isEmpty())
 	{
 		state = trimForPresence(state, 120);
 	}
 
-	const QString details = QStringLiteral("Card: %1").arg(cleanCard);
+	const QString details = tr("Card: %1").arg(cleanCard);
 	m_stableDetails = details;
 	m_stableState = state;
 
@@ -114,8 +114,8 @@ void DiscordRPCManager::setCardOpenContext(const QString& cardName)
 		return;
 	}
 
-	const QString cleanCard = cardName.trimmed().isEmpty() ? QStringLiteral("Memory card") : trimForPresence(cardName.trimmed(), 120);
-	updatePresence(QStringLiteral("Card: %1").arg(cleanCard), QStringLiteral("Browsing Saves"));
+	const QString cleanCard = cardName.trimmed().isEmpty() ? tr("Memory Card") : trimForPresence(cardName.trimmed(), 120);
+	updatePresence(tr("Card: %1").arg(cleanCard), tr("Browsing Saves"));
 }
 
 void DiscordRPCManager::resetToIdle()
@@ -149,8 +149,8 @@ void DiscordRPCManager::start()
 	Discord_Initialize(clientId, &handlers, 1, nullptr);
 
 	m_startTimestamp = QDateTime::currentSecsSinceEpoch();
-	m_stableDetails = QStringLiteral("Using myMCpp");
-	m_stableState = QStringLiteral("Managing Saves");
+	m_stableDetails = tr("Using myMCpp");
+	m_stableState = tr("Managing Saves");
 	updateIdlePresence();
 	m_callbackTimer.start();
 	m_initialized = true;
@@ -182,7 +182,7 @@ void DiscordRPCManager::updateIdlePresence()
 		return;
 	}
 
-	setPresenceText(QStringLiteral("Using myMCpp"), QStringLiteral("Managing Saves"));
+	setPresenceText(tr("Using myMCpp"), tr("Managing Saves"));
 }
 
 void DiscordRPCManager::updatePresence(const QString& details, const QString& state)
@@ -201,25 +201,32 @@ void DiscordRPCManager::updatePresence(const QString& details, const QString& st
 	QByteArray smallImageTextUtf8;
 
 	const QString lowerState = state.toLower();
-	if (lowerState.contains(QStringLiteral("selected file")))
+	if (lowerState.contains(QStringLiteral("selected file")) ||
+		lowerState.contains(tr("Selected File").toLower()))
 	{
 		smallImageKeyUtf8 = QByteArray("File");
-		smallImageTextUtf8 = QByteArray("File Selected");
+		smallImageTextUtf8 = tr("File Selected").toUtf8();
 	}
-	else if (lowerState.contains(QStringLiteral("selected folder")) || lowerState.contains(QStringLiteral("browsing files")))
+	else if (lowerState.contains(QStringLiteral("selected folder")) ||
+			 lowerState.contains(tr("Selected Folder").toLower()) ||
+			 lowerState.contains(QStringLiteral("browsing files")) ||
+			 lowerState.contains(tr("Browsing Files").toLower()))
 	{
 		smallImageKeyUtf8 = QByteArray("folder");
-		smallImageTextUtf8 = QByteArray("Browsing files");
+		smallImageTextUtf8 = tr("Browsing files").toUtf8();
 	}
-	else if (lowerState.contains(QStringLiteral("highlighted save")) || lowerState.contains(QStringLiteral("browsing saves")))
+	else if (lowerState.contains(QStringLiteral("highlighted save")) ||
+			 lowerState.contains(tr("Highlighted Save").toLower()) ||
+			 lowerState.contains(QStringLiteral("browsing saves")) ||
+			 lowerState.contains(tr("Browsing Saves").toLower()))
 	{
 		smallImageKeyUtf8 = QByteArray("Save");
-		smallImageTextUtf8 = QByteArray("Save browser");
+		smallImageTextUtf8 = tr("Save browser").toUtf8();
 	}
 	else
 	{
 		smallImageKeyUtf8 = QByteArray("Idle");
-		smallImageTextUtf8 = QByteArray("Idle");
+		smallImageTextUtf8 = tr("Idle").toUtf8();
 	}
 
 	presence.state = stateUtf8.constData();

@@ -26,11 +26,11 @@ GraphicsSettingsWidget::GraphicsSettingsWidget(SettingsWindow* dialog, QWidget* 
 
 	ui->rendererCombo->clear();
 #if defined(ENABLE_VULKAN)
-	ui->rendererCombo->addItem("Vulkan", "vulkan");
+	ui->rendererCombo->addItem(tr("Vulkan"), "vulkan");
 #endif
-	ui->rendererCombo->addItem("OpenGL", "opengl");
+	ui->rendererCombo->addItem(tr("OpenGL"), "opengl");
 #if defined(__APPLE__)
-	ui->rendererCombo->addItem("Metal", "metal");
+	ui->rendererCombo->addItem(tr("Metal"), "metal");
 #endif
 
 	ui->cameraCombo->clear();
