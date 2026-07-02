@@ -76,7 +76,9 @@ ImportExportSavesDialog::ImportExportSavesDialog(QList<ImportItem>& importItems,
 {
 	ui->setupUi(this);
 	setWindowTitle(tr("Import Saves"));
-	ui->introLabel->setText(tr("Review and select saves to import:"));
+	ui->introLabel->setText(tr(
+		"Review and select saves to import.\n"
+		"Imports are saved to the open memory card file."));
 
 	// Hide the format selection layout since it is only for export
 	ui->formatLabel->hide();

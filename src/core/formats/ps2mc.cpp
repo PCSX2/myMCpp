@@ -18,11 +18,7 @@
 #include <memory>
 #include <algorithm>
 #include <ctime>
-
-#ifdef _WIN32
-#define NOMINMAX
-#include <Windows.h>
-#endif
+#include <filesystem>
 
 template <typename T>
 void writeLE(std::vector<uint8_t>& buf, size_t offset, T value)
@@ -42,6 +38,23 @@ T readLE(const std::vector<uint8_t>& buf, size_t offset)
 		value |= (static_cast<T>(buf[offset + i]) << (i * 8));
 	}
 	return value;
+}
+
+static void renameReplace(const std::filesystem::path& target, const std::filesystem::path& tmp)
+{
+	std::error_code ec;
+	std::filesystem::rename(tmp, target, ec);
+	if (ec)
+	{
+		ec.clear();
+		std::filesystem::remove(target, ec);
+		ec.clear();
+		std::filesystem::rename(tmp, target, ec);
+	}
+	if (ec)
+	{
+		throw PS2McIOError("Failed to replace memory card file: " + ec.message());
+	}
 }
 
 class PS2MemoryCard::Impl
@@ -797,8 +810,11 @@ void PS2MemoryCard::close()
 {
 	if (pImpl->file.is_open())
 	{
+		pImpl->file.flush();
 		pImpl->file.close();
 	}
+	pImpl->page_cache.clear();
+	pImpl->fat_cluster_cache.clear();
 }
 
 void PS2MemoryCard::Impl::init_card_parameters(int sizeInMB, bool disableEcc)
@@ -897,7 +913,7 @@ void PS2MemoryCard::Impl::write_superblock(uint32_t first_ifc, uint32_t indirect
 	}
 
 	sb[336] = 2;
-	sb[337] = 0x2B;
+	sb[337] = with_ecc ? 0x2B : 0x2A;
 
 	write_page(0, sb);
 
@@ -2082,71 +2098,156 @@ void PS2MemoryCard::saveAs(const std::string& filename, bool withEcc)
 		throw PS2McError("Memory card not open");
 	}
 
-	if (withEcc == pImpl->with_ecc)
+	std::error_code ec;
+	bool sameFile = std::filesystem::equivalent(
+		std::filesystem::path(pImpl->filename), std::filesystem::path(filename), ec);
+	if (ec)
 	{
-		pImpl->file.seekg(0, std::ios::end);
-		size_t fileSize = pImpl->file.tellg();
-		pImpl->file.seekg(0, std::ios::beg);
+		sameFile = false;
+	}
 
-		std::ofstream outFile(filename, std::ios::binary);
-		if (!outFile)
-		{
-			throw PS2McError("Failed to create file: " + filename);
-		}
+	if (pImpl->modified)
+	{
+		pImpl->write_fat_to_card();
+	}
+	pImpl->file.flush();
 
-		std::vector<char> buffer(fileSize);
-		pImpl->file.read(buffer.data(), fileSize);
-		outFile.write(buffer.data(), fileSize);
-		outFile.close();
+	if (sameFile && withEcc == pImpl->with_ecc)
+	{
 		return;
 	}
 
-	PS2MemoryCard newCard;
-	newCard.create(filename, 8);
+	const std::filesystem::path dest(sameFile ? pImpl->filename : filename);
 
-	uint32_t pageCount = pImpl->clusters_per_card * pImpl->pages_per_cluster;
-
-	newCard.close();
-
-	std::ofstream outFile(filename, std::ios::binary);
-	if (!outFile)
+	if (withEcc == pImpl->with_ecc)
 	{
-		throw PS2McError("Failed to create file: " + filename);
+		pImpl->file.close();
+		pImpl->page_cache.clear();
+		pImpl->fat_cluster_cache.clear();
+
+		std::filesystem::copy_file(pImpl->filename, dest,
+			std::filesystem::copy_options::overwrite_existing, ec);
+		if (ec)
+		{
+			pImpl->file.open(pImpl->filename, std::ios::in | std::ios::out | std::ios::binary);
+			if (!pImpl->file)
+			{
+				pImpl->file.open(pImpl->filename, std::ios::in | std::ios::binary);
+			}
+			throw PS2McIOError("Failed to copy memory card file: " + ec.message());
+		}
+
+		pImpl->file.open(pImpl->filename, std::ios::in | std::ios::out | std::ios::binary);
+		if (!pImpl->file)
+		{
+			pImpl->file.open(pImpl->filename, std::ios::in | std::ios::binary);
+		}
+		if (!pImpl->file)
+		{
+			throw PS2McIOError("Failed to reopen memory card after save");
+		}
+		pImpl->read_superblock();
+		return;
 	}
 
-	if (withEcc && !pImpl->with_ecc)
+	const uint32_t pageCount = pImpl->clusters_per_card * pImpl->pages_per_cluster;
+	const std::filesystem::path tmpPath = dest.string() + ".tmp";
+	std::filesystem::remove(tmpPath, ec);
+
+	std::ofstream out(tmpPath, std::ios::binary);
+	if (!out)
 	{
-		for (uint32_t i = 0; i < pageCount; ++i)
+		throw PS2McError("Failed to create file: " + tmpPath.string());
+	}
+
+	for (uint32_t i = 0; i < pageCount; ++i)
+	{
+		auto pageData = pImpl->read_page(i);
+		if (pageData.size() > pImpl->page_size)
 		{
-			auto pageData = pImpl->read_page(i);
-			if (pageData.size() < pImpl->page_size)
-			{
-				pageData.resize(pImpl->page_size, 0);
-			}
-
-			outFile.write(reinterpret_cast<const char*>(pageData.data()), pImpl->page_size);
-
-			auto spare = eccCalculatePage(pageData, static_cast<int>(pImpl->page_size));
-			outFile.write(reinterpret_cast<const char*>(spare.data()), spare.size());
+			pageData.resize(pImpl->page_size);
 		}
+		else if (pageData.size() < pImpl->page_size)
+		{
+			pageData.resize(pImpl->page_size, 0);
+		}
+
+		const char* MAGIC = "Sony PS2 Memory Card Format ";
+		if (pageData.size() >= 28 && std::memcmp(pageData.data(), MAGIC, 28) == 0)
+		{
+			if (pageData.size() > 0x151)
+			{
+				if (withEcc)
+				{
+					pageData[0x151] |= 0x01;
+				}
+				else
+				{
+					pageData[0x151] &= ~0x01;
+				}
+			}
+		}
+
+		out.write(reinterpret_cast<const char*>(pageData.data()),
+			static_cast<std::streamsize>(pImpl->page_size));
+		if (!out)
+		{
+			std::filesystem::remove(tmpPath, ec);
+			throw PS2McIOError("Failed to write memory card file");
+		}
+
+		if (withEcc && !pImpl->with_ecc)
+		{
+			uint32_t targetSpareSize = divRoundUp(pImpl->page_size, 128) * 4;
+			std::vector<uint8_t> spareBytes(targetSpareSize, 0);
+			auto ecc = eccCalculatePage(pageData, static_cast<int>(pImpl->page_size));
+			for (size_t j = 0; j < ecc.size() && j < targetSpareSize; ++j)
+			{
+				spareBytes[j] = ecc[j];
+			}
+			out.write(reinterpret_cast<const char*>(spareBytes.data()),
+				static_cast<std::streamsize>(targetSpareSize));
+			if (!out)
+			{
+				std::filesystem::remove(tmpPath, ec);
+				throw PS2McIOError("Failed to write memory card file");
+			}
+		}
+	}
+
+	out.close();
+
+	if (!sameFile)
+	{
+		renameReplace(dest, tmpPath);
+		return;
+	}
+
+	pImpl->file.close();
+	pImpl->page_cache.clear();
+	pImpl->fat_cluster_cache.clear();
+	renameReplace(dest, tmpPath);
+
+	pImpl->with_ecc = withEcc;
+	pImpl->ignore_ecc = !withEcc;
+	if (withEcc)
+	{
+		pImpl->calculate_derived();
 	}
 	else
 	{
-		for (uint32_t i = 0; i < pageCount; ++i)
-		{
-			auto pageData = pImpl->read_page(i);
-			if (pageData.size() > pImpl->page_size)
-			{
-				pageData.resize(pImpl->page_size);
-			}
-			else if (pageData.size() < pImpl->page_size)
-			{
-				pageData.resize(pImpl->page_size, 0);
-			}
-
-			outFile.write(reinterpret_cast<const char*>(pageData.data()), pImpl->page_size);
-		}
+		pImpl->spare_size = 0;
+		pImpl->raw_page_size = pImpl->page_size;
 	}
 
-	outFile.close();
+	pImpl->file.open(pImpl->filename, std::ios::in | std::ios::out | std::ios::binary);
+	if (!pImpl->file)
+	{
+		pImpl->file.open(pImpl->filename, std::ios::in | std::ios::binary);
+	}
+	if (!pImpl->file)
+	{
+		throw PS2McIOError("Failed to reopen memory card after save");
+	}
+	pImpl->read_superblock();
 }
