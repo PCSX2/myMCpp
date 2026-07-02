@@ -824,7 +824,9 @@ void MainWindow::onLanguageChanged()
 
 	if (m_settingsWindow)
 	{
+		m_settingsWindow->disconnect();
 		m_settingsWindow->close();
+		m_settingsWindow->deleteLater();
 		m_settingsWindow = nullptr;
 	}
 

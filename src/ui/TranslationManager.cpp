@@ -50,27 +50,31 @@ void TranslationManager::loadLanguage(const std::string& lang)
 	m_translator = std::make_unique<QTranslator>();
 	bool loaded = false;
 
-	QString appTranslations = QApplication::applicationDirPath() + QStringLiteral("/translations");
-	if (m_translator->load("myMCpp_" + langStr, appTranslations))
+	// Don't need to translate English
+	if (langStr != QStringLiteral("en"))
 	{
-		loaded = true;
-		Logger::info("Loaded translation from app translations folder: {}", appTranslations.toStdString());
-	}
-	else if (m_translator->load("myMCpp_" + langStr,
-				 QString::fromStdString((m_config->getResourcesPath() / "translations").string())))
-	{
-		loaded = true;
-		Logger::info("Loaded translation from external resources folder");
-	}
-	// Try resource path
-	else if (m_translator->load(":/translations/myMCpp_" + langStr + ".qm"))
-	{
-		loaded = true;
-		Logger::info("Loaded translation from resource");
-	}
-	else
-	{
-		Logger::warn("Failed to load translation for language: {}", lang);
+		QString appTranslations = QApplication::applicationDirPath() + QStringLiteral("/translations");
+		if (m_translator->load("myMCpp_" + langStr, appTranslations))
+		{
+			loaded = true;
+			Logger::info("Loaded translation from app translations folder: {}", appTranslations.toStdString());
+		}
+		else if (m_translator->load("myMCpp_" + langStr,
+					 QString::fromStdString((m_config->getResourcesPath() / "translations").string())))
+		{
+			loaded = true;
+			Logger::info("Loaded translation from external resources folder");
+		}
+		// Try resource path
+		else if (m_translator->load(":/translations/myMCpp_" + langStr + ".qm"))
+		{
+			loaded = true;
+			Logger::info("Loaded translation from resource");
+		}
+		else
+		{
+			Logger::warn("Failed to load translation for language: {}", lang);
+		}
 	}
 
 	m_currentLanguage = lang;
@@ -79,8 +83,9 @@ void TranslationManager::loadLanguage(const std::string& lang)
 	{
 		m_app->installTranslator(m_translator.get());
 		Logger::info("Translator installed successfully");
-		emit languageChanged();
 	}
+
+	emit languageChanged();
 }
 
 std::vector<std::pair<QString, QString>> TranslationManager::getAvailableLanguages()
