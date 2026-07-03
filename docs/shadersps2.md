@@ -9,11 +9,11 @@
 How do we render the vertices and textures of polygons into a colorful scene?  
 This is where **OpenGL shaders** come into play.
 
-Today, we’ll discuss the shaders used in **ps2mc-browser**.
+Today, we'll discuss the shaders used in **ps2mc-browser**.
 
 **ps2mc-browser** is a PlayStation 2 memory card viewer capable of parsing **vertex and texture data** from 3D icons stored in PS2 memory card files and rendering them using **OpenGL**.
 
-In the following sections, we’ll break down the **six OpenGL shaders** used in ps2mc-browser and explain how each one works.
+In the following sections, we'll break down the **six OpenGL shaders** used in ps2mc-browser and explain how each one works.
 
 ---
 
@@ -23,7 +23,7 @@ These shaders are responsible for rendering the **background color**.
 
 From earlier analysis, the `icon.sys` file provides:
 - Color data
-- Transparency data  
+- Transparency data
 for the **four vertices** of the background.
 
 ### Coordinate System Recap
@@ -217,5 +217,3 @@ ps2mc-browser renders animated PS2 memory card icons by combining:
 - Button shaders (UI interaction)
 
 Both Python and OpenGL were new technologies for this project, and integrating them proved to be a rewarding challenge. More features may be added in the future.
-
-Until next time.

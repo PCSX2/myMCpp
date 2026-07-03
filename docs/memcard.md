@@ -5,7 +5,7 @@
 **By Ross Ridge**  
 **Public Domain**
 
-This document describes the file system layout used on PlayStation 2 memory cards. It is based on research conducted while writing **mymc**, a utility for working with PS2 memory card images. This document attempts to be comprehensive and accurate, but some details may be missing, misleading, or incorrect. Many assumptions were required during the research process, and it is difficult to know Sony’s exact intent in all cases. Almost all structure, field, and flag names were coined by the author. Nothing in this document should be considered official.
+This document describes the file system layout used on PlayStation 2 memory cards. It is based on research conducted while writing **mymc**, a utility for working with PS2 memory card images. This document attempts to be comprehensive and accurate, but some details may be missing, misleading, or incorrect. Many assumptions were required during the research process, and it is difficult to know Sony's exact intent in all cases. Almost all structure, field, and flag names were coined by the author. Nothing in this document should be considered official.
 
 For brevity, unused fields and flag bits are omitted from tables. In most cases, unused fields or flags should be assumed to be reserved or padding and set to zero when writing. Structures must be padded to the length specified at the top of each table. All values are stored on the card using **little-endian** byte order.
 
@@ -15,31 +15,31 @@ For brevity, unused fields and flag bits are omitted from tables. In most cases,
 
 ### Glossary
 
-- **block**  
+- **block**
   See *erase block*.
 
-- **cluster**  
+- **cluster**
   The unit of allocation used in the file system. A cluster is one or more pages in size.
 
-- **ECC**  
+- **ECC**
   Error Correcting Code. A method of encoding data so random bit errors can be detected and corrected.
 
-- **erase block**  
+- **erase block**
   The basic erasable unit on a memory card.
 
-- **half**  
+- **half**
   A two-byte unsigned half-word value.
 
-- **page**  
+- **page**
   The basic addressable unit on a memory card. Corresponds to a page on the flash device and is analogous to a sector on a hard disk.
 
-- **programming**  
+- **programming**
   The operation of changing erased bits on a flash device from `1` to `0`.
 
-- **superblock**  
+- **superblock**
   The first page on the memory card containing critical file system structure information.
 
-- **word**  
+- **word**
   A four-byte unsigned word value.
 
 ---
@@ -50,15 +50,15 @@ PlayStation 2 memory cards use **NAND flash**, a non-volatile memory type that c
 
 #### Access Speed
 
-Random access is relatively slow. Reading the first byte takes ~25 µs, while sequential reads are much faster (~50 ns per byte). For example, the **TC58V64AFT** flash device (used in PS2 memory cards) can read a full 528-byte page at ~10 Mb/s sequentially, but only ~40 KB/s for random byte reads. Actual transfer rates are lower due to the PS2’s serial bus limitations.
+Random access is relatively slow. Reading the first byte takes ~25 µs, while sequential reads are much faster (~50 ns per byte). For example, the **TC58V64AFT** flash device (used in PS2 memory cards) can read a full 528-byte page at ~10 Mb/s sequentially, but only ~40 KB/s for random byte reads. Actual transfer rates are lower due to the PS2's serial bus limitations.
 
 #### Write Limitations
 
 Flash memory can only change bits from `1` to `0`. To reset bits back to `1`, an entire **erase block** must be erased. Since erase blocks contain multiple pages, writing a single page requires:
 
-1. Reading all pages in the erase block  
-2. Erasing the block  
-3. Reprogramming all pages with updated data  
+1. Reading all pages in the erase block
+2. Erasing the block
+3. Reprogramming all pages with updated data
 
 Some flash devices reverse this behavior (erasing to `0`, programming to `1`).
 
@@ -66,9 +66,9 @@ Some flash devices reverse this behavior (erasing to `0`, programming to `1`).
 
 Flash memory is less reliable than RAM:
 
-- Devices may ship with bad blocks  
-- New defects may develop over time  
-- Blocks wear out after many erase/program cycles  
+- Devices may ship with bad blocks
+- New defects may develop over time
+- Blocks wear out after many erase/program cycles
 
 Each page is split into:
 
@@ -128,12 +128,12 @@ The superblock is the only structure with a fixed location. It resides in the **
 
 | Offset | Name | Type | Default | Description |
 |------:|------|------|---------|-------------|
-| 0x00 | magic | byte[28] | — | ASCII string `"Sony PS2 Memory Card Format "` |
+| 0x00 | magic | byte[28] | - | ASCII string `"Sony PS2 Memory Card Format "` |
 | 0x1C | version | byte[12] | 1.X.0.0 | Format version |
 | 0x28 | page_len | half | 512 | Page size in bytes |
 | 0x2A | pages_per_cluster | half | 2 | Pages per cluster |
 | 0x2C | pages_per_block | half | 16 | Pages per erase block |
-| 0x2E | — | half | 0xFF00 | Unused |
+| 0x2E | - | half | 0xFF00 | Unused |
 | 0x30 | clusters_per_card | word | 8192 | Total clusters |
 | 0x34 | alloc_offset | word | 41 | First allocatable cluster |
 | 0x38 | alloc_end | word | 8135 | End of allocatable clusters |
@@ -159,18 +159,18 @@ The superblock is the only structure with a fixed location. It resides in the **
 
 Each FAT entry is a 32-bit value:
 
-- MSB clear → cluster free  
-- MSB set → cluster allocated  
-- Lower 31 bits → next cluster index (relative to `alloc_offset`)  
-- `0xFFFFFFFF` → end of file  
+- MSB clear -> cluster free
+- MSB set -> cluster allocated
+- Lower 31 bits -> next cluster index (relative to `alloc_offset`)
+- `0xFFFFFFFF` -> end of file
 
 ### FAT Indirection
 
 The FAT uses **double-indirect indexing**:
 
-- `ifc_list` → indirect FAT clusters  
-- Indirect clusters → FAT clusters  
-- FAT clusters → FAT entries  
+- `ifc_list` -> indirect FAT clusters
+- Indirect clusters -> FAT clusters
+- FAT clusters -> FAT entries
 
 Example access logic (cluster size = 1024):
 
@@ -230,7 +230,7 @@ Directories are files containing directory entries. The root directory cluster i
 | 0x02 | min | byte | Minutes |
 | 0x03 | hour | byte | Hours |
 | 0x04 | day | byte | Day |
-| 0x05 | month | byte | Month (1–12) |
+| 0x05 | month | byte | Month (1-12) |
 | 0x06 | year | word | Year (4-digit) |
 
 All timestamps use Japan Standard Time (UTC+9).
