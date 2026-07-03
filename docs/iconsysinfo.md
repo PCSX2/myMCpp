@@ -6,7 +6,7 @@ This structure defines how a PlayStation 2 save appears in the PS2 Browser, incl
 
 ### General Notes:
 - All multi-byte values are big-endian
-- Color values use RGB- format with a range of 0x00–0x80
+- Color values use RGB- format with a range of 0x00-0x80
 - Strings are null-terminated
 - Text encoding for titles is Shift-JIS
 - Total file size is 964 bytes
@@ -18,10 +18,10 @@ This structure defines how a PlayStation 2 save appears in the PS2 Browser, incl
 | 6              | 2            | Offset of 2nd line in title name |
 | 8              | 4            | Unknown |
 | 12             | 4            | Background transparency when **Save** is selected in PS2 Browser (`0x00` = transparent, `0x80` = opaque) |
-| 16             | 16           | Background color – upper left (RGB-, `0x00`–`0x80`) |
-| 32             | 16           | Background color – upper right (RGB-, `0x00`–`0x80`) |
-| 48             | 16           | Background color – lower left (RGB-, `0x00`–`0x80`) |
-| 64             | 16           | Background color – lower right (RGB-, `0x00`–`0x80`) |
+| 16             | 16           | Background color - upper left (RGB-, `0x00`-`0x80`) |
+| 32             | 16           | Background color - upper right (RGB-, `0x00`-`0x80`) |
+| 48             | 16           | Background color - lower left (RGB-, `0x00`-`0x80`) |
+| 64             | 16           | Background color - lower right (RGB-, `0x00`-`0x80`) |
 | 80             | 16           | Light 1 direction |
 | 96             | 16           | Light 2 direction |
 | 112            | 16           | Light 3 direction |

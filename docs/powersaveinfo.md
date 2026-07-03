@@ -28,7 +28,7 @@ After decompressing the data using the lzAri algorithm, the result is an archive
 | 0x00000000 | 4 | File data size (bytes) |
 | 0x00000004 | 32 | Filename (ASCII) |
 | 0x00000024 | Variable | File data |
-| — | Variable | Padding |
+| - | Variable | Padding |
 
 ---
 

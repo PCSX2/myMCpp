@@ -4,7 +4,7 @@
 
 Unlike the icon.sys file, the icon file for each game is variable in size and quantity, but there is always at least one. Some games may use the same icon for both copying and deleting icons as the regular icon.
 
-Seeing this image, it should be familiar to seasoned PS2 players.  
+Seeing this image, it should be familiar to seasoned PS2 players.
 It is the **3D icon of a game save file** shown in the PS2 memory card
 management interface. This article introduces how to **extract and render
 the icon model** from a PS2 save file.
@@ -15,27 +15,27 @@ the icon model** from a PS2 save file.
 
 ### A. What can be parsed from the save file?
 
-- All **vertices and normals** of the icon model  
-- **Animation frames** of the icon model  
-- **Lighting information**  
-- **Textures and texture coordinates**  
+- All **vertices and normals** of the icon model
+- **Animation frames** of the icon model
+- **Lighting information**
+- **Textures and texture coordinates**
 - **Background color and transparency**
 
 ### B. What needs to be implemented?
 
 - Write shaders to render the **background and icons**
-- Create animations from the **icon model’s animation frames**
+- Create animations from the **icon model's animation frames**
 - Build **model**, **view**, and **projection** matrices to achieve a result
   close to the original PS2 visual effect
 
-Completing all functionality will likely require two articles.  
+Completing all functionality will likely require two articles.
 This article primarily focuses on **Part A (parsing)**.
 
 ---
 
 ## 02 Parsing `icon.sys`
 
-In the previous article, we discussed how to export game save files.  
+In the previous article, we discussed how to export game save files.
 Each save file contains an `icon.sys` file, which acts as the **configuration
 file** for the save icon.
 
@@ -50,18 +50,18 @@ file** for the save icon.
 | 4      | uint16       | `0`                                                                         |
 | 6      | uint16       | Position of newline character in the game title (see Note 1)               |
 | 8      | uint32       | `0`                                                                         |
-| 12     | uint32       | bg_transparency: Background transparency (0–255)                           |
-| 16     | uint32[4]    | bg_color: Top-left corner background color (RGB, 0–255)                    |
-| 32     | uint32[4]    | bg_color: Top-right corner background color (RGB, 0–255)                   |
-| 48     | uint32[4]    | bg_color: Bottom-left corner background color (RGB, 0–255)                 |
-| 64     | uint32[4]    | bg_color: Bottom-right corner background color (RGB, 0–255)                |
-| 80     | uint32[4]    | light_pos1: Light position 1 (XYZ, 0–1)                                     |
-| 96     | uint32[4]    | light_pos2: Light position 2 (XYZ, 0–1)                                     |
-| 112    | uint32[4]    | light_pos3: Light position 3 (XYZ, 0–1)                                     |
-| 128    | uint32[4]    | light_color1: Light color 1 (RGB, 0–1)                                      |
-| 144    | uint32[4]    | light_color2: Light color 2 (RGB, 0–1)                                      |
-| 160    | uint32[4]    | light_color3: Light color 3 (RGB, 0–1)                                      |
-| 176    | uint32[4]    | ambient: Ambient light color (RGB, 0–1)                                    |
+| 12     | uint32       | bg_transparency: Background transparency (0-255)                           |
+| 16     | uint32[4]    | bg_color: Top-left corner background color (RGB, 0-255)                    |
+| 32     | uint32[4]    | bg_color: Top-right corner background color (RGB, 0-255)                   |
+| 48     | uint32[4]    | bg_color: Bottom-left corner background color (RGB, 0-255)                 |
+| 64     | uint32[4]    | bg_color: Bottom-right corner background color (RGB, 0-255)                |
+| 80     | uint32[4]    | light_pos1: Light position 1 (XYZ, 0-1)                                     |
+| 96     | uint32[4]    | light_pos2: Light position 2 (XYZ, 0-1)                                     |
+| 112    | uint32[4]    | light_pos3: Light position 3 (XYZ, 0-1)                                     |
+| 128    | uint32[4]    | light_color1: Light color 1 (RGB, 0-1)                                      |
+| 144    | uint32[4]    | light_color2: Light color 2 (RGB, 0-1)                                      |
+| 160    | uint32[4]    | light_color3: Light color 3 (RGB, 0-1)                                      |
+| 176    | uint32[4]    | ambient: Ambient light color (RGB, 0-1)                                    |
 | 192    | byte[68]     | sub_title: Game title (null-terminated, SJIS encoding)                     |
 | 260    | byte[64]     | icon_file_normal: Normal icon filename (null-terminated)                   |
 | 324    | byte[64]     | icon_file_copy: Copy icon filename (null-terminated)                       |
@@ -72,15 +72,22 @@ file** for the save icon.
 
 ### Notes
 
-**Note 1**  
-The game title (`sub_title`) is displayed across **two lines**.  
+**Note 1**
+The game title (`sub_title`) is displayed across **two lines**.
 This value specifies the byte position at which the newline occurs in the
 title string.
 
-**Note 2**  
+**Note 2**
 Icon filenames refer to `.icn` files stored alongside `icon.sys` in the save
 directory.
 
+---
+
+## 03 Parsing the Icon File
+
+The game icon file (usually with a `.icn` extension) contains the 3D model, animations, and texture data. It is composed of four main segments:
+
+### 3.1 Icon File Structure
 
 | Name               | Description                                                         |
 |--------------------|---------------------------------------------------------------------|
@@ -92,9 +99,9 @@ directory.
 ### 3.2 Icon Header
 The Icon header stores all the essential information needed to decode the different data segments. This includes:
 
-Number of vertices contained in the “Vertex Segment” and the number of animation shapes
+Number of vertices contained in the "Vertex Segment" and the number of animation shapes
 Whether the texture data is compressed
-In the icon file, the Icon header is always located at offset 0. Here’s the structure of the Icon header:
+In the icon file, the Icon header is always located at offset 0. Here's the structure of the Icon header:
 
 | Offset | Length | Description                                                                 |
 |--------|--------|-----------------------------------------------------------------------------|
@@ -106,12 +113,12 @@ In the icon file, the Icon header is always located at offset 0. Here’s the st
 
 ### Notes
 
-**Note 1**  
-The icon model has different sets of vertex data for different actions, called **“shapes.”**  
+**Note 1**
+The icon model has different sets of vertex data for different actions, called **"shapes."**
 Rendering different shapes in a loop creates animation effects.
 
-**Note 2**  
-The purpose of the **Texture type** field is not yet fully understood.  
+**Note 2**
+The purpose of the **Texture type** field is not yet fully understood.
 It is a 4-byte integer. Below is a summary of the observed behavior of each bit (may be incomplete or inaccurate):
 
 | Mask | Description                                                                 |
@@ -128,7 +135,7 @@ It is a 4-byte integer. Below is a summary of the observed behavior of each bit 
 Polygons in PS2 icons are always composed of **triangles formed by three vertices**.  
 Since the vertices are arranged according to a specific pattern, polygons can be constructed by reading the vertex data in sequence. Rendering this data with OpenGL or similar APIs produces a wireframe icon.
 
-The **Vertex Segment** contains data for all vertices in the icon.  
+The **Vertex Segment** contains data for all vertices in the icon.
 Each vertex includes:
 - Vertex coordinates
 - Normal coordinates
@@ -137,7 +144,7 @@ Each vertex includes:
 
 Therefore, for an icon with **m vertices** and **n shapes**, the Vertex Segment layout is:
 
-### Vertex Segment Layout (Per Vertex)
+#### Vertex Segment Layout (Per Vertex)
 
 Each vertex in the icon model is composed of the following data blocks, stored sequentially:
 
@@ -145,7 +152,7 @@ Each vertex in the icon model is composed of the following data blocks, stored s
 |----------|-------------|
 | **Shape 1 Vertex Coordinates** | Vertex position (X, Y, Z) for animation shape 1 |
 | **Shape 2 Vertex Coordinates** | Vertex position (X, Y, Z) for animation shape 2 |
-| **…** | Additional vertex positions for other animation shapes |
+| **...** | Additional vertex positions for other animation shapes |
 | **Shape n Vertex Coordinates** | Vertex position (X, Y, Z) for animation shape n |
 | **Normal Coordinates** | Normal vector (X, Y, Z) used for lighting calculations |
 | **Texture Coordinates** | UV coordinates used for texture mapping |
@@ -162,7 +169,7 @@ This layout enables animation by interpolating vertex positions between shapes w
 keeping normals, UVs, and colors constant.
 
 
-### Vertex Coordinates
+#### Vertex Coordinates
 
 Each vertex coordinate occupies **8 bytes** and has the following structure:
 
@@ -175,13 +182,13 @@ Each vertex coordinate occupies **8 bytes** and has the following structure:
 
 ---
 
-### Normal Coordinates
+#### Normal Coordinates
 
 Each normal coordinate has the **same structure** as the vertex coordinate data.
 
 ---
 
-### Texture Coordinates
+#### Texture Coordinates
 
 Each texture coordinate occupies **4 bytes** and has the following structure:
 
@@ -192,18 +199,18 @@ Each texture coordinate occupies **4 bytes** and has the following structure:
 
 ---
 
-### Vertex RGBA
+#### Vertex RGBA
 
 Each vertex color occupies **4 bytes** and has the following structure:
 
 | Offset | Length | Description                                      |
 |--------|--------|--------------------------------------------------|
-| 0000   | uint8  | Red (0–255)                                      |
-| 0001   | uint8  | Green (0–255)                                    |
-| 0002   | uint8  | Blue (0–255)                                     |
-| 0003   | uint8  | Alpha (0–255)                                    |
+| 0000   | uint8  | Red (0-255)                                      |
+| 0001   | uint8  | Green (0-255)                                    |
+| 0002   | uint8  | Blue (0-255)                                     |
+| 0003   | uint8  | Alpha (0-255)                                    |
 
-## 3.4 Animation Segment
+### 3.4 Animation Segment
 
 The exact meaning of much of the **Animation Segment** is not fully understood.  
 However, this is not a major concern, as animation can still be implemented using
@@ -214,7 +221,7 @@ The Animation Segment consists of:
 - followed by several **Animation Frames**
 - each Animation Frame contains multiple **Key Frames**
 
-### Animation Segment Structure
+#### Animation Segment Structure
 
 The Animation Segment consists of an **Animation Header** followed by multiple
 **Animation Frames**. Each animation frame contains **frame metadata** and a list
@@ -224,12 +231,12 @@ of **key frames**.
 
 #### Overall Layout
 
-|            | Frame Data | Key Frame 1 | Key Frame 2 | … | Key Frame n |
+|            | Frame Data | Key Frame 1 | Key Frame 2 | ... | Key Frame n |
 |------------|------------|-------------|-------------|---|-------------|
-| **Frame 1** | Frame Data 1 | Frame Key 1 | Frame Key 2 | … | Frame Key n |
-| **Frame 2** | Frame Data 2 | Frame Key 1 | Frame Key 2 | … | Frame Key n |
-| **…**      | …          | …           | …           | … | …           |
-| **Frame m** | Frame Data m | Frame Key 1 | Frame Key 2 | … | Frame Key n |
+| **Frame 1** | Frame Data 1 | Frame Key 1 | Frame Key 2 | ... | Frame Key n |
+| **Frame 2** | Frame Data 2 | Frame Key 1 | Frame Key 2 | ... | Frame Key n |
+| **...**      | ...          | ...           | ...           | ... | ...           |
+| **Frame m** | Frame Data m | Frame Key 1 | Frame Key 2 | ... | Frame Key n |
 
 ---
 
@@ -249,7 +256,7 @@ meaning of some fields remains undocumented.
 
 ---
 
-### Animation Header
+#### Animation Header
 
 | Offset | Length  | Description                                                                 |
 |--------|---------|-----------------------------------------------------------------------------|
@@ -261,7 +268,7 @@ meaning of some fields remains undocumented.
 
 ---
 
-### Frame Data
+#### Frame Data
 
 Frame Data immediately follows the Animation Header.
 
@@ -274,7 +281,7 @@ Frame Data immediately follows the Animation Header.
 
 ---
 
-### Key Frame
+#### Key Frame
 
 | Offset | Type | Description |
 |--------|------|-------------|
@@ -283,15 +290,15 @@ Frame Data immediately follows the Animation Header.
 
 ---
 
-## 3.5 Texture Segment
+### 3.5 Texture Segment
 
-Textures are images with dimensions **128×128 pixels**, encoded using the **TIM**
+Textures are images with dimensions **128x128 pixels**, encoded using the **TIM**
 image format. Based on the `tex_type` field in the Icon Header, textures can be
 classified as **uncompressed** or **compressed**.
 
 ---
 
-### Uncompressed Texture
+#### Uncompressed Texture
 
 Uncompressed textures use the **BGR555** pixel format:
 
@@ -305,17 +312,17 @@ High-order byte: Low-order byte:
 X B B B B B G G G G G R R R R R
 ```
 
-- **X** = Don’t care  
+- **X** = Don't care  
 - **R** = Red  
 - **G** = Green  
 - **B** = Blue  
 
 The raw image size is always:
-128 × 128 × 2 bytes
+128 x 128 x 2 bytes
 
 ---
 
-### Conversion to RGB24
+#### Conversion to RGB24
 
 To convert from BGR555 to RGB24:
 
@@ -329,14 +336,14 @@ When converting 5-bit color values to 8-bit:
 - Pad the lower **3 bits with zeros**
 
 After conversion:
-- **RGB24** → 3 bytes per pixel
-- **RGBA32** → 4 bytes per pixel (with added alpha)
+- **RGB24** -> 3 bytes per pixel
+- **RGBA32** -> 4 bytes per pixel (with added alpha)
 
-## Compressed Texture
+#### Compressed Texture
 
 Compressed textures use a **simple RLE (Run-Length Encoding)** algorithm.
 
-### Compression Layout
+#### Compression Layout
 
 - The first **u32** value specifies the **size of the compressed texture data**
 - The remaining data consists of repeating pairs:
@@ -346,9 +353,9 @@ Compressed textures use a **simple RLE (Run-Length Encoding)** algorithm.
 
 ---
 
-### RLE Decoding Rules
+#### RLE Decoding Rules
 
-The `rle_code` determines how `rle_data` is expanded.  
+The `rle_code` determines how `rle_data` is expanded.
 Each RLE entry represents **x copies of rle_data repeated y times**.
 
 | Condition                      | x (data count)           | y (repeat count) |
@@ -357,12 +364,12 @@ Each RLE entry represents **x copies of rle_data repeated y times**.
 | `rle_code >= 0xFF00`           | `0x10000 - rle_code`     | 1                |
 
 In other words:
-- **Small rle_code** → repeat a single value many times
-- **Large rle_code** → copy multiple values once
+- **Small rle_code** -> repeat a single value many times
+- **Large rle_code** -> copy multiple values once
 
 ---
 
-### Decompression Example
+#### Decompression Example
 
 - `rle_code = 3`
   - Output: repeat `rle_data` **3 times**
@@ -372,11 +379,11 @@ In other words:
   - Output: copy **3 consecutive data values** once
 
 After decompression, the texture data matches the uncompressed
-**128×128×2-byte BGR555** format.
+**128x128x2-byte BGR555** format.
 
 ---
 
-### Post-Decompression Processing
+#### Post-Decompression Processing
 
 Once decompressed, the texture can be converted using the same method as
 uncompressed textures:
@@ -387,17 +394,7 @@ See **Section 3.5 Texture Segment** for pixel format conversion details.
 
 ---
 
-## 04 Conclusion
-
-With the analysis of the relevant PS2 icon files complete, all necessary data
-structures are now understood. The remaining task is rendering.
-
-In the next step, rendering will be implemented using **PyGame** and
-**ModernGL** to display the animated icon models.
-
----
-
 ## 05 References
 
-- **gothi** — `icon.sys` format  
-- **Martin Åkesson** — *PS2 Icon Format v0.5*
+- **gothi** - `icon.sys` format
+- **Martin Åkesson** - *PS2 Icon Format v0.5*
