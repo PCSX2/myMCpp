@@ -29,8 +29,21 @@ jobs:
         with:
           node-version: 24
 
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.11.1'
+          host: 'linux'
+          target: 'desktop'
+          arch: 'linux_gcc_64'
+          cache: true
+          use-official: true
+
+      - name: Update translations source (lupdate)
+        run: lupdate src/ -ts src/ui/Translations/myMCpp_*.ts
+
       - name: Install Crowdin CLI
-        run: npm install -g @crowdin/cli@4.14.2
+        run: npm install -g @crowdin/cli@4.14.3
 
       - name: Upload source strings
         run: crowdin upload sources
