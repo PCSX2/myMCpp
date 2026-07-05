@@ -20,6 +20,11 @@ target_link_libraries(myMCpp PRIVATE
 # Took inspiration from https://github.com/PCSX2/pcsx2/blob/master/pcsx2-qt/CMakeLists.txt for the translation generation
 file(GLOB TS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/ui/Translations/myMCpp_*.ts")
 
+qt_add_lupdate(myMCpp
+    SOURCE_TARGETS myMCpp-qt
+    TS_FILES ${TS_FILES}
+)
+
 if(WIN32)
     qt_add_lrelease(myMCpp TS_FILES ${TS_FILES} QM_FILES_OUTPUT_VARIABLE QM_FILES)
     set(QM_OUTPUT_DIR "$<TARGET_FILE_DIR:myMCpp>/translations")
