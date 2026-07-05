@@ -1,648 +1,2695 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.1" language="en" sourcelanguage="en-US">
-  <context>
+<context>
+    <name>AboutDialog</name>
+    <message>
+        <location filename="../dialogs/AboutDialog.ui" line="+14"/>
+        <source>About myMCpp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>myMCpp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>myMCpp is a modern, free, and open-source PlayStation 2 memory card manager.
+It allows you to view, import, export, and manage save files on virtual memory cards.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>PlayStation 2 and PS2 are registered trademarks of Sony Interactive Entertainment.
+This application is not affiliated in any way with Sony Interactive Entertainment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+45"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/PCSX2/myMCpp&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;GitHub Repository&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://github.com/PCSX2/myMCpp/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Documentation&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;#licenses&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Licenses&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+49"/>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/AboutDialog.cpp" line="+52"/>
+        <source>Third-Party Licenses</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AdvancedSettingsWidget</name>
     <message>
-      <location filename="../Settings/AdvancedSettingsWidget.cpp" line="+19"/>
-      <source>Debug Logging</source>
-      <translation type="unfinished">Debug Logging</translation>
+        <location filename="../Settings/AdvancedSettingsWidget.cpp" line="+18"/>
+        <source>Debug Logging</source>
+        <translation type="unfinished">Debug Logging</translation>
     </message>
     <message>
-      <location line="+0"/>
-      <source>Enable verbose logging to standard output for debugging purposes.</source>
-      <translation type="unfinished">Enable verbose logging to standard output for debugging purposes.</translation>
+        <location line="+0"/>
+        <source>Enable verbose logging to standard output for debugging purposes.</source>
+        <translation type="unfinished">Enable verbose logging to standard output for debugging purposes.</translation>
     </message>
     <message>
-      <location line="+4"/>
-      <source>Advanced</source>
-      <translation type="unfinished">Advanced</translation>
+        <location line="+1"/>
+        <location line="+55"/>
+        <source>Export Settings</source>
+        <translation type="unfinished"></translation>
     </message>
-  </context>
-  <context>
+    <message>
+        <location line="-55"/>
+        <source>Save the current settings to a JSON file for backup or sharing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+80"/>
+        <source>Import Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-80"/>
+        <source>Load settings from a previously exported JSON file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Advanced</source>
+        <translation type="unfinished">Advanced</translation>
+    </message>
+    <message>
+        <location line="+50"/>
+        <location line="+26"/>
+        <source>JSON Files (*.json)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-20"/>
+        <source>Export Successful</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Settings have been exported to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Export Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Failed to export settings to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Confirm Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>This will overwrite your current settings. Are you sure you want to continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Import Successful</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Settings have been imported from %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Import Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Failed to import settings from %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Settings/AdvancedSettingsWidget.ui" line="+35"/>
+        <source>Debugging</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Enable Debug Logging</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Settings Management</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Export Settings...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Import Settings...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BehaviorSettingsWidget</name>
     <message>
-      <location filename="../Settings/BehaviorSettingsWidget.cpp" line="+19"/>
-      <source>Warn Before Deleting</source>
-      <translation type="unfinished">Warn Before Deleting</translation>
+        <source>Warn Before Deleting</source>
+        <translation type="obsolete">Warn Before Deleting</translation>
     </message>
     <message>
-      <location line="+0"/>
-      <source>Show a warning dialog when attempting to delete files from a memory card.</source>
-      <translation type="unfinished">Show a warning dialog when attempting to delete files from a memory card.</translation>
+        <source>Show a warning dialog when attempting to delete files from a memory card.</source>
+        <translation type="obsolete">Show a warning dialog when attempting to delete files from a memory card.</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Hide to System Tray</source>
-      <translation type="unfinished">Hide to System Tray</translation>
+        <source>Hide to System Tray</source>
+        <translation type="obsolete">Hide to System Tray</translation>
     </message>
     <message>
-      <location line="+0"/>
-      <source>Minimize the application to the system tray instead of the taskbar.</source>
-      <translation type="unfinished">Minimize the application to the system tray instead of the taskbar.</translation>
+        <source>Minimize the application to the system tray instead of the taskbar.</source>
+        <translation type="obsolete">Minimize the application to the system tray instead of the taskbar.</translation>
     </message>
     <message>
-      <location line="+5"/>
-      <source>Behavior</source>
-      <translation type="unfinished">Behavior</translation>
+        <source>Behavior</source>
+        <translation type="obsolete">Behavior</translation>
     </message>
-  </context>
-  <context>
+</context>
+<context>
     <name>CardActionHandler</name>
     <message>
-      <location filename="../CardActionHandler.cpp" line="+28"/>
-      <source>Opened: %1</source>
-      <translation type="unfinished">Opened: %1</translation>
+        <location filename="../CardActionHandler.cpp" line="+27"/>
+        <source>Opened: %1</source>
+        <translation type="unfinished">Opened: %1</translation>
     </message>
     <message>
-      <location line="+7"/>
-      <location line="+22"/>
-      <location line="+24"/>
-      <location line="+61"/>
-      <location line="+36"/>
-      <location line="+36"/>
-      <location line="+37"/>
-      <source>Error</source>
-      <translation type="unfinished">Error</translation>
+        <location line="+7"/>
+        <location line="+22"/>
+        <location line="+112"/>
+        <location line="+39"/>
+        <location line="+36"/>
+        <location line="+51"/>
+        <source>Error</source>
+        <translation type="unfinished">Error</translation>
     </message>
     <message>
-      <location line="-215"/>
-      <source>Failed to open memory card: %1</source>
-      <translation type="unfinished">Failed to open memory card: %1</translation>
+        <location line="-259"/>
+        <source>Failed to open memory card: %1</source>
+        <translation type="unfinished">Failed to open memory card: %1</translation>
     </message>
     <message>
-      <location line="+14"/>
-      <source>Created: %1</source>
-      <translation type="unfinished">Created: %1</translation>
+        <location line="+14"/>
+        <source>Created: %1</source>
+        <translation type="unfinished">Created: %1</translation>
     </message>
     <message>
-      <location line="+8"/>
-      <source>Failed to create memory card: %1</source>
-      <translation type="unfinished">Failed to create memory card: %1</translation>
+        <location line="+8"/>
+        <source>Failed to create memory card: %1</source>
+        <translation type="unfinished">Failed to create memory card: %1</translation>
     </message>
     <message>
-      <location line="+9"/>
-      <location line="+8"/>
-      <location line="+76"/>
-      <location line="+36"/>
-      <location line="+37"/>
-      <source>No memory card open</source>
-      <translation type="unfinished">No memory card open</translation>
+        <location line="+9"/>
+        <location line="+11"/>
+        <location line="+103"/>
+        <location line="+36"/>
+        <location line="+37"/>
+        <source>No memory card open</source>
+        <translation type="unfinished">No memory card open</translation>
     </message>
     <message>
-      <location line="-149"/>
-      <location line="+19"/>
-      <location line="+57"/>
-      <location line="+36"/>
-      <location line="+37"/>
-      <source>Warning</source>
-      <translation type="unfinished">Warning</translation>
+        <location line="-176"/>
+        <location line="+17"/>
+        <location line="+86"/>
+        <location line="+36"/>
+        <location line="+37"/>
+        <source>Warning</source>
+        <translation type="unfinished">Warning</translation>
     </message>
     <message>
-      <location line="-142"/>
-      <source>File not found: %1</source>
-      <translation type="unfinished">File not found: %1</translation>
+        <source>File not found: %1</source>
+        <translation type="obsolete">File not found: %1</translation>
     </message>
     <message>
-      <location line="+13"/>
-      <source>Save file is empty or contains no valid entries</source>
-      <translation type="unfinished">Save file is empty or contains no valid entries</translation>
+        <location line="-158"/>
+        <source>Save file is empty or contains no valid entries</source>
+        <translation type="unfinished">Save file is empty or contains no valid entries</translation>
     </message>
     <message>
-      <location line="+10"/>
-      <location line="+22"/>
-      <location line="+41"/>
-      <location line="+78"/>
-      <source>Success</source>
-      <translation type="unfinished">Success</translation>
+        <location line="+18"/>
+        <location line="+29"/>
+        <location line="+55"/>
+        <location line="+92"/>
+        <source>Success</source>
+        <translation type="unfinished">Success</translation>
     </message>
     <message>
-      <location line="-140"/>
-      <source>Successfully imported save: %1</source>
-      <translation type="unfinished">Successfully imported save: %1</translation>
+        <location line="-175"/>
+        <source>Successfully imported save: %1</source>
+        <translation type="unfinished">Successfully imported save: %1</translation>
     </message>
     <message>
-      <location line="+5"/>
-      <source>Imported: %1</source>
-      <translation type="unfinished">Imported: %1</translation>
+        <location line="+6"/>
+        <source>Imported: %1</source>
+        <translation type="unfinished">Imported: %1</translation>
     </message>
     <message>
-      <location line="+5"/>
-      <source>Save Exists</source>
-      <translation type="unfinished">Save Exists</translation>
+        <location line="+11"/>
+        <source>Save Exists</source>
+        <translation type="unfinished">Save Exists</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Save &apos;%1&apos; already exists. Overwrite?</source>
-      <translation type="unfinished">Save &apos;%1&apos; already exists. Overwrite?</translation>
+        <location line="+1"/>
+        <source>Save &apos;%1&apos; already exists. Overwrite?</source>
+        <translation type="unfinished">Save &apos;%1&apos; already exists. Overwrite?</translation>
     </message>
     <message>
-      <location line="+11"/>
-      <source>Successfully imported and overwrote existing save</source>
-      <translation type="unfinished">Successfully imported and overwrote existing save</translation>
+        <location line="+11"/>
+        <source>Successfully imported and overwrote existing save</source>
+        <translation type="unfinished">Successfully imported and overwrote existing save</translation>
     </message>
     <message>
-      <location line="+4"/>
-      <source>Imported (overwrite): %1</source>
-      <translation type="unfinished">Imported (overwrite): %1</translation>
+        <location line="+4"/>
+        <source>Imported (overwrite): %1</source>
+        <translation type="unfinished">Imported (overwrite): %1</translation>
     </message>
     <message>
-      <location line="+11"/>
-      <source>Failed to import save: %1</source>
-      <translation type="unfinished">Failed to import save: %1</translation>
+        <location line="+22"/>
+        <source>Failed to import save: %1</source>
+        <translation type="unfinished">Failed to import save: %1</translation>
     </message>
     <message>
-      <location line="+26"/>
-      <source>Successfully exported save to:
+        <location line="+29"/>
+        <source>Successfully exported save to:
 %1</source>
-      <translation type="unfinished">Successfully exported save to:
+        <translation type="unfinished">Successfully exported save to:
 %1</translation>
     </message>
     <message>
-      <location line="+4"/>
-      <source>Exported: %1</source>
-      <translation type="unfinished">Exported: %1</translation>
+        <location line="+3"/>
+        <source>Exported: %1</source>
+        <translation type="unfinished">Exported: %1</translation>
     </message>
     <message>
-      <location line="+6"/>
-      <source>Failed to export save: %1</source>
-      <translation type="unfinished">Failed to export save: %1</translation>
+        <location line="+6"/>
+        <source>Failed to export save: %1</source>
+        <translation type="unfinished">Failed to export save: %1</translation>
     </message>
     <message>
-      <location line="+18"/>
-      <source>Confirm Delete</source>
-      <translation type="unfinished">Confirm Delete</translation>
+        <location line="+19"/>
+        <source>Confirm Delete</source>
+        <translation type="unfinished">Confirm Delete</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Delete this save?
+        <location line="+1"/>
+        <source>Delete this save?
 
 %1</source>
-      <translation type="unfinished">Delete this save?
-
-%1</translation>
-    </message>
-    <message>
-      <location line="+11"/>
-      <source>Deleted: %1</source>
-      <translation type="unfinished">Deleted: %1</translation>
-    </message>
-    <message>
-      <location line="+6"/>
-      <source>Failed to delete save:
-
-%1</source>
-      <translation type="unfinished">Failed to delete save:
+        <translation type="unfinished">Delete this save?
 
 %1</translation>
     </message>
     <message>
-      <location line="+13"/>
-      <source>Format Card</source>
-      <translation type="unfinished">Format Card</translation>
+        <location line="+11"/>
+        <source>Deleted: %1</source>
+        <translation type="unfinished">Deleted: %1</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>WARNING: This will erase ALL data on the memory card!
+        <location line="+6"/>
+        <source>Failed to delete save:
+
+%1</source>
+        <translation type="unfinished">Failed to delete save:
+
+%1</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Format Card</source>
+        <translation type="unfinished">Format Card</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>WARNING: This will erase ALL data on the memory card!
 
 Are you sure you want to continue?</source>
-      <translation type="unfinished">WARNING: This will erase ALL data on the memory card!
+        <translation type="unfinished">WARNING: This will erase ALL data on the memory card!
 
 Are you sure you want to continue?</translation>
     </message>
     <message>
-      <location line="+14"/>
-      <source>Card formatted successfully</source>
-      <translation type="unfinished">Card formatted successfully</translation>
+        <location line="+26"/>
+        <source>Card formatted successfully</source>
+        <translation type="unfinished">Card formatted successfully</translation>
     </message>
     <message>
-      <location line="+4"/>
-      <source>Memory card formatted successfully (%1 MB)</source>
-      <translation type="unfinished">Memory card formatted successfully (%1 MB)</translation>
+        <location line="+4"/>
+        <source>Memory card formatted successfully (%1 MB)</source>
+        <translation type="unfinished">Memory card formatted successfully (%1 MB)</translation>
     </message>
     <message>
-      <location line="+5"/>
-      <source>Failed to format card:
+        <location line="+5"/>
+        <source>Failed to format card:
 
 %1</source>
-      <translation type="unfinished">Failed to format card:
+        <translation type="unfinished">Failed to format card:
 
 %1</translation>
     </message>
-  </context>
-  <context>
+</context>
+<context>
+    <name>DiscordRPCManager</name>
+    <message>
+        <location filename="../DiscordRPCManager.cpp" line="+61"/>
+        <location line="+56"/>
+        <source>Memory Card</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-55"/>
+        <source>Browsing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Highlighted: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <location line="+48"/>
+        <source>Card: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <location line="+103"/>
+        <source>Browsing Saves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-69"/>
+        <location line="+33"/>
+        <source>Using myMCpp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-32"/>
+        <location line="+32"/>
+        <source>Managing Saves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Selected File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>File Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Selected Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Browsing Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Browsing files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Highlighted Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Save browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Idle</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FilesSettingsWidget</name>
     <message>
-      <location filename="../Settings/FilesSettingsWidget.cpp" line="+23"/>
-      <source>Memory Card Directory</source>
-      <translation type="unfinished">Memory Card Directory</translation>
+        <location filename="../Settings/FilesSettingsWidget.cpp" line="+18"/>
+        <source>Memory Card Directory</source>
+        <translation type="unfinished">Memory Card Directory</translation>
     </message>
     <message>
-      <location line="+0"/>
-      <source>The default directory where memory card images are stored.</source>
-      <translation type="unfinished">The default directory where memory card images are stored.</translation>
+        <source>The default directory where memory card images are stored.</source>
+        <translation type="obsolete">The default directory where memory card images are stored.</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Browse Directory</source>
-      <translation type="unfinished">Browse Directory</translation>
+        <location line="+0"/>
+        <source>The default directory where memory card images are stored. If not set, the home directory is used.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+0"/>
-      <source>Open a file dialog to select the memory card directory.</source>
-      <translation type="unfinished">Open a file dialog to select the memory card directory.</translation>
+        <location line="+1"/>
+        <location line="+2"/>
+        <source>Browse Directory</source>
+        <translation type="unfinished">Browse Directory</translation>
     </message>
     <message>
-      <location line="+5"/>
-      <source>Files</source>
-      <translation type="unfinished">Files</translation>
+        <location line="-2"/>
+        <source>Open a file dialog to select the memory card directory.</source>
+        <translation type="unfinished">Open a file dialog to select the memory card directory.</translation>
     </message>
     <message>
-      <location line="+29"/>
-      <source>Select Memory Card Folder</source>
-      <translation type="unfinished">Select Memory Card Folder</translation>
+        <location line="+1"/>
+        <source>Import/Export Directory</source>
+        <translation type="unfinished"></translation>
     </message>
-  </context>
-  <context>
+    <message>
+        <location line="+0"/>
+        <source>The default directory for importing and exporting save files. If not set, the home directory is used.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open a file dialog to select the import/export directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Files</source>
+        <translation type="unfinished">Files</translation>
+    </message>
+    <message>
+        <location line="+48"/>
+        <source>Select Import/Export Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Select Memory Card Folder</source>
+        <translation type="unfinished">Select Memory Card Folder</translation>
+    </message>
+    <message>
+        <location filename="../Settings/FilesSettingsWidget.ui" line="+35"/>
+        <source>Default Directories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Memory Card Directory:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <location line="+28"/>
+        <source>Browse...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-19"/>
+        <source>Import/Export Directory:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GeneralSettingsWidget</name>
+    <message>
+        <location filename="../Settings/GeneralSettingsWidget.ui" line="+35"/>
+        <source>Appearance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Language:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Theme:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <location filename="../Settings/GeneralSettingsWidget.cpp" line="+33"/>
+        <source>None</source>
+        <translation type="unfinished">None</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location filename="../Settings/GeneralSettingsWidget.cpp" line="+1"/>
+        <source>Dark (Default)</source>
+        <translation type="unfinished">Dark (Default)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location filename="../Settings/GeneralSettingsWidget.cpp" line="+1"/>
+        <source>Light</source>
+        <translation type="unfinished">Light</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Behavior</source>
+        <translation type="unfinished">Behavior</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Warn Before Deleting Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Hide to System Tray on Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Use ASCII Mode for Filenames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Force Import (Overwrite Existing)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location filename="../Settings/GeneralSettingsWidget.cpp" line="-12"/>
+        <source>Enable Discord Rich Presence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Settings/GeneralSettingsWidget.cpp" line="-6"/>
+        <source>Language</source>
+        <translation type="unfinished">Language</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Select the language for the application interface.</source>
+        <translation type="unfinished">Select the language for the application interface.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Theme</source>
+        <translation type="unfinished">Theme</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Select the color theme for the application.</source>
+        <translation type="unfinished">Select the color theme for the application.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Warn Before Deleting</source>
+        <translation type="unfinished">Warn Before Deleting</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show a warning dialog when attempting to delete files from a memory card.</source>
+        <translation type="unfinished">Show a warning dialog when attempting to delete files from a memory card.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hide to System Tray</source>
+        <translation type="unfinished">Hide to System Tray</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Minimize the application to the system tray instead of closing when you click the X button.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>ASCII Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Use ASCII characters only for filenames when exporting. This helps with compatibility on some systems.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Force Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>When importing files, overwrite existing files without prompting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show your myMCpp activity in Discord while the GUI is open.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Pizza Brown [Light]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Grey Matter [Dark]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cobalt Sky [Dark]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>AMOLED [Black]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Windows Vista</source>
+        <translation type="unfinished">Windows Vista</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>General</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GraphicsSettingsWidget</name>
+    <message>
+        <location filename="../Settings/GraphicsSettingsWidget.ui" line="+35"/>
+        <source>Rendering</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Renderer:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Camera Angle:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Lighting Mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Performance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Thumbnail Size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>pixels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Antialiasing:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>FPS Limit:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Unlimited</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>FPS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <location filename="../Settings/GraphicsSettingsWidget.cpp" line="+23"/>
+        <source>Animate Icons</source>
+        <translation type="unfinished">Animate Icons</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Enable VSync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Settings/GraphicsSettingsWidget.cpp" line="-5"/>
+        <source>Renderer</source>
+        <translation type="unfinished">Renderer</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Select the graphics API used for rendering the 3D icons.</source>
+        <translation type="unfinished">Select the graphics API used for rendering the 3D icons.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Camera Angle</source>
+        <translation type="unfinished">Camera Angle</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Change the camera angle used to view the 3D icons.</source>
+        <translation type="unfinished">Change the camera angle used to view the 3D icons.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Lighting Mode</source>
+        <translation type="unfinished">Lighting Mode</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Select how the icons are lit.</source>
+        <translation type="unfinished">Select how the icons are lit.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Thumbnail Size</source>
+        <translation type="unfinished">Thumbnail Size</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Adjust the size of the save icons in the main view.</source>
+        <translation type="unfinished">Adjust the size of the save icons in the main view.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Antialiasing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Enable multisample antialiasing for smoother edges. Higher values may impact performance.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Enable rotating animations for the 3D icons.</source>
+        <translation type="unfinished">Enable rotating animations for the 3D icons.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>FPS Limit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Set frame rate limit for icon preview. Set to 0 for unlimited FPS.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>VSync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Synchronize frame rate with monitor refresh rate to prevent screen tearing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Vulkan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>OpenGL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Metal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Default</source>
+        <translation type="unfinished">Default</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Flat</source>
+        <translation type="unfinished">Flat</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Near</source>
+        <translation type="unfinished">Near</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>High</source>
+        <translation type="unfinished">High</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Icon Lighting</source>
+        <translation type="unfinished">Icon Lighting</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Lighting Off</source>
+        <translation type="unfinished">Lighting Off</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Alternate 1</source>
+        <translation type="unfinished">Alternate 1</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Alternate 2</source>
+        <translation type="unfinished">Alternate 2</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>2x MSAA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>4x MSAA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>8x MSAA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Graphics</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>IconWidget</name>
+    <message>
+        <location filename="../widgets/IconWidget.cpp" line="+372"/>
+        <source>Wayland surface is not ready yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Native window is not available yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Failed to initialize renderer</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ImportExportSavesDialog</name>
+    <message>
+        <location filename="../dialogs/ImportExportSavesDialog.ui" line="+20"/>
+        <source>Saves Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location filename="../dialogs/ImportExportSavesDialog.cpp" line="+21"/>
+        <source>Edit export filenames (folder name by default):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Export format:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/ImportExportSavesDialog.cpp" line="-1"/>
+        <source>Export File Names</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+190"/>
+        <source>PSU (.psu)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-189"/>
+        <location line="+190"/>
+        <source>MAX (.max)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-167"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Export filename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Import Saves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Review and select saves to import.
+Imports are saved to the open memory card file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Import? / Game Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Directory ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Source File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Overwrite?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>[Corrupt] %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>No (New)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+52"/>
+        <source>Duplicate Filenames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Some filenames are used more than once. Later files will overwrite earlier ones:
+
+%1
+
+Continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>InterfaceSettingsWidget</name>
     <message>
-      <location filename="../Settings/InterfaceSettingsWidget.cpp" line="+25"/>
-      <source>Language</source>
-      <translation type="unfinished">Language</translation>
+        <source>Language</source>
+        <translation type="obsolete">Language</translation>
     </message>
     <message>
-      <location line="+0"/>
-      <source>Select the language for the application interface.</source>
-      <translation type="unfinished">Select the language for the application interface.</translation>
+        <source>Select the language for the application interface.</source>
+        <translation type="obsolete">Select the language for the application interface.</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Theme</source>
-      <translation type="unfinished">Theme</translation>
+        <source>Theme</source>
+        <translation type="obsolete">Theme</translation>
     </message>
     <message>
-      <location line="+0"/>
-      <source>Select the color theme for the application.</source>
-      <translation type="unfinished">Select the color theme for the application.</translation>
+        <source>Select the color theme for the application.</source>
+        <translation type="obsolete">Select the color theme for the application.</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Thumbnail Size</source>
-      <translation type="unfinished">Thumbnail Size</translation>
+        <source>Thumbnail Size</source>
+        <translation type="obsolete">Thumbnail Size</translation>
     </message>
     <message>
-      <location line="+0"/>
-      <source>Adjust the size of the save icons in the main view.</source>
-      <translation type="unfinished">Adjust the size of the save icons in the main view.</translation>
+        <source>Adjust the size of the save icons in the main view.</source>
+        <translation type="obsolete">Adjust the size of the save icons in the main view.</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Renderer</source>
-      <translation type="unfinished">Renderer</translation>
+        <source>Renderer</source>
+        <translation type="obsolete">Renderer</translation>
     </message>
     <message>
-      <location line="+0"/>
-      <source>Select the graphics API used for rendering the 3D icons.</source>
-      <translation type="unfinished">Select the graphics API used for rendering the 3D icons.</translation>
+        <source>Select the graphics API used for rendering the 3D icons.</source>
+        <translation type="obsolete">Select the graphics API used for rendering the 3D icons.</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Camera Angle</source>
-      <translation type="unfinished">Camera Angle</translation>
+        <source>Camera Angle</source>
+        <translation type="obsolete">Camera Angle</translation>
     </message>
     <message>
-      <location line="+0"/>
-      <source>Change the camera angle used to view the 3D icons.</source>
-      <translation type="unfinished">Change the camera angle used to view the 3D icons.</translation>
+        <source>Change the camera angle used to view the 3D icons.</source>
+        <translation type="obsolete">Change the camera angle used to view the 3D icons.</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Lighting Mode</source>
-      <translation type="unfinished">Lighting Mode</translation>
+        <source>Lighting Mode</source>
+        <translation type="obsolete">Lighting Mode</translation>
     </message>
     <message>
-      <location line="+0"/>
-      <source>Select how the icons are lit.</source>
-      <translation type="unfinished">Select how the icons are lit.</translation>
+        <source>Select how the icons are lit.</source>
+        <translation type="obsolete">Select how the icons are lit.</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Animate Icons</source>
-      <translation type="unfinished">Animate Icons</translation>
+        <source>Animate Icons</source>
+        <translation type="obsolete">Animate Icons</translation>
     </message>
     <message>
-      <location line="+0"/>
-      <source>Enable rotating animations for the 3D icons.</source>
-      <translation type="unfinished">Enable rotating animations for the 3D icons.</translation>
+        <source>Enable rotating animations for the 3D icons.</source>
+        <translation type="obsolete">Enable rotating animations for the 3D icons.</translation>
     </message>
     <message>
-      <location line="+6"/>
-      <source>None</source>
-      <translation type="unfinished">None</translation>
+        <source>None</source>
+        <translation type="obsolete">None</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Dark (Default)</source>
-      <translation type="unfinished">Dark (Default)</translation>
+        <source>Dark (Default)</source>
+        <translation type="obsolete">Dark (Default)</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Light</source>
-      <translation type="unfinished">Light</translation>
+        <source>Light</source>
+        <translation type="obsolete">Light</translation>
     </message>
     <message>
-      <location line="+2"/>
-      <source>Windows Vista</source>
-      <translation type="unfinished">Windows Vista</translation>
+        <source>Windows Vista</source>
+        <translation type="obsolete">Windows Vista</translation>
     </message>
     <message>
-      <location line="+16"/>
-      <source>Default</source>
-      <translation type="unfinished">Default</translation>
+        <source>Default</source>
+        <translation type="obsolete">Default</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Flat</source>
-      <translation type="unfinished">Flat</translation>
+        <source>Flat</source>
+        <translation type="obsolete">Flat</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Near</source>
-      <translation type="unfinished">Near</translation>
+        <source>Near</source>
+        <translation type="obsolete">Near</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>High</source>
-      <translation type="unfinished">High</translation>
+        <source>High</source>
+        <translation type="obsolete">High</translation>
     </message>
     <message>
-      <location line="+3"/>
-      <source>Icon Lighting</source>
-      <translation type="unfinished">Icon Lighting</translation>
+        <source>Icon Lighting</source>
+        <translation type="obsolete">Icon Lighting</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Lighting Off</source>
-      <translation type="unfinished">Lighting Off</translation>
+        <source>Lighting Off</source>
+        <translation type="obsolete">Lighting Off</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Alternate 1</source>
-      <translation type="unfinished">Alternate 1</translation>
+        <source>Alternate 1</source>
+        <translation type="obsolete">Alternate 1</translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Alternate 2</source>
-      <translation type="unfinished">Alternate 2</translation>
+        <source>Alternate 2</source>
+        <translation type="obsolete">Alternate 2</translation>
     </message>
     <message>
-      <location line="+10"/>
-      <source>Interface</source>
-      <translation type="unfinished">Interface</translation>
+        <source>Interface</source>
+        <translation type="obsolete">Interface</translation>
     </message>
-  </context>
-  <context>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
-      <location filename="../MainWindow.cpp" line="+63"/>
-      <source>Settings...</source>
-      <translation type="unfinished">Settings...</translation>
+        <location filename="../MainWindow.cpp" line="+143"/>
+        <source>Settings...</source>
+        <translation type="unfinished">Settings...</translation>
     </message>
     <message>
-      <location line="+22"/>
-      <source>Imported %1</source>
-      <translation type="unfinished">Imported %1</translation>
+        <location line="+735"/>
+        <source>TBD
+
+For updates, visit: https://github.com/PCSX2/myMCpp/releases</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+31"/>
-      <source>Open Memory Card</source>
-      <translation type="unfinished">Open Memory Card</translation>
+        <location line="+18"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+2"/>
-      <source>PS2 Memory Card (*.ps2 *.mc2 *.mcd *.bin *.mc);;All Files (*.*)</source>
-      <translation type="unfinished">PS2 Memory Card (*.ps2 *.mc2 *.mcd *.bin *.mc);;All Files (*.*)</translation>
+        <location line="+43"/>
+        <location line="+31"/>
+        <location line="+485"/>
+        <source>Inside: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+40"/>
-      <source>Create Memory Card</source>
-      <translation type="unfinished">Create Memory Card</translation>
+        <location line="-515"/>
+        <source>Browsing Files</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+2"/>
-      <location line="+275"/>
-      <source>PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</source>
-      <translation type="unfinished">PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</translation>
+        <location line="+28"/>
+        <source>Selected Folder: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="-250"/>
-      <source>Created %1 MB memory card</source>
-      <translation type="unfinished">Created %1 MB memory card</translation>
+        <location line="+0"/>
+        <source>Selected File: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+18"/>
-      <source>Import Save</source>
-      <translation type="unfinished">Import Save</translation>
+        <location line="+7"/>
+        <source>Highlighted Save: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+2"/>
-      <source>PS2 Save Files (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;All Files (*.*)</source>
-      <translation type="unfinished">PS2 Save Files (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;All Files (*.*)</translation>
+        <location line="+0"/>
+        <source>Highlighted Item: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+15"/>
-      <source>Export</source>
-      <translation type="unfinished">Export</translation>
+        <location line="+56"/>
+        <source>Edit Modified Date</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Please select a save to export</source>
-      <translation type="unfinished">Please select a save to export</translation>
+        <location line="+13"/>
+        <source>Set to Now</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+6"/>
-      <source>Export Save</source>
-      <translation type="unfinished">Export Save</translation>
+        <location line="+30"/>
+        <source>Failed to edit timestamp: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+2"/>
-      <source>EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</source>
-      <translation type="unfinished">EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</translation>
+        <location line="+21"/>
+        <source>ECC</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+15"/>
-      <source>Delete</source>
-      <translation type="unfinished">Delete</translation>
+        <location line="+0"/>
+        <source>No ECC</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Please select a save to delete</source>
-      <translation type="unfinished">Please select a save to delete</translation>
+        <location line="+2"/>
+        <source>Free: %2 MB / Total: %1 MB (%3)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+9"/>
-      <source>Delete Save</source>
-      <translation type="unfinished">Delete Save</translation>
+        <location line="+55"/>
+        <source>Save Copy As...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Are you sure you want to delete &apos;%1&apos;?</source>
-      <translation type="unfinished">Are you sure you want to delete &apos;%1&apos;?</translation>
+        <location line="+11"/>
+        <source>Save Copy As</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+8"/>
-      <source>Deleted %1</source>
-      <translation type="unfinished">Deleted %1</translation>
+        <location line="+1"/>
+        <source>That file is already open.
+
+Pick another name if you want a copy.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+71"/>
-      <source>Check for Updates</source>
-      <translation type="unfinished">Check for Updates</translation>
+        <location line="+12"/>
+        <source>Copy saved: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>You are running the latest version of myMCpp (v1.0.0).
+        <location line="+2"/>
+        <source>Copy saved to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Card Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Header</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Magic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Image Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <location line="+43"/>
+        <location line="+1"/>
+        <source>%1 MiB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-42"/>
+        <source>Geometry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Page Length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <location line="+1"/>
+        <source>%1 bytes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Page Physical</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pages / Cluster</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cluster Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>%1 KiB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Clusters / Card</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Type and Flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Unknown (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>PS2 (2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>PSX (1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Card Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>USE_ECC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>BAD_BLOCK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>ERASE_ZEROES</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>0x%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source> (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>, </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Card Flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>ECC Layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Yes (512+16)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>No (512 only)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Allocation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Alloc Offset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Alloc Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Reserved Clusters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Root Dir Cluster</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Backup Block 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Backup Block 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Bad Blocks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Usage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Used / Free Clusters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>%1 / %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Used Bytes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Free Bytes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Health</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Filesystem Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Problems detected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Failed to read card info: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Remove ECC and Save Copy As...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Add ECC and Save Copy As...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>That file is already open.
+
+Pick another name for the ECC copy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Removed ECC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Added ECC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>ECC copy saved to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <location line="+11"/>
+        <source>Rename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-10"/>
+        <source>New name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>The name is invalid.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Failed to rename: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <source>Failed to open file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Imported File: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Imported %1</source>
+        <translation type="unfinished">Imported %1</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Failed to import file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-1062"/>
+        <source>Open Memory Card</source>
+        <translation type="unfinished">Open Memory Card</translation>
+    </message>
+    <message>
+        <source>PS2 Memory Card (*.ps2 *.mc2 *.mcd *.bin *.mc);;All Files (*.*)</source>
+        <translation type="obsolete">PS2 Memory Card (*.ps2 *.mc2 *.mcd *.bin *.mc);;All Files (*.*)</translation>
+    </message>
+    <message>
+        <location line="+68"/>
+        <location line="+13"/>
+        <source>Create Memory Card</source>
+        <translation type="unfinished">Create Memory Card</translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <location line="+681"/>
+        <source>PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</source>
+        <translation type="unfinished">PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</translation>
+    </message>
+    <message>
+        <location line="-627"/>
+        <source>Created %1 MB memory card</source>
+        <translation type="unfinished">Created %1 MB memory card</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Import Save</source>
+        <translation type="unfinished">Import Save</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>PS2 Save Files (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;All Files (*.*)</source>
+        <translation type="unfinished">PS2 Save Files (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;All Files (*.*)</translation>
+    </message>
+    <message>
+        <location line="-217"/>
+        <location line="+380"/>
+        <source>Export</source>
+        <translation type="unfinished">Export</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Please select a save to export</source>
+        <translation type="unfinished">Please select a save to export</translation>
+    </message>
+    <message>
+        <location line="-531"/>
+        <location line="+538"/>
+        <source>Export Save</source>
+        <translation type="unfinished">Export Save</translation>
+    </message>
+    <message>
+        <location line="-682"/>
+        <source>PCSX2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>MemCard PRO2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>PS3 VMC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Raw</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+6"/>
+        <source>Memory Card</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+51"/>
+        <source>Icon preview unavailable: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+78"/>
+        <location line="+542"/>
+        <source>EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</source>
+        <translation type="unfinished">EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</translation>
+    </message>
+    <message>
+        <location line="-542"/>
+        <source>MAX Drive Format (*.max);;EMS/PSU Format (*.psu);;All Files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Export File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location line="+47"/>
+        <source>All Files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-39"/>
+        <source>Exported %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Failed to export file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Import File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>New Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Folder name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Created folder %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Failed to create folder: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Export Selected Saves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Overwrite Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>%1 file(s) already exist in the folder. Overwrite?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Exported %1 save(s); %2 failed:
+%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Exported %1 saves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Exported %1, %2 failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Delete Selected Saves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Are you sure you want to delete the following saves?
+
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+51"/>
+        <source>All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd *.bin *.mc);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;Raw Memory Card (*.bin *.mc);;All Files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <location line="+79"/>
+        <source>Remove ECC and Save &amp;Copy As...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-79"/>
+        <location line="+79"/>
+        <source>Add ECC and Save &amp;Copy As...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-77"/>
+        <location line="+79"/>
+        <source>Remove ECC from the memory card and save a copy to another file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-78"/>
+        <location line="+79"/>
+        <source>Add ECC to the memory card and save a copy to another file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-64"/>
+        <source>Reloaded %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>&apos;%1&apos; already exists.
+
+Creating a memory card here will overwrite that file and erase any saves on it.
+
+Continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+188"/>
+        <location line="+7"/>
+        <location line="+5"/>
+        <source>Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <source>Imported %1 save(s); %2 failed:
+%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Successfully imported %1 save(s) (skipped %2 duplicate(s))</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Successfully imported %1 save(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Imported %1, %2 failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Imported %1 save(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>No saves imported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location line="+33"/>
+        <location line="+31"/>
+        <location line="+20"/>
+        <location line="+193"/>
+        <location line="+198"/>
+        <location line="+148"/>
+        <source>Card: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-622"/>
+        <source>Imported %1 Saves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Exported Save: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <location line="+8"/>
+        <source>Delete</source>
+        <translation type="unfinished">Delete</translation>
+    </message>
+    <message>
+        <source>Please select a save to delete</source>
+        <translation type="obsolete">Please select a save to delete</translation>
+    </message>
+    <message>
+        <location line="-531"/>
+        <source>Delete Save</source>
+        <translation type="unfinished">Delete Save</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Are you sure you want to delete &apos;%1&apos;?</source>
+        <translation type="unfinished">Are you sure you want to delete &apos;%1&apos;?</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <location line="+537"/>
+        <source>Deleted %1</source>
+        <translation type="unfinished">Deleted %1</translation>
+    </message>
+    <message>
+        <location line="-22"/>
+        <source>Please select a file or folder to delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Are you sure you want to delete &apos;%1&apos;?
+This action cannot be undone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Deleted: %1</source>
+        <translation type="unfinished">Deleted: %1</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Formatted Memory Card</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+92"/>
+        <source>Check for Updates</source>
+        <translation type="unfinished">Check for Updates</translation>
+    </message>
+    <message>
+        <source>You are running the latest version of myMCpp (v1.0.0).
 
 For updates, visit: https://github.com/SternXD/myMCpp/releases</source>
-      <translation type="unfinished">You are running the latest version of myMCpp (v1.0.0).
+        <translation type="obsolete">You are running the latest version of myMCpp (v1.0.0).
 
 For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
     </message>
     <message>
-      <location line="+57"/>
-      <source>Free space: %1 MB</source>
-      <translation type="unfinished">Free space: %1 MB</translation>
+        <source>Free space: %1 MB</source>
+        <translation type="obsolete">Free space: %1 MB</translation>
     </message>
     <message>
-      <location line="+4"/>
-      <source>Memory card open</source>
-      <translation type="unfinished">Memory card open</translation>
+        <location line="+227"/>
+        <source>Memory card open</source>
+        <translation type="unfinished">Memory card open</translation>
     </message>
     <message>
-      <location line="+5"/>
-      <source>No memory card open</source>
-      <translation type="unfinished">No memory card open</translation>
+        <location line="+5"/>
+        <source>No memory card open</source>
+        <translation type="unfinished">No memory card open</translation>
     </message>
     <message>
-      <location line="+32"/>
-      <source>Save Memory Card As</source>
-      <translation type="unfinished">Save Memory Card As</translation>
+        <source>Save Memory Card As</source>
+        <translation type="obsolete">Save Memory Card As</translation>
     </message>
     <message>
-      <location line="+10"/>
-      <location line="+44"/>
-      <source>Saved to %1</source>
-      <translation type="unfinished">Saved to %1</translation>
+        <source>Saved to %1</source>
+        <translation type="obsolete">Saved to %1</translation>
     </message>
     <message>
-      <location line="-40"/>
-      <location line="+44"/>
-      <source>Error</source>
-      <translation type="unfinished">Error</translation>
+        <location line="-901"/>
+        <location line="+66"/>
+        <location line="+799"/>
+        <location line="+109"/>
+        <location line="+89"/>
+        <location line="+59"/>
+        <location line="+50"/>
+        <location line="+57"/>
+        <location line="+27"/>
+        <source>Error</source>
+        <translation type="unfinished">Error</translation>
     </message>
     <message>
-      <location line="-43"/>
-      <location line="+44"/>
-      <source>Failed to save: %1</source>
-      <translation type="unfinished">Failed to save: %1</translation>
+        <location line="-281"/>
+        <location line="+148"/>
+        <source>Failed to save: %1</source>
+        <translation type="unfinished">Failed to save: %1</translation>
     </message>
     <message>
-      <location line="-19"/>
-      <source>Remove ECC and Save As...</source>
-      <translation type="unfinished">Remove ECC and Save As...</translation>
+        <source>Remove ECC and Save As...</source>
+        <translation type="obsolete">Remove ECC and Save As...</translation>
     </message>
     <message>
-      <location line="+0"/>
-      <source>Add ECC and Save As...</source>
-      <translation type="unfinished">Add ECC and Save As...</translation>
+        <source>Add ECC and Save As...</source>
+        <translation type="obsolete">Add ECC and Save As...</translation>
     </message>
     <message>
-      <location line="+6"/>
-      <source>PS2 Memory Card (*.ps2 *.mc2 *.mcd);;All Files (*.*)</source>
-      <translation type="unfinished">PS2 Memory Card (*.ps2 *.mc2 *.mcd);;All Files (*.*)</translation>
+        <source>PS2 Memory Card (*.ps2 *.mc2 *.mcd);;All Files (*.*)</source>
+        <translation type="obsolete">PS2 Memory Card (*.ps2 *.mc2 *.mcd);;All Files (*.*)</translation>
     </message>
-  </context>
-  <context>
+    <message>
+        <location filename="../MainWindow.ui" line="+14"/>
+        <source>myMCpp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Modified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>&amp;File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>&amp;Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>&amp;Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Main Toolbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>&amp;Open Memory Card...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Open a PS2 memory card image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+O</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&amp;Create Memory Card...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Create a new PS2 memory card image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+N</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>&amp;Close Memory Card</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Close the current memory card</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Save &amp;Copy As...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Save a copy to another file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+Shift+S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Card &amp;Info...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Show detailed information about the current memory card</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>E&amp;xit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Exit the application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+Q</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Select &amp;All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Select all saves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>&amp;Import Save...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Import a save file to the open memory card</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+I</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>&amp;Export Save...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Export a save file from the memory card</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+E</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>&amp;Delete Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Delete the selected save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Del</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>&amp;Format Card...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Format the memory card (erase all data)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Save ECC &amp;Copy As...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Add or remove ECC from the memory card and save a copy to another file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+Shift+E</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&amp;ASCII Descriptions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Show descriptions in ASCII instead of Shift-JIS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+Shift+A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&amp;Force Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Force overwriting existing saves when importing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+Shift+F</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&amp;Lock Toolbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Prevent the main toolbar from being moved or floated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&amp;Preferences...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Configure application settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&amp;Documentation...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>View online documentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&amp;GitHub Repository...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Visit myMCpp on GitHub</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&amp;Check for Updates...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Check if a new version is available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>&amp;About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Show information about myMCpp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>About &amp;Qt...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Show information about Qt</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MemoryCardBrowser</name>
     <message>
-      <location filename="../widgets/MemoryCardBrowser.cpp" line="+93"/>
-      <source>Error</source>
-      <translation type="unfinished">Error</translation>
+        <location filename="../widgets/MemoryCardBrowser.cpp" line="+109"/>
+        <location line="+13"/>
+        <location line="+65"/>
+        <source>%1 KB</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+1"/>
-      <source>Failed to read memory card: %1</source>
-      <translation type="unfinished">Failed to read memory card: %1</translation>
+        <location line="-74"/>
+        <source>?</source>
+        <translation type="unfinished"></translation>
     </message>
-  </context>
-  <context>
+    <message>
+        <location line="+7"/>
+        <location line="+65"/>
+        <source>%1 B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-44"/>
+        <location line="+64"/>
+        <source>Error</source>
+        <translation type="unfinished">Error</translation>
+    </message>
+    <message>
+        <location line="-63"/>
+        <source>Failed to read memory card: %1</source>
+        <translation type="unfinished">Failed to read memory card: %1</translation>
+    </message>
+    <message>
+        <location line="+49"/>
+        <source>&lt;DIR&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Failed to read save directory: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+109"/>
+        <source>Import File...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>New Folder...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Export Selected Saves...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Delete Selected Saves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Browse Contents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Export Save...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location line="+43"/>
+        <source>Export File...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-35"/>
+        <location line="+41"/>
+        <source>Rename...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-36"/>
+        <location line="+41"/>
+        <source>Edit Modified Date...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-36"/>
+        <location line="+41"/>
+        <source>Delete</source>
+        <translation type="unfinished">Delete</translation>
+    </message>
+    <message>
+        <location line="-25"/>
+        <source>Go Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Go Back to Saves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/MemoryCardBrowser.ui" line="+24"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Modified</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NewCardDialog</name>
+    <message>
+        <location filename="../dialogs/NewCardDialog.ui" line="+20"/>
+        <source>Create New Memory Card</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Choose the size and format for your new memory card. Smaller cards are usually the safest choice for game compatibility.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Card Size Preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>8 MB (Recommended)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Official size used by standard PS2 cards. Best overall compatibility.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>16 MB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Expanded capacity with generally good compatibility in many titles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>32 MB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Larger third-party style size. Useful when you need extra space.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>64 MB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Very large card size. Some games and tools may not handle this reliably.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Create image data without error correction bytes.
+Useful for specific raw-image workflows.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Create without ECC bytes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Keep ECC enabled unless you specifically need a raw image format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Selection Summary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Current selection:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/NewCardDialog.cpp" line="+31"/>
+        <source>Continue...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>Best compatibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Good compatibility with most titles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Lower compatibility in some games</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>ECC disabled (smaller raw image)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>ECC enabled (recommended default)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Current selection: %1 MB
+%2
+%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SaveDetailsPanel</name>
     <message>
-      <location filename="../widgets/SaveDetailsPanel.cpp" line="+92"/>
-      <source>Size: %1
+        <location filename="../widgets/SaveDetailsPanel.cpp" line="+109"/>
+        <source>Size: %1
 Modified: %2</source>
-      <translation type="unfinished">Size: %1
+        <translation type="unfinished">Size: %1
 Modified: %2</translation>
     </message>
     <message>
-      <location line="+17"/>
-      <source>
+        <location line="+17"/>
+        <source>
 Files: %1</source>
-      <translation type="unfinished">
+        <translation type="unfinished">
 Files: %1</translation>
     </message>
     <message>
-      <location line="+73"/>
-      <source>No save selected</source>
-      <translation type="unfinished">No save selected</translation>
+        <location line="+91"/>
+        <source>Play animation</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+2"/>
-      <source>No details available</source>
-      <translation type="unfinished">No details available</translation>
+        <location filename="../widgets/SaveDetailsPanel.ui" line="+17"/>
+        <source>Icon</source>
+        <translation type="unfinished"></translation>
     </message>
-  </context>
-  <context>
+    <message>
+        <location line="+43"/>
+        <location filename="../widgets/SaveDetailsPanel.cpp" line="+0"/>
+        <source>Pause animation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Reset view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Zoom in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>−</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Zoom out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <location filename="../widgets/SaveDetailsPanel.cpp" line="-27"/>
+        <source>No save selected</source>
+        <translation type="unfinished">No save selected</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>color: gray; font-size: 11px;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <location filename="../widgets/SaveDetailsPanel.cpp" line="+4"/>
+        <source>No details available</source>
+        <translation type="unfinished">No details available</translation>
+    </message>
+</context>
+<context>
     <name>SettingsWindow</name>
     <message>
-      <location filename="../Settings/SettingsWindow.cpp" line="+34"/>
-      <source>Interface</source>
-      <translation type="unfinished">Interface</translation>
+        <source>Interface</source>
+        <translation type="obsolete">Interface</translation>
     </message>
     <message>
-      <location line="+2"/>
-      <source>&lt;strong&gt;Interface Settings&lt;/strong&gt;&lt;hr&gt;These options control how the software looks throughout the application.</source>
-      <translation type="unfinished">&lt;strong&gt;Interface Settings&lt;/strong&gt;&lt;hr&gt;These options control how the software looks throughout the application.</translation>
+        <source>&lt;strong&gt;Interface Settings&lt;/strong&gt;&lt;hr&gt;These options control how the software looks throughout the application.</source>
+        <translation type="obsolete">&lt;strong&gt;Interface Settings&lt;/strong&gt;&lt;hr&gt;These options control how the software looks throughout the application.</translation>
     </message>
     <message>
-      <location line="+2"/>
-      <source>Behavior</source>
-      <translation type="unfinished">Behavior</translation>
+        <source>Behavior</source>
+        <translation type="obsolete">Behavior</translation>
     </message>
     <message>
-      <location line="+2"/>
-      <source>&lt;strong&gt;Behavior Settings&lt;/strong&gt;&lt;hr&gt;Configure how the application behaves, including warnings and shutdown confirmations.</source>
-      <translation type="unfinished">&lt;strong&gt;Behavior Settings&lt;/strong&gt;&lt;hr&gt;Configure how the application behaves, including warnings and shutdown confirmations.</translation>
+        <source>&lt;strong&gt;Behavior Settings&lt;/strong&gt;&lt;hr&gt;Configure how the application behaves, including warnings and shutdown confirmations.</source>
+        <translation type="obsolete">&lt;strong&gt;Behavior Settings&lt;/strong&gt;&lt;hr&gt;Configure how the application behaves, including warnings and shutdown confirmations.</translation>
     </message>
     <message>
-      <location line="+2"/>
-      <source>Files</source>
-      <translation type="unfinished">Files</translation>
+        <location filename="../Settings/SettingsWindow.cpp" line="+30"/>
+        <source>General</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+2"/>
-      <source>&lt;strong&gt;File Settings&lt;/strong&gt;&lt;hr&gt;Manage default paths for memory cards and other resources.</source>
-      <translation type="unfinished">&lt;strong&gt;File Settings&lt;/strong&gt;&lt;hr&gt;Manage default paths for memory cards and other resources.</translation>
+        <location line="+2"/>
+        <source>&lt;strong&gt;General Settings&lt;/strong&gt;&lt;hr&gt;Configure language, theme, and application behavior.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+2"/>
-      <source>Advanced</source>
-      <translation type="unfinished">Advanced</translation>
+        <location line="+2"/>
+        <source>Graphics</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-      <location line="+2"/>
-      <source>&lt;strong&gt;Advanced Settings&lt;/strong&gt;&lt;hr&gt;Advanced options for debugging and developer tools.</source>
-      <translation type="unfinished">&lt;strong&gt;Advanced Settings&lt;/strong&gt;&lt;hr&gt;Advanced options for debugging and developer tools.</translation>
+        <location line="+2"/>
+        <source>&lt;strong&gt;Graphics Settings&lt;/strong&gt;&lt;hr&gt;Configure rendering options, camera, lighting, and visual effects.</source>
+        <translation type="unfinished"></translation>
     </message>
-  </context>
+    <message>
+        <location line="+2"/>
+        <source>Files</source>
+        <translation type="unfinished">Files</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&lt;strong&gt;File Settings&lt;/strong&gt;&lt;hr&gt;Manage default paths for memory cards and import/export.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&lt;strong&gt;Advanced Settings&lt;/strong&gt;&lt;hr&gt;Advanced options for window behavior, debugging, and developer tools.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;strong&gt;File Settings&lt;/strong&gt;&lt;hr&gt;Manage default paths for memory cards and other resources.</source>
+        <translation type="obsolete">&lt;strong&gt;File Settings&lt;/strong&gt;&lt;hr&gt;Manage default paths for memory cards and other resources.</translation>
+    </message>
+    <message>
+        <location line="-2"/>
+        <source>Advanced</source>
+        <translation type="unfinished">Advanced</translation>
+    </message>
+    <message>
+        <source>&lt;strong&gt;Advanced Settings&lt;/strong&gt;&lt;hr&gt;Advanced options for debugging and developer tools.</source>
+        <translation type="obsolete">&lt;strong&gt;Advanced Settings&lt;/strong&gt;&lt;hr&gt;Advanced options for debugging and developer tools.</translation>
+    </message>
+    <message>
+        <location filename="../Settings/SettingsWindow.ui" line="+20"/>
+        <source>myMCpp Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+69"/>
+        <source>Restore Category Defaults</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>
