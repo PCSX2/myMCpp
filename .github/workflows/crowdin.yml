@@ -77,3 +77,5 @@ jobs:
           title: "translations: sync Crowdin translations"
           body: |
             Automated translation sync from Crowdin.
+          add-paths: |
+            src/ui/Translations
