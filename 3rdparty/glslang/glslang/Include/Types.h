@@ -47,6 +47,7 @@
 #include "SpirvIntrinsics.h"
 
 #include <algorithm>
+#include <climits>
 
 namespace glslang {
 
@@ -958,13 +959,13 @@ public:
                  unsigned int layoutAttachment           :  8;  // for input_attachment_index
     static const unsigned int layoutAttachmentEnd      = 0XFF;
 
-                 unsigned int layoutSpecConstantId       : 11;
-    static const unsigned int layoutSpecConstantIdEnd = 0x7FF;
+                 unsigned int layoutSpecConstantId;
+    static const unsigned int layoutSpecConstantIdEnd = UINT_MAX;
 
                  unsigned int layoutBank                 : 4;
     static const unsigned int layoutBankEnd            = 0xF;
 
-                 unsigned int layoutDescriptorStride     : 4;
+                 unsigned int layoutDescriptorStride;
     static const unsigned int layoutDescriptorStrideEnd = 0x0;
 
     // stored as log2 of the actual alignment value
@@ -1341,6 +1342,12 @@ public:
     }
 };
 
+enum TDerivativeGroupExtension {
+    EdgNone,
+    EdgNV,
+    EdgKHR,
+};
+
 // Qualifiers that don't need to be kept per object.  They have shader scope, not object scope.
 // So, they will not be part of TType, TQualifier, etc.
 struct TShaderQualifiers {
@@ -1367,8 +1374,9 @@ struct TShaderQualifiers {
     int numViews;             // multiview extenstions
     TInterlockOrdering interlockOrdering;
     bool layoutOverrideCoverage;        // true if layout override_coverage set
-    bool layoutDerivativeGroupQuads;    // true if layout derivative_group_quadsNV set
-    bool layoutDerivativeGroupLinear;   // true if layout derivative_group_linearNV set
+    bool layoutDerivativeGroupQuads;    // true if a derivative_group_quads* layout is set
+    bool layoutDerivativeGroupLinear;   // true if a derivative_group_linear* layout is set
+    TDerivativeGroupExtension derivativeGroupExtension;
     int primitives;                     // mesh shader "max_primitives"DerivativeGroupLinear;   // true if layout derivative_group_linearNV set
     bool layoutPrimitiveCulling;        // true if layout primitive_culling set
     bool layoutNonCoherentTileAttachmentReadQCOM; // fragment shaders -- per object
@@ -1409,6 +1417,7 @@ struct TShaderQualifiers {
         layoutOverrideCoverage      = false;
         layoutDerivativeGroupQuads  = false;
         layoutDerivativeGroupLinear = false;
+        derivativeGroupExtension    = EdgNone;
         layoutPrimitiveCulling      = false;
         layoutNonCoherentTileAttachmentReadQCOM = false;
         layoutTileShadingRateQCOM[0] = 0;
@@ -1480,6 +1489,8 @@ struct TShaderQualifiers {
             layoutDerivativeGroupQuads = src.layoutDerivativeGroupQuads;
         if (src.layoutDerivativeGroupLinear)
             layoutDerivativeGroupLinear = src.layoutDerivativeGroupLinear;
+        if (src.derivativeGroupExtension != EdgNone)
+            derivativeGroupExtension = src.derivativeGroupExtension;
         if (src.primitives != TQualifier::layoutNotSet)
             primitives = src.primitives;
         if (src.interlockOrdering != EioNone)
@@ -1565,6 +1576,8 @@ public:
 
     bool isTensorLayoutNV() const { return basicType == EbtTensorLayoutNV; }
     bool isTensorViewNV() const { return basicType == EbtTensorViewNV; }
+
+    const TTypeParameters* getTypeParameters() const { return typeParameters; }
 
     void initType(const TSourceLoc& l)
     {
@@ -2715,7 +2728,13 @@ public:
         uint32_t components = 0;
 
         if (isCoopVecOrLongVector()) {
-            components = typeParameters->arraySizes->getDimSize(0);
+            auto* arraySizes = typeParameters->arraySizes;
+            if (!arraySizes || arraySizes->getNumDims() < 1) {
+                // This is a malformed vector type. A later step will
+                // catch the error and emit a diagnostic.
+                return 0;
+            }
+            components = arraySizes->getDimSize(0);
         } else if (getBasicType() == EbtStruct || getBasicType() == EbtBlock) {
             for (TTypeList::const_iterator tl = getStruct()->begin(); tl != getStruct()->end(); tl++)
                 components += ((*tl).type)->computeNumComponents();

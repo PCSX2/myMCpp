@@ -110,9 +110,35 @@ struct OpDecorations {
         void addNoContraction(spv::Builder& builder, spv::Id t) { builder.addDecoration(t, noContraction); }
         void addNonUniform(spv::Builder& builder, spv::Id t)  { builder.addDecoration(t, nonUniform); }
     protected:
-        spv::Decoration noContraction;
-        spv::Decoration nonUniform;
+    spv::Decoration noContraction;
+    spv::Decoration nonUniform;
 };
+
+void addDerivativeGroupExecutionMode(spv::Builder& builder, const glslang::TIntermediate& intermediate,
+                                     spv::Function* shaderEntry)
+{
+    if (intermediate.getLayoutDerivativeModeNone() == glslang::LayoutDerivativeGroupQuads) {
+        if (intermediate.getLayoutDerivativeExtension() == glslang::EdgKHR) {
+            builder.addCapability(spv::Capability::ComputeDerivativeGroupQuadsKHR);
+            builder.addExecutionMode(shaderEntry, spv::ExecutionMode::DerivativeGroupQuadsKHR);
+            builder.addExtension(spv::E_SPV_KHR_compute_shader_derivatives);
+        } else {
+            builder.addCapability(spv::Capability::ComputeDerivativeGroupQuadsNV);
+            builder.addExecutionMode(shaderEntry, spv::ExecutionMode::DerivativeGroupQuadsNV);
+            builder.addExtension(spv::E_SPV_NV_compute_shader_derivatives);
+        }
+    } else if (intermediate.getLayoutDerivativeModeNone() == glslang::LayoutDerivativeGroupLinear) {
+        if (intermediate.getLayoutDerivativeExtension() == glslang::EdgKHR) {
+            builder.addCapability(spv::Capability::ComputeDerivativeGroupLinearKHR);
+            builder.addExecutionMode(shaderEntry, spv::ExecutionMode::DerivativeGroupLinearKHR);
+            builder.addExtension(spv::E_SPV_KHR_compute_shader_derivatives);
+        } else {
+            builder.addCapability(spv::Capability::ComputeDerivativeGroupLinearNV);
+            builder.addExecutionMode(shaderEntry, spv::ExecutionMode::DerivativeGroupLinearNV);
+            builder.addExtension(spv::E_SPV_NV_compute_shader_derivatives);
+        }
+    }
+}
 
 } // namespace
 
@@ -246,6 +272,7 @@ protected:
     spv::Id translateForcedType(spv::Id object);
     spv::Id createCompositeConstruct(spv::Id typeId, std::vector<spv::Id> constituents);
     void recordDescHeapAccessChainInfo(glslang::TIntermBinary* node);
+    void createAbortEXT(const glslang::TIntermSequence &glslangOperands);
 
     glslang::SpvOptions& options;
     spv::Function* shaderEntry;
@@ -1679,20 +1706,32 @@ TGlslangToSpvTraverser::TGlslangToSpvTraverser(unsigned int spvVersion,
         }
         builder.setDebugMainSourceFile(glslangIntermediate->getSourceFile());
 
-        // Set the source shader's text. If for SPV version 1.0, include
+        // Set the source shader's text
+        std::string text;
+
+        // If for SPV version 1.0, include
         // a preamble in comments stating the OpModuleProcessed instructions.
         // Otherwise, emit those as actual instructions.
-        std::string text;
+        //
+        // ...Except when using ShaderDebugInfo we DON'T want these as it will mess up the line
+        // number, instead the user has opt'ed in for ShaderDebugInfo instead, so they will want
+        // to parse those instead
+        // https://github.com/KhronosGroup/glslang/issues/3863
+        const bool add_comments =
+            glslangIntermediate->getSpv().spv < glslang::EShTargetSpv_1_1 && !options.emitNonSemanticShaderDebugSource;
+
         const std::vector<std::string>& processes = glslangIntermediate->getProcesses();
         for (int p = 0; p < (int)processes.size(); ++p) {
-            if (glslangIntermediate->getSpv().spv < glslang::EShTargetSpv_1_1) {
+            if (add_comments) {
                 text.append("// OpModuleProcessed ");
                 text.append(processes[p]);
                 text.append("\n");
-            } else
+            } else if (glslangIntermediate->getSpv().spv >= glslang::EShTargetSpv_1_1) {
+                // OpModuleProcessed added in SPIR-V 1.1
                 builder.addModuleProcessed(processes[p]);
+            }
         }
-        if (glslangIntermediate->getSpv().spv < glslang::EShTargetSpv_1_1 && (int)processes.size() > 0)
+        if (add_comments && (int)processes.size() > 0)
             text.append("#line 1\n");
         text.append(glslangIntermediate->getSourceText());
         builder.setSourceText(text);
@@ -1928,15 +1967,7 @@ TGlslangToSpvTraverser::TGlslangToSpvTraverser(unsigned int spvVersion,
                                                                                    glslangIntermediate->getLocalSize(2));
             }
         }
-        if (glslangIntermediate->getLayoutDerivativeModeNone() == glslang::LayoutDerivativeGroupQuads) {
-            builder.addCapability(spv::Capability::ComputeDerivativeGroupQuadsNV);
-            builder.addExecutionMode(shaderEntry, spv::ExecutionMode::DerivativeGroupQuadsNV);
-            builder.addExtension(spv::E_SPV_NV_compute_shader_derivatives);
-        } else if (glslangIntermediate->getLayoutDerivativeModeNone() == glslang::LayoutDerivativeGroupLinear) {
-            builder.addCapability(spv::Capability::ComputeDerivativeGroupLinearNV);
-            builder.addExecutionMode(shaderEntry, spv::ExecutionMode::DerivativeGroupLinearNV);
-            builder.addExtension(spv::E_SPV_NV_compute_shader_derivatives);
-        }
+        addDerivativeGroupExecutionMode(builder, *glslangIntermediate, shaderEntry);
 
         if (glslangIntermediate->getNonCoherentTileAttachmentReadQCOM()) {
             builder.addCapability(spv::Capability::TileShadingQCOM);
@@ -2073,6 +2104,7 @@ TGlslangToSpvTraverser::TGlslangToSpvTraverser(unsigned int spvVersion,
                                                                                glslangIntermediate->getLocalSize(1),
                                                                                glslangIntermediate->getLocalSize(2));
         }
+        addDerivativeGroupExecutionMode(builder, *glslangIntermediate, shaderEntry);
         if (glslangIntermediate->getStage() == EShLangMesh) {
             builder.addExecutionMode(shaderEntry, spv::ExecutionMode::OutputVertices,
                 glslangIntermediate->getVertices());
@@ -3136,6 +3168,106 @@ spv::Id TGlslangToSpvTraverser::createCompositeConstruct(spv::Id resultTypeId, s
     return builder.createCompositeConstruct(resultTypeId, constituents);
 }
 
+void TGlslangToSpvTraverser::createAbortEXT(const glslang::TIntermSequence &glslangOperands)
+{
+    bool isEmptyMsg =
+        glslangOperands.empty() ||
+        strcmp(glslangOperands[0]->getAsConstantUnion()->getConstArray()[0].getSConst()->c_str(), "") == 0;
+    // Add Capability and extensions.
+    builder.addCapability(spv::Capability::AbortKHR);
+    builder.addCapability(spv::Capability::ConstantDataKHR);
+    builder.addExtension(spv::E_SPV_KHR_constant_data);
+    builder.addExtension(spv::E_SPV_KHR_abort);
+
+    struct strInfo {
+        glslang::TString string;
+        int specifierIndex; // -1 if not a specifier.
+        strInfo(glslang::TString str, int spec) : string(str), specifierIndex(spec) {};
+    };
+
+    std::vector<strInfo> splitStr, tempSplitStr;
+    const uint32_t formatSpecifiersSize = 4;
+    const char* formatSpecifiers[formatSpecifiersSize] = {"%d", "%i", "%f", "%u"};
+    // 1. Split original message string with format specifiers.
+    const auto emptyMsg = glslang::TString("\0");
+    const glslang::TString* msg =
+        isEmptyMsg ? &emptyMsg : glslangOperands[0]->getAsConstantUnion()->getConstArray()[0].getSConst();
+    splitStr.push_back(strInfo(*msg, -1));
+    for (uint32_t i = 0; i < formatSpecifiersSize; i++) {
+        for (uint32_t j = 0; j < splitStr.size(); j++) {
+            auto str = splitStr[j].string;
+            int specifierIndex = splitStr[j].specifierIndex;
+            auto pos = str.find(formatSpecifiers[i]);
+            while (pos != std::string::npos) {
+                tempSplitStr.push_back(strInfo(str.substr(0, pos), specifierIndex));
+                tempSplitStr.push_back(strInfo(glslang::TString(formatSpecifiers[i]), i));
+                str = str.substr(pos + strlen(formatSpecifiers[i]));
+                pos = str.find(formatSpecifiers[i]);
+            }
+            if (!str.empty() || isEmptyMsg)
+                tempSplitStr.push_back(strInfo(str, specifierIndex));
+        }
+        splitStr.clear();
+        splitStr = tempSplitStr;
+        tempSplitStr.clear();
+    }
+    // 2. Prepare to construct message struct variable, record members' types, data and offsets.
+    std::vector<int> structMemberOffsets;
+    std::vector<spv::Id> structMemberType;
+    std::vector<spv::Id> structLoadMemberType;
+    std::vector<spv::Id> structMemberData;
+    structMemberOffsets.push_back(0);
+    auto charType = builder.makeIntType(8);
+    for (auto elem : splitStr) {
+        // 2.1 get sub string's length (if specifier, be spec const).
+        //     If not an empty string, \0 is the final character.
+        unsigned int strElemLen = isEmptyMsg ? 1 : elem.string.size() + 1;
+        unsigned int paddingSize = (4 - strElemLen % 4) % 4;
+        strElemLen = strElemLen + paddingSize;
+        spv::Id constLen = builder.makeUintConstant(strElemLen);
+        spv::Op constDataOp = spv::Op::OpConstantDataKHR;
+        if (elem.specifierIndex >= 0) {
+            constLen = builder.makeUintConstant(strElemLen, true);
+            constDataOp = spv::Op::OpSpecConstantDataKHR;
+        }
+        // 2.2 get sub string's array type (if specifier, be spec const).
+        auto strElemArrType = builder.makeArrayType(charType, constLen, 1);
+        auto strElemLoadArrType = builder.makeArrayType(charType, constLen, 1);
+        // 2.3 add sub string constant data
+        auto strElemConstData = builder.createConstData(constDataOp, strElemArrType, {elem.string.c_str()});
+        // 2.4 add decoration for those sub string.
+        builder.addDecoration(strElemArrType, spv::Decoration::UTFEncodedKHR);
+        builder.addDecoration(strElemLoadArrType, spv::Decoration::UTFEncodedKHR);
+        // 2.5 Collect data and type for construct an internal message structure member.
+        structMemberType.push_back(strElemArrType);
+        structLoadMemberType.push_back(strElemLoadArrType);
+        structMemberOffsets.push_back(structMemberOffsets.back() + strElemLen);
+        structMemberData.push_back(strElemConstData);
+    }
+    structMemberOffsets.pop_back();
+    // 3. Add extra following arguments/variables' types in member structure.
+    for (unsigned int i = 1; i < glslangOperands.size(); i++) {
+        spv::Builder::AccessChain save = builder.getAccessChain();
+        builder.clearAccessChain();
+        auto width = GetNumBits(glslangOperands[i]->getAsTyped()->getBasicType());
+        structMemberOffsets.push_back(structMemberOffsets.back() + width / 8);
+        glslangOperands[i]->traverse(this);
+        structMemberData.push_back(accessChainLoad(glslangOperands[i]->getAsTyped()->getType()));
+        spv::Id reservedOpType = builder.getTypeId(structMemberData.back());
+        structMemberType.push_back(reservedOpType);
+        structLoadMemberType.push_back(reservedOpType);
+
+        builder.setAccessChain(save);
+    }
+    // 4. Construct struct message variable, add abortExt instruction.
+    auto structLoadType = builder.makeStructType(structLoadMemberType, {}, "abortMessageLoadType");
+    for (unsigned int i = 0; i < structMemberOffsets.size(); i++)
+        builder.addMemberDecoration(structLoadType, i, spv::Decoration::Offset, structMemberOffsets[i]);
+    auto structType = builder.makeStructType(structMemberType, {}, "abortMessage");
+    auto messageVar = builder.createCompositeConstruct(structType, structMemberData);
+    builder.makeStatementTerminator(spv::Op::OpAbortKHR, {structLoadType, messageVar}, "post-abort");
+}
+
 bool TGlslangToSpvTraverser::visitAggregate(glslang::TVisit visit, glslang::TIntermAggregate* node)
 {
     SpecConstantOpModeGuard spec_constant_op_mode_setter(&builder);
@@ -3147,6 +3279,8 @@ bool TGlslangToSpvTraverser::visitAggregate(glslang::TVisit visit, glslang::TInt
     std::vector<spv::Builder::AccessChain> complexLvalues;  // for holding swizzling l-values too complex for
                                                             // SPIR-V, for an out parameter
     std::vector<spv::Id> temporaryLvalues;                  // temporaries to pass, as proxies for complexLValues
+    spv::Builder::AccessChain tensorReadResultLValue = {};
+    tensorReadResultLValue.base = spv::NoResult;            // deferred tensorReadARM out-arg store target
 
     auto resultType = [&invertedType, &node, this](){
         if (invertedType != spv::NoType) {
@@ -3873,6 +4007,10 @@ bool TGlslangToSpvTraverser::visitAggregate(glslang::TVisit visit, glslang::TInt
     glslang::TIntermSequence& glslangOperands = node->getSequence();
     std::vector<spv::Id> operands;
     std::vector<spv::IdImmediate> memoryAccessOperands;
+    if (node->getOp() == glslang::EOpAbortEXT) {
+        createAbortEXT(glslangOperands);
+        return false;
+    }
     for (int arg = 0; arg < (int)glslangOperands.size(); ++arg) {
         // special case l-value operands; there are just a few
         bool lvalue = false;
@@ -4158,7 +4296,17 @@ bool TGlslangToSpvTraverser::visitAggregate(glslang::TVisit visit, glslang::TInt
                     builder.accessChainGetInferredType(), "swizzleTemp"));
                 operands.push_back(temporaryLvalues.back());
             } else {
-                operands.push_back(builder.accessChainGetLValue());
+                if (node->getOp() == glslang::EOpTensorReadARM && arg == 2) {
+                    // tensorReadARM stores the result after emitting the op, so keep the
+                    // original l-value access chain and avoid materializing a transient
+                    // pointer that may not preserve descriptor-heap indexing.
+                    tensorReadResultLValue = builder.getAccessChain();
+                    // Keep the operand slot so optional tensor operands keep their
+                    // existing indices in the later lowering logic.
+                    operands.push_back(spv::NoResult);
+                } else {
+                    operands.push_back(builder.accessChainGetLValue());
+                }
             }
             lvalueCoherentFlags = builder.getAccessChain().coherentFlags;
             lvalueCoherentFlags |= TranslateCoherent(glslangOperands[arg]->getAsTyped()->getType());
@@ -4657,7 +4805,9 @@ bool TGlslangToSpvTraverser::visitAggregate(glslang::TVisit visit, glslang::TInt
             spv::Id retType = convertGlslangToSpvType(resArgType);
             result = builder.createOp(spv::Op::OpTensorReadARM, retType, idImmOps);
             // Store the result to the result argument.
-            builder.createStore(result, operands[2]);
+            assert(tensorReadResultLValue.base != spv::NoResult);
+            builder.setAccessChain(tensorReadResultLValue);
+            accessChainStore(resArgType, result);
         }
     } else if (node->getOp() == glslang::EOpTensorSizeARM) {
         // Expected operands are (tensor, dimension)
@@ -5753,8 +5903,14 @@ spv::Id TGlslangToSpvTraverser::convertGlslangToSpvType(const glslang::TType& ty
     }
 
     if (type.isLongVector()) {
-        builder.addCapability(spv::Capability::LongVectorEXT);
-        builder.addExtension(spv::E_SPV_EXT_long_vector);
+        // SPIR-V LongVectorEXT not needed when component count is literal 2–4.
+        const bool needLongVectorCap = type.hasSpecConstantVectorComponents() ||
+            (type.getTypeParameters()->arraySizes->getDimSize(0) < 2 ||
+             type.getTypeParameters()->arraySizes->getDimSize(0) > 4);
+        if (needLongVectorCap) {
+            builder.addCapability(spv::Capability::LongVectorEXT);
+            builder.addExtension(spv::E_SPV_EXT_long_vector);
+        }
 
         if (type.getBasicType() == glslang::EbtFloat16)
             builder.addCapability(spv::Capability::Float16);
@@ -6010,6 +6166,19 @@ spv::Id TGlslangToSpvTraverser::convertGlslangStructToSpvType(const glslang::TTy
                         }
                     }
                     debugInfo.debugTypeOverride = builder.getDebugType(typeId);
+                } else if (glslangMember.type->getQualifier().builtIn != glslang::EbvNone) {
+                    // TODO - The built-in currently are not provide the correct line/column and spirv-val will validate these when using shaderDebugInfo
+                    //
+                    // There is a larger issue because even defining the builtIn such as
+                    //
+                    //      out gl_PerVertex {
+                    //         vec4 gl_Position;
+                    //     };
+                    //
+                    // in the shader also doesn't produce the correct line/column
+                    // So for now, provide zero, as that is a valid value here
+                    debugInfo.line = 0;
+                    debugInfo.column = 0;
                 }
 
                 memberDebugInfo.push_back(debugInfo);

@@ -107,6 +107,12 @@ cmake_dependent_option(ENABLE_EMSCRIPTEN_ENVIRONMENT_NODE
     OFF)
 
 option(ENABLE_HLSL "Enables HLSL input support" ON)
+if(ENABLE_HLSL)
+    message(DEPRECATION
+        "ENABLE_HLSL is deprecated. The HLSL front-end will be removed in "
+        "a future major release of glslang. "
+        "See https://github.com/KhronosGroup/glslang/issues/4210 for details.")
+endif()
 option(ENABLE_RTTI "Enables RTTI")
 option(ENABLE_EXCEPTIONS "Enables Exceptions")
 cmake_dependent_option(ENABLE_OPT "Enables spirv-opt capability if present" ON "ENABLE_SPIRV" OFF)
@@ -327,6 +333,18 @@ endif()
 add_subdirectory(glslang)
 if(ENABLE_GLSLANG_BINARIES)
     add_subdirectory(StandAlone)
+endif()
+
+option(ALLOW_EXTERNAL_GTEST "Allows to build against installed googletest. This is unsupported if the commit isn't the one in known_good.json")
+set(GMOCK_TARGET gmock)
+if(NOT TARGET ${GMOCK_TARGET})
+    if(ALLOW_EXTERNAL_GTEST)
+        message(STATUS "Trying to find local googletest")
+        find_package(GTest)
+        if(TARGET GTest::gmock)
+            set(GMOCK_TARGET GTest::gmock)
+        endif()
+    endif()
 endif()
 
 if(GLSLANG_TESTS)

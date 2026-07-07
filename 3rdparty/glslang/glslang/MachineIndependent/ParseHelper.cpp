@@ -61,7 +61,8 @@ TParseContext::TParseContext(TSymbolTable& symbolTable, TIntermediate& interm, b
             inMain(false),
             blockName(nullptr),
             limits(resources.limits),
-            atomicUintOffsets(nullptr), anyIndexLimits(false)
+            atomicUintOffsets(nullptr), anyIndexLimits(false),
+            khrDerivativeLayoutQualifierSpecified(false)
 {
     // decide whether precision qualifiers should be ignored or respected
     if (isEsProfile() || spvVersion.vulkan > 0) {
@@ -1126,9 +1127,10 @@ TIntermTyped* TParseContext::handleDotSwizzle(const TSourceLoc& loc, TIntermType
         }
     }
 
-    if (base->getType().getQualifier().isFrontEndConstant())
+    if (base->getType().getQualifier().isFrontEndConstant()) {
+	rValueErrorCheck(loc, ".", base);
         result = intermediate.foldSwizzle(base, selectors, loc);
-    else {
+    } else {
         if (selectors.size() == 1) {
             TIntermTyped* index = intermediate.addConstantUnion(selectors[0], loc);
             result = intermediate.addIndex(EOpIndexDirect, base, index, loc);
@@ -1146,6 +1148,22 @@ TIntermTyped* TParseContext::handleDotSwizzle(const TSourceLoc& loc, TIntermType
     return result;
 }
 
+TIntermTyped* TParseContext::handleTypeCast(const TSourceLoc& loc, TType *castType, TIntermTyped *base)
+{
+    TIntermTyped *result = base;
+    requireExtensions(loc, 1, &E_GL_NV_explicit_typecast, "explicit typecast");
+    if (castType->isScalar() || castType->isVector() || castType->isMatrix() || castType->isReference()) {
+        if (base->getAsAggregate() && !base->getAsAggregate()->getSequence().empty() ) {
+            warn(loc, "typecast is unary operator and takes only a single expression","","");
+        }
+        result = addConstructor(loc, base, *castType);
+    }
+    else
+        error(loc, "type cast has to be either scalar, vector, matrix or buffer reference", "", "");
+
+
+    return result;
+}
 void TParseContext::blockMemberExtensionCheck(const TSourceLoc& loc, const TIntermTyped* base, int member, const TString& memberName)
 {
     // a block that needs extension checking is either 'base', or if arrayed,
@@ -2332,6 +2350,7 @@ void TParseContext::computeBuiltinPrecisions(TIntermTyped& node, const TFunction
             numArgs = 1;
             break;
         case EOpDebugPrintf:
+        case EOpAbortEXT:
         case EOpCooperativeMatrixPerElementOpNV:
         case EOpCooperativeMatrixReduceNV:
         case EOpConstructSaturated:
@@ -2860,6 +2879,22 @@ void TParseContext::memorySemanticsCheck(const TSourceLoc& loc, const TFunction&
 //
 // Assumes there has been a semantically correct match to a built-in function prototype.
 //
+void TParseContext::requireDerivativeLayout(const TSourceLoc& loc, const char* featureDesc)
+{
+    if (language != EShLangCompute && language != EShLangTask && language != EShLangMesh)
+        return;
+
+    if (language == EShLangCompute) {
+        const char* const derivativeExts[] = { E_GL_NV_compute_shader_derivatives, E_GL_KHR_compute_shader_derivatives };
+        requireExtensions(loc, 2, derivativeExts, featureDesc);
+    } else {
+        requireExtensions(loc, 1, &E_GL_KHR_compute_shader_derivatives, featureDesc);
+    }
+
+    if (!intermediate.hasLayoutDerivativeModeNone())
+        error(loc, "requires a derivative_group_quads* or derivative_group_linear* layout qualifier", featureDesc, "");
+}
+
 void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCandidate, TIntermOperator& callNode)
 {
     // Set up convenience accessors to the argument(s).  There is almost always
@@ -2894,6 +2929,18 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
     };
 
     switch (callNode.getOp()) {
+    case EOpDPdx:
+    case EOpDPdxFine:
+    case EOpDPdxCoarse:
+    case EOpDPdy:
+    case EOpDPdyFine:
+    case EOpDPdyCoarse:
+    case EOpFwidth:
+    case EOpFwidthFine:
+    case EOpFwidthCoarse:
+        requireDerivativeLayout(loc, fnCandidate.getName().c_str());
+        break;
+
     case EOpTextureGather:
     case EOpTextureGatherOffset:
     case EOpTextureGatherOffsets:
@@ -2976,6 +3023,9 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
     case EOpTexture:
     case EOpTextureLod:
     {
+        if (callNode.getOp() == EOpTexture && fnCandidate.getParamCount() > 2)
+            requireDerivativeLayout(loc, (fnCandidate.getName() + " with bias argument").c_str());
+
         if ((fnCandidate.getParamCount() > 2) && ((*argp)[1]->getAsTyped()->getType().getBasicType() == EbtFloat) &&
             ((*argp)[1]->getAsTyped()->getType().getVectorSize() == 4) && fnCandidate[0].type->getSampler().shadow) {
             featureString = fnCandidate.getName();
@@ -3002,6 +3052,12 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
         }
         break;
     }
+
+    case EOpTextureProj:
+    case EOpSparseTexture:
+    case EOpTextureQueryLod:
+        requireDerivativeLayout(loc, fnCandidate.getName().c_str());
+        break;
 
     case EOpSparseTextureGather:
     case EOpSparseTextureGatherOffset:
@@ -3084,6 +3140,10 @@ void TParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fnCan
     case EOpSparseTextureLodOffset:
     case EOpSparseTextureGradOffset:
     {
+        if (callNode.getOp() == EOpTextureOffset || callNode.getOp() == EOpTextureProjOffset ||
+            callNode.getOp() == EOpSparseTextureOffset)
+            requireDerivativeLayout(loc, fnCandidate.getName().c_str());
+
         // Handle texture-offset limits checking
         // Pick which argument has to hold constant offsets
         int arg = -1;
@@ -4648,6 +4708,10 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
 
     if (op == EOpConstructStruct && ! type.isArray() && (int)type.getStruct()->size() != function.getParamCount()) {
         error(loc, "Number of constructor parameters does not match the number of structure fields", constructorString.c_str(), "");
+        return true;
+    }
+
+    if (type.isLongVector() && !isValidLongVectorElseError(loc, type)) {
         return true;
     }
 
@@ -6618,6 +6682,12 @@ void TParseContext::finish()
         break;
     }
 
+    if (intermediate.IsRequestedExtension(E_GL_KHR_compute_shader_derivatives) &&
+        !khrDerivativeLayoutQualifierSpecified) {
+        error(getCurrentLoc(), "requires one of derivative_group_quadsKHR or derivative_group_linearKHR layout qualifiers",
+              E_GL_KHR_compute_shader_derivatives, "");
+    }
+
     // Set default outputs for GL_NV_geometry_shader_passthrough
     if (language == EShLangGeometry && extensionTurnedOn(E_SPV_NV_geometry_shader_passthrough)) {
         if (intermediate.getOutputPrimitive() == ElgNone) {
@@ -6991,17 +7061,32 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
 
         }
     }
-    if (language == EShLangCompute) {
+    if (language == EShLangCompute || language == EShLangTask || language == EShLangMesh) {
         if (id.compare(0, 17, "derivative_group_") == 0) {
-            requireExtensions(loc, 1, &E_GL_NV_compute_shader_derivatives, "compute shader derivatives");
-            if (id == "derivative_group_quadsnv") {
+            if (id == "derivative_group_quadsnv" || id == "derivative_group_linearnv") {
+                requireExtensions(loc, 1, &E_GL_NV_compute_shader_derivatives, "compute shader derivatives");
+                if (language != EShLangCompute) {
+                    error(loc, "can only apply to compute shaders", id.c_str(), "");
+                    return;
+                }
+            } else if (id == "derivative_group_quadskhr" || id == "derivative_group_linearkhr") {
+                requireExtensions(loc, 1, &E_GL_KHR_compute_shader_derivatives, "compute shader derivatives");
+                khrDerivativeLayoutQualifierSpecified = true;
+            }
+            if (id == "derivative_group_quadsnv" || id == "derivative_group_quadskhr") {
                 publicType.shaderQualifiers.layoutDerivativeGroupQuads = true;
+                publicType.shaderQualifiers.derivativeGroupExtension =
+                    id == "derivative_group_quadsnv" ? EdgNV : EdgKHR;
                 return;
-            } else if (id == "derivative_group_linearnv") {
+            } else if (id == "derivative_group_linearnv" || id == "derivative_group_linearkhr") {
                 publicType.shaderQualifiers.layoutDerivativeGroupLinear = true;
+                publicType.shaderQualifiers.derivativeGroupExtension =
+                    id == "derivative_group_linearnv" ? EdgNV : EdgKHR;
                 return;
             }
         }
+    }
+    if (language == EShLangCompute) {
         if (id == "tile_attachmentqcom") {
             requireExtensions(loc, 1, &E_GL_QCOM_tile_shading, "tile shading QCOM");
             publicType.qualifier.layoutTileAttachmentQCOM = true;
@@ -7123,7 +7208,7 @@ void TParseContext::setLayoutQualifier(const TSourceLoc& loc, TPublicType& publi
     }
     if (id == "constant_id") {
         requireSpv(loc, "constant_id");
-        if (value >= (int)TQualifier::layoutSpecConstantIdEnd) {
+        if ((unsigned)value >= TQualifier::layoutSpecConstantIdEnd) {
             error(loc, "specialization-constant id is too large", id.c_str(), "");
         } else {
             publicType.qualifier.layoutSpecConstantId = value;
@@ -8212,6 +8297,12 @@ const TFunction* TParseContext::findFunction(const TSourceLoc& loc, const TFunct
         if (symbol)
             return symbol->getAsFunction();
     }
+    // abortEXT has usage (var args) as similar as debugPrintfEXT.
+    if (call.getName() == "abortEXT") {
+        TSymbol* symbol = symbolTable.find("abortEXT(", &builtIn);
+        if (symbol)
+            return symbol->getAsFunction();
+    }
 
     // coopMatPerElementNV is variadic. There is some function signature error
     // checking in handleCoopMat2FunctionCall.
@@ -8775,6 +8866,9 @@ void TParseContext::typeParametersCheck(const TSourceLoc& loc, const TPublicType
             return;
         }
     }
+    if (publicType.isLongVector() && !isValidLongVectorElseError(loc, publicType)) {
+        return;
+    }
 }
 
 bool TParseContext::vkRelaxedRemapUniformVariable(const TSourceLoc& loc, TString& identifier, const TPublicType& publicType,
@@ -9238,10 +9332,24 @@ TIntermNode* TParseContext::declareVariable(const TSourceLoc& loc, TString& iden
                 publicType.typeParameters->basicType != EbtUint64 &&
                 publicType.typeParameters->basicType != EbtFloat16 &&
                 publicType.typeParameters->basicType != EbtFloat &&
-                publicType.typeParameters->basicType != EbtDouble) {
+                publicType.typeParameters->basicType != EbtDouble &&
+                publicType.typeParameters->basicType != EbtBFloat16 &&
+                publicType.typeParameters->basicType != EbtFloatE5M2 &&
+                publicType.typeParameters->basicType != EbtFloatE4M3) {
                 error(loc, "expected bool, integer or floating point type parameter", identifier.c_str(), "");
             }
 
+            if (publicType.typeParameters->basicType == EbtBFloat16) {
+                requireExtensions(loc, 1, &E_GL_ARM_tensors_bfloat16, "tensor with bfloat16_t type");
+            }
+
+            if (publicType.typeParameters->basicType == EbtFloatE5M2) {
+                requireExtensions(loc, 1, &E_GL_ARM_tensors_float_e5m2, "tensor with floate5m2_t type");
+            }
+
+            if (publicType.typeParameters->basicType == EbtFloatE4M3) {
+                requireExtensions(loc, 1, &E_GL_ARM_tensors_float_e4m3, "tensor with floate4m3_t type");
+            }
         }
     } else {
         if (publicType.typeParameters && publicType.typeParameters->arraySizes->getNumDims() != 0) {
@@ -11396,19 +11504,20 @@ void TParseContext::updateStandaloneQualifierDefaults(const TSourceLoc& loc, con
 
     if (publicType.shaderQualifiers.layoutDerivativeGroupQuads &&
         publicType.shaderQualifiers.layoutDerivativeGroupLinear) {
-        error(loc, "cannot be both specified", "derivative_group_quadsNV and derivative_group_linearNV", "");
+        error(loc, "cannot be both specified", "derivative_group_quads* and derivative_group_linear*", "");
     }
 
     if (publicType.shaderQualifiers.layoutDerivativeGroupQuads) {
         if (publicType.qualifier.storage == EvqVaryingIn) {
             if ((intermediate.getLocalSizeSpecId(0) == TQualifier::layoutNotSet && (intermediate.getLocalSize(0) & 1)) ||
                 (intermediate.getLocalSizeSpecId(1) == TQualifier::layoutNotSet && (intermediate.getLocalSize(1) & 1)))
-                error(loc, "requires local_size_x and local_size_y to be multiple of two", "derivative_group_quadsNV", "");
+                error(loc, "requires local_size_x and local_size_y to be multiple of two", "derivative_group_quads", "");
             else
-                intermediate.setLayoutDerivativeMode(LayoutDerivativeGroupQuads);
+                intermediate.setLayoutDerivativeMode(LayoutDerivativeGroupQuads,
+                                                     publicType.shaderQualifiers.derivativeGroupExtension);
         }
         else
-            error(loc, "can only apply to 'in'", "derivative_group_quadsNV", "");
+            error(loc, "can only apply to 'in'", "derivative_group_quads", "");
     }
     if (publicType.shaderQualifiers.layoutDerivativeGroupLinear) {
         if (publicType.qualifier.storage == EvqVaryingIn) {
@@ -11418,12 +11527,13 @@ void TParseContext::updateStandaloneQualifierDefaults(const TSourceLoc& loc, con
                 (intermediate.getLocalSize(0) *
                 intermediate.getLocalSize(1) *
                 intermediate.getLocalSize(2)) % 4 != 0)
-                error(loc, "requires total group size to be multiple of four", "derivative_group_linearNV", "");
+                error(loc, "requires total group size to be multiple of four", "derivative_group_linear", "");
             else
-                intermediate.setLayoutDerivativeMode(LayoutDerivativeGroupLinear);
+                intermediate.setLayoutDerivativeMode(LayoutDerivativeGroupLinear,
+                                                     publicType.shaderQualifiers.derivativeGroupExtension);
         }
         else
-            error(loc, "can only apply to 'in'", "derivative_group_linearNV", "");
+            error(loc, "can only apply to 'in'", "derivative_group_linear", "");
     }
     // Check mesh out array sizes, once all the necessary out qualifiers are defined.
     if ((language == EShLangMesh) &&

@@ -344,6 +344,7 @@ public:
     TIntermTyped* handleUnaryMath(const TSourceLoc&, const char* str, TOperator op, TIntermTyped* childNode);
     TIntermTyped* handleDotDereference(const TSourceLoc&, TIntermTyped* base, const TString& field);
     TIntermTyped* handleDotSwizzle(const TSourceLoc&, TIntermTyped* base, const TString& field);
+    TIntermTyped* handleTypeCast(const TSourceLoc&, TType *castType, TIntermTyped *base);
     void blockMemberExtensionCheck(const TSourceLoc&, const TIntermTyped* base, int member, const TString& memberName);
     TFunction* handleFunctionDeclarator(const TSourceLoc&, TFunction& function, bool prototype);
     TIntermAggregate* handleFunctionDefinition(const TSourceLoc&, TFunction&);
@@ -357,6 +358,7 @@ public:
     TIntermTyped* addOutputArgumentConversions(const TFunction&, TIntermAggregate&) const;
     TIntermTyped* addAssign(const TSourceLoc&, TOperator op, TIntermTyped* left, TIntermTyped* right);
     void builtInOpCheck(const TSourceLoc&, const TFunction&, TIntermOperator&);
+    void requireDerivativeLayout(const TSourceLoc&, const char* featureDesc);
     void nonOpBuiltInCheck(const TSourceLoc&, const TFunction&, TIntermAggregate&);
     void userFunctionCallCheck(const TSourceLoc&, TIntermAggregate&);
     void samplerConstructorLocationCheck(const TSourceLoc&, const char* token, TIntermNode*);
@@ -529,6 +531,32 @@ protected:
     virtual void setAtomicCounterBlockDefaults(TType& block) const override;
     virtual void setInvariant(const TSourceLoc& loc, const char* builtin) override;
 
+    // Returns true if the given long vector type is correctly parameterized.
+    // Otherwise emits an error and returns false.
+    template<typename TTYPE>
+    bool isValidLongVectorElseError(const TSourceLoc& loc, const TTYPE& type) {
+        assert(type.isLongVector());
+        const TTypeParameters* typeParams = type.getTypeParameters();
+        if (typeParams == nullptr) {
+            error(loc, "vector type missing type parameters", "", "");
+            return false;
+        }
+        const auto basicType = typeParams->basicType;
+        if (!isTypeInt(basicType) && !isTypeFloat(basicType) && basicType != EbtBool) {
+            error(loc, "invalid element type for vector", TType::getBasicString(typeParams->basicType), "");
+            return false;
+        }
+        if (typeParams->arraySizes == nullptr) {
+            error(loc, "vector type missing element count", "", "");
+            return false;
+        }
+        if (typeParams->arraySizes->getNumDims() != 1) {
+            error(loc, "vector type requires exactly 1 element count", "", "");
+            return false;
+        }
+        return true;
+    }
+
 public:
     //
     // Generally, bison productions, the scanner, and the PP need read/write access to these; just give them direct access
@@ -557,6 +585,7 @@ protected:
     TString currentCaller;        // name of last function body entered (not valid when at global scope)
     int* atomicUintOffsets;       // to become an array of the right size to hold an offset per binding point
     bool anyIndexLimits;
+    bool khrDerivativeLayoutQualifierSpecified;
     TIdSetType inductiveLoopIds;
     TVector<TIntermTyped*> needsIndexLimitationChecking;
     TStructRecord matrixFixRecord;
