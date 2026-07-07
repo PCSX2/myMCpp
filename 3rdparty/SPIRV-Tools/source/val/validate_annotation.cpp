@@ -39,6 +39,8 @@ bool DecorationTakesIdParameters(spv::Decoration type) {
     case spv::Decoration::PayloadNodeBaseIndexAMDX:
     case spv::Decoration::ArrayStrideIdEXT:
     case spv::Decoration::OffsetIdEXT:
+    case spv::Decoration::AliasScopeINTEL:
+    case spv::Decoration::NoAliasINTEL:
       return true;
     default:
       break;
@@ -117,8 +119,12 @@ spv_result_t ValidateDecorationTarget(ValidationState_t& _, spv::Decoration dec,
   };
   switch (dec) {
     case spv::Decoration::SpecId:
-      if (!spvOpcodeIsScalarSpecConstant(target->opcode())) {
-        return fail(0) << "must be a scalar specialization constant";
+      if (target->opcode() != spv::Op::OpSpecConstantTrue &&
+          target->opcode() != spv::Op::OpSpecConstantFalse &&
+          target->opcode() != spv::Op::OpSpecConstant &&
+          target->opcode() != spv::Op::OpSpecConstantDataKHR) {
+        return fail(0) << "must be OpSpecConstantTrue, OpSpecConstantFalse, "
+                          "OpSpecConstant, or OpSpecConstantDataKHR";
       }
       break;
     case spv::Decoration::Block:
@@ -367,6 +373,15 @@ spv_result_t ValidateDecorateId(ValidationState_t& _, const Instruction* inst) {
         return _.diag(SPV_ERROR_INVALID_ID, inst)
                << "ArrayStrideIdEXT extra operand must be a 32-bit int "
                   "scalar type.";
+      }
+
+      // Even if spec constant, validation layers will test when frozen
+      uint64_t stride_value = 0;
+      if (_.EvalConstantValUint64(operand_id, &stride_value)) {
+        if (stride_value == 0) {
+          return _.diag(SPV_ERROR_INVALID_ID, inst)
+                 << "ArrayStrideIdEXT contains a stride of zero.";
+        }
       }
 
       // Strip array and should be the descriptor type
