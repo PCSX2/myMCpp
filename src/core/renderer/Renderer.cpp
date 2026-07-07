@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #if defined(ENABLE_VULKAN)
 #include "Vulkan/VulkanRenderer.h"
+#include "Vulkan/VulkanDevice.h"
 #endif
 #include "OpenGL/OpenGLRenderer.h"
 #if defined(__APPLE__)
@@ -100,5 +101,21 @@ void RendererFactory::applyVSyncToAll(bool enabled)
 		{
 			renderer->setVSync(enabled);
 		}
+	}
+}
+
+std::vector<std::string> RendererFactory::getAvailableAdapters(RendererType type)
+{
+	// Chose switch because in the near future I plan to have D3D renderers.
+	switch (type)
+	{
+		case RendererType::Vulkan:
+#if defined(ENABLE_VULKAN)
+			return VulkanDevice::getAvailableAdapters();
+#else
+			return {};
+#endif
+		default:
+			return {};
 	}
 }

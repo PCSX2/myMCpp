@@ -35,6 +35,8 @@ protected:
 	void changeEvent(QEvent* event) override;
 
 private:
+	void updateAdapterComboState();
+
 	std::unique_ptr<Ui::GraphicsSettingsWidget> ui;
 	QWidget* m_rootWidget = nullptr;
 };

@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <memory>
 #include <vector>
+#include <string>
 #include "../../common/Error.h"
 #include "WindowInfo.h"
 
@@ -106,6 +107,7 @@ public:
 	static void registerRenderer(Renderer* renderer);
 	static void unregisterRenderer(Renderer* renderer);
 	static void applyVSyncToAll(bool enabled);
+	static std::vector<std::string> getAvailableAdapters(RendererType type);
 
 private:
 	static std::vector<Renderer*> s_activeRenderers;

@@ -16,6 +16,7 @@ GraphicsSettingsWidget::GraphicsSettingsWidget(SettingsWindow* dialog, QWidget* 
 	ui->setupUi(m_rootWidget);
 
 	registerHelp(ui->rendererCombo, tr("Renderer"), tr("Select the graphics API used for rendering the 3D icons."));
+	registerHelp(ui->adapterCombo, tr("Graphics Adapter"), tr("Select the graphics adapter (GPU) to use for rendering."));
 	registerHelp(ui->cameraCombo, tr("Camera Angle"), tr("Change the camera angle used to view the 3D icons."));
 	registerHelp(ui->lightingCombo, tr("Lighting Mode"), tr("Select how the icons are lit."));
 	registerHelp(ui->thumbnailSizeSpinner, tr("Thumbnail Size"), tr("Adjust the size of the save icons in the main view."));
@@ -31,6 +32,16 @@ GraphicsSettingsWidget::GraphicsSettingsWidget(SettingsWindow* dialog, QWidget* 
 	ui->rendererCombo->addItem(tr("OpenGL"), "opengl");
 #if defined(__APPLE__)
 	ui->rendererCombo->addItem(tr("Metal"), "metal");
+#endif
+
+	ui->adapterCombo->clear();
+	ui->adapterCombo->addItem(tr("Default Adapter"), "");
+#if defined(ENABLE_VULKAN)
+	std::vector<std::string> vulkanAdapters = RendererFactory::getAvailableAdapters(RendererFactory::RendererType::Vulkan);
+	for (const auto& name : vulkanAdapters)
+	{
+		ui->adapterCombo->addItem(QString::fromStdString(name), QString::fromStdString(name));
+	}
 #endif
 
 	ui->cameraCombo->clear();
@@ -52,6 +63,7 @@ GraphicsSettingsWidget::GraphicsSettingsWidget(SettingsWindow* dialog, QWidget* 
 	ui->antialiasingCombo->addItem(tr("8x MSAA"), 8);
 
 	connect(ui->rendererCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &GraphicsSettingsWidget::onRendererChanged);
+	connect(ui->adapterCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SettingsWidget::settingChanged);
 	connect(ui->cameraCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SettingsWidget::settingChanged);
 	connect(ui->lightingCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SettingsWidget::settingChanged);
 	connect(ui->thumbnailSizeSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this, &SettingsWidget::settingChanged);
@@ -83,7 +95,16 @@ void GraphicsSettingsWidget::onRendererChanged(int index)
 	if (index < 0)
 		return;
 
+	updateAdapterComboState();
 	emit settingChanged();
+}
+
+void GraphicsSettingsWidget::updateAdapterComboState()
+{
+	QString currentRenderer = ui->rendererCombo->currentData().toString().toLower();
+	bool isGL = (currentRenderer == "opengl");
+	ui->adapterLabel->setVisible(!isGL);
+	ui->adapterCombo->setVisible(!isGL);
 }
 
 void GraphicsSettingsWidget::loadSettings()
@@ -96,6 +117,15 @@ void GraphicsSettingsWidget::loadSettings()
 	int rIdxData = ui->rendererCombo->findData(r);
 	if (rIdxData >= 0)
 		ui->rendererCombo->setCurrentIndex(rIdxData);
+
+	QString adapter = QString::fromStdString(config->getAdapter());
+	int adapterIdx = ui->adapterCombo->findData(adapter);
+	if (adapterIdx >= 0)
+		ui->adapterCombo->setCurrentIndex(adapterIdx);
+	else
+		ui->adapterCombo->setCurrentIndex(0);
+
+	updateAdapterComboState();
 
 	QString c = QString::fromStdString(config->getCameraMode()).toLower();
 	int cIdx = ui->cameraCombo->findData(c);
@@ -125,6 +155,7 @@ void GraphicsSettingsWidget::saveSettings()
 		return;
 
 	config->setRenderer(ui->rendererCombo->currentData().toString().toStdString());
+	config->setAdapter(ui->adapterCombo->currentData().toString().toStdString());
 	config->setCameraMode(ui->cameraCombo->currentData().toString().toStdString());
 	config->setLightingMode(ui->lightingCombo->currentData().toString().toStdString());
 	config->setThumbnailSize(ui->thumbnailSizeSpinner->value());
@@ -137,6 +168,7 @@ void GraphicsSettingsWidget::saveSettings()
 void GraphicsSettingsWidget::restoreDefaults()
 {
 	ui->rendererCombo->setCurrentIndex(0);
+	ui->adapterCombo->setCurrentIndex(0);
 	ui->cameraCombo->setCurrentIndex(0);
 	ui->lightingCombo->setCurrentIndex(0);
 	ui->thumbnailSizeSpinner->setValue(64);

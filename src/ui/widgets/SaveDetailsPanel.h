@@ -42,6 +42,7 @@ private:
 	QString currentModified;
 
 	std::string m_lastRendererType;
+	std::string m_lastAdapter;
 
 	std::unique_ptr<Ui::SaveDetailsPanel> ui;
 };

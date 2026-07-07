@@ -6,6 +6,8 @@
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
 #include <cstdint>
+#include <vector>
+#include <string>
 #include "../../../common/Error.h"
 
 struct WindowInfo;
@@ -19,8 +21,10 @@ public:
 	VulkanDevice(const VulkanDevice&) = delete;
 	VulkanDevice& operator=(const VulkanDevice&) = delete;
 
-	bool create(const WindowInfo& windowInfo);
+	bool create(const WindowInfo& windowInfo, const std::string& preferredAdapter = "");
 	void destroy();
+
+	static std::vector<std::string> getAvailableAdapters();
 
 	const Error& GetError() const { return m_error; }
 
@@ -38,7 +42,7 @@ public:
 private:
 	bool createInstance();
 	bool createSurface(const WindowInfo& windowInfo);
-	bool selectPhysicalDevice();
+	bool selectPhysicalDevice(const std::string& preferredAdapter = "");
 	bool createLogicalDevice();
 
 	Error m_error;
