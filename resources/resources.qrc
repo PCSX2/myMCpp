@@ -25,6 +25,11 @@
 		<file>icons/black/svg/settings-fill.svg</file>
 		<file>icons/black/svg/tools-line.svg</file>
 		<file>icons/black/svg/trash-fill.svg</file>
+		<file>icons/black/svg/add-line.svg</file>
+		<file>icons/black/svg/pause-line.svg</file>
+		<file>icons/black/svg/play-fill.svg</file>
+		<file>icons/black/svg/reset-right-line.svg</file>
+		<file>icons/black/svg/subtract-line.svg</file>
 		<file>icons/white/svg/book-marked-fill.svg</file>
 		<file>icons/white/svg/bug-line.svg</file>
 		<file>icons/white/svg/close-circle-fill.svg</file>
@@ -46,5 +51,10 @@
 		<file>icons/white/svg/settings-fill.svg</file>
 		<file>icons/white/svg/tools-line.svg</file>
 		<file>icons/white/svg/trash-fill.svg</file>
+		<file>icons/white/svg/add-line.svg</file>
+		<file>icons/white/svg/pause-line.svg</file>
+		<file>icons/white/svg/play-fill.svg</file>
+		<file>icons/white/svg/reset-right-line.svg</file>
+		<file>icons/white/svg/subtract-line.svg</file>
 	</qresource>
 </RCC>
