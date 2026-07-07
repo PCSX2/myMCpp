@@ -32,7 +32,7 @@ constexpr uint32_t kPointerTypeStorageClassIndex = 0;
 constexpr uint32_t kVariableStorageClassIndex = 0;
 constexpr uint32_t kTypeImageSampledIndex = 5;
 
-// Constants for OpenCL.DebugInfo.100 / NonSemantic.Shader.DebugInfo.100
+// Constants for OpenCL.DebugInfo.100 / NonSemantic.Shader.DebugInfo
 // extension instructions.
 constexpr uint32_t kExtInstSetIdInIdx = 0;
 constexpr uint32_t kExtInstInstructionInIdx = 1;
@@ -252,6 +252,7 @@ Instruction* Instruction::GetBaseAddress() const {
     switch (base_inst->opcode()) {
       case spv::Op::OpAccessChain:
       case spv::Op::OpInBoundsAccessChain:
+      case spv::Op::OpUntypedAccessChainKHR:
       case spv::Op::OpPtrAccessChain:
       case spv::Op::OpInBoundsPtrAccessChain:
       case spv::Op::OpImageTexelPointer:
@@ -586,23 +587,23 @@ bool Instruction::AddDebugLine(const Instruction* inst) {
 }
 
 bool Instruction::IsDebugLineInst() const {
-  NonSemanticShaderDebugInfo100Instructions ext_opt = GetShader100DebugOpcode();
-  return ((ext_opt == NonSemanticShaderDebugInfo100DebugLine) ||
-          (ext_opt == NonSemanticShaderDebugInfo100DebugNoLine));
+  NonSemanticShaderDebugInfoInstructions ext_opt = GetShaderDebugOpcode();
+  return ((ext_opt == NonSemanticShaderDebugInfoDebugLine) ||
+          (ext_opt == NonSemanticShaderDebugInfoDebugNoLine));
 }
 
 bool Instruction::IsLineInst() const { return IsLine() || IsNoLine(); }
 
 bool Instruction::IsLine() const {
   if (opcode() == spv::Op::OpLine) return true;
-  NonSemanticShaderDebugInfo100Instructions ext_opt = GetShader100DebugOpcode();
-  return ext_opt == NonSemanticShaderDebugInfo100DebugLine;
+  NonSemanticShaderDebugInfoInstructions ext_opt = GetShaderDebugOpcode();
+  return ext_opt == NonSemanticShaderDebugInfoDebugLine;
 }
 
 bool Instruction::IsNoLine() const {
   if (opcode() == spv::Op::OpNoLine) return true;
-  NonSemanticShaderDebugInfo100Instructions ext_opt = GetShader100DebugOpcode();
-  return ext_opt == NonSemanticShaderDebugInfo100DebugNoLine;
+  NonSemanticShaderDebugInfoInstructions ext_opt = GetShaderDebugOpcode();
+  return ext_opt == NonSemanticShaderDebugInfoDebugNoLine;
 }
 
 Instruction* Instruction::InsertBefore(std::unique_ptr<Instruction>&& inst) {
@@ -673,7 +674,8 @@ bool Instruction::IsValidBasePointer() const {
 }
 
 OpenCLDebugInfo100Instructions Instruction::GetOpenCL100DebugOpcode() const {
-  if (opcode() != spv::Op::OpExtInst) {
+  if (opcode() != spv::Op::OpExtInst &&
+      opcode() != spv::Op::OpExtInstWithForwardRefsKHR) {
     return OpenCLDebugInfo100InstructionsMax;
   }
 
@@ -690,38 +692,40 @@ OpenCLDebugInfo100Instructions Instruction::GetOpenCL100DebugOpcode() const {
       GetSingleWordInOperand(kExtInstInstructionInIdx));
 }
 
-NonSemanticShaderDebugInfo100Instructions Instruction::GetShader100DebugOpcode()
+NonSemanticShaderDebugInfoInstructions Instruction::GetShaderDebugOpcode()
     const {
-  if (opcode() != spv::Op::OpExtInst) {
-    return NonSemanticShaderDebugInfo100InstructionsMax;
+  if (opcode() != spv::Op::OpExtInst &&
+      opcode() != spv::Op::OpExtInstWithForwardRefsKHR) {
+    return NonSemanticShaderDebugInfoInstructionsMax;
   }
 
-  if (!context()->get_feature_mgr()->GetExtInstImportId_Shader100DebugInfo()) {
-    return NonSemanticShaderDebugInfo100InstructionsMax;
+  if (!context()->get_feature_mgr()->GetExtInstImportId_ShaderDebugInfo()) {
+    return NonSemanticShaderDebugInfoInstructionsMax;
   }
 
   if (GetSingleWordInOperand(kExtInstSetIdInIdx) !=
-      context()->get_feature_mgr()->GetExtInstImportId_Shader100DebugInfo()) {
-    return NonSemanticShaderDebugInfo100InstructionsMax;
+      context()->get_feature_mgr()->GetExtInstImportId_ShaderDebugInfo()) {
+    return NonSemanticShaderDebugInfoInstructionsMax;
   }
 
   uint32_t opcode = GetSingleWordInOperand(kExtInstInstructionInIdx);
-  if (opcode >= NonSemanticShaderDebugInfo100InstructionsMax) {
-    return NonSemanticShaderDebugInfo100InstructionsMax;
+  if (opcode >= NonSemanticShaderDebugInfoInstructionsMax) {
+    return NonSemanticShaderDebugInfoInstructionsMax;
   }
 
-  return NonSemanticShaderDebugInfo100Instructions(opcode);
+  return NonSemanticShaderDebugInfoInstructions(opcode);
 }
 
 CommonDebugInfoInstructions Instruction::GetCommonDebugOpcode() const {
-  if (opcode() != spv::Op::OpExtInst) {
+  if (opcode() != spv::Op::OpExtInst &&
+      opcode() != spv::Op::OpExtInstWithForwardRefsKHR) {
     return CommonDebugInfoInstructionsMax;
   }
 
   const uint32_t opencl_set_id =
       context()->get_feature_mgr()->GetExtInstImportId_OpenCL100DebugInfo();
   const uint32_t shader_set_id =
-      context()->get_feature_mgr()->GetExtInstImportId_Shader100DebugInfo();
+      context()->get_feature_mgr()->GetExtInstImportId_ShaderDebugInfo();
 
   if (!opencl_set_id && !shader_set_id) {
     return CommonDebugInfoInstructionsMax;
@@ -1052,8 +1056,8 @@ bool Instruction::IsOpcodeSafeToDelete() const {
   }
 
   if (IsNonSemanticInstruction() &&
-      (GetShader100DebugOpcode() == NonSemanticShaderDebugInfo100DebugDeclare ||
-       GetShader100DebugOpcode() == NonSemanticShaderDebugInfo100DebugValue)) {
+      (GetShaderDebugOpcode() == NonSemanticShaderDebugInfoDebugDeclare ||
+       GetShaderDebugOpcode() == NonSemanticShaderDebugInfoDebugValue)) {
     return true;
   }
 
