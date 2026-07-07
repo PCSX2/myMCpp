@@ -211,6 +211,241 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		}
 	});
 
+	connect(ui->cardBrowser, &MemoryCardBrowser::exportSaveAsFolderRequested, this, [this](const QString& savePath) {
+		if (!memoryCard)
+			return;
+
+		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
+		QString targetDir = QFileDialog::getExistingDirectory(
+			this,
+			tr("Export Save as Folder"),
+			exportDir);
+
+		if (!targetDir.isEmpty())
+			actionHandler->exportSaveAsFolder(memoryCard.get(), savePath, targetDir);
+	});
+
+	connect(ui->cardBrowser, &MemoryCardBrowser::exportSavesAsFoldersRequested, this, [this](const QStringList& savePaths) {
+		if (!memoryCard || savePaths.isEmpty())
+			return;
+
+		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
+		QString targetDir = QFileDialog::getExistingDirectory(
+			this,
+			tr("Export Selected as Folders"),
+			exportDir);
+
+		if (targetDir.isEmpty())
+			return;
+
+		QDir dir(targetDir);
+		QStringList existing;
+		for (const QString& savePath : savePaths)
+		{
+			QString saveFolderName = QFileInfo(savePath).fileName();
+			saveFolderName = QtUtils::sanitizeFilename(saveFolderName);
+			if (dir.exists(saveFolderName))
+			{
+				existing.append(saveFolderName);
+			}
+		}
+
+		if (!existing.isEmpty())
+		{
+			QMessageBox::StandardButton reply = QMessageBox::question(this, tr("Overwrite Folders"),
+				tr("%1 folder(s) already exist. Overwrite?").arg(existing.size()),
+				QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+			if (reply == QMessageBox::No)
+				return;
+		}
+
+		int ok = 0, failed = 0;
+		QStringList sanitizedChanges;
+		QStringList failedNames;
+		for (const QString& savePath : savePaths)
+		{
+			QString rawFolderName = QFileInfo(savePath).fileName();
+			QString saveFolderName = QtUtils::sanitizeFilename(rawFolderName);
+			if (saveFolderName != rawFolderName)
+			{
+				sanitizedChanges.append(tr("'%1' -> '%2'").arg(rawFolderName, saveFolderName));
+			}
+			if (actionHandler->exportSaveAsFolder(memoryCard.get(), savePath, targetDir, false))
+				++ok;
+			else
+			{
+				++failed;
+				failedNames.append(rawFolderName);
+			}
+		}
+
+		if (failed > 0)
+		{
+			QMessageBox::warning(this, tr("Export"),
+				tr("Exported %1 folder(s); %2 failed:\n%3").arg(ok).arg(failed).arg(failedNames.join("\n")));
+		}
+		else
+		{
+			QMessageBox msgBox(this);
+			msgBox.setWindowTitle(tr("Success"));
+			QString msgText = tr("Successfully exported %1 folder(s) to:\n%2").arg(ok).arg(targetDir);
+			if (!sanitizedChanges.isEmpty())
+			{
+				msgText += "\n\n" + tr("Note: The following folder names were sanitized due to invalid characters:\n%1").arg(sanitizedChanges.join("\n"));
+			}
+			msgBox.setText(msgText);
+			msgBox.setIcon(QMessageBox::Information);
+			QPushButton* openFolderButton = msgBox.addButton(tr("Open Folder"), QMessageBox::ActionRole);
+			msgBox.addButton(QMessageBox::Ok);
+			msgBox.exec();
+
+			if (msgBox.clickedButton() == openFolderButton)
+			{
+				QDesktopServices::openUrl(QUrl::fromLocalFile(targetDir));
+			}
+		}
+		ui->statusBar->showMessage(failed == 0 ?
+									   tr("Exported %1 folders").arg(ok) :
+									   tr("Exported %1, %2 failed").arg(ok).arg(failed),
+			5000);
+	});
+
+	connect(ui->cardBrowser, &MemoryCardBrowser::exportFilesRequested, this, [this](const QString& savePath, const QStringList& fileNames) {
+		if (!memoryCard || fileNames.isEmpty())
+			return;
+
+		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
+		QString targetDir = QFileDialog::getExistingDirectory(
+			this,
+			tr("Export Selected Files"),
+			exportDir);
+
+		if (targetDir.isEmpty())
+			return;
+
+		QDir dir(targetDir);
+		QStringList existing;
+		for (const QString& fileName : fileNames)
+		{
+			QString cleanFileName = QtUtils::sanitizeFilename(fileName);
+			if (dir.exists(cleanFileName))
+			{
+				existing.append(cleanFileName);
+			}
+		}
+
+		if (!existing.isEmpty())
+		{
+			QMessageBox::StandardButton reply = QMessageBox::question(this, tr("Overwrite Files"),
+				tr("%1 file(s) already exist in the folder. Overwrite?").arg(existing.size()),
+				QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+			if (reply == QMessageBox::No)
+				return;
+		}
+
+		int ok = 0, failed = 0;
+		QStringList sanitizedChanges;
+		QStringList failedNames;
+		for (const QString& fileName : fileNames)
+		{
+			try
+			{
+				QString fullPath = savePath + "/" + fileName;
+				QString cleanFileName = QtUtils::sanitizeFilename(fileName);
+				if (cleanFileName != fileName)
+				{
+					sanitizedChanges.append(tr("'%1' -> '%2'").arg(fileName, cleanFileName));
+				}
+				QString targetFilePath = dir.filePath(cleanFileName);
+				memoryCard->exportFile(fullPath.toStdString(), targetFilePath.toStdString());
+				++ok;
+			}
+			catch (const std::exception&)
+			{
+				++failed;
+				failedNames.append(fileName);
+			}
+		}
+
+		if (failed > 0)
+		{
+			QMessageBox::warning(this, tr("Export"),
+				tr("Exported %1 file(s); %2 failed:\n%3").arg(ok).arg(failed).arg(failedNames.join("\n")));
+		}
+		else
+		{
+			QMessageBox msgBox(this);
+			msgBox.setWindowTitle(tr("Success"));
+			QString msgText = tr("Successfully exported %1 file(s) to:\n%2").arg(ok).arg(targetDir);
+			if (!sanitizedChanges.isEmpty())
+			{
+				msgText += "\n\n" + tr("Note: The following filenames were sanitized due to invalid characters:\n%1").arg(sanitizedChanges.join("\n"));
+			}
+			msgBox.setText(msgText);
+			msgBox.setIcon(QMessageBox::Information);
+			QPushButton* openFolderButton = msgBox.addButton(tr("Open Folder"), QMessageBox::ActionRole);
+			msgBox.addButton(QMessageBox::Ok);
+			msgBox.exec();
+
+			if (msgBox.clickedButton() == openFolderButton)
+			{
+				QDesktopServices::openUrl(QUrl::fromLocalFile(targetDir));
+			}
+		}
+		ui->statusBar->showMessage(failed == 0 ?
+									   tr("Exported %1 files").arg(ok) :
+									   tr("Exported %1, %2 failed").arg(ok).arg(failed),
+			5000);
+	});
+
+	connect(ui->cardBrowser, &MemoryCardBrowser::deleteFilesRequested, this, [this](const QString& savePath, const QStringList& fileNames) {
+		if (!memoryCard || fileNames.isEmpty())
+			return;
+
+		if (m_config && m_config->getWarnOnDelete())
+		{
+			const QString message = fileNames.size() == 1 ?
+			                            tr("Are you sure you want to delete '%1'?").arg(fileNames.first()) :
+			                            tr("Are you sure you want to delete the %1 selected file(s)?").arg(fileNames.size());
+			QMessageBox::StandardButton reply = QMessageBox::question(this, tr("Delete Files"),
+				message,
+				QMessageBox::Yes | QMessageBox::No);
+
+			if (reply == QMessageBox::No)
+				return;
+		}
+
+		int ok = 0, failed = 0;
+		QStringList failedNames;
+		for (const QString& name : fileNames)
+		{
+			try
+			{
+				QString fullPath = savePath + "/" + name;
+				memoryCard->remove(fullPath.toStdString());
+				++ok;
+			}
+			catch (const std::exception&)
+			{
+				++failed;
+				failedNames.append(name);
+			}
+		}
+
+		if (failed > 0)
+		{
+			QMessageBox::warning(this, tr("Delete"),
+				tr("Deleted %1 file(s); %2 failed:\n%3").arg(ok).arg(failed).arg(failedNames.join("\n")));
+		}
+		ui->statusBar->showMessage(failed == 0 ?
+									   tr("Deleted %1 files").arg(ok) :
+									   tr("Deleted %1, %2 failed").arg(ok).arg(failed),
+			5000);
+		updateCardView();
+		ui->cardBrowser->navigateTo(savePath);
+		ui->detailsPanel->clear();
+	});
+
 	connect(ui->cardBrowser, &MemoryCardBrowser::deleteSaveRequested, this, [this](const QString& savePath) {
 		if (!memoryCard)
 			return;
@@ -299,8 +534,14 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		QStringList existing;
 		for (int i = 0; i < savePaths.size() && i < filenames.size(); ++i)
 		{
-			if (!filenames[i].isEmpty() && QFileInfo(dir, filenames[i]).exists())
-				existing.append(filenames[i]);
+			if (!filenames[i].isEmpty())
+			{
+				QString cleanName = QtUtils::sanitizeFilename(filenames[i]);
+				if (QFileInfo(dir, cleanName).exists())
+				{
+					existing.append(cleanName);
+				}
+			}
 		}
 		if (!existing.isEmpty())
 		{
@@ -312,23 +553,52 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		}
 
 		int ok = 0, failed = 0;
+		QStringList sanitizedChanges;
 		QStringList failedNames;
 		for (int i = 0; i < savePaths.size() && i < filenames.size(); ++i)
 		{
 			if (filenames[i].isEmpty())
 				continue;
-			QString outputPath = dir.filePath(filenames[i]);
+			QString rawName = filenames[i];
+			QString cleanName = QtUtils::sanitizeFilename(rawName);
+			if (cleanName != rawName)
+			{
+				sanitizedChanges.append(tr("'%1' -> '%2'").arg(rawName, cleanName));
+			}
+			QString outputPath = dir.filePath(cleanName);
 			if (actionHandler->exportSave(memoryCard.get(), savePaths[i], outputPath, false))
 				++ok;
 			else
 			{
 				++failed;
-				failedNames.append(filenames[i]);
+				failedNames.append(rawName);
 			}
 		}
 
 		if (failed > 0)
+		{
 			QMessageBox::warning(this, tr("Export"), tr("Exported %1 save(s); %2 failed:\n%3").arg(ok).arg(failed).arg(failedNames.join("\n")));
+		}
+		else
+		{
+			QMessageBox msgBox(this);
+			msgBox.setWindowTitle(tr("Success"));
+			QString msgText = tr("Successfully exported %1 save(s) to:\n%2").arg(ok).arg(targetDir);
+			if (!sanitizedChanges.isEmpty())
+			{
+				msgText += "\n\n" + tr("Note: The following filenames were sanitized due to invalid characters:\n%1").arg(sanitizedChanges.join("\n"));
+			}
+			msgBox.setText(msgText);
+			msgBox.setIcon(QMessageBox::Information);
+			QPushButton* openFolderButton = msgBox.addButton(tr("Open Folder"), QMessageBox::ActionRole);
+			msgBox.addButton(QMessageBox::Ok);
+			msgBox.exec();
+
+			if (msgBox.clickedButton() == openFolderButton)
+			{
+				QDesktopServices::openUrl(QUrl::fromLocalFile(targetDir));
+			}
+		}
 		ui->statusBar->showMessage(failed == 0 ? tr("Exported %1 saves").arg(ok) : tr("Exported %1, %2 failed").arg(ok).arg(failed), 5000);
 	});
 

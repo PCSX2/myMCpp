@@ -322,133 +322,177 @@ void MemoryCardBrowser::contextMenuEvent(QContextMenuEvent* event)
 		emit createFolderRequested(m_currentPath);
 	});
 
-	menu.addSeparator();
-
-	// Special menu when multiple saves are selected at the root level
-	if (multipleSelection && m_currentPath == "/")
+	if (multipleSelection)
 	{
-		QStringList savePaths;
-		for (QTreeWidgetItem* it : selected)
+		if (m_currentPath == "/")
 		{
-			if (!it)
-				continue;
-			const QString name = it->data(0, Qt::UserRole).toString();
-			const bool isDir = it->data(0, Qt::UserRole + 1).toBool();
-			if (name.isEmpty() || name == ".." || !isDir)
-				continue;
-			savePaths.append("/" + name);
-		}
-
-		if (!savePaths.isEmpty())
-		{
-			menu.addSeparator();
-
-			QAction* exportSelectedAction = menu.addAction(tr("Export Selected Saves..."));
-			connect(exportSelectedAction, &QAction::triggered, this, [this, savePaths]() {
-				emit exportMultipleSavesRequested(savePaths);
-			});
-
-			QAction* deleteSelectedAction = menu.addAction(tr("Delete Selected Saves"));
-			connect(deleteSelectedAction, &QAction::triggered, this, [this, savePaths]() {
-				emit deleteMultipleSavesRequested(savePaths);
-			});
-		}
-	}
-	else if (m_currentPath == "/")
-	{
-		if (item)
-		{
-			QString name = item->data(0, Qt::UserRole).toString();
-			bool isDir = item->data(0, Qt::UserRole + 1).toBool();
-
-			if (name != "..")
+			QStringList savePaths;
+			for (QTreeWidgetItem* it : selected)
 			{
-				const QString fullPath = "/" + name;
+				if (!it)
+					continue;
+				const QString name = it->data(0, Qt::UserRole).toString();
+				const bool isDir = it->data(0, Qt::UserRole + 1).toBool();
+				if (name.isEmpty() || name == ".." || !isDir)
+					continue;
+				savePaths.append("/" + name);
+			}
 
-				if (isDir)
-				{
-					QAction* browseAction = menu.addAction(tr("Browse Contents"));
-					connect(browseAction, &QAction::triggered, this, [this, fullPath]() {
-						navigateTo(fullPath);
-					});
-
-					QAction* exportAction = menu.addAction(tr("Export Save..."));
-					connect(exportAction, &QAction::triggered, this, [this, fullPath]() {
-						emit exportSaveRequested(fullPath);
-					});
-				}
-				else
-				{
-					QAction* exportAction = menu.addAction(tr("Export File..."));
-					connect(exportAction, &QAction::triggered, this, [this, name]() {
-						emit exportFileRequested(m_currentPath, name);
-					});
-				}
-
+			if (!savePaths.isEmpty())
+			{
 				menu.addSeparator();
 
-				QAction* renameAction = menu.addAction(tr("Rename..."));
-				connect(renameAction, &QAction::triggered, this, [this, fullPath]() {
-					emit renameRequested(fullPath);
+				QAction* exportSelectedAction = menu.addAction(tr("Export Selected Saves..."));
+				connect(exportSelectedAction, &QAction::triggered, this, [this, savePaths]() {
+					emit exportMultipleSavesRequested(savePaths);
 				});
 
-				QAction* editTimestampAction = menu.addAction(tr("Edit Modified Date..."));
-				connect(editTimestampAction, &QAction::triggered, this, [this, fullPath]() {
-					emit editTimestampRequested(fullPath);
+				QAction* exportSelectedFoldersAction = menu.addAction(tr("Export Selected as Folders..."));
+				connect(exportSelectedFoldersAction, &QAction::triggered, this, [this, savePaths]() {
+					emit exportSavesAsFoldersRequested(savePaths);
 				});
 
-				QAction* deleteAction = menu.addAction(tr("Delete"));
-				connect(deleteAction, &QAction::triggered, this, [this, fullPath]() {
-					emit deleteSaveRequested(fullPath);
+				QAction* deleteSelectedAction = menu.addAction(tr("Delete Selected Saves"));
+				connect(deleteSelectedAction, &QAction::triggered, this, [this, savePaths]() {
+					emit deleteMultipleSavesRequested(savePaths);
+				});
+			}
+		}
+		else
+		{
+			QStringList fileNames;
+			for (QTreeWidgetItem* it : selected)
+			{
+				if (!it)
+					continue;
+				const QString name = it->data(0, Qt::UserRole).toString();
+				if (name.isEmpty() || name == "..")
+					continue;
+				fileNames.append(name);
+			}
+
+			if (!fileNames.isEmpty())
+			{
+				menu.addSeparator();
+
+				QAction* exportSelectedAction = menu.addAction(tr("Export Selected Files..."));
+				connect(exportSelectedAction, &QAction::triggered, this, [this, fileNames]() {
+					emit exportFilesRequested(m_currentPath, fileNames);
+				});
+
+				QAction* deleteSelectedAction = menu.addAction(tr("Delete Selected Files"));
+				connect(deleteSelectedAction, &QAction::triggered, this, [this, fileNames]() {
+					emit deleteFilesRequested(m_currentPath, fileNames);
 				});
 			}
 		}
 	}
 	else
 	{
-		if (item)
+		if (m_currentPath == "/")
 		{
-			QString name = item->data(0, Qt::UserRole).toString();
-			bool isDir = item->data(0, Qt::UserRole + 1).toBool();
-
-			if (name == "..")
+			if (item)
 			{
-				QAction* backAction = menu.addAction(tr("Go Back"));
-				connect(backAction, &QAction::triggered, this, &MemoryCardBrowser::navigateUp);
-			}
-			else
-			{
-				const QString fullPath = m_currentPath == "/" ? "/" + name : m_currentPath + "/" + name;
+				QString name = item->data(0, Qt::UserRole).toString();
+				bool isDir = item->data(0, Qt::UserRole + 1).toBool();
 
-				if (!isDir)
+				if (name != "..")
 				{
-					QAction* exportAction = menu.addAction(tr("Export File..."));
-					connect(exportAction, &QAction::triggered, this, [this, name]() {
-						emit exportFileRequested(m_currentPath, name);
+					menu.addSeparator();
+					const QString fullPath = "/" + name;
+
+					if (isDir)
+					{
+						QAction* browseAction = menu.addAction(tr("Browse Contents"));
+						connect(browseAction, &QAction::triggered, this, [this, fullPath]() {
+							navigateTo(fullPath);
+						});
+
+						QAction* exportAction = menu.addAction(tr("Export Save..."));
+						connect(exportAction, &QAction::triggered, this, [this, fullPath]() {
+							emit exportSaveRequested(fullPath);
+						});
+
+						QAction* exportFolderAction = menu.addAction(tr("Export as Folder..."));
+						connect(exportFolderAction, &QAction::triggered, this, [this, fullPath]() {
+							emit exportSaveAsFolderRequested(fullPath);
+						});
+					}
+					else
+					{
+						QAction* exportAction = menu.addAction(tr("Export File..."));
+						connect(exportAction, &QAction::triggered, this, [this, name]() {
+							emit exportFileRequested(m_currentPath, name);
+						});
+					}
+
+					menu.addSeparator();
+
+					QAction* renameAction = menu.addAction(tr("Rename..."));
+					connect(renameAction, &QAction::triggered, this, [this, fullPath]() {
+						emit renameRequested(fullPath);
+					});
+
+					QAction* editTimestampAction = menu.addAction(tr("Edit Modified Date..."));
+					connect(editTimestampAction, &QAction::triggered, this, [this, fullPath]() {
+						emit editTimestampRequested(fullPath);
+					});
+
+					QAction* deleteAction = menu.addAction(tr("Delete"));
+					connect(deleteAction, &QAction::triggered, this, [this, fullPath]() {
+						emit deleteSaveRequested(fullPath);
 					});
 				}
-
-				QAction* renameAction = menu.addAction(tr("Rename..."));
-				connect(renameAction, &QAction::triggered, this, [this, fullPath]() {
-					emit renameRequested(fullPath);
-				});
-
-				QAction* editTimestampAction = menu.addAction(tr("Edit Modified Date..."));
-				connect(editTimestampAction, &QAction::triggered, this, [this, fullPath]() {
-					emit editTimestampRequested(fullPath);
-				});
-
-				QAction* deleteAction = menu.addAction(tr("Delete"));
-				connect(deleteAction, &QAction::triggered, this, [this, fullPath]() {
-					emit deleteSaveRequested(fullPath);
-				});
 			}
 		}
+		else
+		{
+			if (item)
+			{
+				QString name = item->data(0, Qt::UserRole).toString();
+				bool isDir = item->data(0, Qt::UserRole + 1).toBool();
 
-		menu.addSeparator();
+				if (name == "..")
+				{
+					menu.addSeparator();
+					QAction* backAction = menu.addAction(tr("Go Back"));
+					connect(backAction, &QAction::triggered, this, &MemoryCardBrowser::navigateUp);
+				}
+				else
+				{
+					menu.addSeparator();
+					const QString fullPath = m_currentPath == "/" ? "/" + name : m_currentPath + "/" + name;
 
-		QAction* backAction = menu.addAction(tr("Go Back to Saves"));
-		connect(backAction, &QAction::triggered, this, &MemoryCardBrowser::navigateUp);
+					if (!isDir)
+					{
+						QAction* exportAction = menu.addAction(tr("Export File..."));
+						connect(exportAction, &QAction::triggered, this, [this, name]() {
+							emit exportFileRequested(m_currentPath, name);
+						});
+					}
+
+					QAction* renameAction = menu.addAction(tr("Rename..."));
+					connect(renameAction, &QAction::triggered, this, [this, fullPath]() {
+						emit renameRequested(fullPath);
+					});
+
+					QAction* editTimestampAction = menu.addAction(tr("Edit Modified Date..."));
+					connect(editTimestampAction, &QAction::triggered, this, [this, fullPath]() {
+						emit editTimestampRequested(fullPath);
+					});
+
+					QAction* deleteAction = menu.addAction(tr("Delete"));
+					connect(deleteAction, &QAction::triggered, this, [this, name]() {
+						emit deleteFilesRequested(m_currentPath, QStringList() << name);
+					});
+				}
+			}
+
+			menu.addSeparator();
+
+			QAction* backAction = menu.addAction(tr("Go Back to Saves"));
+			connect(backAction, &QAction::triggered, this, &MemoryCardBrowser::navigateUp);
+		}
 	}
 
 	if (!menu.isEmpty())
