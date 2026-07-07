@@ -20,7 +20,7 @@ public:
 	VulkanSwapchain(const VulkanSwapchain&) = delete;
 	VulkanSwapchain& operator=(const VulkanSwapchain&) = delete;
 
-	bool create(VulkanDevice& device, uint32_t width, uint32_t height);
+	bool create(VulkanDevice& device, uint32_t width, uint32_t height, bool vsync = true);
 	void destroy(VkDevice device, VmaAllocator allocator);
 	bool recreate(VulkanDevice& device, uint32_t width, uint32_t height);
 

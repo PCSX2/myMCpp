@@ -14,9 +14,11 @@ VulkanSwapchain::VulkanSwapchain() = default;
 
 VulkanSwapchain::~VulkanSwapchain() = default;
 
-bool VulkanSwapchain::create(VulkanDevice& device, uint32_t width, uint32_t height)
+bool VulkanSwapchain::create(VulkanDevice& device, uint32_t width, uint32_t height, bool vsync)
 {
 	m_error.Clear();
+
+	m_presentMode = vsync ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_MAILBOX_KHR;
 
 	if (!createSwapchain(device, width, height))
 		return false;
@@ -111,12 +113,16 @@ bool VulkanSwapchain::createSwapchain(VulkanDevice& device, uint32_t width, uint
 	VkSwapchainKHR oldSwapchain)
 {
 	VkSurfaceCapabilitiesKHR capabilities;
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device.getPhysicalDevice(), device.getSurface(), &capabilities);
+	if (vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device.getPhysicalDevice(), device.getSurface(), &capabilities) != VK_SUCCESS)
+		return m_error.Fail("VK: Failed to get physical device surface capabilities");
 
 	uint32_t formatCount = 0;
-	vkGetPhysicalDeviceSurfaceFormatsKHR(device.getPhysicalDevice(), device.getSurface(), &formatCount, nullptr);
+	if (vkGetPhysicalDeviceSurfaceFormatsKHR(device.getPhysicalDevice(), device.getSurface(), &formatCount, nullptr) != VK_SUCCESS || formatCount == 0)
+		return m_error.Fail("VK: Failed to get physical device surface formats or none supported");
+
 	std::vector<VkSurfaceFormatKHR> formats(formatCount);
-	vkGetPhysicalDeviceSurfaceFormatsKHR(device.getPhysicalDevice(), device.getSurface(), &formatCount, formats.data());
+	if (vkGetPhysicalDeviceSurfaceFormatsKHR(device.getPhysicalDevice(), device.getSurface(), &formatCount, formats.data()) != VK_SUCCESS || formats.empty())
+		return m_error.Fail("VK: Failed to retrieve physical device surface formats");
 
 	VkSurfaceFormatKHR surfaceFormat = formats[0];
 	for (const auto& fmt : formats)
@@ -129,36 +135,46 @@ bool VulkanSwapchain::createSwapchain(VulkanDevice& device, uint32_t width, uint
 	}
 
 	uint32_t presentModeCount = 0;
-	vkGetPhysicalDeviceSurfacePresentModesKHR(device.getPhysicalDevice(), device.getSurface(), &presentModeCount, nullptr);
+	if (vkGetPhysicalDeviceSurfacePresentModesKHR(device.getPhysicalDevice(), device.getSurface(), &presentModeCount, nullptr) != VK_SUCCESS || presentModeCount == 0)
+		return m_error.Fail("VK: Failed to get physical device surface present modes or none supported");
+
 	std::vector<VkPresentModeKHR> presentModes(presentModeCount);
-	vkGetPhysicalDeviceSurfacePresentModesKHR(device.getPhysicalDevice(), device.getSurface(), &presentModeCount, presentModes.data());
+	if (vkGetPhysicalDeviceSurfacePresentModesKHR(device.getPhysicalDevice(), device.getSurface(), &presentModeCount, presentModes.data()) != VK_SUCCESS || presentModes.empty())
+		return m_error.Fail("VK: Failed to retrieve physical device surface present modes");
 
 	VkPresentModeKHR presentMode = m_presentMode;
-	if (oldSwapchain == VK_NULL_HANDLE)
+	bool supported = false;
+	for (const auto& mode : presentModes)
 	{
-		presentMode = VK_PRESENT_MODE_FIFO_KHR;
-		for (const auto& mode : presentModes)
+		if (mode == presentMode)
 		{
-			if (mode == VK_PRESENT_MODE_FIFO_KHR)
-			{
-				presentMode = mode;
-				break;
-			}
+			supported = true;
+			break;
 		}
 	}
-	else
+	if (!supported)
 	{
-		bool supported = false;
-		for (const auto& mode : presentModes)
+		if (presentMode == VK_PRESENT_MODE_MAILBOX_KHR)
 		{
-			if (mode == m_presentMode)
+			for (const auto& mode : presentModes)
 			{
-				supported = true;
-				break;
+				// If mailbox is not supported, try immediate.
+				if (mode == VK_PRESENT_MODE_IMMEDIATE_KHR)
+				{
+					presentMode = mode;
+					supported = true;
+					Logger::warn("VK: Mailbox present mode not supported, falling back to immediate");
+					break;
+				}
 			}
 		}
+		// If mailbox and immediate are not supported, use fifo.
 		if (!supported)
+		{
+			if (m_presentMode != VK_PRESENT_MODE_FIFO_KHR)
+				Logger::warn("VK: Requested present mode not supported, falling back to FIFO");
 			presentMode = VK_PRESENT_MODE_FIFO_KHR;
+		}
 	}
 
 	m_presentMode = presentMode;
@@ -335,8 +351,7 @@ bool VulkanSwapchain::createDepthResources(VulkanDevice& device)
 
 bool VulkanSwapchain::createRenderPass(VkDevice device)
 {
-	std::array<VkAttachmentDescription2, 2> attachments{};
-	attachments[0].sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2;
+	std::array<VkAttachmentDescription, 2> attachments{};
 	attachments[0].format = m_format;
 	attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
 	attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -346,7 +361,6 @@ bool VulkanSwapchain::createRenderPass(VkDevice device)
 	attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-	attachments[1].sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2;
 	attachments[1].format = m_depthFormat;
 	attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
 	attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -356,45 +370,47 @@ bool VulkanSwapchain::createRenderPass(VkDevice device)
 	attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-	VkAttachmentReference2 colorRef{};
-	colorRef.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2;
+	VkAttachmentReference colorRef{};
 	colorRef.attachment = 0;
 	colorRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-	colorRef.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
-	VkAttachmentReference2 depthRef{};
-	depthRef.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2;
+	VkAttachmentReference depthRef{};
 	depthRef.attachment = 1;
 	depthRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	depthRef.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 
-	VkSubpassDescription2 subpass{};
-	subpass.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2;
+	VkSubpassDescription subpass{};
 	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 	subpass.colorAttachmentCount = 1;
 	subpass.pColorAttachments = &colorRef;
 	subpass.pDepthStencilAttachment = &depthRef;
 
-	VkSubpassDependency2 dependency{};
-	dependency.sType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2;
-	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-	dependency.dstSubpass = 0;
-	dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-	dependency.dependencyFlags = 0;
-	dependency.viewOffset = 0;
+	std::array<VkSubpassDependency, 2> dependencies{};
+	dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
+	dependencies[0].dstSubpass = 0;
+	dependencies[0].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+	dependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+	dependencies[0].srcAccessMask = 0;
+	dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+	dependencies[0].dependencyFlags = 0;
 
-	VkRenderPassCreateInfo2 renderPassInfo{};
-	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2;
+	dependencies[1].srcSubpass = 0;
+	dependencies[1].dstSubpass = VK_SUBPASS_EXTERNAL;
+	dependencies[1].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependencies[1].dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+	dependencies[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	dependencies[1].dstAccessMask = 0;
+	dependencies[1].dependencyFlags = 0;
+
+	VkRenderPassCreateInfo renderPassInfo{};
+	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 	renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 	renderPassInfo.pAttachments = attachments.data();
 	renderPassInfo.subpassCount = 1;
 	renderPassInfo.pSubpasses = &subpass;
-	renderPassInfo.dependencyCount = 1;
-	renderPassInfo.pDependencies = &dependency;
+	renderPassInfo.dependencyCount = static_cast<uint32_t>(dependencies.size());
+	renderPassInfo.pDependencies = dependencies.data();
 
-	if (vkCreateRenderPass2(device, &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS)
+	if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS)
 		return m_error.Fail("VK: Failed to create render pass");
 
 	return true;

@@ -71,7 +71,7 @@ bool VulkanRenderer::initialize()
 	if (!m_vulkanDevice.create(m_windowInfo))
 		return m_error.Assign(m_vulkanDevice.GetError());
 
-	if (!m_vulkanSwapchain.create(m_vulkanDevice, m_width, m_height))
+	if (!m_vulkanSwapchain.create(m_vulkanDevice, m_width, m_height, m_config ? m_config->getVSync() : true))
 		return m_error.Assign(m_vulkanSwapchain.GetError());
 
 	VkRenderPass renderPass = m_vulkanSwapchain.getRenderPass();
@@ -801,10 +801,7 @@ bool VulkanRenderer::recordCommandBuffer(uint32_t imageIndex)
 	scissor.offset = {0, 0};
 	scissor.extent = extent;
 
-	VkSubpassBeginInfo subpassBegin{};
-	subpassBegin.sType = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO;
-	subpassBegin.contents = VK_SUBPASS_CONTENTS_INLINE;
-	vkCmdBeginRenderPass2(cmd, &renderPassInfo, &subpassBegin);
+	vkCmdBeginRenderPass(cmd, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 	VkBuffer bgBuffer = m_vulkanResources.getBackgroundVertexBuffer();
 	if (m_background.shouldRender && m_vulkanPipeline.getBackgroundPipeline() != VK_NULL_HANDLE && bgBuffer != VK_NULL_HANDLE)
@@ -848,9 +845,7 @@ bool VulkanRenderer::recordCommandBuffer(uint32_t imageIndex)
 		vkCmdDraw(cmd, m_vertexCount, 1, 0, 0);
 	}
 
-	VkSubpassEndInfo subpassEnd{};
-	subpassEnd.sType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO;
-	vkCmdEndRenderPass2(cmd, &subpassEnd);
+	vkCmdEndRenderPass(cmd);
 
 	if (vkEndCommandBuffer(cmd) != VK_SUCCESS)
 	{

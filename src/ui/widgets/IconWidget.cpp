@@ -293,22 +293,18 @@ void IconWidget::startRendering()
 	m_renderLoopEnabled = true;
 
 	int maxFps = m_config ? m_config->getMaxFPS() : 30;
-	float rate;
+	int interval;
 
 	if (maxFps <= 0)
 	{
-		rate = getRefreshRate(this);
-		if (rate < 30.0f)
-			rate = 60.0f;
+		interval = 0;
 	}
 	else
 	{
-		rate = static_cast<float>(maxFps);
+		interval = static_cast<int>(1000.0f / static_cast<float>(maxFps));
+		if (interval <= 0)
+			interval = 1;
 	}
-
-	int interval = static_cast<int>(1000.0f / rate);
-	if (interval <= 0)
-		interval = 16;
 
 	m_renderTimer.start(interval, this);
 	renderFrame();
@@ -412,6 +408,15 @@ bool IconWidget::ensureRenderer()
 		{
 #if defined(ENABLE_VULKAN)
 			m_renderer = RendererFactory::createVulkanRenderer(wi, m_config, &rendererError);
+			if (!m_renderer)
+			{
+				Logger::warn("IconWidget: Vulkan initialization failed, falling back to OpenGL: {}",
+					rendererError.IsValid() ? rendererError.GetDescription() : "Unknown error");
+				rendererError.Clear();
+				m_renderer = RendererFactory::createOpenGLRenderer(wi, m_config, &rendererError);
+			}
+#else
+			m_renderer = RendererFactory::createOpenGLRenderer(wi, m_config, &rendererError);
 #endif
 		}
 
@@ -461,6 +466,9 @@ void IconWidget::recreateRenderer()
 
 void IconWidget::renderFrame()
 {
+	if (!isVisible())
+		return;
+
 	ensureRenderer();
 	if (!m_renderer)
 		return;
@@ -578,6 +586,12 @@ void IconWidget::showEvent(QShowEvent* event)
 	{
 		startRendering();
 	}
+}
+
+void IconWidget::hideEvent(QHideEvent* event)
+{
+	QWidget::hideEvent(event);
+	stopRendering();
 }
 
 QPaintEngine* IconWidget::paintEngine() const
