@@ -4,9 +4,14 @@
 #include "CardActionHandler.h"
 #include "ps2mc.h"
 #include "ps2save.h"
+#include "QtUtils.h"
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QFileInfo>
+#include <QDir>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QPushButton>
 
 CardActionHandler::CardActionHandler(QWidget* parent)
 	: QObject(parent)
@@ -194,8 +199,111 @@ bool CardActionHandler::exportSave(PS2MemoryCard* card, const QString& savePath,
 
 		if (showSuccessDialog)
 		{
-			QMessageBox::information(parentWidget, tr("Success"),
-				tr("Successfully exported save to:\n%1").arg(outputFilename));
+			QMessageBox msgBox(parentWidget);
+			msgBox.setWindowTitle(tr("Success"));
+			msgBox.setText(tr("Successfully exported save to:\n%1").arg(outputFilename));
+			msgBox.setIcon(QMessageBox::Information);
+			QPushButton* openFolderButton = msgBox.addButton(tr("Open Folder"), QMessageBox::ActionRole);
+			msgBox.addButton(QMessageBox::Ok);
+			msgBox.exec();
+
+			if (msgBox.clickedButton() == openFolderButton)
+			{
+				QString folderPath = QFileInfo(outputFilename).absolutePath();
+				QDesktopServices::openUrl(QUrl::fromLocalFile(folderPath));
+			}
+		}
+		if (statusBar && showSuccessDialog)
+			statusBar->showMessage(tr("Exported: %1").arg(savePath), 3000);
+		return true;
+	}
+	catch (const std::exception& e)
+	{
+		if (showSuccessDialog)
+			QMessageBox::critical(parentWidget, tr("Error"), tr("Failed to export save: %1").arg(e.what()));
+		return false;
+	}
+}
+
+bool CardActionHandler::exportSaveAsFolder(PS2MemoryCard* card, const QString& savePath, const QString& targetDir, bool showSuccessDialog)
+{
+	if (!card)
+	{
+		if (showSuccessDialog)
+			QMessageBox::warning(parentWidget, tr("Warning"), tr("No memory card open"));
+		return false;
+	}
+
+	try
+	{
+		PS2SaveFile saveFile;
+		card->exportSaveFile(savePath.toStdString(), saveFile);
+
+		QStringList sanitizedChanges;
+		QString rawFolderName = QFileInfo(savePath).fileName();
+		QString saveFolderName = QtUtils::sanitizeFilename(rawFolderName);
+		if (saveFolderName != rawFolderName)
+		{
+			sanitizedChanges.append(tr("'%1' -> '%2'").arg(rawFolderName, saveFolderName));
+		}
+		QDir destParentDir(targetDir);
+		QString fullDestPath = destParentDir.filePath(saveFolderName);
+
+		QDir destDir(fullDestPath);
+		if (!destDir.exists())
+		{
+			if (!destParentDir.mkpath(saveFolderName))
+			{
+				throw std::runtime_error(tr("Failed to create directory: %1").arg(fullDestPath).toStdString());
+			}
+		}
+
+		const auto& entries = saveFile.getEntries();
+		for (const auto& entry : entries)
+		{
+			if (entry.dirEntry.mode & DF_DIR)
+			{
+				continue;
+			}
+
+			QString rawFileName = QString::fromStdString(entry.dirEntry.name);
+			QString fileName = QtUtils::sanitizeFilename(rawFileName);
+			if (fileName != rawFileName)
+			{
+				sanitizedChanges.append(tr("'%1' -> '%2'").arg(rawFileName, fileName));
+			}
+			QString filePath = destDir.filePath(fileName);
+
+			QFile file(filePath);
+			if (!file.open(QIODevice::WriteOnly))
+			{
+				throw std::runtime_error(tr("Failed to write file: %1").arg(filePath).toStdString());
+			}
+			if (file.write(reinterpret_cast<const char*>(entry.data.data()), entry.data.size()) != static_cast<qint64>(entry.data.size()))
+			{
+				throw std::runtime_error(tr("Failed to write all data to file: %1").arg(filePath).toStdString());
+			}
+		}
+
+		if (showSuccessDialog)
+		{
+			QMessageBox msgBox(parentWidget);
+			msgBox.setWindowTitle(tr("Success"));
+			QString msgText = tr("Successfully exported save as folder to:\n%1").arg(fullDestPath);
+			if (!sanitizedChanges.isEmpty())
+			{
+				msgText += "\n\n" + tr("Note: The following names were sanitized due to invalid characters:\n%1").arg(sanitizedChanges.join("\n"));
+			}
+			msgBox.setText(msgText);
+			msgBox.setIcon(QMessageBox::Information);
+			QPushButton* openFolderButton = msgBox.addButton(tr("Open Folder"), QMessageBox::ActionRole);
+			msgBox.addButton(QMessageBox::Ok);
+			msgBox.exec();
+
+			if (msgBox.clickedButton() == openFolderButton)
+			{
+				QDesktopServices::openUrl(QUrl::fromLocalFile(fullDestPath));
+			}
 		}
 		if (statusBar && showSuccessDialog)
 			statusBar->showMessage(tr("Exported: %1").arg(savePath), 3000);

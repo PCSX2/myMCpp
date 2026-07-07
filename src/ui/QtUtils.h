@@ -29,4 +29,15 @@ namespace QtUtils
 
 		return resolveConfigFolderPath(QString::fromStdString(configuredPath));
 	}
+
+	inline QString sanitizeFilename(const QString& name)
+	{
+		QString clean = name;
+		const QString forbidden = QStringLiteral("\\/:*?\"<>|");
+		for (QChar ch : forbidden)
+		{
+			clean.replace(ch, QChar('_'));
+		}
+		return clean;
+	}
 } // namespace QtUtils
