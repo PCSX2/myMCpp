@@ -478,6 +478,49 @@ void loader_remove_instance_only_debug_funcs(struct loader_instance *ptr_instanc
     }
 }
 
+// Dump the app's VkInstanceCreateInfo under VK_LOADER_DEBUG (names, versions, requested layers/extensions). Handy
+// for debugging instance setup and matching driver workarounds to a specific app.
+static void loader_log_instance_create_info(const struct loader_instance *inst, const VkInstanceCreateInfo *pCreateInfo) {
+    const VkApplicationInfo *app_info = pCreateInfo->pApplicationInfo;
+    const char *app_name = (app_info && app_info->pApplicationName) ? app_info->pApplicationName : "";
+    const char *engine_name = (app_info && app_info->pEngineName) ? app_info->pEngineName : "";
+    uint32_t app_version = app_info ? app_info->applicationVersion : 0;
+    uint32_t engine_version = app_info ? app_info->engineVersion : 0;
+    uint32_t api_version = app_info ? app_info->apiVersion : 0;
+
+    loader_log(inst, VULKAN_LOADER_INFO_BIT, 0,
+               "vkCreateInstance: applicationName: \"%s\", applicationVersion: %u, engineName: \"%s\", engineVersion: %u, "
+               "apiVersion: %u.%u.%u",
+               app_name, app_version, engine_name, engine_version, VK_API_VERSION_MAJOR(api_version),
+               VK_API_VERSION_MINOR(api_version), VK_API_VERSION_PATCH(api_version));
+
+    // Guard the name arrays: this runs before the loader validates pCreateInfo, so the count may be non-zero with a null
+    // array (see the null-pointer tests).
+    loader_log(inst, VULKAN_LOADER_INFO_BIT, 0,
+               "vkCreateInstance: Requested %u instance layer(s):", pCreateInfo->enabledLayerCount);
+    if (pCreateInfo->ppEnabledLayerNames) {
+        for (uint32_t i = 0; i < pCreateInfo->enabledLayerCount; ++i) {
+            if (pCreateInfo->ppEnabledLayerNames[i]) {
+                loader_log(inst, VULKAN_LOADER_INFO_BIT, 0, "   %s", pCreateInfo->ppEnabledLayerNames[i]);
+            } else {
+                loader_log(inst, VULKAN_LOADER_INFO_BIT, 0, "   <NULL>");
+            }
+        }
+    }
+
+    loader_log(inst, VULKAN_LOADER_INFO_BIT, 0,
+               "vkCreateInstance: Requested %u instance extension(s):", pCreateInfo->enabledExtensionCount);
+    if (pCreateInfo->ppEnabledExtensionNames) {
+        for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
+            if (pCreateInfo->ppEnabledExtensionNames[i]) {
+                loader_log(inst, VULKAN_LOADER_INFO_BIT, 0, "   %s", pCreateInfo->ppEnabledExtensionNames[i]);
+            } else {
+                loader_log(inst, VULKAN_LOADER_INFO_BIT, 0, "   <NULL>");
+            }
+        }
+    }
+}
+
 LOADER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo *pCreateInfo,
                                                               const VkAllocationCallbacks *pAllocator, VkInstance *pInstance) {
     struct loader_instance *ptr_instance = NULL;
@@ -542,6 +585,8 @@ LOADER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCr
         // Failure of setting up one or more of the callback.
         goto out;
     }
+
+    loader_log_instance_create_info(ptr_instance, pCreateInfo);
 
     VkResult settings_file_res = get_loader_settings(ptr_instance, &ptr_instance->settings);
     if (settings_file_res == VK_ERROR_OUT_OF_HOST_MEMORY) {
@@ -673,10 +718,8 @@ LOADER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCr
     }
     memcpy(&ptr_instance->disp->layer_inst_disp, &instance_disp, sizeof(instance_disp));
 
-    loader_platform_thread_lock_mutex(&loader_global_instance_list_lock);
     ptr_instance->next = loader.instances;
     loader.instances = ptr_instance;
-    loader_platform_thread_unlock_mutex(&loader_global_instance_list_lock);
 
     // Activate any layers on instance chain
     res = loader_enable_instance_layers(ptr_instance, &ici, &ptr_instance->instance_layer_list, &layer_filters);
@@ -714,12 +757,10 @@ out:
 
     if (NULL != ptr_instance) {
         if (res != VK_SUCCESS) {
-            loader_platform_thread_lock_mutex(&loader_global_instance_list_lock);
             // error path, should clean everything up
             if (loader.instances == ptr_instance) {
                 loader.instances = ptr_instance->next;
             }
-            loader_platform_thread_unlock_mutex(&loader_global_instance_list_lock);
 
             free_loader_settings(ptr_instance, &ptr_instance->settings);
 
