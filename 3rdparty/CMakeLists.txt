@@ -82,6 +82,7 @@ if(ENABLE_VULKAN)
             set(USE_GAS OFF CACHE BOOL "" FORCE)
             set(UNKNOWN_FUNCTIONS_SUPPORTED OFF CACHE BOOL "" FORCE)
         endif()
+        set(VulkanHeaders_VERSION "1.4.356" CACHE STRING "" FORCE)
         add_subdirectory(Vulkan-Loader)
 
         if(TARGET vulkan)

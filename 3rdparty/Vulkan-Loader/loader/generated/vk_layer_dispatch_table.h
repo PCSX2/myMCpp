@@ -29,6 +29,7 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include <vulkan/vk_layer.h>
 
 // Instance function pointer dispatch table
 typedef struct VkLayerInstanceDispatchTable_ {
@@ -301,6 +302,9 @@ typedef struct VkLayerInstanceDispatchTable_ {
     PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM GetPhysicalDeviceQueueFamilyDataGraphPropertiesARM;
     PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM GetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM;
 
+    // ---- VK_ARM_data_graph_instruction_set_tosa extension commands
+    PFN_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM GetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM;
+
     // ---- VK_OHOS_surface extension commands
 #if defined(VK_USE_PLATFORM_OHOS)
     PFN_vkCreateSurfaceOHOS CreateSurfaceOHOS;
@@ -311,6 +315,20 @@ typedef struct VkLayerInstanceDispatchTable_ {
 
     // ---- VK_ARM_performance_counters_by_region extension commands
     PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM EnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM;
+
+    // ---- VK_ARM_shader_instrumentation extension commands
+    PFN_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM EnumeratePhysicalDeviceShaderInstrumentationMetricsARM;
+
+    // ---- VK_ARM_data_graph_optical_flow extension commands
+    PFN_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM GetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM;
+
+    // ---- VK_SEC_ubm_surface extension commands
+#if defined(VK_USE_PLATFORM_UBM_SEC)
+    PFN_vkCreateUbmSurfaceSEC CreateUbmSurfaceSEC;
+#endif // VK_USE_PLATFORM_UBM_SEC
+#if defined(VK_USE_PLATFORM_UBM_SEC)
+    PFN_vkGetPhysicalDeviceUbmPresentationSupportSEC GetPhysicalDeviceUbmPresentationSupportSEC;
+#endif // VK_USE_PLATFORM_UBM_SEC
 } VkLayerInstanceDispatchTable;
 
 // Device function pointer dispatch table
@@ -699,6 +717,30 @@ typedef struct VkLayerDispatchTable_ {
     PFN_vkCmdWriteTimestamp2KHR CmdWriteTimestamp2KHR;
     PFN_vkQueueSubmit2KHR QueueSubmit2KHR;
 
+    // ---- VK_KHR_device_address_commands extension commands
+    PFN_vkCmdBindIndexBuffer3KHR CmdBindIndexBuffer3KHR;
+    PFN_vkCmdBindVertexBuffers3KHR CmdBindVertexBuffers3KHR;
+    PFN_vkCmdDrawIndirect2KHR CmdDrawIndirect2KHR;
+    PFN_vkCmdDrawIndexedIndirect2KHR CmdDrawIndexedIndirect2KHR;
+    PFN_vkCmdDispatchIndirect2KHR CmdDispatchIndirect2KHR;
+    PFN_vkCmdCopyMemoryKHR CmdCopyMemoryKHR;
+    PFN_vkCmdCopyMemoryToImageKHR CmdCopyMemoryToImageKHR;
+    PFN_vkCmdCopyImageToMemoryKHR CmdCopyImageToMemoryKHR;
+    PFN_vkCmdUpdateMemoryKHR CmdUpdateMemoryKHR;
+    PFN_vkCmdFillMemoryKHR CmdFillMemoryKHR;
+    PFN_vkCmdCopyQueryPoolResultsToMemoryKHR CmdCopyQueryPoolResultsToMemoryKHR;
+    PFN_vkCmdDrawIndirectCount2KHR CmdDrawIndirectCount2KHR;
+    PFN_vkCmdDrawIndexedIndirectCount2KHR CmdDrawIndexedIndirectCount2KHR;
+    PFN_vkCmdBeginConditionalRendering2EXT CmdBeginConditionalRendering2EXT;
+    PFN_vkCmdBindTransformFeedbackBuffers2EXT CmdBindTransformFeedbackBuffers2EXT;
+    PFN_vkCmdBeginTransformFeedback2EXT CmdBeginTransformFeedback2EXT;
+    PFN_vkCmdEndTransformFeedback2EXT CmdEndTransformFeedback2EXT;
+    PFN_vkCmdDrawIndirectByteCount2EXT CmdDrawIndirectByteCount2EXT;
+    PFN_vkCmdDrawMeshTasksIndirect2EXT CmdDrawMeshTasksIndirect2EXT;
+    PFN_vkCmdDrawMeshTasksIndirectCount2EXT CmdDrawMeshTasksIndirectCount2EXT;
+    PFN_vkCmdWriteMarkerToMemoryAMD CmdWriteMarkerToMemoryAMD;
+    PFN_vkCreateAccelerationStructure2KHR CreateAccelerationStructure2KHR;
+
     // ---- VK_KHR_copy_commands2 extension commands
     PFN_vkCmdCopyBuffer2KHR CmdCopyBuffer2KHR;
     PFN_vkCmdCopyImage2KHR CmdCopyImage2KHR;
@@ -751,6 +793,10 @@ typedef struct VkLayerDispatchTable_ {
     // ---- VK_KHR_copy_memory_indirect extension commands
     PFN_vkCmdCopyMemoryIndirectKHR CmdCopyMemoryIndirectKHR;
     PFN_vkCmdCopyMemoryToImageIndirectKHR CmdCopyMemoryToImageIndirectKHR;
+
+    // ---- VK_KHR_device_fault extension commands
+    PFN_vkGetDeviceFaultReportsKHR GetDeviceFaultReportsKHR;
+    PFN_vkGetDeviceFaultDebugInfoKHR GetDeviceFaultDebugInfoKHR;
 
     // ---- VK_KHR_maintenance10 extension commands
     PFN_vkCmdEndRendering2KHR CmdEndRendering2KHR;
@@ -837,6 +883,20 @@ typedef struct VkLayerDispatchTable_ {
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
     PFN_vkGetMemoryAndroidHardwareBufferANDROID GetMemoryAndroidHardwareBufferANDROID;
 #endif // VK_USE_PLATFORM_ANDROID_KHR
+
+    // ---- VK_AMD_gpa_interface extension commands
+    PFN_vkCreateGpaSessionAMD CreateGpaSessionAMD;
+    PFN_vkDestroyGpaSessionAMD DestroyGpaSessionAMD;
+    PFN_vkSetGpaDeviceClockModeAMD SetGpaDeviceClockModeAMD;
+    PFN_vkGetGpaDeviceClockInfoAMD GetGpaDeviceClockInfoAMD;
+    PFN_vkCmdBeginGpaSessionAMD CmdBeginGpaSessionAMD;
+    PFN_vkCmdEndGpaSessionAMD CmdEndGpaSessionAMD;
+    PFN_vkCmdBeginGpaSampleAMD CmdBeginGpaSampleAMD;
+    PFN_vkCmdEndGpaSampleAMD CmdEndGpaSampleAMD;
+    PFN_vkGetGpaSessionStatusAMD GetGpaSessionStatusAMD;
+    PFN_vkGetGpaSessionResultsAMD GetGpaSessionResultsAMD;
+    PFN_vkResetGpaSessionAMD ResetGpaSessionAMD;
+    PFN_vkCmdCopyGpaSessionResultsAMD CmdCopyGpaSessionResultsAMD;
 
     // ---- VK_AMDX_shader_enqueue extension commands
 #if defined(VK_ENABLE_BETA_EXTENSIONS)
@@ -1013,6 +1073,9 @@ typedef struct VkLayerDispatchTable_ {
     PFN_vkSetPrivateDataEXT SetPrivateDataEXT;
     PFN_vkGetPrivateDataEXT GetPrivateDataEXT;
 
+    // ---- VK_QCOM_queue_perf_hint extension commands
+    PFN_vkQueueSetPerfHintQCOM QueueSetPerfHintQCOM;
+
     // ---- VK_NV_cuda_kernel_launch extension commands
 #if defined(VK_ENABLE_BETA_EXTENSIONS)
     PFN_vkCreateCudaModuleNV CreateCudaModuleNV;
@@ -1147,6 +1210,9 @@ typedef struct VkLayerDispatchTable_ {
 
     // ---- VK_EXT_pageable_device_local_memory extension commands
     PFN_vkSetDeviceMemoryPriorityEXT SetDeviceMemoryPriorityEXT;
+
+    // ---- VK_ARM_scheduling_controls extension commands
+    PFN_vkCmdSetDispatchParametersARM CmdSetDispatchParametersARM;
 
     // ---- VK_VALVE_descriptor_set_host_mapping extension commands
     PFN_vkGetDescriptorSetLayoutHostMappingInfoVALVE GetDescriptorSetLayoutHostMappingInfoVALVE;
@@ -1311,6 +1377,14 @@ typedef struct VkLayerDispatchTable_ {
     PFN_vkGetMemoryMetalHandlePropertiesEXT GetMemoryMetalHandlePropertiesEXT;
 #endif // VK_USE_PLATFORM_METAL_EXT
 
+    // ---- VK_ARM_shader_instrumentation extension commands
+    PFN_vkCreateShaderInstrumentationARM CreateShaderInstrumentationARM;
+    PFN_vkDestroyShaderInstrumentationARM DestroyShaderInstrumentationARM;
+    PFN_vkCmdBeginShaderInstrumentationARM CmdBeginShaderInstrumentationARM;
+    PFN_vkCmdEndShaderInstrumentationARM CmdEndShaderInstrumentationARM;
+    PFN_vkGetShaderInstrumentationValuesARM GetShaderInstrumentationValuesARM;
+    PFN_vkClearShaderInstrumentationMetricsARM ClearShaderInstrumentationMetricsARM;
+
     // ---- VK_EXT_fragment_density_map_offset extension commands
     PFN_vkCmdEndRendering2EXT CmdEndRendering2EXT;
 
@@ -1319,6 +1393,9 @@ typedef struct VkLayerDispatchTable_ {
 
     // ---- VK_NV_compute_occupancy_priority extension commands
     PFN_vkCmdSetComputeOccupancyPriorityNV CmdSetComputeOccupancyPriorityNV;
+
+    // ---- VK_EXT_primitive_restart_index extension commands
+    PFN_vkCmdSetPrimitiveRestartIndexEXT CmdSetPrimitiveRestartIndexEXT;
 
     // ---- VK_KHR_acceleration_structure extension commands
     PFN_vkCreateAccelerationStructureKHR CreateAccelerationStructureKHR;
