@@ -53,6 +53,12 @@ SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)
 		iconWidget->zoomOut();
 	});
 
+	ui->zoomInButton->setIcon(QIcon::fromTheme(QStringLiteral("add-line")));
+	ui->zoomInButton->setText(QString());
+	ui->zoomOutButton->setIcon(QIcon::fromTheme(QStringLiteral("subtract-line")));
+	ui->zoomOutButton->setText(QString());
+	ui->resetViewButton->setIcon(QIcon::fromTheme(QStringLiteral("reset-right-line")));
+
 	this->hide();
 }
 
@@ -212,10 +218,9 @@ void SaveDetailsPanel::updatePlayPauseButton()
 
 	const bool animating = iconWidget->isAnimationEnabled();
 	ui->playPauseButton->setIcon(
-		style()->standardIcon(animating ? QStyle::SP_MediaPause : QStyle::SP_MediaPlay));
+		QIcon::fromTheme(animating ? QStringLiteral("pause-line") : QStringLiteral("play-line")));
 	ui->playPauseButton->setToolTip(
 		animating ? tr("Pause animation") : tr("Play animation"));
-	ui->resetViewButton->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
 }
 
 void SaveDetailsPanel::createIconWidget()
