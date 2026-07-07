@@ -79,6 +79,7 @@ if(WIN32)
             COMMAND ${CMAKE_COMMAND} -E echo "Running windeployqt to deploy Qt dependencies..."
             COMMAND "${WINDEPLOYQT_EXECUTABLE}"
             --no-compiler-runtime
+            --no-opengl-sw
             "$<TARGET_FILE:myMCpp>"
             VERBATIM
         )

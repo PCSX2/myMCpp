@@ -90,7 +90,7 @@ if not exist "%QT_BIN%\lrelease.exe" (
 xcopy /Y /E /I "$(ProjectDir)..\resources" "$(TargetDir)resources"
 
 if exist "%QT_BIN%\windeployqt.exe" (
-  "%QT_BIN%\windeployqt.exe" --no-compiler-runtime "$(TargetPath)"
+  "%QT_BIN%\windeployqt.exe" --no-compiler-runtime --no-opengl-sw "$(TargetPath)"
 ) else (
   echo Qt windeployqt not found at "%QT_BIN%". Qt DLLs/plugins will not be deployed.
 )
