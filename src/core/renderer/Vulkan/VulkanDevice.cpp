@@ -44,7 +44,7 @@ VulkanDevice::~VulkanDevice()
 	destroy();
 }
 
-bool VulkanDevice::create(const WindowInfo& windowInfo)
+bool VulkanDevice::create(const WindowInfo& windowInfo, const std::string& preferredAdapter)
 {
 	m_error.Clear();
 	if (!createInstance())
@@ -54,7 +54,7 @@ bool VulkanDevice::create(const WindowInfo& windowInfo)
 		destroy();
 		return false;
 	}
-	if (!selectPhysicalDevice())
+	if (!selectPhysicalDevice(preferredAdapter))
 	{
 		destroy();
 		return false;
@@ -65,6 +65,44 @@ bool VulkanDevice::create(const WindowInfo& windowInfo)
 		return false;
 	}
 	return true;
+}
+
+std::vector<std::string> VulkanDevice::getAvailableAdapters()
+{
+	std::vector<std::string> adapterNames;
+
+	VkApplicationInfo appInfo{};
+	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	appInfo.pApplicationName = "myMCpp";
+	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+	appInfo.pEngineName = "myMCpp";
+	appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+	appInfo.apiVersion = VK_API_VERSION_1_1;
+
+	VkInstanceCreateInfo createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	createInfo.pApplicationInfo = &appInfo;
+
+	VkInstance tempInstance = VK_NULL_HANDLE;
+	if (vkCreateInstance(&createInfo, nullptr, &tempInstance) == VK_SUCCESS)
+	{
+		uint32_t deviceCount = 0;
+		vkEnumeratePhysicalDevices(tempInstance, &deviceCount, nullptr);
+		if (deviceCount > 0)
+		{
+			std::vector<VkPhysicalDevice> devices(deviceCount);
+			vkEnumeratePhysicalDevices(tempInstance, &deviceCount, devices.data());
+			for (const auto& device : devices)
+			{
+				VkPhysicalDeviceProperties props;
+				vkGetPhysicalDeviceProperties(device, &props);
+				adapterNames.push_back(props.deviceName);
+			}
+		}
+		vkDestroyInstance(tempInstance, nullptr);
+	}
+
+	return adapterNames;
 }
 
 void VulkanDevice::destroy()
@@ -313,7 +351,7 @@ bool VulkanDevice::createSurface(const WindowInfo& windowInfo)
 #endif
 }
 
-bool VulkanDevice::selectPhysicalDevice()
+bool VulkanDevice::selectPhysicalDevice(const std::string& preferredAdapter)
 {
 	uint32_t deviceCount = 0;
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
@@ -324,13 +362,11 @@ bool VulkanDevice::selectPhysicalDevice()
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
 
-	for (const auto& device : devices)
-	{
-		VkPhysicalDeviceProperties2 props2{};
-		props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
-		vkGetPhysicalDeviceProperties2(device, &props2);
-		const VkPhysicalDeviceProperties& props = props2.properties;
+	VkPhysicalDevice selectedDevice = VK_NULL_HANDLE;
+	uint32_t selectedQueueFamily = 0;
+	std::string selectedDeviceName;
 
+	auto isDeviceSuitable = [&](VkPhysicalDevice device, uint32_t& queueFamilyIndex) {
 		uint32_t queueFamilyCount = 0;
 		vkGetPhysicalDeviceQueueFamilyProperties2(device, &queueFamilyCount, nullptr);
 
@@ -347,17 +383,49 @@ bool VulkanDevice::selectPhysicalDevice()
 			if (queueFamilies[i].queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT)
 			{
 				VkBool32 presentSupport = false;
-				vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentSupport);
-
-				if (presentSupport)
+				if (vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentSupport) == VK_SUCCESS && presentSupport)
 				{
-					m_physicalDevice = device;
-					m_graphicsQueueFamily = i;
-					Logger::info("VK: Using device: {}", props.deviceName);
+					queueFamilyIndex = i;
 					return true;
 				}
 			}
 		}
+		return false;
+	};
+
+	for (const auto& device : devices)
+	{
+		VkPhysicalDeviceProperties2 props2{};
+		props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+		vkGetPhysicalDeviceProperties2(device, &props2);
+
+		uint32_t queueFamily = 0;
+		if (isDeviceSuitable(device, queueFamily))
+		{
+			std::string name = props2.properties.deviceName;
+			if (!preferredAdapter.empty() && name == preferredAdapter)
+			{
+				selectedDevice = device;
+				selectedQueueFamily = queueFamily;
+				selectedDeviceName = name;
+				break;
+			}
+
+			if (selectedDevice == VK_NULL_HANDLE)
+			{
+				selectedDevice = device;
+				selectedQueueFamily = queueFamily;
+				selectedDeviceName = name;
+			}
+		}
+	}
+
+	if (selectedDevice != VK_NULL_HANDLE)
+	{
+		m_physicalDevice = selectedDevice;
+		m_graphicsQueueFamily = selectedQueueFamily;
+		Logger::info("VK: Using device: {}", selectedDeviceName);
+		return true;
 	}
 
 	return m_error.Fail("VK: No suitable device found");

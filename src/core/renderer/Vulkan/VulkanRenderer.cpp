@@ -68,7 +68,7 @@ bool VulkanRenderer::initialize()
 	CocoaTools::SetDrawableSize(&m_windowInfo, m_width, m_height);
 #endif
 
-	if (!m_vulkanDevice.create(m_windowInfo))
+	if (!m_vulkanDevice.create(m_windowInfo, m_config ? m_config->getAdapter() : ""))
 		return m_error.Assign(m_vulkanDevice.GetError());
 
 	if (!m_vulkanSwapchain.create(m_vulkanDevice, m_width, m_height, m_config ? m_config->getVSync() : true))

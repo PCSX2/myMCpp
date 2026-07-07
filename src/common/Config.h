@@ -25,6 +25,9 @@ public:
 	std::string getRenderer() const;
 	void setRenderer(const std::string& renderer);
 
+	std::string getAdapter() const;
+	void setAdapter(const std::string& adapter);
+
 	bool getAnimateIcons() const;
 	void setAnimateIcons(bool enabled);
 	std::string getLightingMode() const;

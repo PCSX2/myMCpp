@@ -229,9 +229,15 @@ void SaveDetailsPanel::createIconWidget()
 
 	iconWidget = new IconWidget(m_config, this);
 	if (m_config)
+	{
 		m_lastRendererType = m_config->getRenderer();
+		m_lastAdapter = m_config->getAdapter();
+	}
 	else
+	{
 		m_lastRendererType = "vulkan";
+		m_lastAdapter = "";
+	}
 
 	iconWidget->setMinimumSize(128, 128);
 	QSizePolicy sp(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
@@ -246,7 +252,8 @@ void SaveDetailsPanel::createIconWidget()
 void SaveDetailsPanel::refreshConfig()
 {
 	std::string currentRenderer = m_config ? m_config->getRenderer() : "vulkan";
-	if (!iconWidget || currentRenderer != m_lastRendererType)
+	std::string currentAdapter = m_config ? m_config->getAdapter() : "";
+	if (!iconWidget || currentRenderer != m_lastRendererType || currentAdapter != m_lastAdapter)
 	{
 		createIconWidget();
 	}

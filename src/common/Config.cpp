@@ -112,6 +112,23 @@ void Config::setRenderer(const std::string& renderer)
 	m_config["graphics"]["renderer"] = renderer;
 }
 
+std::string Config::getAdapter() const
+{
+	try
+	{
+		return m_config["graphics"]["adapter"].get<std::string>();
+	}
+	catch (...)
+	{
+		return "";
+	}
+}
+
+void Config::setAdapter(const std::string& adapter)
+{
+	m_config["graphics"]["adapter"] = adapter;
+}
+
 bool Config::getAnimateIcons() const
 {
 	try
@@ -537,6 +554,7 @@ void Config::createDefaults()
 {
 	m_config = {
 		{"graphics", {{"renderer", "vulkan"},
+						 {"adapter", ""},
 						 {"vsync", true},
 						 {"swap_interval", 1},
 						 {"antialiasing", 4},
@@ -582,6 +600,8 @@ void Config::ensureKeys()
 
 	if (!m_config["graphics"].contains("renderer"))
 		m_config["graphics"]["renderer"] = "vulkan";
+	if (!m_config["graphics"].contains("adapter"))
+		m_config["graphics"]["adapter"] = "";
 	if (!m_config["graphics"].contains("vsync"))
 		m_config["graphics"]["vsync"] = true;
 	if (!m_config["graphics"].contains("swap_interval"))
