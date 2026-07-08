@@ -218,7 +218,7 @@ void SaveDetailsPanel::updatePlayPauseButton()
 
 	const bool animating = iconWidget->isAnimationEnabled();
 	ui->playPauseButton->setIcon(
-		QIcon::fromTheme(animating ? QStringLiteral("pause-line") : QStringLiteral("play-line")));
+		QIcon::fromTheme(animating ? QStringLiteral("pause-line") : QStringLiteral("play-fill")));
 	ui->playPauseButton->setToolTip(
 		animating ? tr("Pause animation") : tr("Play animation"));
 }
