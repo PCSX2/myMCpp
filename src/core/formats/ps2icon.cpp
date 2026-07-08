@@ -331,7 +331,7 @@ namespace PS2Icon
 			uint16_t rleCode = readLE<uint16_t>(data, offset + rleOffset);
 			rleOffset += 2;
 
-			if ((rleCode & 0xFF00) == 0xFF00)
+			if ((rleCode & 0x8000) != 0)
 			{
 				uint32_t subLength = (0x10000 - rleCode);
 
@@ -355,23 +355,26 @@ namespace PS2Icon
 			{
 				uint32_t rep = rleCode;
 
-				if (compressedSize < rleOffset + 2)
+				if (rep > 0)
 				{
-					Logger::warn("PS2Icon: Compressed texture data too short (Repeat).");
-					break;
-				}
+					if (compressedSize < rleOffset + 2)
+					{
+						Logger::warn("PS2Icon: Compressed texture data too short (Repeat).");
+						break;
+					}
 
-				if (texOffset + rep > texture.size())
-				{
-					throw std::runtime_error("Decompressed texture exceeds size");
-				}
+					if (texOffset + rep > texture.size())
+					{
+						throw std::runtime_error("Decompressed texture exceeds size");
+					}
 
-				uint16_t value = readLE<uint16_t>(data, offset + rleOffset);
-				rleOffset += 2;
+					uint16_t value = readLE<uint16_t>(data, offset + rleOffset);
+					rleOffset += 2;
 
-				for (uint32_t i = 0; i < rep; ++i)
-				{
-					texture[texOffset++] = value;
+					for (uint32_t i = 0; i < rep; ++i)
+					{
+						texture[texOffset++] = value;
+					}
 				}
 			}
 		}
