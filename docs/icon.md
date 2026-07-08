@@ -346,10 +346,8 @@ Compressed textures use a **simple RLE (Run-Length Encoding)** algorithm.
 #### Compression Layout
 
 - The first **u32** value specifies the **size of the compressed texture data**
-- The remaining data consists of repeating pairs:
-  - **u16 rle_code**
-  - **u16 rle_data**
-- These pairs continue until the compressed data size is exhausted
+- The remaining data consists of a **u16 rle_code** followed by variable data based on the rules below.
+- This continues until the compressed data size is exhausted.
 
 ---
 
@@ -360,12 +358,12 @@ Each RLE entry represents **x copies of rle_data repeated y times**.
 
 | Condition                      | x (data count)           | y (repeat count) |
 |--------------------------------|--------------------------|------------------|
-| `rle_code < 0xFF00`            | 1                        | `rle_code`      |
-| `rle_code >= 0xFF00`           | `0x10000 - rle_code`     | 1                |
+| `(rle_code & 0x8000) == 0`     | 1                        | `rle_code`       |
+| `(rle_code & 0x8000) != 0`     | `0x10000 - rle_code`     | 1                |
 
 In other words:
-- **Small rle_code** -> repeat a single value many times
-- **Large rle_code** -> copy multiple values once
+- **Small rle_code (MSB is 0)** -> repeat a single value many times (skipped if 0)
+- **Large rle_code (MSB is 1)** -> copy multiple values once
 
 ---
 
