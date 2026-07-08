@@ -188,7 +188,7 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
 <context>
     <name>CardActionHandler</name>
     <message>
-        <location filename="../CardActionHandler.cpp" line="+27"/>
+        <location filename="../CardActionHandler.cpp" line="+32"/>
         <source>Opened: %1</source>
         <translation type="unfinished">Opened: %1</translation>
     </message>
@@ -196,14 +196,15 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
         <location line="+7"/>
         <location line="+22"/>
         <location line="+112"/>
-        <location line="+39"/>
+        <location line="+50"/>
+        <location line="+92"/>
         <location line="+36"/>
         <location line="+51"/>
         <source>Error</source>
         <translation type="unfinished">Error</translation>
     </message>
     <message>
-        <location line="-259"/>
+        <location line="-362"/>
         <source>Failed to open memory card: %1</source>
         <translation type="unfinished">Failed to open memory card: %1</translation>
     </message>
@@ -221,16 +222,18 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
         <location line="+9"/>
         <location line="+11"/>
         <location line="+103"/>
-        <location line="+36"/>
+        <location line="+48"/>
+        <location line="+91"/>
         <location line="+37"/>
         <source>No memory card open</source>
         <translation type="unfinished">No memory card open</translation>
     </message>
     <message>
-        <location line="-176"/>
+        <location line="-279"/>
         <location line="+17"/>
         <location line="+86"/>
-        <location line="+36"/>
+        <location line="+48"/>
+        <location line="+91"/>
         <location line="+37"/>
         <source>Warning</source>
         <translation type="unfinished">Warning</translation>
@@ -240,20 +243,21 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
         <translation type="obsolete">File not found: %1</translation>
     </message>
     <message>
-        <location line="-158"/>
+        <location line="-261"/>
         <source>Save file is empty or contains no valid entries</source>
         <translation type="unfinished">Save file is empty or contains no valid entries</translation>
     </message>
     <message>
         <location line="+18"/>
         <location line="+29"/>
-        <location line="+55"/>
-        <location line="+92"/>
+        <location line="+56"/>
+        <location line="+88"/>
+        <location line="+106"/>
         <source>Success</source>
         <translation type="unfinished">Success</translation>
     </message>
     <message>
-        <location line="-175"/>
+        <location line="-278"/>
         <source>Successfully imported save: %1</source>
         <translation type="unfinished">Successfully imported save: %1</translation>
     </message>
@@ -288,24 +292,65 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
         <translation type="unfinished">Failed to import save: %1</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+30"/>
         <source>Successfully exported save to:
 %1</source>
         <translation type="unfinished">Successfully exported save to:
 %1</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
+        <location line="+93"/>
+        <source>Open Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-82"/>
+        <location line="+92"/>
         <source>Exported: %1</source>
         <translation type="unfinished">Exported: %1</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-86"/>
+        <location line="+92"/>
         <source>Failed to export save: %1</source>
         <translation type="unfinished">Failed to export save: %1</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="-68"/>
+        <location line="+26"/>
+        <source>&apos;%1&apos; -&gt; &apos;%2&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-16"/>
+        <source>Failed to create directory: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Failed to write file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Failed to write all data to file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Successfully exported save as folder to:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Note: The following names were sanitized due to invalid characters:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+39"/>
         <source>Confirm Delete</source>
         <translation type="unfinished">Confirm Delete</translation>
     </message>
@@ -704,6 +749,11 @@ Are you sure you want to continue?</translation>
     </message>
     <message>
         <location line="+13"/>
+        <source>Graphics Adapter:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>Camera Angle:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -738,12 +788,12 @@ Are you sure you want to continue?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+12"/>
         <source>Unlimited</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+19"/>
         <source>FPS</source>
         <translation type="unfinished"></translation>
     </message>
@@ -754,7 +804,7 @@ Are you sure you want to continue?</translation>
     </message>
     <message>
         <location line="+6"/>
-        <location filename="../Settings/GraphicsSettingsWidget.cpp" line="+23"/>
+        <location filename="../Settings/GraphicsSettingsWidget.cpp" line="+24"/>
         <source>Animate Icons</source>
         <translation type="unfinished">Animate Icons</translation>
     </message>
@@ -764,7 +814,7 @@ Are you sure you want to continue?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/GraphicsSettingsWidget.cpp" line="-5"/>
+        <location filename="../Settings/GraphicsSettingsWidget.cpp" line="-6"/>
         <source>Renderer</source>
         <translation type="unfinished">Renderer</translation>
     </message>
@@ -772,6 +822,16 @@ Are you sure you want to continue?</translation>
         <location line="+0"/>
         <source>Select the graphics API used for rendering the 3D icons.</source>
         <translation type="unfinished">Select the graphics API used for rendering the 3D icons.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Graphics Adapter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Select the graphics adapter (GPU) to use for rendering.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -855,6 +915,11 @@ Are you sure you want to continue?</translation>
     </message>
     <message>
         <location line="+4"/>
+        <source>Default Adapter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Default</source>
         <translation type="unfinished">Default</translation>
     </message>
@@ -914,7 +979,7 @@ Are you sure you want to continue?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>Graphics</source>
         <translation type="unfinished"></translation>
     </message>
@@ -922,7 +987,7 @@ Are you sure you want to continue?</translation>
 <context>
     <name>IconWidget</name>
     <message>
-        <location filename="../widgets/IconWidget.cpp" line="+372"/>
+        <location filename="../widgets/IconWidget.cpp" line="+368"/>
         <source>Wayland surface is not ready yet</source>
         <translation type="unfinished"></translation>
     </message>
@@ -932,7 +997,7 @@ Are you sure you want to continue?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+38"/>
         <source>Failed to initialize renderer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1162,7 +1227,132 @@ Continue?</source>
         <translation type="unfinished">Settings...</translation>
     </message>
     <message>
-        <location line="+735"/>
+        <location line="+78"/>
+        <source>Export Save as Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Export Selected as Folders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Overwrite Folders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>%1 folder(s) already exist. Overwrite?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <location line="+86"/>
+        <location line="+209"/>
+        <source>&apos;%1&apos; -&gt; &apos;%2&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-281"/>
+        <source>Exported %1 folder(s); %2 failed:
+%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location line="+88"/>
+        <location line="+207"/>
+        <source>Success</source>
+        <translation type="unfinished">Success</translation>
+    </message>
+    <message>
+        <location line="-294"/>
+        <source>Successfully exported %1 folder(s) to:
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Note: The following folder names were sanitized due to invalid characters:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <location line="+88"/>
+        <location line="+207"/>
+        <source>Open Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-285"/>
+        <source>Exported %1 folders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Export Selected Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>Exported %1 file(s); %2 failed:
+%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Successfully exported %1 file(s) to:
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+207"/>
+        <source>Note: The following filenames were sanitized due to invalid characters:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-193"/>
+        <source>Exported %1 files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Are you sure you want to delete the %1 selected file(s)?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Delete Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Deleted %1 file(s); %2 failed:
+%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Deleted %1 files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Deleted %1, %2 failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+144"/>
+        <source>Successfully exported %1 save(s) to:
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+562"/>
         <source>TBD
 
 For updates, visit: https://github.com/PCSX2/myMCpp/releases</source>
@@ -1610,8 +1800,10 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished">PS2 Save Files (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;All Files (*.*)</translation>
     </message>
     <message>
-        <location line="-217"/>
-        <location line="+380"/>
+        <location line="-534"/>
+        <location line="+88"/>
+        <location line="+208"/>
+        <location line="+401"/>
         <source>Export</source>
         <translation type="unfinished">Export</translation>
     </message>
@@ -1621,13 +1813,13 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished">Please select a save to export</translation>
     </message>
     <message>
-        <location line="-531"/>
-        <location line="+538"/>
+        <location line="-801"/>
+        <location line="+808"/>
         <source>Export Save</source>
         <translation type="unfinished">Export Save</translation>
     </message>
     <message>
-        <location line="-682"/>
+        <location line="-952"/>
         <source>PCSX2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1659,12 +1851,12 @@ Pick another name for the ECC copy.</source>
     </message>
     <message>
         <location line="+78"/>
-        <location line="+542"/>
+        <location line="+812"/>
         <source>EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</source>
         <translation type="unfinished">EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</translation>
     </message>
     <message>
-        <location line="-542"/>
+        <location line="-812"/>
         <source>MAX Drive Format (*.max);;EMS/PSU Format (*.psu);;All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1675,12 +1867,12 @@ Pick another name for the ECC copy.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+47"/>
+        <location line="+282"/>
         <source>All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-39"/>
+        <location line="-274"/>
         <source>Exported %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1690,7 +1882,7 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+269"/>
         <source>Import File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1720,28 +1912,32 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="-188"/>
+        <location line="+209"/>
         <source>Overwrite Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-208"/>
+        <location line="+209"/>
         <source>%1 file(s) already exist in the folder. Overwrite?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+31"/>
         <source>Exported %1 save(s); %2 failed:
 %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+22"/>
         <source>Exported %1 saves</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="-293"/>
+        <location line="+88"/>
+        <location line="+205"/>
         <source>Exported %1, %2 failed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1860,7 +2056,8 @@ Continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-567"/>
+        <location line="+577"/>
         <location line="+8"/>
         <source>Delete</source>
         <translation type="unfinished">Delete</translation>
@@ -1870,18 +2067,19 @@ Continue?</source>
         <translation type="obsolete">Please select a save to delete</translation>
     </message>
     <message>
-        <location line="-531"/>
+        <location line="-566"/>
         <source>Delete Save</source>
         <translation type="unfinished">Delete Save</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-48"/>
+        <location line="+49"/>
         <source>Are you sure you want to delete &apos;%1&apos;?</source>
         <translation type="unfinished">Are you sure you want to delete &apos;%1&apos;?</translation>
     </message>
     <message>
         <location line="+8"/>
-        <location line="+537"/>
+        <location line="+572"/>
         <source>Deleted %1</source>
         <translation type="unfinished">Deleted %1</translation>
     </message>
@@ -1942,9 +2140,9 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
         <translation type="obsolete">Saved to %1</translation>
     </message>
     <message>
-        <location line="-901"/>
-        <location line="+66"/>
-        <location line="+799"/>
+        <location line="-1171"/>
+        <location line="+301"/>
+        <location line="+834"/>
         <location line="+109"/>
         <location line="+89"/>
         <location line="+59"/>
@@ -2335,8 +2533,13 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+25"/>
         <source>Export Selected Saves...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Export Selected as Folders...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2345,7 +2548,17 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+23"/>
+        <source>Export Selected Files...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Delete Selected Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Browse Contents</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2355,36 +2568,41 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+5"/>
+        <source>Export as Folder...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+7"/>
-        <location line="+43"/>
+        <location line="+45"/>
         <source>Export File...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-35"/>
-        <location line="+41"/>
+        <location line="-37"/>
+        <location line="+43"/>
         <source>Rename...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-36"/>
-        <location line="+41"/>
+        <location line="-38"/>
+        <location line="+43"/>
         <source>Edit Modified Date...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-36"/>
-        <location line="+41"/>
+        <location line="-38"/>
+        <location line="+43"/>
         <source>Delete</source>
         <translation type="unfinished">Delete</translation>
     </message>
     <message>
-        <location line="-25"/>
+        <location line="-26"/>
         <source>Go Back</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Go Back to Saves</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2533,7 +2751,7 @@ Useful for specific raw-image workflows.</source>
 <context>
     <name>SaveDetailsPanel</name>
     <message>
-        <location filename="../widgets/SaveDetailsPanel.cpp" line="+109"/>
+        <location filename="../widgets/SaveDetailsPanel.cpp" line="+115"/>
         <source>Size: %1
 Modified: %2</source>
         <translation type="unfinished">Size: %1
@@ -2557,54 +2775,44 @@ Files: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+46"/>
         <location filename="../widgets/SaveDetailsPanel.cpp" line="+0"/>
         <source>Pause animation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+25"/>
         <source>Reset view</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
-        <source>+</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="+25"/>
         <source>Zoom in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
-        <source>−</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="+25"/>
         <source>Zoom out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+34"/>
         <source>Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+12"/>
         <location filename="../widgets/SaveDetailsPanel.cpp" line="-27"/>
         <source>No save selected</source>
         <translation type="unfinished">No save selected</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+10"/>
         <source>color: gray; font-size: 11px;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+17"/>
         <location filename="../widgets/SaveDetailsPanel.cpp" line="+4"/>
         <source>No details available</source>
         <translation type="unfinished">No details available</translation>
