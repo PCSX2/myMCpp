@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Apply labels based on file changes
-        uses: actions/labeler@v6.1.0
+        uses: actions/labeler@v6.2.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
