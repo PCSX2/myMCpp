@@ -41,7 +41,7 @@
         </property>
        </column>
       </widget>
-      <widget class="SaveDetailsPanel" name="detailsPanel" native="true"/>
+      <widget class="SaveDetailsPanel" name="detailsPanel"/>
      </widget>
     </item>
    </layout>
