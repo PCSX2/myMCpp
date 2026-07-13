@@ -35,6 +35,10 @@ static void initResourcePath(Config& config)
 
 int runQtMainApp(int argc, char* argv[], Config& config)
 {
+	// Workaround for QTBUG-133919: native widgets break refresh on GNOME/Weston Wayland.
+	QGuiApplication::setAttribute(Qt::AA_NativeWindows, false);
+	QGuiApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
+
 	QApplication app(argc, argv);
 	initResourcePath(config);
 	app.setApplicationName(MYMCpp_APP_NAME);

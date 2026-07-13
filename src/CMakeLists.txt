@@ -104,10 +104,11 @@ endif()
 
 if(UNIX AND NOT APPLE)
     add_custom_command(TARGET myMCpp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E echo "Copying resources folder to output directory..."
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/resources
         $<TARGET_FILE_DIR:myMCpp>/resources
-        COMMENT "Copying resources folder to output directory..."
+        VERBATIM
     )
 endif()
 
