@@ -6,41 +6,41 @@
     <message>
       <location filename="../dialogs/AboutDialog.ui" line="+14"/>
       <source>About myMCpp</source>
-      <translation type="unfinished">About myMCpp</translation>
+      <translation>نبذة عن myMCpp</translation>
     </message>
     <message>
       <location line="+41"/>
       <source>myMCpp</source>
-      <translation type="unfinished">myMCpp</translation>
+      <translation>myMCpp</translation>
     </message>
     <message>
       <location line="+10"/>
       <source>myMCpp is a modern, free, and open-source PlayStation 2 memory card manager.
 It allows you to view, import, export, and manage save files on virtual memory cards.</source>
-      <translation type="unfinished">myMCpp is a modern, free, and open-source PlayStation 2 memory card manager.
-It allows you to view, import, export, and manage save files on virtual memory cards.</translation>
+      <translation>myMCpp هو برنامج حديث ومجاني ومفتوح المصدر لإدارة بطاقات الذاكرة الخاصة بجهاز PlayStation 2.
+ويتيح لك عرض ملفات الحفظ على بطاقات الذاكرة الافتراضية واستيرادها وتصديرها وإدارتها.</translation>
     </message>
     <message>
       <location line="+19"/>
       <source>PlayStation 2 and PS2 are registered trademarks of Sony Interactive Entertainment.
 This application is not affiliated in any way with Sony Interactive Entertainment.</source>
-      <translation type="unfinished">PlayStation 2 and PS2 are registered trademarks of Sony Interactive Entertainment.
-This application is not affiliated in any way with Sony Interactive Entertainment.</translation>
+      <translation>«PlayStation 2» و«PS2» علامتان تجاريتان مسجلتان لشركة «Sony Interactive Entertainment».
+هذا التطبيق لا يرتبط بأي شكل من الأشكال بشركة «Sony Interactive Entertainment».</translation>
     </message>
     <message>
       <location line="+45"/>
       <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/PCSX2/myMCpp&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;GitHub Repository&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://github.com/PCSX2/myMCpp/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Documentation&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;#licenses&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Licenses&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-      <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/PCSX2/myMCpp&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;GitHub Repository&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://github.com/PCSX2/myMCpp/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Documentation&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;#licenses&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Licenses&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+      <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/PCSX2/myMCpp&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;مستودع GitHub&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://github.com/PCSX2/myMCpp/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;التوثيق&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;#licenses&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;التراخيص&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
       <location line="+49"/>
       <source>Close</source>
-      <translation type="unfinished">Close</translation>
+      <translation>إغلاق</translation>
     </message>
     <message>
       <location filename="../dialogs/AboutDialog.cpp" line="+52"/>
       <source>Third-Party Licenses</source>
-      <translation type="unfinished">Third-Party Licenses</translation>
+      <translation>تراخيص الجهات الخارجية</translation>
     </message>
   </context>
   <context>
@@ -48,120 +48,120 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
     <message>
       <location filename="../Settings/AdvancedSettingsWidget.cpp" line="+18"/>
       <source>Debug Logging</source>
-      <translation type="unfinished">Debug Logging</translation>
+      <translation>تسجيل أخطاء التصحيح</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Enable verbose logging to standard output for debugging purposes.</source>
-      <translation type="unfinished">Enable verbose logging to standard output for debugging purposes.</translation>
+      <translation>تمكين التسجيل التفصيلي في الإخراج القياسي لأغراض تصحيح الأخطاء.</translation>
     </message>
     <message>
       <location line="+1"/>
       <location line="+55"/>
       <source>Export Settings</source>
-      <translation type="unfinished">Export Settings</translation>
+      <translation>تصدير الإعدادات</translation>
     </message>
     <message>
       <location line="-55"/>
       <source>Save the current settings to a JSON file for backup or sharing.</source>
-      <translation type="unfinished">Save the current settings to a JSON file for backup or sharing.</translation>
+      <translation>احفظ الإعدادات الحالية في ملف JSON لأغراض النسخ الاحتياطي أو المشاركة.</translation>
     </message>
     <message>
       <location line="+1"/>
       <location line="+80"/>
       <source>Import Settings</source>
-      <translation type="unfinished">Import Settings</translation>
+      <translation>استيراد الإعدادات</translation>
     </message>
     <message>
       <location line="-80"/>
       <source>Load settings from a previously exported JSON file.</source>
-      <translation type="unfinished">Load settings from a previously exported JSON file.</translation>
+      <translation>تحميل الإعدادات من ملف JSON تم تصديره مسبقًا.</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Advanced</source>
-      <translation type="unfinished">Advanced</translation>
+      <translation>متقدم</translation>
     </message>
     <message>
       <location line="+50"/>
       <location line="+26"/>
       <source>JSON Files (*.json)</source>
-      <translation type="unfinished">JSON Files (*.json)</translation>
+      <translation>ملفات JSON (*.json)</translation>
     </message>
     <message>
       <location line="-20"/>
       <source>Export Successful</source>
-      <translation type="unfinished">Export Successful</translation>
+      <translation>تم التصدير بنجاح</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Settings have been exported to %1</source>
-      <translation type="unfinished">Settings have been exported to %1</translation>
+      <translation>تم تصدير الإعدادات إلى %1</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Export Failed</source>
-      <translation type="unfinished">Export Failed</translation>
+      <translation>فشل التصدير</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Failed to export settings to %1</source>
-      <translation type="unfinished">Failed to export settings to %1</translation>
+      <translation>فشل تصدير الإعدادات إلى %1</translation>
     </message>
     <message>
       <location line="+18"/>
       <source>Confirm Import</source>
-      <translation type="unfinished">Confirm Import</translation>
+      <translation>تأكيد الاستيراد</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>This will overwrite your current settings. Are you sure you want to continue?</source>
-      <translation type="unfinished">This will overwrite your current settings. Are you sure you want to continue?</translation>
+      <translation>سيؤدي هذا إلى استبدال إعداداتك الحالية. هل أنت متأكد من رغبتك في المتابعة؟</translation>
     </message>
     <message>
       <location line="+9"/>
       <source>Import Successful</source>
-      <translation type="unfinished">Import Successful</translation>
+      <translation>تم الاستيراد بنجاح</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Settings have been imported from %1</source>
-      <translation type="unfinished">Settings have been imported from %1</translation>
+      <translation>تم استيراد الإعدادات من %1</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Import Failed</source>
-      <translation type="unfinished">Import Failed</translation>
+      <translation>فشل الاستيراد</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Failed to import settings from %1</source>
-      <translation type="unfinished">Failed to import settings from %1</translation>
+      <translation>فشل استيراد الإعدادات من %1</translation>
     </message>
     <message>
       <location filename="../Settings/AdvancedSettingsWidget.ui" line="+35"/>
       <source>Debugging</source>
-      <translation type="unfinished">Debugging</translation>
+      <translation>تصحيح الأخطاء</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Enable Debug Logging</source>
-      <translation type="unfinished">Enable Debug Logging</translation>
+      <translation>تمكين تسجيل التصحيح</translation>
     </message>
     <message>
       <location line="+10"/>
       <source>Settings Management</source>
-      <translation type="unfinished">Settings Management</translation>
+      <translation>إدارة الإعدادات</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Export Settings...</source>
-      <translation type="unfinished">Export Settings...</translation>
+      <translation>تصدير الإعدادات...</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>Import Settings...</source>
-      <translation type="unfinished">Import Settings...</translation>
+      <translation>استيراد الإعدادات...</translation>
     </message>
   </context>
   <context>
@@ -169,7 +169,7 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
     <message>
       <location filename="../CardActionHandler.cpp" line="+32"/>
       <source>Opened: %1</source>
-      <translation type="unfinished">Opened: %1</translation>
+      <translation>تاريخ الافتتاح: %1</translation>
     </message>
     <message>
       <location line="+7"/>
@@ -180,22 +180,22 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
       <location line="+36"/>
       <location line="+51"/>
       <source>Error</source>
-      <translation type="unfinished">Error</translation>
+      <translation>خطأ</translation>
     </message>
     <message>
       <location line="-362"/>
       <source>Failed to open memory card: %1</source>
-      <translation type="unfinished">Failed to open memory card: %1</translation>
+      <translation>فشل فتح بطاقة الذاكرة: %1</translation>
     </message>
     <message>
       <location line="+14"/>
       <source>Created: %1</source>
-      <translation type="unfinished">Created: %1</translation>
+      <translation>تاريخ الإنشاء: %1</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>Failed to create memory card: %1</source>
-      <translation type="unfinished">Failed to create memory card: %1</translation>
+      <translation>فشل إنشاء بطاقة الذاكرة: %1</translation>
     </message>
     <message>
       <location line="+9"/>
@@ -205,7 +205,7 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
       <location line="+91"/>
       <location line="+37"/>
       <source>No memory card open</source>
-      <translation type="unfinished">No memory card open</translation>
+      <translation>لا توجد بطاقة ذاكرة مفتوحة</translation>
     </message>
     <message>
       <location line="-279"/>
@@ -215,12 +215,12 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
       <location line="+91"/>
       <location line="+37"/>
       <source>Warning</source>
-      <translation type="unfinished">Warning</translation>
+      <translation>تحذير</translation>
     </message>
     <message>
       <location line="-261"/>
       <source>Save file is empty or contains no valid entries</source>
-      <translation type="unfinished">Save file is empty or contains no valid entries</translation>
+      <translation>الملف المحفوظ فارغ أو لا يحتوي على أي إدخالات صالحة</translation>
     </message>
     <message>
       <location line="+18"/>
@@ -229,161 +229,161 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
       <location line="+88"/>
       <location line="+106"/>
       <source>Success</source>
-      <translation type="unfinished">Success</translation>
+      <translation>النجاح</translation>
     </message>
     <message>
       <location line="-278"/>
       <source>Successfully imported save: %1</source>
-      <translation type="unfinished">Successfully imported save: %1</translation>
+      <translation>تم استيراد ملف الحفظ بنجاح: %1</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Imported: %1</source>
-      <translation type="unfinished">Imported: %1</translation>
+      <translation>مستورد: %1</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>Save Exists</source>
-      <translation type="unfinished">Save Exists</translation>
+      <translation>"حفظ" موجود</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Save &apos;%1&apos; already exists. Overwrite?</source>
-      <translation type="unfinished">Save &apos;%1&apos; already exists. Overwrite?</translation>
+      <translation>حفظ &apos;%1&apos; موجود بالفعل. هل تريد الاستبدال؟</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>Successfully imported and overwrote existing save</source>
-      <translation type="unfinished">Successfully imported and overwrote existing save</translation>
+      <translation>تم الاستيراد بنجاح واستبدال ملف الحفظ الموجود</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Imported (overwrite): %1</source>
-      <translation type="unfinished">Imported (overwrite): %1</translation>
+      <translation>مستورد (الكتابة فوق): %1</translation>
     </message>
     <message>
       <location line="+22"/>
       <source>Failed to import save: %1</source>
-      <translation type="unfinished">Failed to import save: %1</translation>
+      <translation>فشل استيراد ملف الحفظ: %1</translation>
     </message>
     <message>
       <location line="+30"/>
       <source>Successfully exported save to:
 %1</source>
-      <translation type="unfinished">Successfully exported save to:
+      <translation>تم تصدير ملف الحفظ بنجاح إلى:
 %1</translation>
     </message>
     <message>
       <location line="+2"/>
       <location line="+93"/>
       <source>Open Folder</source>
-      <translation type="unfinished">Open Folder</translation>
+      <translation>فتح المجلد</translation>
     </message>
     <message>
       <location line="-82"/>
       <location line="+92"/>
       <source>Exported: %1</source>
-      <translation type="unfinished">Exported: %1</translation>
+      <translation>تم التصدير: %1</translation>
     </message>
     <message>
       <location line="-86"/>
       <location line="+92"/>
       <source>Failed to export save: %1</source>
-      <translation type="unfinished">Failed to export save: %1</translation>
+      <translation>فشل تصدير الحفظ: %1</translation>
     </message>
     <message>
       <location line="-68"/>
       <location line="+26"/>
       <source>&apos;%1&apos; -&gt; &apos;%2&apos;</source>
-      <translation type="unfinished">&apos;%1&apos; -&gt; &apos;%2&apos;</translation>
+      <translation>&apos;%1&apos; -&gt; &apos;%2&apos;</translation>
     </message>
     <message>
       <location line="-16"/>
       <source>Failed to create directory: %1</source>
-      <translation type="unfinished">Failed to create directory: %1</translation>
+      <translation>فشل إنشاء الدليل: %1</translation>
     </message>
     <message>
       <location line="+23"/>
       <source>Failed to write file: %1</source>
-      <translation type="unfinished">Failed to write file: %1</translation>
+      <translation>فشل كتابة الملف: %1</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Failed to write all data to file: %1</source>
-      <translation type="unfinished">Failed to write all data to file: %1</translation>
+      <translation>فشل كتابة جميع البيانات إلى الملف: %1</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>Successfully exported save as folder to:
 %1</source>
-      <translation type="unfinished">Successfully exported save as folder to:
+      <translation>تم تصدير مجلد «حفظ باسم» بنجاح إلى:
 %1</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Note: The following names were sanitized due to invalid characters:
 %1</source>
-      <translation type="unfinished">Note: The following names were sanitized due to invalid characters:
+      <translation>ملاحظة: تم تنقية الأسماء التالية بسبب احتوائها على أحرف غير صالحة:
 %1</translation>
     </message>
     <message>
       <location line="+39"/>
       <source>Confirm Delete</source>
-      <translation type="unfinished">Confirm Delete</translation>
+      <translation>تأكيد الحذف</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Delete this save?
 
 %1</source>
-      <translation type="unfinished">Delete this save?
+      <translation>هل تريد حذف هذا الحفظ؟
 
 %1</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>Deleted: %1</source>
-      <translation type="unfinished">Deleted: %1</translation>
+      <translation>تم الحذف: %1</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Failed to delete save:
 
 %1</source>
-      <translation type="unfinished">Failed to delete save:
+      <translation>فشل حذف الملف المحفوظ:
 
 %1</translation>
     </message>
     <message>
       <location line="+15"/>
       <source>Format Card</source>
-      <translation type="unfinished">Format Card</translation>
+      <translation>تهيئة البطاقة</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>WARNING: This will erase ALL data on the memory card!
 
 Are you sure you want to continue?</source>
-      <translation type="unfinished">WARNING: This will erase ALL data on the memory card!
+      <translation>تحذير: سيؤدي هذا إلى مسح جميع البيانات الموجودة على بطاقة الذاكرة!
 
-Are you sure you want to continue?</translation>
+هل أنت متأكد من رغبتك في المتابعة؟</translation>
     </message>
     <message>
       <location line="+26"/>
       <source>Card formatted successfully</source>
-      <translation type="unfinished">Card formatted successfully</translation>
+      <translation>تم تهيئة البطاقة بنجاح</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Memory card formatted successfully (%1 MB)</source>
-      <translation type="unfinished">Memory card formatted successfully (%1 MB)</translation>
+      <translation>تم تهيئة بطاقة الذاكرة بنجاح (%1 MB)</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Failed to format card:
 
 %1</source>
-      <translation type="unfinished">Failed to format card:
+      <translation>فشل تهيئة البطاقة:
 
 %1</translation>
     </message>
@@ -394,81 +394,81 @@ Are you sure you want to continue?</translation>
       <location filename="../DiscordRPCManager.cpp" line="+61"/>
       <location line="+56"/>
       <source>Memory Card</source>
-      <translation type="unfinished">Memory Card</translation>
+      <translation>بطاقة الذاكرة</translation>
     </message>
     <message>
       <location line="-55"/>
       <source>Browsing</source>
-      <translation type="unfinished">Browsing</translation>
+      <translation>التصفح</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Highlighted: %1</source>
-      <translation type="unfinished">Highlighted: %1</translation>
+      <translation>المميز: %1</translation>
     </message>
     <message>
       <location line="+6"/>
       <location line="+48"/>
       <source>Card: %1</source>
-      <translation type="unfinished">Card: %1</translation>
+      <translation>البطاقة: %1</translation>
     </message>
     <message>
       <location line="+0"/>
       <location line="+103"/>
       <source>Browsing Saves</source>
-      <translation type="unfinished">Browsing Saves</translation>
+      <translation>توفيرات التصفح</translation>
     </message>
     <message>
       <location line="-69"/>
       <location line="+33"/>
       <source>Using myMCpp</source>
-      <translation type="unfinished">Using myMCpp</translation>
+      <translation>استخدام myMCpp</translation>
     </message>
     <message>
       <location line="-32"/>
       <location line="+32"/>
       <source>Managing Saves</source>
-      <translation type="unfinished">Managing Saves</translation>
+      <translation>إدارة عمليات الحفظ</translation>
     </message>
     <message>
       <location line="+20"/>
       <source>Selected File</source>
-      <translation type="unfinished">Selected File</translation>
+      <translation>الملف المحدد</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>File Selected</source>
-      <translation type="unfinished">File Selected</translation>
+      <translation>تم تحديد الملف</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Selected Folder</source>
-      <translation type="unfinished">Selected Folder</translation>
+      <translation>المجلد المحدد</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Browsing Files</source>
-      <translation type="unfinished">Browsing Files</translation>
+      <translation>تصفح الملفات</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Browsing files</source>
-      <translation type="unfinished">Browsing files</translation>
+      <translation>تصفح الملفات</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Highlighted Save</source>
-      <translation type="unfinished">Highlighted Save</translation>
+      <translation>حفظ مميز</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Save browser</source>
-      <translation type="unfinished">Save browser</translation>
+      <translation>حفظ المتصفح</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Idle</source>
-      <translation type="unfinished">Idle</translation>
+      <translation>خامل</translation>
     </message>
   </context>
   <context>
@@ -476,74 +476,74 @@ Are you sure you want to continue?</translation>
     <message>
       <location filename="../Settings/FilesSettingsWidget.cpp" line="+18"/>
       <source>Memory Card Directory</source>
-      <translation type="unfinished">Memory Card Directory</translation>
+      <translation>دليل بطاقة الذاكرة</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>The default directory where memory card images are stored. If not set, the home directory is used.</source>
-      <translation type="unfinished">The default directory where memory card images are stored. If not set, the home directory is used.</translation>
+      <translation>الدليل الافتراضي الذي تُخزَّن فيه صور بطاقة الذاكرة. إذا لم يتم تعيينه، فسيتم استخدام الدليل الرئيسي.</translation>
     </message>
     <message>
       <location line="+1"/>
       <location line="+2"/>
       <source>Browse Directory</source>
-      <translation type="unfinished">Browse Directory</translation>
+      <translation>تصفح الدليل</translation>
     </message>
     <message>
       <location line="-2"/>
       <source>Open a file dialog to select the memory card directory.</source>
-      <translation type="unfinished">Open a file dialog to select the memory card directory.</translation>
+      <translation>افتح مربع حوار الملفات لاختيار دليل بطاقة الذاكرة.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Import/Export Directory</source>
-      <translation type="unfinished">Import/Export Directory</translation>
+      <translation>دليل الاستيراد والتصدير</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>The default directory for importing and exporting save files. If not set, the home directory is used.</source>
-      <translation type="unfinished">The default directory for importing and exporting save files. If not set, the home directory is used.</translation>
+      <translation>الدليل الافتراضي لاستيراد وتصدير ملفات الحفظ. إذا لم يتم تعيينه، فسيتم استخدام الدليل الرئيسي.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Open a file dialog to select the import/export directory.</source>
-      <translation type="unfinished">Open a file dialog to select the import/export directory.</translation>
+      <translation>افتح مربع حوار الملفات لاختيار دليل الاستيراد/التصدير.</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>Files</source>
-      <translation type="unfinished">Files</translation>
+      <translation>الملفات</translation>
     </message>
     <message>
       <location line="+48"/>
       <source>Select Import/Export Folder</source>
-      <translation type="unfinished">Select Import/Export Folder</translation>
+      <translation>اختر مجلد الاستيراد/التصدير</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>Select Memory Card Folder</source>
-      <translation type="unfinished">Select Memory Card Folder</translation>
+      <translation>اختر مجلد بطاقة الذاكرة</translation>
     </message>
     <message>
       <location filename="../Settings/FilesSettingsWidget.ui" line="+35"/>
       <source>Default Directories</source>
-      <translation type="unfinished">Default Directories</translation>
+      <translation>الدلائل الافتراضية</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Memory Card Directory:</source>
-      <translation type="unfinished">Memory Card Directory:</translation>
+      <translation>دليل بطاقة الذاكرة:</translation>
     </message>
     <message>
       <location line="+19"/>
       <location line="+28"/>
       <source>Browse...</source>
-      <translation type="unfinished">Browse...</translation>
+      <translation>تصفح...</translation>
     </message>
     <message>
       <location line="-19"/>
       <source>Import/Export Directory:</source>
-      <translation type="unfinished">Import/Export Directory:</translation>
+      <translation>دليل الاستيراد والتصدير:</translation>
     </message>
   </context>
   <context>
@@ -551,161 +551,161 @@ Are you sure you want to continue?</translation>
     <message>
       <location filename="../Settings/GeneralSettingsWidget.ui" line="+35"/>
       <source>Appearance</source>
-      <translation type="unfinished">Appearance</translation>
+      <translation>المظهر</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Language:</source>
-      <translation type="unfinished">Language:</translation>
+      <translation>اللغة:</translation>
     </message>
     <message>
       <location line="+13"/>
       <source>Theme:</source>
-      <translation type="unfinished">Theme:</translation>
+      <translation>الموضوع:</translation>
     </message>
     <message>
       <location line="+11"/>
       <location filename="../Settings/GeneralSettingsWidget.cpp" line="+33"/>
       <source>None</source>
-      <translation type="unfinished">None</translation>
+      <translation>لا شيء</translation>
     </message>
     <message>
       <location line="+5"/>
       <location filename="../Settings/GeneralSettingsWidget.cpp" line="+1"/>
       <source>Dark (Default)</source>
-      <translation type="unfinished">Dark (Default)</translation>
+      <translation>داكن (الافتراضي)</translation>
     </message>
     <message>
       <location line="+5"/>
       <location filename="../Settings/GeneralSettingsWidget.cpp" line="+1"/>
       <source>Light</source>
-      <translation type="unfinished">Light</translation>
+      <translation>الضوء</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>Behavior</source>
-      <translation type="unfinished">Behavior</translation>
+      <translation>السلوك</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Warn Before Deleting Files</source>
-      <translation type="unfinished">Warn Before Deleting Files</translation>
+      <translation>التحذير قبل حذف الملفات</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>Hide to System Tray on Close</source>
-      <translation type="unfinished">Hide to System Tray on Close</translation>
+      <translation>إخفاء البرنامج في علبة النظام عند الإغلاق</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>Use ASCII Mode for Filenames</source>
-      <translation type="unfinished">Use ASCII Mode for Filenames</translation>
+      <translation>استخدم وضع ASCII لأسماء الملفات</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>Force Import (Overwrite Existing)</source>
-      <translation type="unfinished">Force Import (Overwrite Existing)</translation>
+      <translation>الاستيراد القسري (الكتابة فوق الملفات الموجودة)</translation>
     </message>
     <message>
       <location line="+7"/>
       <location filename="../Settings/GeneralSettingsWidget.cpp" line="-12"/>
       <source>Enable Discord Rich Presence</source>
-      <translation type="unfinished">Enable Discord Rich Presence</translation>
+      <translation>تمكين ميزة «Rich Presence» في Discord</translation>
     </message>
     <message>
       <location filename="../Settings/GeneralSettingsWidget.cpp" line="-6"/>
       <source>Language</source>
-      <translation type="unfinished">Language</translation>
+      <translation>اللغة</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Select the language for the application interface.</source>
-      <translation type="unfinished">Select the language for the application interface.</translation>
+      <translation>حدد لغة واجهة التطبيق.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Theme</source>
-      <translation type="unfinished">Theme</translation>
+      <translation>الموضوع</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Select the color theme for the application.</source>
-      <translation type="unfinished">Select the color theme for the application.</translation>
+      <translation>اختر مظهر الألوان للتطبيق.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Warn Before Deleting</source>
-      <translation type="unfinished">Warn Before Deleting</translation>
+      <translation>التحذير قبل الحذف</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Show a warning dialog when attempting to delete files from a memory card.</source>
-      <translation type="unfinished">Show a warning dialog when attempting to delete files from a memory card.</translation>
+      <translation>اعرض مربع حوار تحذيري عند محاولة حذف ملفات من بطاقة الذاكرة.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Hide to System Tray</source>
-      <translation type="unfinished">Hide to System Tray</translation>
+      <translation>إخفاء الرمز في علبة النظام</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Minimize the application to the system tray instead of closing when you click the X button.</source>
-      <translation type="unfinished">Minimize the application to the system tray instead of closing when you click the X button.</translation>
+      <translation>قم بتصغير التطبيق إلى علبة النظام بدلاً من إغلاقه عند النقر على زر «X».</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>ASCII Mode</source>
-      <translation type="unfinished">ASCII Mode</translation>
+      <translation>وضع ASCII</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Use ASCII characters only for filenames when exporting. This helps with compatibility on some systems.</source>
-      <translation type="unfinished">Use ASCII characters only for filenames when exporting. This helps with compatibility on some systems.</translation>
+      <translation>استخدم أحرف ASCII فقط في أسماء الملفات عند التصدير. فهذا يساعد على ضمان التوافق مع بعض الأنظمة.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Force Import</source>
-      <translation type="unfinished">Force Import</translation>
+      <translation>الاستيراد القسري</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>When importing files, overwrite existing files without prompting.</source>
-      <translation type="unfinished">When importing files, overwrite existing files without prompting.</translation>
+      <translation>عند استيراد الملفات، قم بالكتابة فوق الملفات الموجودة دون عرض رسالة استفسار.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Show your myMCpp activity in Discord while the GUI is open.</source>
-      <translation type="unfinished">Show your myMCpp activity in Discord while the GUI is open.</translation>
+      <translation>اعرض نشاط myMCpp الخاص بك على Discord أثناء فتح واجهة المستخدم الرسومية.</translation>
     </message>
     <message>
       <location line="+13"/>
       <source>Pizza Brown [Light]</source>
-      <translation type="unfinished">Pizza Brown [Light]</translation>
+      <translation>بيتزا براون [فاتحة]</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Grey Matter [Dark]</source>
-      <translation type="unfinished">Grey Matter [Dark]</translation>
+      <translation>المادة الرمادية [داكنة]</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Cobalt Sky [Dark]</source>
-      <translation type="unfinished">Cobalt Sky [Dark]</translation>
+      <translation>سماء الكوبالت [داكنة]</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>AMOLED [Black]</source>
-      <translation type="unfinished">AMOLED [Black]</translation>
+      <translation>AMOLED [أسود]</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Windows Vista</source>
-      <translation type="unfinished">Windows Vista</translation>
+      <translation>ويندوز فيستا</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>General</source>
-      <translation type="unfinished">General</translation>
+      <translation>عام</translation>
     </message>
   </context>
   <context>
@@ -713,248 +713,248 @@ Are you sure you want to continue?</translation>
     <message>
       <location filename="../Settings/GraphicsSettingsWidget.ui" line="+35"/>
       <source>Rendering</source>
-      <translation type="unfinished">Rendering</translation>
+      <translation>التصوير</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Renderer:</source>
-      <translation type="unfinished">Renderer:</translation>
+      <translation>برنامج العرض:</translation>
     </message>
     <message>
       <location line="+13"/>
       <source>Graphics Adapter:</source>
-      <translation type="unfinished">Graphics Adapter:</translation>
+      <translation>بطاقة الرسومات:</translation>
     </message>
     <message>
       <location line="+13"/>
       <source>Camera Angle:</source>
-      <translation type="unfinished">Camera Angle:</translation>
+      <translation>زاوية التصوير:</translation>
     </message>
     <message>
       <location line="+13"/>
       <source>Lighting Mode:</source>
-      <translation type="unfinished">Lighting Mode:</translation>
+      <translation>وضع الإضاءة:</translation>
     </message>
     <message>
       <location line="+16"/>
       <source>Performance</source>
-      <translation type="unfinished">Performance</translation>
+      <translation>الأداء</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Thumbnail Size:</source>
-      <translation type="unfinished">Thumbnail Size:</translation>
+      <translation>حجم الصورة المصغرة:</translation>
     </message>
     <message>
       <location line="+28"/>
       <source>pixels</source>
-      <translation type="unfinished">pixels</translation>
+      <translation>بكسلات</translation>
     </message>
     <message>
       <location line="+22"/>
       <source>Antialiasing:</source>
-      <translation type="unfinished">Antialiasing:</translation>
+      <translation>تنعيم الحواف:</translation>
     </message>
     <message>
       <location line="+13"/>
       <source>FPS Limit:</source>
-      <translation type="unfinished">FPS Limit:</translation>
+      <translation>حد FPS:</translation>
     </message>
     <message>
       <location line="+12"/>
       <source>Unlimited</source>
-      <translation type="unfinished">Unlimited</translation>
+      <translation>غير محدود</translation>
     </message>
     <message>
       <location line="+19"/>
       <source>FPS</source>
-      <translation type="unfinished">FPS</translation>
+      <translation>FPS</translation>
     </message>
     <message>
       <location line="+25"/>
       <source>Options</source>
-      <translation type="unfinished">Options</translation>
+      <translation>خيارات</translation>
     </message>
     <message>
       <location line="+6"/>
       <location filename="../Settings/GraphicsSettingsWidget.cpp" line="+24"/>
       <source>Animate Icons</source>
-      <translation type="unfinished">Animate Icons</translation>
+      <translation>أيقونات متحركة</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>Enable VSync</source>
-      <translation type="unfinished">Enable VSync</translation>
+      <translation>تمكين VSync</translation>
     </message>
     <message>
       <location filename="../Settings/GraphicsSettingsWidget.cpp" line="-6"/>
       <source>Renderer</source>
-      <translation type="unfinished">Renderer</translation>
+      <translation>برنامج العرض</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Select the graphics API used for rendering the 3D icons.</source>
-      <translation type="unfinished">Select the graphics API used for rendering the 3D icons.</translation>
+      <translation>حدد واجهة برمجة التطبيقات الرسومية المستخدمة لعرض الرموز ثلاثية الأبعاد.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Graphics Adapter</source>
-      <translation type="unfinished">Graphics Adapter</translation>
+      <translation>بطاقة الرسومات</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Select the graphics adapter (GPU) to use for rendering.</source>
-      <translation type="unfinished">Select the graphics adapter (GPU) to use for rendering.</translation>
+      <translation>حدد وحدة معالجة الرسومات (GPU) التي تريد استخدامها لعملية العرض.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Camera Angle</source>
-      <translation type="unfinished">Camera Angle</translation>
+      <translation>زاوية التصوير</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Change the camera angle used to view the 3D icons.</source>
-      <translation type="unfinished">Change the camera angle used to view the 3D icons.</translation>
+      <translation>تغيير زاوية الكاميرا المستخدمة لعرض الرموز ثلاثية الأبعاد.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Lighting Mode</source>
-      <translation type="unfinished">Lighting Mode</translation>
+      <translation>وضع الإضاءة</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Select how the icons are lit.</source>
-      <translation type="unfinished">Select how the icons are lit.</translation>
+      <translation>حدد طريقة إضاءة الرموز.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Thumbnail Size</source>
-      <translation type="unfinished">Thumbnail Size</translation>
+      <translation>حجم الصورة المصغرة</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Adjust the size of the save icons in the main view.</source>
-      <translation type="unfinished">Adjust the size of the save icons in the main view.</translation>
+      <translation>اضبط حجم أيقونات الحفظ في الشاشة الرئيسية.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Antialiasing</source>
-      <translation type="unfinished">Antialiasing</translation>
+      <translation>تنعيم الحواف</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Enable multisample antialiasing for smoother edges. Higher values may impact performance.</source>
-      <translation type="unfinished">Enable multisample antialiasing for smoother edges. Higher values may impact performance.</translation>
+      <translation>قم بتمكين ميزة إزالة التموجات باستخدام عينات متعددة للحصول على حواف أكثر نعومة. قد تؤثر القيم الأعلى على الأداء.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Enable rotating animations for the 3D icons.</source>
-      <translation type="unfinished">Enable rotating animations for the 3D icons.</translation>
+      <translation>تمكين الرسوم المتحركة الدوارة للأيقونات ثلاثية الأبعاد.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>FPS Limit</source>
-      <translation type="unfinished">FPS Limit</translation>
+      <translation>حد FPS</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Set frame rate limit for icon preview. Set to 0 for unlimited FPS.</source>
-      <translation type="unfinished">Set frame rate limit for icon preview. Set to 0 for unlimited FPS.</translation>
+      <translation>تعيين الحد الأقصى لمعدل الإطارات لمعاينة الرموز. اضبط القيمة على 0 للحصول على معدل إطارات غير محدود.</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>VSync</source>
-      <translation type="unfinished">VSync</translation>
+      <translation>VSync</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Synchronize frame rate with monitor refresh rate to prevent screen tearing.</source>
-      <translation type="unfinished">Synchronize frame rate with monitor refresh rate to prevent screen tearing.</translation>
+      <translation>قم بمزامنة معدل الإطارات مع معدل تحديث الشاشة لمنع حدوث تمزق الصورة.</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Vulkan</source>
-      <translation type="unfinished">Vulkan</translation>
+      <translation>فولكان</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>OpenGL</source>
-      <translation type="unfinished">OpenGL</translation>
+      <translation>OpenGL</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Metal</source>
-      <translation type="unfinished">Metal</translation>
+      <translation>معدن</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Default Adapter</source>
-      <translation type="unfinished">Default Adapter</translation>
+      <translation>المحول الافتراضي</translation>
     </message>
     <message>
       <location line="+10"/>
       <source>Default</source>
-      <translation type="unfinished">Default</translation>
+      <translation>الافتراضي</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Flat</source>
-      <translation type="unfinished">Flat</translation>
+      <translation>شقة</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Near</source>
-      <translation type="unfinished">Near</translation>
+      <translation>بالقرب من</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>High</source>
-      <translation type="unfinished">High</translation>
+      <translation>مرتفع</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Icon Lighting</source>
-      <translation type="unfinished">Icon Lighting</translation>
+      <translation>إيكون لايتينغ</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Lighting Off</source>
-      <translation type="unfinished">Lighting Off</translation>
+      <translation>إيقاف الإضاءة</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Alternate 1</source>
-      <translation type="unfinished">Alternate 1</translation>
+      <translation>البديل 1</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Alternate 2</source>
-      <translation type="unfinished">Alternate 2</translation>
+      <translation>الخيار الثاني</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Off</source>
-      <translation type="unfinished">Off</translation>
+      <translation>إيقاف</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>2x MSAA</source>
-      <translation type="unfinished">2x MSAA</translation>
+      <translation>2x MSAA</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>4x MSAA</source>
-      <translation type="unfinished">4x MSAA</translation>
+      <translation>4x MSAA</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>8x MSAA</source>
-      <translation type="unfinished">8x MSAA</translation>
+      <translation>8x MSAA</translation>
     </message>
     <message>
       <location line="+12"/>
       <source>Graphics</source>
-      <translation type="unfinished">Graphics</translation>
+      <translation>الرسومات</translation>
     </message>
   </context>
   <context>
@@ -962,17 +962,17 @@ Are you sure you want to continue?</translation>
     <message>
       <location filename="../widgets/IconWidget.cpp" line="+368"/>
       <source>Wayland surface is not ready yet</source>
-      <translation type="unfinished">Wayland surface is not ready yet</translation>
+      <translation>لم تصبح واجهة «وايلاند» جاهزة بعد</translation>
     </message>
     <message>
       <location line="+21"/>
       <source>Native window is not available yet</source>
-      <translation type="unfinished">Native window is not available yet</translation>
+      <translation>النافذة الأصلية غير متوفرة حتى الآن</translation>
     </message>
     <message>
       <location line="+38"/>
       <source>Failed to initialize renderer</source>
-      <translation type="unfinished">Failed to initialize renderer</translation>
+      <translation>فشل تهيئة عارض العرض</translation>
     </message>
   </context>
   <context>
@@ -980,97 +980,97 @@ Are you sure you want to continue?</translation>
     <message>
       <location filename="../dialogs/ImportExportSavesDialog.ui" line="+20"/>
       <source>Saves Dialog</source>
-      <translation type="unfinished">Saves Dialog</translation>
+      <translation>حفظ مربع الحوار</translation>
     </message>
     <message>
       <location line="+9"/>
       <location filename="../dialogs/ImportExportSavesDialog.cpp" line="+21"/>
       <source>Edit export filenames (folder name by default):</source>
-      <translation type="unfinished">Edit export filenames (folder name by default):</translation>
+      <translation>تعديل أسماء ملفات التصدير (اسم المجلد افتراضيًّا):</translation>
     </message>
     <message>
       <location line="+9"/>
       <source>Export format:</source>
-      <translation type="unfinished">Export format:</translation>
+      <translation>تنسيق التصدير:</translation>
     </message>
     <message>
       <location filename="../dialogs/ImportExportSavesDialog.cpp" line="-1"/>
       <source>Export File Names</source>
-      <translation type="unfinished">Export File Names</translation>
+      <translation>تصدير أسماء الملفات</translation>
     </message>
     <message>
       <location line="+3"/>
       <location line="+190"/>
       <source>PSU (.psu)</source>
-      <translation type="unfinished">PSU (.psu)</translation>
+      <translation>PSU (.psu)</translation>
     </message>
     <message>
       <location line="-189"/>
       <location line="+190"/>
       <source>MAX (.max)</source>
-      <translation type="unfinished">MAX (.max)</translation>
+      <translation>MAX (.max)</translation>
     </message>
     <message>
       <location line="-167"/>
       <source>Save</source>
-      <translation type="unfinished">Save</translation>
+      <translation>حفظ</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Export filename</source>
-      <translation type="unfinished">Export filename</translation>
+      <translation>اسم ملف التصدير</translation>
     </message>
     <message>
       <location line="+31"/>
       <source>Import Saves</source>
-      <translation type="unfinished">Import Saves</translation>
+      <translation>استيراد الملفات المحفوظة</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Review and select saves to import.
 Imports are saved to the open memory card file.</source>
-      <translation type="unfinished">Review and select saves to import.
-Imports are saved to the open memory card file.</translation>
+      <translation>راجع الملفات المحفوظة واختر ما تريد استيراده.
+يتم حفظ الملفات المستوردة في ملف بطاقة الذاكرة المفتوحة.</translation>
     </message>
     <message>
       <location line="+9"/>
       <source>Import? / Game Title</source>
-      <translation type="unfinished">Import? / Game Title</translation>
+      <translation>استيراد؟ / عنوان اللعبة</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Directory ID</source>
-      <translation type="unfinished">Directory ID</translation>
+      <translation>معرّف الدليل</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Source File</source>
-      <translation type="unfinished">Source File</translation>
+      <translation>ملف المصدر</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Overwrite?</source>
-      <translation type="unfinished">Overwrite?</translation>
+      <translation>هل تريد الكتابة فوق الملف؟</translation>
     </message>
     <message>
       <location line="+14"/>
       <source>[Corrupt] %1</source>
-      <translation type="unfinished">[Corrupt] %1</translation>
+      <translation>[تالف] %1</translation>
     </message>
     <message>
       <location line="+18"/>
       <source>Yes</source>
-      <translation type="unfinished">Yes</translation>
+      <translation>نعم</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>No (New)</source>
-      <translation type="unfinished">No (New)</translation>
+      <translation>لا (جديد)</translation>
     </message>
     <message>
       <location line="+52"/>
       <source>Duplicate Filenames</source>
-      <translation type="unfinished">Duplicate Filenames</translation>
+      <translation>أسماء الملفات المكررة</translation>
     </message>
     <message>
       <location line="+1"/>
@@ -1079,11 +1079,11 @@ Imports are saved to the open memory card file.</translation>
 %1
 
 Continue?</source>
-      <translation type="unfinished">Some filenames are used more than once. Later files will overwrite earlier ones:
+      <translation>يتم استخدام بعض أسماء الملفات أكثر من مرة. وستحل الملفات الأحدث محل الملفات الأقدم:
 
 %1
 
-Continue?</translation>
+هل تريد المتابعة؟</translation>
     </message>
   </context>
   <context>
@@ -1091,40 +1091,40 @@ Continue?</translation>
     <message>
       <location filename="../MainWindow.cpp" line="+143"/>
       <source>Settings...</source>
-      <translation type="unfinished">Settings...</translation>
+      <translation>الإعدادات...</translation>
     </message>
     <message>
       <location line="+78"/>
       <source>Export Save as Folder</source>
-      <translation type="unfinished">Export Save as Folder</translation>
+      <translation>تصدير «حفظ باسم» كمجلد</translation>
     </message>
     <message>
       <location line="+14"/>
       <source>Export Selected as Folders</source>
-      <translation type="unfinished">Export Selected as Folders</translation>
+      <translation>تصدير العناصر المحددة كمجلدات</translation>
     </message>
     <message>
       <location line="+20"/>
       <source>Overwrite Folders</source>
-      <translation type="unfinished">Overwrite Folders</translation>
+      <translation>الكتابة فوق المجلدات</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>%1 folder(s) already exist. Overwrite?</source>
-      <translation type="unfinished">%1 folder(s) already exist. Overwrite?</translation>
+      <translation>%1 المجلد (المجلدات) موجود بالفعل. هل تريد الكتابة فوقه؟</translation>
     </message>
     <message>
       <location line="+15"/>
       <location line="+86"/>
       <location line="+209"/>
       <source>&apos;%1&apos; -&gt; &apos;%2&apos;</source>
-      <translation type="unfinished">&apos;%1&apos; -&gt; &apos;%2&apos;</translation>
+      <translation>&apos;%1&apos; -&gt; &apos;%2&apos;</translation>
     </message>
     <message>
       <location line="-281"/>
       <source>Exported %1 folder(s); %2 failed:
 %3</source>
-      <translation type="unfinished">Exported %1 folder(s); %2 failed:
+      <translation>تم تصدير المجلد (المجلدات) %1 ؛ فشل تصدير %2 :
 %3</translation>
     </message>
     <message>
@@ -1132,20 +1132,20 @@ Continue?</translation>
       <location line="+88"/>
       <location line="+207"/>
       <source>Success</source>
-      <translation type="unfinished">Success</translation>
+      <translation>النجاح</translation>
     </message>
     <message>
       <location line="-294"/>
       <source>Successfully exported %1 folder(s) to:
 %2</source>
-      <translation type="unfinished">Successfully exported %1 folder(s) to:
+      <translation>تم بنجاح تصدير المجلد (المجلدات) %1 إلى:
 %2</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Note: The following folder names were sanitized due to invalid characters:
 %1</source>
-      <translation type="unfinished">Note: The following folder names were sanitized due to invalid characters:
+      <translation>ملاحظة: تم تنقية أسماء المجلدات التالية بسبب احتوائها على أحرف غير صالحة:
 %1</translation>
     </message>
     <message>
@@ -1153,30 +1153,30 @@ Continue?</translation>
       <location line="+88"/>
       <location line="+207"/>
       <source>Open Folder</source>
-      <translation type="unfinished">Open Folder</translation>
+      <translation>فتح المجلد</translation>
     </message>
     <message>
       <location line="-285"/>
       <source>Exported %1 folders</source>
-      <translation type="unfinished">Exported %1 folders</translation>
+      <translation>تم تصدير المجلدات التالية: %1</translation>
     </message>
     <message>
       <location line="+12"/>
       <source>Export Selected Files</source>
-      <translation type="unfinished">Export Selected Files</translation>
+      <translation>تصدير الملفات المحددة</translation>
     </message>
     <message>
       <location line="+53"/>
       <source>Exported %1 file(s); %2 failed:
 %3</source>
-      <translation type="unfinished">Exported %1 file(s); %2 failed:
+      <translation>تم تصدير ملف (ملفات) %1 ؛ فشل تصدير ملف %2 :
 %3</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Successfully exported %1 file(s) to:
 %2</source>
-      <translation type="unfinished">Successfully exported %1 file(s) to:
+      <translation>تم بنجاح تصدير ملف (ملفات) %1 إلى:
 %2</translation>
     </message>
     <message>
@@ -1184,46 +1184,46 @@ Continue?</translation>
       <location line="+207"/>
       <source>Note: The following filenames were sanitized due to invalid characters:
 %1</source>
-      <translation type="unfinished">Note: The following filenames were sanitized due to invalid characters:
+      <translation>ملاحظة: تم تنقية أسماء الملفات التالية بسبب احتوائها على أحرف غير صالحة:
 %1</translation>
     </message>
     <message>
       <location line="-193"/>
       <source>Exported %1 files</source>
-      <translation type="unfinished">Exported %1 files</translation>
+      <translation>ملفات %1 التي تم تصديرها</translation>
     </message>
     <message>
       <location line="+13"/>
       <source>Are you sure you want to delete the %1 selected file(s)?</source>
-      <translation type="unfinished">Are you sure you want to delete the %1 selected file(s)?</translation>
+      <translation>هل أنت متأكد من رغبتك في حذف الملف (الملفات) المحدد (المحددة) %1؟</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Delete Files</source>
-      <translation type="unfinished">Delete Files</translation>
+      <translation>حذف الملفات</translation>
     </message>
     <message>
       <location line="+28"/>
       <source>Deleted %1 file(s); %2 failed:
 %3</source>
-      <translation type="unfinished">Deleted %1 file(s); %2 failed:
+      <translation>تم حذف الملف (الملفات) %1 ؛ فشل تنفيذ الأمر %2 :
 %3</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Deleted %1 files</source>
-      <translation type="unfinished">Deleted %1 files</translation>
+      <translation>تم حذف ملفات %1</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Deleted %1, %2 failed</source>
-      <translation type="unfinished">Deleted %1, %2 failed</translation>
+      <translation>تم حذف %1، %2 فشل</translation>
     </message>
     <message>
       <location line="+144"/>
       <source>Successfully exported %1 save(s) to:
 %2</source>
-      <translation type="unfinished">Successfully exported %1 save(s) to:
+      <translation>تم بنجاح تصدير %1 ملف (ملفات) إلى:
 %2</translation>
     </message>
     <message>
@@ -1231,450 +1231,450 @@ Continue?</translation>
       <source>TBD
 
 For updates, visit: https://github.com/PCSX2/myMCpp/releases</source>
-      <translation type="unfinished">TBD
+      <translation>سيُحدد لاحقًا
 
-For updates, visit: https://github.com/PCSX2/myMCpp/releases</translation>
+للحصول على آخر المستجدات، تفضل بزيارة: https://github.com/PCSX2/myMCpp/releases</translation>
     </message>
     <message>
       <location line="+18"/>
       <source>Save</source>
-      <translation type="unfinished">Save</translation>
+      <translation>حفظ</translation>
     </message>
     <message>
       <location line="+43"/>
       <location line="+31"/>
       <location line="+485"/>
       <source>Inside: %1</source>
-      <translation type="unfinished">Inside: %1</translation>
+      <translation>في الداخل: %1</translation>
     </message>
     <message>
       <location line="-515"/>
       <source>Browsing Files</source>
-      <translation type="unfinished">Browsing Files</translation>
+      <translation>تصفح الملفات</translation>
     </message>
     <message>
       <location line="+28"/>
       <source>Selected Folder: %1</source>
-      <translation type="unfinished">Selected Folder: %1</translation>
+      <translation>المجلد المحدد: %1</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Selected File: %1</source>
-      <translation type="unfinished">Selected File: %1</translation>
+      <translation>الملف المحدد: %1</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>Highlighted Save: %1</source>
-      <translation type="unfinished">Highlighted Save: %1</translation>
+      <translation>حفظ مميز: %1</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Highlighted Item: %1</source>
-      <translation type="unfinished">Highlighted Item: %1</translation>
+      <translation>العنصر المُبرز: %1</translation>
     </message>
     <message>
       <location line="+56"/>
       <source>Edit Modified Date</source>
-      <translation type="unfinished">Edit Modified Date</translation>
+      <translation>تعديل تاريخ التعديل</translation>
     </message>
     <message>
       <location line="+13"/>
       <source>Set to Now</source>
-      <translation type="unfinished">Set to Now</translation>
+      <translation>ضبط على «الآن»</translation>
     </message>
     <message>
       <location line="+30"/>
       <source>Failed to edit timestamp: %1</source>
-      <translation type="unfinished">Failed to edit timestamp: %1</translation>
+      <translation>فشل تعديل الطابع الزمني: %1</translation>
     </message>
     <message>
       <location line="+21"/>
       <source>ECC</source>
-      <translation type="unfinished">ECC</translation>
+      <translation>ECC</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>No ECC</source>
-      <translation type="unfinished">No ECC</translation>
+      <translation>لا يوجد ECC</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Free: %2 MB / Total: %1 MB (%3)</source>
-      <translation type="unfinished">Free: %2 MB / Total: %1 MB (%3)</translation>
+      <translation>مجانًا: %2 ميجابايت / الإجمالي: %1 ميجابايت (%3)</translation>
     </message>
     <message>
       <location line="+55"/>
       <source>Save Copy As...</source>
-      <translation type="unfinished">Save Copy As...</translation>
+      <translation>حفظ | "نسخ باسم..."</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>Save Copy As</source>
-      <translation type="unfinished">Save Copy As</translation>
+      <translation>حفظ | حفظ باسم</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>That file is already open.
 
 Pick another name if you want a copy.</source>
-      <translation type="unfinished">That file is already open.
+      <translation>هذا الملف مفتوح بالفعل.
 
-Pick another name if you want a copy.</translation>
+اختر اسمًا آخر إذا كنت تريد نسخة منه.</translation>
     </message>
     <message>
       <location line="+12"/>
       <source>Copy saved: %1</source>
-      <translation type="unfinished">Copy saved: %1</translation>
+      <translation>تم حفظ النسخة: %1</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Copy saved to %1</source>
-      <translation type="unfinished">Copy saved to %1</translation>
+      <translation>تم حفظ النسخة في %1</translation>
     </message>
     <message>
       <location line="+19"/>
       <source>Card Info</source>
-      <translation type="unfinished">Card Info</translation>
+      <translation>معلومات البطاقة</translation>
     </message>
     <message>
       <location line="+18"/>
       <source>Header</source>
-      <translation type="unfinished">Header</translation>
+      <translation>العنوان</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Magic</source>
-      <translation type="unfinished">Magic</translation>
+      <translation>السحر</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Image Size</source>
-      <translation type="unfinished">Image Size</translation>
+      <translation>حجم الصورة</translation>
     </message>
     <message>
       <location line="+0"/>
       <location line="+43"/>
       <location line="+1"/>
       <source>%1 MiB</source>
-      <translation type="unfinished">%1 MiB</translation>
+      <translation>%1 MiB</translation>
     </message>
     <message>
       <location line="-42"/>
       <source>Geometry</source>
-      <translation type="unfinished">Geometry</translation>
+      <translation>الهندسة</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Page Length</source>
-      <translation type="unfinished">Page Length</translation>
+      <translation>طول الصفحة</translation>
     </message>
     <message>
       <location line="+0"/>
       <location line="+1"/>
       <source>%1 bytes</source>
-      <translation type="unfinished">%1 bytes</translation>
+      <translation>%1 بايت</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Page Physical</source>
-      <translation type="unfinished">Page Physical</translation>
+      <translation>الصفحة المادية</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Pages / Cluster</source>
-      <translation type="unfinished">Pages / Cluster</translation>
+      <translation>الصفحات / المجموعة</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Cluster Size</source>
-      <translation type="unfinished">Cluster Size</translation>
+      <translation>حجم المجموعة</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>%1 KiB</source>
-      <translation type="unfinished">%1 KiB</translation>
+      <translation>%1 كيلوبايت</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Clusters / Card</source>
-      <translation type="unfinished">Clusters / Card</translation>
+      <translation>المجموعات / البطاقة</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Type and Flags</source>
-      <translation type="unfinished">Type and Flags</translation>
+      <translation>النوع والعلامات</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Unknown (%1)</source>
-      <translation type="unfinished">Unknown (%1)</translation>
+      <translation>مجهول (%1)</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>PS2 (2)</source>
-      <translation type="unfinished">PS2 (2)</translation>
+      <translation>PS2 (2)</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>PSX (1)</source>
-      <translation type="unfinished">PSX (1)</translation>
+      <translation>PSX (1)</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Card Type</source>
-      <translation type="unfinished">Card Type</translation>
+      <translation>نوع البطاقة</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>USE_ECC</source>
-      <translation type="unfinished">USE_ECC</translation>
+      <translation>USE_ECC</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>BAD_BLOCK</source>
-      <translation type="unfinished">BAD_BLOCK</translation>
+      <translation>BAD_BLOCK</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>ERASE_ZEROES</source>
-      <translation type="unfinished">ERASE_ZEROES</translation>
+      <translation>ERASE_ZEROES</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>0x%1</source>
-      <translation type="unfinished">0x%1</translation>
+      <translation>0x%1</translation>
     </message>
     <message>
       <location line="+2"/>
       <source> (%1)</source>
-      <translation type="unfinished"> (%1)</translation>
+      <translation> (%1)</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>, </source>
-      <translation type="unfinished">, </translation>
+      <translation>، </translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Card Flags</source>
-      <translation type="unfinished">Card Flags</translation>
+      <translation>أعلام البطاقات</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>ECC Layout</source>
-      <translation type="unfinished">ECC Layout</translation>
+      <translation>تصميم ECC</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Yes (512+16)</source>
-      <translation type="unfinished">Yes (512+16)</translation>
+      <translation>نعم (512+16)</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>No (512 only)</source>
-      <translation type="unfinished">No (512 only)</translation>
+      <translation>لا (512 فقط)</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Allocation</source>
-      <translation type="unfinished">Allocation</translation>
+      <translation>التخصيص</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Alloc Offset</source>
-      <translation type="unfinished">Alloc Offset</translation>
+      <translation>تخصيص الإزاحة</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Alloc Count</source>
-      <translation type="unfinished">Alloc Count</translation>
+      <translation>عدد التخصيصات</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Reserved Clusters</source>
-      <translation type="unfinished">Reserved Clusters</translation>
+      <translation>المجموعات المحجوزة</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Root Dir Cluster</source>
-      <translation type="unfinished">Root Dir Cluster</translation>
+      <translation>مجموعة الدليل الجذري</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Backup Block 1</source>
-      <translation type="unfinished">Backup Block 1</translation>
+      <translation>كتلة النسخ الاحتياطي 1</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Backup Block 2</source>
-      <translation type="unfinished">Backup Block 2</translation>
+      <translation>كتلة النسخ الاحتياطي 2</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Bad Blocks</source>
-      <translation type="unfinished">Bad Blocks</translation>
+      <translation>الكتل التالفة</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Usage</source>
-      <translation type="unfinished">Usage</translation>
+      <translation>الاستخدام</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Used / Free Clusters</source>
-      <translation type="unfinished">Used / Free Clusters</translation>
+      <translation>المجموعات المستعملة / المجانية</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>%1 / %2</source>
-      <translation type="unfinished">%1 / %2</translation>
+      <translation>%1 / %2</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Used Bytes</source>
-      <translation type="unfinished">Used Bytes</translation>
+      <translation>البايتات المستخدمة</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Free Bytes</source>
-      <translation type="unfinished">Free Bytes</translation>
+      <translation>بايتات مجانية</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Health</source>
-      <translation type="unfinished">Health</translation>
+      <translation>الصحة</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Filesystem Check</source>
-      <translation type="unfinished">Filesystem Check</translation>
+      <translation>فحص نظام الملفات</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>OK</source>
-      <translation type="unfinished">OK</translation>
+      <translation>حسناً</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Problems detected</source>
-      <translation type="unfinished">Problems detected</translation>
+      <translation>المشاكل التي تم اكتشافها</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>Failed to read card info: %1</source>
-      <translation type="unfinished">Failed to read card info: %1</translation>
+      <translation>فشل قراءة معلومات البطاقة: %1</translation>
     </message>
     <message>
       <location line="+24"/>
       <source>Remove ECC and Save Copy As...</source>
-      <translation type="unfinished">Remove ECC and Save Copy As...</translation>
+      <translation>إزالة ECC وحفظ نسخة باسم...</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Add ECC and Save Copy As...</source>
-      <translation type="unfinished">Add ECC and Save Copy As...</translation>
+      <translation>أضف ECC واحفظ نسخة باسم...</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</source>
-      <translation type="unfinished">All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</translation>
+      <translation>جميع بطاقات الذاكرة (*.ps2 *.vm2 *.vmc *.mc2 *.mcd)؛؛بطاقة ذاكرة PCSX2 (*.ps2)؛؛بطاقة الذاكرة الافتراضية لـ PS3 (*.vm2 *.vmc)؛؛MemCard PRO2 (*.mc2 *.mcd)؛؛جميع الملفات (*.*)</translation>
     </message>
     <message>
       <location line="+10"/>
       <source>That file is already open.
 
 Pick another name for the ECC copy.</source>
-      <translation type="unfinished">That file is already open.
+      <translation>هذا الملف مفتوح بالفعل.
 
-Pick another name for the ECC copy.</translation>
+اختر اسمًا آخر لنسخة ECC.</translation>
     </message>
     <message>
       <location line="+12"/>
       <source>Removed ECC</source>
-      <translation type="unfinished">Removed ECC</translation>
+      <translation>تمت إزالة ECC</translation>
     </message>
     <message>
       <location line="+0"/>
       <source>Added ECC</source>
-      <translation type="unfinished">Added ECC</translation>
+      <translation>تمت إضافة ECC</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>ECC copy saved to %1</source>
-      <translation type="unfinished">ECC copy saved to %1</translation>
+      <translation>تم حفظ نسخة ECC في %1</translation>
     </message>
     <message>
       <location line="+22"/>
       <location line="+11"/>
       <source>Rename</source>
-      <translation type="unfinished">Rename</translation>
+      <translation>إعادة تسمية</translation>
     </message>
     <message>
       <location line="-10"/>
       <source>New name:</source>
-      <translation type="unfinished">New name:</translation>
+      <translation>الاسم الجديد:</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>The name is invalid.</source>
-      <translation type="unfinished">The name is invalid.</translation>
+      <translation>الاسم غير صالح.</translation>
     </message>
     <message>
       <location line="+21"/>
       <source>Failed to rename: %1</source>
-      <translation type="unfinished">Failed to rename: %1</translation>
+      <translation>فشل إعادة التسمية: %1</translation>
     </message>
     <message>
       <location line="+57"/>
       <source>Failed to open file: %1</source>
-      <translation type="unfinished">Failed to open file: %1</translation>
+      <translation>فشل فتح الملف: %1</translation>
     </message>
     <message>
       <location line="+18"/>
       <source>Imported File: %1</source>
-      <translation type="unfinished">Imported File: %1</translation>
+      <translation>الملف المستورد: %1</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Imported %1</source>
-      <translation type="unfinished">Imported %1</translation>
+      <translation>مستورد %1</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>Failed to import file: %1</source>
-      <translation type="unfinished">Failed to import file: %1</translation>
+      <translation>فشل استيراد الملف: %1</translation>
     </message>
     <message>
       <location line="-1062"/>
       <source>Open Memory Card</source>
-      <translation type="unfinished">Open Memory Card</translation>
+      <translation>فتح بطاقة الذاكرة</translation>
     </message>
     <message>
       <location line="+68"/>
       <location line="+13"/>
       <source>Create Memory Card</source>
-      <translation type="unfinished">Create Memory Card</translation>
+      <translation>إنشاء بطاقة ذاكرة</translation>
     </message>
     <message>
       <location line="-11"/>
       <location line="+681"/>
       <source>PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</source>
-      <translation type="unfinished">PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</translation>
+      <translation>بطاقة ذاكرة PCSX2 (*.ps2)؛؛ MemCard PRO2 (*.mc2 *.mcd)؛؛ جميع الملفات (*.*)</translation>
     </message>
     <message>
       <location line="-627"/>
       <source>Created %1 MB memory card</source>
-      <translation type="unfinished">Created %1 MB memory card</translation>
+      <translation>بطاقة ذاكرة سعة %1 ميغابايت تم إنشاؤها</translation>
     </message>
     <message>
       <location line="+19"/>
       <source>Import Save</source>
-      <translation type="unfinished">Import Save</translation>
+      <translation>استيراد حفظ</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>PS2 Save Files (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;All Files (*.*)</source>
-      <translation type="unfinished">PS2 Save Files (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;All Files (*.*)</translation>
+      <translation>ملفات حفظ PS2 (*.psu *.max *.sps *.xps *.cbs *.psv)؛؛EMS/PSU (*.psu)؛؛MAX Drive (*.max)؛؛SharkPort (*.sps)؛؛X-Port (*.xps)؛؛CodeBreaker (*.cbs)؛؛PSV (*.psv)؛؛جميع الملفات (*.*)</translation>
     </message>
     <message>
       <location line="-534"/>
@@ -1682,190 +1682,190 @@ Pick another name for the ECC copy.</translation>
       <location line="+208"/>
       <location line="+401"/>
       <source>Export</source>
-      <translation type="unfinished">Export</translation>
+      <translation>تصدير</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Please select a save to export</source>
-      <translation type="unfinished">Please select a save to export</translation>
+      <translation>يرجى تحديد ملف لتصديره</translation>
     </message>
     <message>
       <location line="-801"/>
       <location line="+808"/>
       <source>Export Save</source>
-      <translation type="unfinished">Export Save</translation>
+      <translation>تصدير حفظ</translation>
     </message>
     <message>
       <location line="-952"/>
       <source>PCSX2</source>
-      <translation type="unfinished">PCSX2</translation>
+      <translation>PCSX2</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>MemCard PRO2</source>
-      <translation type="unfinished">MemCard PRO2</translation>
+      <translation>MemCard PRO2</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>PS3 VMC</source>
-      <translation type="unfinished">PS3 VMC</translation>
+      <translation>PS3 VMC</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Raw</source>
-      <translation type="unfinished">Raw</translation>
+      <translation>خام</translation>
     </message>
     <message>
       <location line="+1"/>
       <location line="+6"/>
       <source>Memory Card</source>
-      <translation type="unfinished">Memory Card</translation>
+      <translation>بطاقة الذاكرة</translation>
     </message>
     <message>
       <location line="+51"/>
       <source>Icon preview unavailable: %1</source>
-      <translation type="unfinished">Icon preview unavailable: %1</translation>
+      <translation>معاينة الرمز غير متاحة: %1</translation>
     </message>
     <message>
       <location line="+78"/>
       <location line="+812"/>
       <source>EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</source>
-      <translation type="unfinished">EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</translation>
+      <translation>تنسيق EMS/PSU (*.psu)؛؛تنسيق MAX Drive (*.max)؛؛جميع الملفات (*.*)</translation>
     </message>
     <message>
       <location line="-812"/>
       <source>MAX Drive Format (*.max);;EMS/PSU Format (*.psu);;All Files (*.*)</source>
-      <translation type="unfinished">MAX Drive Format (*.max);;EMS/PSU Format (*.psu);;All Files (*.*)</translation>
+      <translation>تنسيق MAX Drive (*.max)؛؛تنسيق EMS/PSU (*.psu)؛؛جميع الملفات (*.*)</translation>
     </message>
     <message>
       <location line="+15"/>
       <source>Export File</source>
-      <translation type="unfinished">Export File</translation>
+      <translation>تصدير الملف</translation>
     </message>
     <message>
       <location line="+2"/>
       <location line="+282"/>
       <source>All Files (*.*)</source>
-      <translation type="unfinished">All Files (*.*)</translation>
+      <translation>جميع الملفات (*.*)</translation>
     </message>
     <message>
       <location line="-274"/>
       <source>Exported %1</source>
-      <translation type="unfinished">Exported %1</translation>
+      <translation>تم التصدير %1</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Failed to export file: %1</source>
-      <translation type="unfinished">Failed to export file: %1</translation>
+      <translation>فشل تصدير الملف: %1</translation>
     </message>
     <message>
       <location line="+269"/>
       <source>Import File</source>
-      <translation type="unfinished">Import File</translation>
+      <translation>استيراد ملف</translation>
     </message>
     <message>
       <location line="+14"/>
       <source>New Folder</source>
-      <translation type="unfinished">New Folder</translation>
+      <translation>مجلد جديد</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Folder name:</source>
-      <translation type="unfinished">Folder name:</translation>
+      <translation>اسم المجلد:</translation>
     </message>
     <message>
       <location line="+10"/>
       <source>Created folder %1</source>
-      <translation type="unfinished">Created folder %1</translation>
+      <translation>تم إنشاء مجلد %1</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>Failed to create folder: %1</source>
-      <translation type="unfinished">Failed to create folder: %1</translation>
+      <translation>فشل إنشاء المجلد: %1</translation>
     </message>
     <message>
       <location line="+17"/>
       <source>Export Selected Saves</source>
-      <translation type="unfinished">Export Selected Saves</translation>
+      <translation>تصدير الملفات المحفوظة المحددة</translation>
     </message>
     <message>
       <location line="-188"/>
       <location line="+209"/>
       <source>Overwrite Files</source>
-      <translation type="unfinished">Overwrite Files</translation>
+      <translation>الكتابة فوق الملفات</translation>
     </message>
     <message>
       <location line="-208"/>
       <location line="+209"/>
       <source>%1 file(s) already exist in the folder. Overwrite?</source>
-      <translation type="unfinished">%1 file(s) already exist in the folder. Overwrite?</translation>
+      <translation>%1 الملف (الملفات) موجود بالفعل في المجلد. هل تريد الكتابة فوقه؟</translation>
     </message>
     <message>
       <location line="+31"/>
       <source>Exported %1 save(s); %2 failed:
 %3</source>
-      <translation type="unfinished">Exported %1 save(s); %2 failed:
+      <translation>تم تصدير %1 حفظ (حفظات)؛ %2 فشل:
 %3</translation>
     </message>
     <message>
       <location line="+22"/>
       <source>Exported %1 saves</source>
-      <translation type="unfinished">Exported %1 saves</translation>
+      <translation>تم تصدير ملفات الحفظ من موقع %1</translation>
     </message>
     <message>
       <location line="-293"/>
       <location line="+88"/>
       <location line="+205"/>
       <source>Exported %1, %2 failed</source>
-      <translation type="unfinished">Exported %1, %2 failed</translation>
+      <translation>فشل تصدير %1و %2</translation>
     </message>
     <message>
       <location line="+21"/>
       <source>Delete Selected Saves</source>
-      <translation type="unfinished">Delete Selected Saves</translation>
+      <translation>حذف عمليات الحفظ المحددة</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>Are you sure you want to delete the following saves?
 
 %1</source>
-      <translation type="unfinished">Are you sure you want to delete the following saves?
+      <translation>هل أنت متأكد من رغبتك في حذف ملفات الحفظ التالية؟
 
 %1</translation>
     </message>
     <message>
       <location line="+51"/>
       <source>All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd *.bin *.mc);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;Raw Memory Card (*.bin *.mc);;All Files (*.*)</source>
-      <translation type="unfinished">All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd *.bin *.mc);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;Raw Memory Card (*.bin *.mc);;All Files (*.*)</translation>
+      <translation>جميع بطاقات الذاكرة (*.ps2 *.vm2 *.vmc *.mc2 *.mcd *.bin *.mc)؛؛بطاقة ذاكرة PCSX2 (*.ps2)؛؛بطاقة الذاكرة الافتراضية لـ PS3 (*.vm2 *.vmc)؛؛ MemCard PRO2 (*.mc2 *.mcd)؛؛ بطاقة الذاكرة الخام (*.bin *.mc)؛؛ جميع الملفات (*.*)</translation>
     </message>
     <message>
       <location line="+28"/>
       <location line="+79"/>
       <source>Remove ECC and Save &amp;Copy As...</source>
-      <translation type="unfinished">Remove ECC and Save &amp;Copy As...</translation>
+      <translation>إزالة ECC ثم «حفظ ونسخ باسم...»</translation>
     </message>
     <message>
       <location line="-79"/>
       <location line="+79"/>
       <source>Add ECC and Save &amp;Copy As...</source>
-      <translation type="unfinished">Add ECC and Save &amp;Copy As...</translation>
+      <translation>أضف ECC ثم «حفظ ونسخ باسم...»</translation>
     </message>
     <message>
       <location line="-77"/>
       <location line="+79"/>
       <source>Remove ECC from the memory card and save a copy to another file</source>
-      <translation type="unfinished">Remove ECC from the memory card and save a copy to another file</translation>
+      <translation>أخرج بطاقة الذاكرة ECC واحفظ نسخة منها في ملف آخر</translation>
     </message>
     <message>
       <location line="-78"/>
       <location line="+79"/>
       <source>Add ECC to the memory card and save a copy to another file</source>
-      <translation type="unfinished">Add ECC to the memory card and save a copy to another file</translation>
+      <translation>أضف ECC إلى بطاقة الذاكرة واحفظ نسخة في ملف آخر</translation>
     </message>
     <message>
       <location line="-64"/>
       <source>Reloaded %1</source>
-      <translation type="unfinished">Reloaded %1</translation>
+      <translation>إعادة التحميل %1</translation>
     </message>
     <message>
       <location line="+34"/>
@@ -1874,50 +1874,50 @@ Pick another name for the ECC copy.</translation>
 Creating a memory card here will overwrite that file and erase any saves on it.
 
 Continue?</source>
-      <translation type="unfinished">&apos;%1&apos; already exists.
+      <translation>&apos;%1&apos; هذا الملف موجود بالفعل.
 
-Creating a memory card here will overwrite that file and erase any saves on it.
+إن إنشاء بطاقة ذاكرة هنا سيؤدي إلى استبدال هذا الملف ومسح أي ملفات حفظ موجودة عليه.
 
-Continue?</translation>
+هل تريد المتابعة؟</translation>
     </message>
     <message>
       <location line="+188"/>
       <location line="+7"/>
       <location line="+5"/>
       <source>Import</source>
-      <translation type="unfinished">Import</translation>
+      <translation>استيراد</translation>
     </message>
     <message>
       <location line="-11"/>
       <source>Imported %1 save(s); %2 failed:
 %3</source>
-      <translation type="unfinished">Imported %1 save(s); %2 failed:
+      <translation>تم استيراد %1 حفظ (حفظات)؛ %2 فشل:
 %3</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>Successfully imported %1 save(s) (skipped %2 duplicate(s))</source>
-      <translation type="unfinished">Successfully imported %1 save(s) (skipped %2 duplicate(s))</translation>
+      <translation>تم استيراد %1 حفظًا بنجاح (تم تخطي %2 مكررًا)</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Successfully imported %1 save(s)</source>
-      <translation type="unfinished">Successfully imported %1 save(s)</translation>
+      <translation>تم استيراد %1 حفظًا بنجاح</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Imported %1, %2 failed</source>
-      <translation type="unfinished">Imported %1, %2 failed</translation>
+      <translation>فشل استيراد %1و %2</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Imported %1 save(s)</source>
-      <translation type="unfinished">Imported %1 save(s)</translation>
+      <translation>مستورد من %1 توفير(ات)</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>No saves imported</source>
-      <translation type="unfinished">No saves imported</translation>
+      <translation>لم يتم استيراد أي ملفات حفظ</translation>
     </message>
     <message>
       <location line="+5"/>
@@ -1928,78 +1928,78 @@ Continue?</translation>
       <location line="+198"/>
       <location line="+148"/>
       <source>Card: %1</source>
-      <translation type="unfinished">Card: %1</translation>
+      <translation>البطاقة: %1</translation>
     </message>
     <message>
       <location line="-622"/>
       <source>Imported %1 Saves</source>
-      <translation type="unfinished">Imported %1 Saves</translation>
+      <translation>مستوردة %1 التوفيرات</translation>
     </message>
     <message>
       <location line="+33"/>
       <source>Exported Save: %1</source>
-      <translation type="unfinished">Exported Save: %1</translation>
+      <translation>النسخة المحفوظة التي تم تصديرها: %1</translation>
     </message>
     <message>
       <location line="-567"/>
       <location line="+577"/>
       <location line="+8"/>
       <source>Delete</source>
-      <translation type="unfinished">Delete</translation>
+      <translation>حذف</translation>
     </message>
     <message>
       <location line="-566"/>
       <source>Delete Save</source>
-      <translation type="unfinished">Delete Save</translation>
+      <translation>حذف حفظ</translation>
     </message>
     <message>
       <location line="-48"/>
       <location line="+49"/>
       <source>Are you sure you want to delete &apos;%1&apos;?</source>
-      <translation type="unfinished">Are you sure you want to delete &apos;%1&apos;?</translation>
+      <translation>هل أنت متأكد من أنك تريد حذف &apos;%1&apos;؟</translation>
     </message>
     <message>
       <location line="+8"/>
       <location line="+572"/>
       <source>Deleted %1</source>
-      <translation type="unfinished">Deleted %1</translation>
+      <translation>تم الحذف %1</translation>
     </message>
     <message>
       <location line="-22"/>
       <source>Please select a file or folder to delete</source>
-      <translation type="unfinished">Please select a file or folder to delete</translation>
+      <translation>يرجى تحديد ملف أو مجلد لحذفه</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>Are you sure you want to delete &apos;%1&apos;?
 This action cannot be undone.</source>
-      <translation type="unfinished">Are you sure you want to delete &apos;%1&apos;?
-This action cannot be undone.</translation>
+      <translation>هل أنت متأكد من رغبتك في حذف &apos;%1&apos;؟
+لا يمكن التراجع عن هذا الإجراء.</translation>
     </message>
     <message>
       <location line="+12"/>
       <source>Deleted: %1</source>
-      <translation type="unfinished">Deleted: %1</translation>
+      <translation>تم الحذف: %1</translation>
     </message>
     <message>
       <location line="+20"/>
       <source>Formatted Memory Card</source>
-      <translation type="unfinished">Formatted Memory Card</translation>
+      <translation>بطاقة ذاكرة مهيأة</translation>
     </message>
     <message>
       <location line="+92"/>
       <source>Check for Updates</source>
-      <translation type="unfinished">Check for Updates</translation>
+      <translation>التحقق من وجود تحديثات</translation>
     </message>
     <message>
       <location line="+227"/>
       <source>Memory card open</source>
-      <translation type="unfinished">Memory card open</translation>
+      <translation>بطاقة الذاكرة مفتوحة</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>No memory card open</source>
-      <translation type="unfinished">No memory card open</translation>
+      <translation>لا توجد بطاقة ذاكرة مفتوحة</translation>
     </message>
     <message>
       <location line="-1171"/>
@@ -2012,323 +2012,323 @@ This action cannot be undone.</translation>
       <location line="+57"/>
       <location line="+27"/>
       <source>Error</source>
-      <translation type="unfinished">Error</translation>
+      <translation>خطأ</translation>
     </message>
     <message>
       <location line="-281"/>
       <location line="+148"/>
       <source>Failed to save: %1</source>
-      <translation type="unfinished">Failed to save: %1</translation>
+      <translation>فشل الحفظ: %1</translation>
     </message>
     <message>
       <location filename="../MainWindow.ui" line="+14"/>
       <source>myMCpp</source>
-      <translation type="unfinished">myMCpp</translation>
+      <translation>myMCpp</translation>
     </message>
     <message>
       <location line="+16"/>
       <source>Name</source>
-      <translation type="unfinished">Name</translation>
+      <translation>الاسم</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Size</source>
-      <translation type="unfinished">Size</translation>
+      <translation>الحجم</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Modified</source>
-      <translation type="unfinished">Modified</translation>
+      <translation>تم تعديله</translation>
     </message>
     <message>
       <location line="+20"/>
       <source>&amp;File</source>
-      <translation type="unfinished">&amp;File</translation>
+      <translation>&amp;ملف</translation>
     </message>
     <message>
       <location line="+14"/>
       <source>&amp;Edit</source>
-      <translation type="unfinished">&amp;Edit</translation>
+      <translation>&amp;تحرير</translation>
     </message>
     <message>
       <location line="+12"/>
       <source>&amp;Options</source>
-      <translation type="unfinished">&amp;Options</translation>
+      <translation>&amp;خيارات</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>&amp;Help</source>
-      <translation type="unfinished">&amp;Help</translation>
+      <translation>&amp;المساعدة</translation>
     </message>
     <message>
       <location line="+21"/>
       <source>Main Toolbar</source>
-      <translation type="unfinished">Main Toolbar</translation>
+      <translation>شريط الأدوات الرئيسي</translation>
     </message>
     <message>
       <location line="+25"/>
       <source>&amp;Open Memory Card...</source>
-      <translation type="unfinished">&amp;Open Memory Card...</translation>
+      <translation>&amp;فتح بطاقة الذاكرة...</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Open a PS2 memory card image</source>
-      <translation type="unfinished">Open a PS2 memory card image</translation>
+      <translation>فتح صورة بطاقة ذاكرة PS2</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Ctrl+O</source>
-      <translation type="unfinished">Ctrl+O</translation>
+      <translation>Ctrl+O</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>&amp;Create Memory Card...</source>
-      <translation type="unfinished">&amp;Create Memory Card...</translation>
+      <translation>&amp;إنشاء بطاقة ذاكرة...</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Create a new PS2 memory card image</source>
-      <translation type="unfinished">Create a new PS2 memory card image</translation>
+      <translation>إنشاء صورة جديدة لبطاقة ذاكرة PS2</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Ctrl+N</source>
-      <translation type="unfinished">Ctrl+N</translation>
+      <translation>Ctrl+N</translation>
     </message>
     <message>
       <location line="+14"/>
       <source>&amp;Close Memory Card</source>
-      <translation type="unfinished">&amp;Close Memory Card</translation>
+      <translation>&amp;إغلاق بطاقة الذاكرة</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Close the current memory card</source>
-      <translation type="unfinished">Close the current memory card</translation>
+      <translation>إغلاق بطاقة الذاكرة الحالية</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>Save &amp;Copy As...</source>
-      <translation type="unfinished">Save &amp;Copy As...</translation>
+      <translation>حفظ ونسخ باسم...</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Save a copy to another file</source>
-      <translation type="unfinished">Save a copy to another file</translation>
+      <translation>حفظ نسخة في ملف آخر</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Ctrl+Shift+S</source>
-      <translation type="unfinished">Ctrl+Shift+S</translation>
+      <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>Card &amp;Info...</source>
-      <translation type="unfinished">Card &amp;Info...</translation>
+      <translation>البطاقة والمعلومات...</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Show detailed information about the current memory card</source>
-      <translation type="unfinished">Show detailed information about the current memory card</translation>
+      <translation>عرض المعلومات التفصيلية عن بطاقة الذاكرة الحالية</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>E&amp;xit</source>
-      <translation type="unfinished">E&amp;xit</translation>
+      <translation>E&amp;xit</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Exit the application</source>
-      <translation type="unfinished">Exit the application</translation>
+      <translation>الخروج من التطبيق</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Ctrl+Q</source>
-      <translation type="unfinished">Ctrl+Q</translation>
+      <translation>Ctrl+Q</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>Select &amp;All</source>
-      <translation type="unfinished">Select &amp;All</translation>
+      <translation>اختر «الكل»</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Select all saves</source>
-      <translation type="unfinished">Select all saves</translation>
+      <translation>تحديد جميع الملفات المحفوظة</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Ctrl+A</source>
-      <translation type="unfinished">Ctrl+A</translation>
+      <translation>Ctrl+A</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>&amp;Import Save...</source>
-      <translation type="unfinished">&amp;Import Save...</translation>
+      <translation>&amp;استيراد وحفظ...</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Import a save file to the open memory card</source>
-      <translation type="unfinished">Import a save file to the open memory card</translation>
+      <translation>استيراد ملف حفظ إلى بطاقة الذاكرة المفتوحة</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Ctrl+I</source>
-      <translation type="unfinished">Ctrl+I</translation>
+      <translation>Ctrl+I</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>&amp;Export Save...</source>
-      <translation type="unfinished">&amp;Export Save...</translation>
+      <translation>&amp;تصدير وحفظ...</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Export a save file from the memory card</source>
-      <translation type="unfinished">Export a save file from the memory card</translation>
+      <translation>تصدير ملف حفظ من بطاقة الذاكرة</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Ctrl+E</source>
-      <translation type="unfinished">Ctrl+E</translation>
+      <translation>Ctrl+E</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>&amp;Delete Save</source>
-      <translation type="unfinished">&amp;Delete Save</translation>
+      <translation>&amp;حذف حفظ</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Delete the selected save</source>
-      <translation type="unfinished">Delete the selected save</translation>
+      <translation>حذف الحفظ المحدد</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Del</source>
-      <translation type="unfinished">Del</translation>
+      <translation>ديل</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>&amp;Format Card...</source>
-      <translation type="unfinished">&amp;Format Card...</translation>
+      <translation>&amp;تنسيق البطاقة...</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Format the memory card (erase all data)</source>
-      <translation type="unfinished">Format the memory card (erase all data)</translation>
+      <translation>تهيئة بطاقة الذاكرة (مسح جميع البيانات)</translation>
     </message>
     <message>
       <location line="+11"/>
       <source>Save ECC &amp;Copy As...</source>
-      <translation type="unfinished">Save ECC &amp;Copy As...</translation>
+      <translation>حفظ ECC و«نسخ باسم...»</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Add or remove ECC from the memory card and save a copy to another file</source>
-      <translation type="unfinished">Add or remove ECC from the memory card and save a copy to another file</translation>
+      <translation>أضف أو أزل ملف ECC من بطاقة الذاكرة واحفظ نسخة منه في ملف آخر</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Ctrl+Shift+E</source>
-      <translation type="unfinished">Ctrl+Shift+E</translation>
+      <translation>Ctrl+Shift+E</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>&amp;ASCII Descriptions</source>
-      <translation type="unfinished">&amp;ASCII Descriptions</translation>
+      <translation>&amp;أوصاف ASCII</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Show descriptions in ASCII instead of Shift-JIS</source>
-      <translation type="unfinished">Show descriptions in ASCII instead of Shift-JIS</translation>
+      <translation>عرض الأوصاف بتنسيق ASCII بدلاً من Shift-JIS</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Ctrl+Shift+A</source>
-      <translation type="unfinished">Ctrl+Shift+A</translation>
+      <translation>Ctrl+Shift+A</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>&amp;Force Import</source>
-      <translation type="unfinished">&amp;Force Import</translation>
+      <translation>&amp;فرض الاستيراد</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Force overwriting existing saves when importing</source>
-      <translation type="unfinished">Force overwriting existing saves when importing</translation>
+      <translation>فرض الكتابة فوق الملفات المحفوظة الحالية عند الاستيراد</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Ctrl+Shift+F</source>
-      <translation type="unfinished">Ctrl+Shift+F</translation>
+      <translation>Ctrl+Shift+F</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>&amp;Lock Toolbar</source>
-      <translation type="unfinished">&amp;Lock Toolbar</translation>
+      <translation>&amp;شريط أدوات القفل</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Prevent the main toolbar from being moved or floated</source>
-      <translation type="unfinished">Prevent the main toolbar from being moved or floated</translation>
+      <translation>منع تحريك شريط الأدوات الرئيسي أو جعله عائمًا</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>&amp;Preferences...</source>
-      <translation type="unfinished">&amp;Preferences...</translation>
+      <translation>&amp;الإعدادات...</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Configure application settings</source>
-      <translation type="unfinished">Configure application settings</translation>
+      <translation>تكوين إعدادات التطبيق</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>&amp;Documentation...</source>
-      <translation type="unfinished">&amp;Documentation...</translation>
+      <translation>&amp;الوثائق...</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>View online documentation</source>
-      <translation type="unfinished">View online documentation</translation>
+      <translation>عرض الوثائق عبر الإنترنت</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>&amp;GitHub Repository...</source>
-      <translation type="unfinished">&amp;GitHub Repository...</translation>
+      <translation>&amp;مستودع GitHub...</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Visit myMCpp on GitHub</source>
-      <translation type="unfinished">Visit myMCpp on GitHub</translation>
+      <translation>تفضل بزيارة myMCpp على GitHub</translation>
     </message>
     <message>
       <location line="+8"/>
       <source>&amp;Check for Updates...</source>
-      <translation type="unfinished">&amp;Check for Updates...</translation>
+      <translation>&amp;التحقق من وجود تحديثات...</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Check if a new version is available</source>
-      <translation type="unfinished">Check if a new version is available</translation>
+      <translation>تحقق من توفر إصدار جديد</translation>
     </message>
     <message>
       <location line="+9"/>
       <source>&amp;About</source>
-      <translation type="unfinished">&amp;About</translation>
+      <translation>&amp;نبذة</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Show information about myMCpp</source>
-      <translation type="unfinished">Show information about myMCpp</translation>
+      <translation>عرض معلومات حول myMCpp</translation>
     </message>
     <message>
       <location line="+9"/>
       <source>About &amp;Qt...</source>
-      <translation type="unfinished">About &amp;Qt...</translation>
+      <translation>نبذة عن &amp;Qt...</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Show information about Qt</source>
-      <translation type="unfinished">Show information about Qt</translation>
+      <translation>عرض معلومات حول Qt</translation>
     </message>
   </context>
   <context>
@@ -2338,138 +2338,138 @@ This action cannot be undone.</translation>
       <location line="+13"/>
       <location line="+65"/>
       <source>%1 KB</source>
-      <translation type="unfinished">%1 KB</translation>
+      <translation>%1 KB</translation>
     </message>
     <message>
       <location line="-74"/>
       <source>?</source>
-      <translation type="unfinished">?</translation>
+      <translation>؟</translation>
     </message>
     <message>
       <location line="+7"/>
       <location line="+65"/>
       <source>%1 B</source>
-      <translation type="unfinished">%1 B</translation>
+      <translation>%1 ب</translation>
     </message>
     <message>
       <location line="-44"/>
       <location line="+64"/>
       <source>Error</source>
-      <translation type="unfinished">Error</translation>
+      <translation>خطأ</translation>
     </message>
     <message>
       <location line="-63"/>
       <source>Failed to read memory card: %1</source>
-      <translation type="unfinished">Failed to read memory card: %1</translation>
+      <translation>فشل قراءة بطاقة الذاكرة: %1</translation>
     </message>
     <message>
       <location line="+49"/>
       <source>&lt;DIR&gt;</source>
-      <translation type="unfinished">&lt;DIR&gt;</translation>
+      <translation>&lt;DIR&gt;</translation>
     </message>
     <message>
       <location line="+15"/>
       <source>Failed to read save directory: %1</source>
-      <translation type="unfinished">Failed to read save directory: %1</translation>
+      <translation>فشل قراءة دليل الحفظ: %1</translation>
     </message>
     <message>
       <location line="+109"/>
       <source>Import File...</source>
-      <translation type="unfinished">Import File...</translation>
+      <translation>استيراد ملف...</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>New Folder...</source>
-      <translation type="unfinished">New Folder...</translation>
+      <translation>مجلد جديد...</translation>
     </message>
     <message>
       <location line="+25"/>
       <source>Export Selected Saves...</source>
-      <translation type="unfinished">Export Selected Saves...</translation>
+      <translation>تصدير الملفات المحفوظة المحددة...</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Export Selected as Folders...</source>
-      <translation type="unfinished">Export Selected as Folders...</translation>
+      <translation>تصدير العناصر المحددة كمجلدات...</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Delete Selected Saves</source>
-      <translation type="unfinished">Delete Selected Saves</translation>
+      <translation>حذف عمليات الحفظ المحددة</translation>
     </message>
     <message>
       <location line="+23"/>
       <source>Export Selected Files...</source>
-      <translation type="unfinished">Export Selected Files...</translation>
+      <translation>تصدير الملفات المحددة...</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Delete Selected Files</source>
-      <translation type="unfinished">Delete Selected Files</translation>
+      <translation>حذف الملفات المحددة</translation>
     </message>
     <message>
       <location line="+23"/>
       <source>Browse Contents</source>
-      <translation type="unfinished">Browse Contents</translation>
+      <translation>تصفح المحتويات</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Export Save...</source>
-      <translation type="unfinished">Export Save...</translation>
+      <translation>تصدير وحفظ...</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Export as Folder...</source>
-      <translation type="unfinished">Export as Folder...</translation>
+      <translation>تصدير كمجلد...</translation>
     </message>
     <message>
       <location line="+7"/>
       <location line="+45"/>
       <source>Export File...</source>
-      <translation type="unfinished">Export File...</translation>
+      <translation>تصدير الملف...</translation>
     </message>
     <message>
       <location line="-37"/>
       <location line="+43"/>
       <source>Rename...</source>
-      <translation type="unfinished">Rename...</translation>
+      <translation>إعادة تسمية...</translation>
     </message>
     <message>
       <location line="-38"/>
       <location line="+43"/>
       <source>Edit Modified Date...</source>
-      <translation type="unfinished">Edit Modified Date...</translation>
+      <translation>تعديل تاريخ التعديل...</translation>
     </message>
     <message>
       <location line="-38"/>
       <location line="+43"/>
       <source>Delete</source>
-      <translation type="unfinished">Delete</translation>
+      <translation>حذف</translation>
     </message>
     <message>
       <location line="-26"/>
       <source>Go Back</source>
-      <translation type="unfinished">Go Back</translation>
+      <translation>العودة</translation>
     </message>
     <message>
       <location line="+35"/>
       <source>Go Back to Saves</source>
-      <translation type="unfinished">Go Back to Saves</translation>
+      <translation>العودة إلى «الحفظات»</translation>
     </message>
     <message>
       <location filename="../widgets/MemoryCardBrowser.ui" line="+24"/>
       <source>Name</source>
-      <translation type="unfinished">Name</translation>
+      <translation>الاسم</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Size</source>
-      <translation type="unfinished">Size</translation>
+      <translation>الحجم</translation>
     </message>
     <message>
       <location line="+5"/>
       <source>Modified</source>
-      <translation type="unfinished">Modified</translation>
+      <translation>تم تعديله</translation>
     </message>
   </context>
   <context>
@@ -2477,126 +2477,126 @@ This action cannot be undone.</translation>
     <message>
       <location filename="../dialogs/NewCardDialog.ui" line="+20"/>
       <source>Create New Memory Card</source>
-      <translation type="unfinished">Create New Memory Card</translation>
+      <translation>إنشاء بطاقة ذاكرة جديدة</translation>
     </message>
     <message>
       <location line="+33"/>
       <source>Choose the size and format for your new memory card. Smaller cards are usually the safest choice for game compatibility.</source>
-      <translation type="unfinished">Choose the size and format for your new memory card. Smaller cards are usually the safest choice for game compatibility.</translation>
+      <translation>اختر الحجم والشكل لبطاقة الذاكرة الجديدة الخاصة بك. عادةً ما تكون البطاقات الأصغر حجمًا هي الخيار الأكثر أمانًا لضمان توافق الألعاب.</translation>
     </message>
     <message>
       <location line="+9"/>
       <source>Card Size Preset</source>
-      <translation type="unfinished">Card Size Preset</translation>
+      <translation>الإعداد المسبق لحجم البطاقة</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>8 MB (Recommended)</source>
-      <translation type="unfinished">8 MB (Recommended)</translation>
+      <translation>8 ميغابايت (موصى به)</translation>
     </message>
     <message>
       <location line="+13"/>
       <source>Official size used by standard PS2 cards. Best overall compatibility.</source>
-      <translation type="unfinished">Official size used by standard PS2 cards. Best overall compatibility.</translation>
+      <translation>الحجم الرسمي المستخدم في بطاقات PS2 القياسية. أفضل توافق بشكل عام.</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>16 MB</source>
-      <translation type="unfinished">16 MB</translation>
+      <translation>16 ميغابايت</translation>
     </message>
     <message>
       <location line="+10"/>
       <source>Expanded capacity with generally good compatibility in many titles.</source>
-      <translation type="unfinished">Expanded capacity with generally good compatibility in many titles.</translation>
+      <translation>زيادة السعة مع توافق جيد بشكل عام مع العديد من الألعاب.</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>32 MB</source>
-      <translation type="unfinished">32 MB</translation>
+      <translation>32 ميغابايت</translation>
     </message>
     <message>
       <location line="+10"/>
       <source>Larger third-party style size. Useful when you need extra space.</source>
-      <translation type="unfinished">Larger third-party style size. Useful when you need extra space.</translation>
+      <translation>حجم نمط أكبر من طرف ثالث. مفيد عندما تحتاج إلى مساحة إضافية.</translation>
     </message>
     <message>
       <location line="+7"/>
       <source>64 MB</source>
-      <translation type="unfinished">64 MB</translation>
+      <translation>64 ميغابايت</translation>
     </message>
     <message>
       <location line="+10"/>
       <source>Very large card size. Some games and tools may not handle this reliably.</source>
-      <translation type="unfinished">Very large card size. Some games and tools may not handle this reliably.</translation>
+      <translation>حجم البطاقة كبير جدًّا. قد لا تتعامل بعض الألعاب والأدوات مع هذا الحجم بشكل موثوق.</translation>
     </message>
     <message>
       <location line="+10"/>
       <source>Options</source>
-      <translation type="unfinished">Options</translation>
+      <translation>خيارات</translation>
     </message>
     <message>
       <location line="+6"/>
       <source>Create image data without error correction bytes.
 Useful for specific raw-image workflows.</source>
-      <translation type="unfinished">Create image data without error correction bytes.
-Useful for specific raw-image workflows.</translation>
+      <translation>إنشاء بيانات صور بدون بايتات تصحيح الأخطاء.
+مفيد في سير عمل معين متعلق بالصور الخام.</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>Create without ECC bytes</source>
-      <translation type="unfinished">Create without ECC bytes</translation>
+      <translation>إنشاء بدون بايتات ECC</translation>
     </message>
     <message>
       <location line="+10"/>
       <source>Keep ECC enabled unless you specifically need a raw image format.</source>
-      <translation type="unfinished">Keep ECC enabled unless you specifically need a raw image format.</translation>
+      <translation>احرص على إبقاء ميزة ECC مفعَّلة ما لم تكن بحاجة بشكل خاص إلى تنسيق الصورة الخام.</translation>
     </message>
     <message>
       <location line="+10"/>
       <source>Selection Summary</source>
-      <translation type="unfinished">Selection Summary</translation>
+      <translation>ملخص الاختيار</translation>
     </message>
     <message>
       <location line="+9"/>
       <source>Current selection:</source>
-      <translation type="unfinished">Current selection:</translation>
+      <translation>الاختيار الحالي:</translation>
     </message>
     <message>
       <location filename="../dialogs/NewCardDialog.cpp" line="+31"/>
       <source>Continue...</source>
-      <translation type="unfinished">Continue...</translation>
+      <translation>تابع...</translation>
     </message>
     <message>
       <location line="+40"/>
       <source>Best compatibility</source>
-      <translation type="unfinished">Best compatibility</translation>
+      <translation>أفضل توافق</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Good compatibility with most titles</source>
-      <translation type="unfinished">Good compatibility with most titles</translation>
+      <translation>توافق جيد مع معظم الألعاب</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Lower compatibility in some games</source>
-      <translation type="unfinished">Lower compatibility in some games</translation>
+      <translation>توافق أقل في بعض الألعاب</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>ECC disabled (smaller raw image)</source>
-      <translation type="unfinished">ECC disabled (smaller raw image)</translation>
+      <translation>تم تعطيل ECC (صورة أولية أصغر حجمًا)</translation>
     </message>
     <message>
       <location line="+1"/>
       <source>ECC enabled (recommended default)</source>
-      <translation type="unfinished">ECC enabled (recommended default)</translation>
+      <translation>تم تمكين ECC (الإعداد الافتراضي الموصى به)</translation>
     </message>
     <message>
       <location line="+3"/>
       <source>Current selection: %1 MB
 %2
 %3</source>
-      <translation type="unfinished">Current selection: %1 MB
+      <translation>الاختيار الحالي: %1 MB
 %2
 %3</translation>
     </message>
@@ -2607,68 +2607,68 @@ Useful for specific raw-image workflows.</translation>
       <location filename="../widgets/SaveDetailsPanel.cpp" line="+115"/>
       <source>Size: %1
 Modified: %2</source>
-      <translation type="unfinished">Size: %1
-Modified: %2</translation>
+      <translation>الحجم: %1
+تاريخ التعديل: %2</translation>
     </message>
     <message>
       <location line="+17"/>
       <source>
 Files: %1</source>
-      <translation type="unfinished">
-Files: %1</translation>
+      <translation>
+الملفات: %1</translation>
     </message>
     <message>
       <location line="+91"/>
       <source>Play animation</source>
-      <translation type="unfinished">Play animation</translation>
+      <translation>تشغيل الرسوم المتحركة</translation>
     </message>
     <message>
       <location filename="../widgets/SaveDetailsPanel.ui" line="+17"/>
       <source>Icon</source>
-      <translation type="unfinished">Icon</translation>
+      <translation>أيقونة</translation>
     </message>
     <message>
       <location line="+46"/>
       <location filename="../widgets/SaveDetailsPanel.cpp" line="+0"/>
       <source>Pause animation</source>
-      <translation type="unfinished">Pause animation</translation>
+      <translation>إيقاف الرسوم المتحركة مؤقتًا</translation>
     </message>
     <message>
       <location line="+25"/>
       <source>Reset view</source>
-      <translation type="unfinished">Reset view</translation>
+      <translation>إعادة ضبط العرض</translation>
     </message>
     <message>
       <location line="+25"/>
       <source>Zoom in</source>
-      <translation type="unfinished">Zoom in</translation>
+      <translation>تكبير</translation>
     </message>
     <message>
       <location line="+25"/>
       <source>Zoom out</source>
-      <translation type="unfinished">Zoom out</translation>
+      <translation>تصغير العرض</translation>
     </message>
     <message>
       <location line="+34"/>
       <source>Details</source>
-      <translation type="unfinished">Details</translation>
+      <translation>التفاصيل</translation>
     </message>
     <message>
       <location line="+12"/>
       <location filename="../widgets/SaveDetailsPanel.cpp" line="-27"/>
       <source>No save selected</source>
-      <translation type="unfinished">No save selected</translation>
+      <translation>لم يتم تحديد أي ملف حفظ</translation>
     </message>
     <message>
       <location line="+10"/>
       <source>color: gray; font-size: 11px;</source>
-      <translation type="unfinished">color: gray; font-size: 11px;</translation>
+      <translation>اللون: رمادي؛ حجم الخط: 11 بكسل؛</translation>
     </message>
     <message>
       <location line="+17"/>
       <location filename="../widgets/SaveDetailsPanel.cpp" line="+4"/>
       <source>No details available</source>
-      <translation type="unfinished">No details available</translation>
+      <translation>لا توجد تفاصيل متاحة</translation>
     </message>
   </context>
   <context>
@@ -2676,57 +2676,57 @@ Files: %1</translation>
     <message>
       <location filename="../Settings/SettingsWindow.cpp" line="+30"/>
       <source>General</source>
-      <translation type="unfinished">General</translation>
+      <translation>عام</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>&lt;strong&gt;General Settings&lt;/strong&gt;&lt;hr&gt;Configure language, theme, and application behavior.</source>
-      <translation type="unfinished">&lt;strong&gt;General Settings&lt;/strong&gt;&lt;hr&gt;Configure language, theme, and application behavior.</translation>
+      <translation>&lt;strong&gt;الإعدادات العامة&lt;/strong&gt;&lt;hr&gt;تكوين اللغة والسمة وسلوك التطبيق.</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Graphics</source>
-      <translation type="unfinished">Graphics</translation>
+      <translation>الرسومات</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>&lt;strong&gt;Graphics Settings&lt;/strong&gt;&lt;hr&gt;Configure rendering options, camera, lighting, and visual effects.</source>
-      <translation type="unfinished">&lt;strong&gt;Graphics Settings&lt;/strong&gt;&lt;hr&gt;Configure rendering options, camera, lighting, and visual effects.</translation>
+      <translation>&lt;strong&gt;إعدادات الرسومات&lt;/strong&gt;&lt;hr&gt;تكوين خيارات العرض والكاميرا والإضاءة والتأثيرات البصرية.</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>Files</source>
-      <translation type="unfinished">Files</translation>
+      <translation>الملفات</translation>
     </message>
     <message>
       <location line="+2"/>
       <source>&lt;strong&gt;File Settings&lt;/strong&gt;&lt;hr&gt;Manage default paths for memory cards and import/export.</source>
-      <translation type="unfinished">&lt;strong&gt;File Settings&lt;/strong&gt;&lt;hr&gt;Manage default paths for memory cards and import/export.</translation>
+      <translation>&lt;strong&gt;إعدادات الملفات&lt;/strong&gt;&lt;hr&gt;إدارة المسارات الافتراضية لبطاقات الذاكرة وعمليات الاستيراد/التصدير.</translation>
     </message>
     <message>
       <location line="+4"/>
       <source>&lt;strong&gt;Advanced Settings&lt;/strong&gt;&lt;hr&gt;Advanced options for window behavior, debugging, and developer tools.</source>
-      <translation type="unfinished">&lt;strong&gt;Advanced Settings&lt;/strong&gt;&lt;hr&gt;Advanced options for window behavior, debugging, and developer tools.</translation>
+      <translation>&lt;strong&gt;الإعدادات المتقدمة&lt;/strong&gt;&lt;hr&gt;خيارات متقدمة تتعلق بسلوك النوافذ، وتصحيح الأخطاء، وأدوات المطورين.</translation>
     </message>
     <message>
       <location line="-2"/>
       <source>Advanced</source>
-      <translation type="unfinished">Advanced</translation>
+      <translation>متقدم</translation>
     </message>
     <message>
       <location filename="../Settings/SettingsWindow.ui" line="+20"/>
       <source>myMCpp Settings</source>
-      <translation type="unfinished">myMCpp Settings</translation>
+      <translation>إعدادات myMCpp</translation>
     </message>
     <message>
       <location line="+69"/>
       <source>Restore Category Defaults</source>
-      <translation type="unfinished">Restore Category Defaults</translation>
+      <translation>استعادة الإعدادات الافتراضية للفئة</translation>
     </message>
     <message>
       <location line="+20"/>
       <source>Close</source>
-      <translation type="unfinished">Close</translation>
+      <translation>إغلاق</translation>
     </message>
   </context>
 </TS>
