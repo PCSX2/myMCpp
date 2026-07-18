@@ -33,14 +33,11 @@ namespace
 	QString getCardTypeLabelFromPath(const QString& cardPath)
 	{
 		const QString ext = QFileInfo(cardPath).suffix().toLower();
-		if (ext == QStringLiteral("ps2"))
-			return QCoreApplication::translate("MainWindow", "PCSX2");
-		if (ext == QStringLiteral("mc2") || ext == QStringLiteral("mcd"))
-			return QCoreApplication::translate("MainWindow", "MemCard PRO2");
-		if (ext == QStringLiteral("vm2") || ext == QStringLiteral("vmc"))
-			return QCoreApplication::translate("MainWindow", "PS3 VMC");
-		if (ext == QStringLiteral("bin") || ext == QStringLiteral("mc"))
-			return QCoreApplication::translate("MainWindow", "Raw");
+		for (const PS2MemoryCard::CardFormat& format : PS2MemoryCard::getFormats())
+		{
+			if (ext == QLatin1String(format.extension))
+				return QCoreApplication::translate("CardFormats", format.displayName);
+		}
 		return QCoreApplication::translate("MainWindow", "Memory Card");
 	}
 
@@ -62,6 +59,36 @@ namespace
 		const QString pathA = QFileInfo(a).canonicalFilePath();
 		const QString pathB = QFileInfo(b).canonicalFilePath();
 		return !pathA.isEmpty() && pathA == pathB;
+	}
+
+	QString memoryCardOpenFilter()
+	{
+		QStringList patterns;
+		QStringList filters;
+		for (const PS2MemoryCard::CardFormat& format : PS2MemoryCard::getFormats())
+		{
+			patterns.append(QStringLiteral("*.") + QLatin1String(format.extension));
+			filters.append(QCoreApplication::translate("CardFormats", format.filterName));
+		}
+		filters.prepend(QCoreApplication::translate("MainWindow", "All Memory Cards (%1)").arg(patterns.join(QLatin1Char(' '))));
+		filters.append(QCoreApplication::translate("MainWindow", "All Files (*.*)"));
+		return filters.join(QStringLiteral(";;"));
+	}
+
+	QString memoryCardSaveFilter(const QString& preferredExt = {})
+	{
+		QStringList filters;
+		const QString preferred = preferredExt.toLower();
+		for (const PS2MemoryCard::CardFormat& format : PS2MemoryCard::getFormats())
+		{
+			const QString label = QCoreApplication::translate("CardFormats", format.filterName);
+			if (preferred == QLatin1String(format.extension))
+				filters.prepend(label);
+			else
+				filters.append(label);
+		}
+		filters.append(QCoreApplication::translate("MainWindow", "All Files (*.*)"));
+		return filters.join(QStringLiteral(";;"));
 	}
 } // namespace
 
@@ -672,12 +699,7 @@ void MainWindow::onOpenMemoryCard()
 		this,
 		tr("Open Memory Card"),
 		memoryCardDir,
-		tr("All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd *.bin *.mc);;"
-		   "PCSX2 Memory Card (*.ps2);;"
-		   "PS3 Virtual Memory Card (*.vm2 *.vmc);;"
-		   "MemCard PRO2 (*.mc2 *.mcd);;"
-		   "Raw Memory Card (*.bin *.mc);;"
-		   "All Files (*.*)"));
+		memoryCardOpenFilter());
 
 	if (filename.isEmpty())
 	{
@@ -728,24 +750,26 @@ void MainWindow::onCreateMemoryCard()
 {
 	NewCardDialog optionsDialog(this);
 	if (optionsDialog.exec() != QDialog::Accepted)
-	{
 		return;
-	}
 
-	int sizeMB = optionsDialog.getCardSizeMB();
-	bool disableEcc = optionsDialog.getDisableEcc();
-
+	const int sizeMB = optionsDialog.getCardSizeMB();
+	const QString ext = optionsDialog.getCardExtension();
+	const bool disableEcc = !optionsDialog.usesEcc();
+	const QString fileName = optionsDialog.getFileName();
 	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->getMemoryCardFolder());
+	QDir().mkpath(memoryCardDir);
+
 	QString filename = QFileDialog::getSaveFileName(
 		this,
 		tr("Create Memory Card"),
-		memoryCardDir + QStringLiteral("/Mcd001.ps2"),
-		tr("PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)"));
+		QDir(memoryCardDir).filePath(fileName),
+		memoryCardSaveFilter(ext));
 
 	if (filename.isEmpty())
-	{
 		return;
-	}
+
+	if (QFileInfo(filename).suffix().isEmpty())
+		filename += QLatin1Char('.') + ext;
 
 	if (QFile::exists(filename))
 	{
@@ -760,9 +784,7 @@ void MainWindow::onCreateMemoryCard()
 			QMessageBox::No);
 
 		if (reply != QMessageBox::Yes)
-		{
 			return;
-		}
 	}
 
 	closeCard();
@@ -794,7 +816,7 @@ void MainWindow::onCreateMemoryCard()
 			m_discordRpc->setCardOpenContext(makeCardDisplayLabel(currentCardPath));
 		}
 
-		ui->statusBar->showMessage(tr("Created %1 MB memory card").arg(sizeMB), 5000);
+		ui->statusBar->showMessage(tr("Created %1").arg(QFileInfo(filename).fileName()), 5000);
 	}
 }
 
@@ -1421,7 +1443,7 @@ void MainWindow::onSaveAs()
 		this,
 		tr("Save Copy As..."),
 		defaultPath,
-		tr("PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)"));
+		memoryCardSaveFilter());
 
 	if (filename.isEmpty())
 		return;
@@ -1569,7 +1591,7 @@ void MainWindow::onEccTool()
 		this,
 		dialogTitle,
 		defaultPath,
-		tr("All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)"));
+		memoryCardOpenFilter());
 
 	if (filename.isEmpty())
 		return;

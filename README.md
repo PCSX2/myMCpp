@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-	<code>myMCpp</code> is a PlayStation 2 memory card manager. It works with <code>.ps2</code> images (PCSX2) and <code>.mc2</code> files (MemCard PRO2).
+	<code>myMCpp</code> is a PlayStation 2 memory card manager for <code>.ps2</code>, <code>.mc2</code>, <code>.mcd</code>, <code>.vm2</code>, and raw VMC files.
 </p>
 
 <p align="center">
@@ -60,7 +60,7 @@ Global options:
 - `--version`: Show version information.
 - `-h`, `--help`: Show help.
 - `-i`, `--ignore-ecc`: Ignore ECC errors while reading.
-- `-e`, `--no-ecc`: Create without ECC (useful for virtual cards such as SD2PSX).
+- `-e`, `--no-ecc`: Create without ECC (also the default for raw formats).
 
 ## License
 

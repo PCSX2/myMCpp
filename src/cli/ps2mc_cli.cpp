@@ -41,7 +41,7 @@ void PS2McCommandLine::printHelp()
 			  << "   --version         Show version information\n"
 			  << "   -h, --help        Show this help message\n"
 			  << "   -i, --ignore-ecc  Ignore ECC errors while reading\n"
-			  << "   -e, --no-ecc      Create virtual memory card without ECC\n";
+			  << "   -e, --no-ecc      Create without ECC (default for raw formats)\n";
 }
 
 void PS2McCommandLine::printVersion()
@@ -137,7 +137,7 @@ int PS2McCommandLine::execute(int argc, char* argv[])
 		try
 		{
 			memoryCard = std::make_unique<PS2MemoryCard>();
-			memoryCard->open(memcardPath);
+			memoryCard->open(memcardPath, ignoreEcc);
 		}
 		catch (const std::exception& e)
 		{
@@ -597,7 +597,7 @@ int PS2McCommandLine::cmdFormat(const std::vector<std::string>& args)
 	try
 	{
 		auto mc = std::make_unique<PS2MemoryCard>();
-		mc->create(args[0], 8); // 8 MB default
+		mc->create(args[0], 8, noEcc || !PS2MemoryCard::usesEccForPath(args[0])); // 8 MB default
 		return 0;
 	}
 	catch (const std::exception& e)

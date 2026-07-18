@@ -40,6 +40,40 @@ T readLE(const std::vector<uint8_t>& buf, size_t offset)
 	return value;
 }
 
+const std::vector<PS2MemoryCard::CardFormat>& PS2MemoryCard::getFormats()
+{
+	static const std::vector<CardFormat> formats = {
+		{"PCSX2", "PCSX2 (*.ps2)", "ps2", true},
+		{"MemCard PRO2", "MemCard PRO2 (*.mc2)", "mc2", false},
+		{"SD2PSX", "SD2PSX (*.mcd)", "mcd", false},
+		{"PS3 VMC", "PS3 VMC (*.vm2)", "vm2", true},
+		{"Raw VMC", "Raw VMC (*.bin)", "bin", false},
+		{"Raw VMC", "Raw VMC (*.vmc)", "vmc", false},
+		{"Raw VMC", "Raw VMC (*.mc)", "mc", false},
+	};
+	return formats;
+}
+
+bool PS2MemoryCard::usesEccForPath(const std::string& path, bool unknownFallback)
+{
+	std::filesystem::path p(path);
+	std::string ext = p.extension().string();
+	if (ext.empty())
+		return unknownFallback;
+
+	ext = ext.substr(1);
+
+	for (char& c : ext)
+		c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+
+	for (const CardFormat& format : getFormats())
+	{
+		if (ext == format.extension)
+			return format.usesEcc;
+	}
+	return unknownFallback;
+}
+
 static void renameReplace(const std::filesystem::path& target, const std::filesystem::path& tmp)
 {
 	std::error_code ec;
@@ -95,6 +129,10 @@ public:
 	std::map<uint32_t, std::vector<uint8_t>> fat_cluster_cache;
 
 	void calculate_derived();
+	void parse_superblock_fields(const std::vector<uint8_t>& page);
+	std::vector<uint8_t> load_superblock();
+	void apply_layout(bool ecc, std::vector<uint8_t> sb_page);
+	bool root_directory_ok();
 	void read_superblock();
 	std::vector<uint8_t> read_page(uint32_t page_num);
 	void write_page(uint32_t page_num, const std::vector<uint8_t>& data);
@@ -128,6 +166,55 @@ void PS2MemoryCard::Impl::calculate_derived()
 	entries_per_cluster = cluster_size / 4; // 4 bytes per FAT entry
 }
 
+void PS2MemoryCard::Impl::parse_superblock_fields(const std::vector<uint8_t>& page)
+{
+	page_size = readLE<uint16_t>(page, 40);
+	pages_per_cluster = readLE<uint16_t>(page, 42);
+	pages_per_erase_block = readLE<uint16_t>(page, 44);
+
+	if (page_size == 0 || pages_per_cluster == 0)
+	{
+		throw PS2McCorrupt("Invalid page/cluster size in superblock");
+	}
+
+	calculate_derived();
+
+	clusters_per_card = readLE<uint32_t>(page, 48);
+	allocatable_cluster_offset = readLE<uint32_t>(page, 52);
+	allocatable_cluster_end = readLE<uint32_t>(page, 56);
+	rootdir_fat_cluster = readLE<uint32_t>(page, 60);
+
+	for (int i = 0; i < 32; ++i)
+	{
+		indirect_fat_cluster_list[i] = readLE<uint32_t>(page, 80 + i * 4);
+	}
+
+	if (page.size() > 0x44 + 4)
+	{
+		backup_block1 = readLE<uint32_t>(page, 0x40);
+		backup_block2 = readLE<uint32_t>(page, 0x44);
+	}
+
+	if (page.size() > 0x151)
+	{
+		card_type = page[0x150];
+		card_flags = page[0x151];
+	}
+
+	if (page.size() > 0xD0 + 32 * 4)
+	{
+		for (int i = 0; i < 32; ++i)
+		{
+			bad_block_list[i] = readLE<uint32_t>(page, 0xD0 + i * 4);
+		}
+	}
+
+	if (allocatable_cluster_end == 0 || allocatable_cluster_end > 1000000)
+	{
+		allocatable_cluster_end = clusters_per_card;
+	}
+}
+
 std::vector<uint8_t> PS2MemoryCard::Impl::read_page(uint32_t page_num)
 {
 	if (!file.is_open())
@@ -156,7 +243,7 @@ std::vector<uint8_t> PS2MemoryCard::Impl::read_page(uint32_t page_num)
 		throw PS2McIOError("Failed to read complete page");
 	}
 
-	if (!ignore_ecc && spare_size > 0)
+	if (spare_size > 0)
 	{
 		std::vector<uint8_t> spare(spare_size);
 		file.read(reinterpret_cast<char*>(spare.data()), spare_size);
@@ -166,15 +253,10 @@ std::vector<uint8_t> PS2MemoryCard::Impl::read_page(uint32_t page_num)
 			throw PS2McIOError("Failed to read ECC spare data");
 		}
 
-		try
+		const int ecc_status = eccCheckPage(page_data, spare, page_size);
+		if (ecc_status == ECC_CHECK_FAILED && !ignore_ecc)
 		{
-			auto ecc_status = eccCheckPage(page_data, spare, page_size);
-			(void)ecc_status;
-		}
-		catch (...)
-		{
-			// If ECC check fails, we might be dealing with a non-ECC card
-			// Continue anyway
+			throw PS2McCorrupt("Unrecoverable ECC error (page " + std::to_string(page_num) + ")");
 		}
 	}
 
@@ -207,7 +289,7 @@ void PS2MemoryCard::Impl::write_page(uint32_t page_num, const std::vector<uint8_
 		throw PS2McIOError("Failed to write page");
 	}
 
-	if (!ignore_ecc && spare_size > 0)
+	if (spare_size > 0)
 	{
 		std::vector<uint8_t> spare(spare_size, 0);
 		try
@@ -335,9 +417,15 @@ void PS2MemoryCard::Impl::read_fat_from_card()
 	}
 }
 
-void PS2MemoryCard::Impl::read_superblock()
+std::vector<uint8_t> PS2MemoryCard::Impl::load_superblock()
 {
-	auto sb_page = read_page(0);
+	file.seekg(0, std::ios::beg);
+	std::vector<uint8_t> sb_page(page_size);
+	file.read(reinterpret_cast<char*>(sb_page.data()), page_size);
+	if (file.gcount() != static_cast<std::streamsize>(page_size))
+	{
+		throw PS2McIOError("Failed to read superblock");
+	}
 
 	const char* MAGIC = "Sony PS2 Memory Card Format ";
 	if (sb_page.size() < 28 || std::memcmp(sb_page.data(), MAGIC, 28) != 0)
@@ -345,77 +433,74 @@ void PS2MemoryCard::Impl::read_superblock()
 		throw PS2McCorrupt("Invalid memory card magic");
 	}
 
-	page_size = readLE<uint16_t>(sb_page, 40);
-	pages_per_cluster = readLE<uint16_t>(sb_page, 42);
-	pages_per_erase_block = readLE<uint16_t>(sb_page, 44);
+	parse_superblock_fields(sb_page);
+	return sb_page;
+}
 
-	if (page_size == 0 || pages_per_cluster == 0)
+void PS2MemoryCard::Impl::apply_layout(bool ecc, std::vector<uint8_t> sb_page)
+{
+	page_cache.clear();
+	fat_cluster_cache.clear();
+	parse_superblock_fields(sb_page);
+
+	if (ecc)
 	{
-		throw PS2McCorrupt("Invalid page/cluster size in superblock");
-	}
-
-	calculate_derived();
-
-	clusters_per_card = readLE<uint32_t>(sb_page, 48); // offset 48-51
-	allocatable_cluster_offset = readLE<uint32_t>(sb_page, 52); // offset 52-55
-	allocatable_cluster_end = readLE<uint32_t>(sb_page, 56); // offset 56-59
-	rootdir_fat_cluster = readLE<uint32_t>(sb_page, 60); // offset 60-63
-
-	for (int i = 0; i < 32; ++i)
-	{
-		indirect_fat_cluster_list[i] = readLE<uint32_t>(sb_page, 80 + i * 4);
-	}
-
-	if (sb_page.size() > 0x44 + 4)
-	{
-		backup_block1 = readLE<uint32_t>(sb_page, 0x40);
-		backup_block2 = readLE<uint32_t>(sb_page, 0x44);
-	}
-
-	if (sb_page.size() > 0x151)
-	{
-		card_type = sb_page[0x150];
-		card_flags = sb_page[0x151];
-
-		if ((card_flags & 0x01) == 0)
+		with_ecc = true;
+		if (spare_size > 0)
 		{
-			with_ecc = false;
+			std::vector<uint8_t> spare(spare_size);
+			file.seekg(page_size, std::ios::beg);
+			file.read(reinterpret_cast<char*>(spare.data()), spare_size);
+			if (file.gcount() == static_cast<std::streamsize>(spare_size))
+			{
+				std::vector<uint8_t> page = sb_page;
+				const int ecc_status = eccCheckPage(page, spare, static_cast<int>(page_size));
+				if (ecc_status != ECC_CHECK_FAILED)
+				{
+					sb_page = std::move(page);
+					if (ecc_status == ECC_CHECK_CORRECTED)
+						parse_superblock_fields(sb_page);
+				}
+			}
 		}
 	}
-
-	if (sb_page.size() > 0xD0 + 32 * 4)
+	else
 	{
-		for (int i = 0; i < 32; ++i)
-		{
-			bad_block_list[i] = readLE<uint32_t>(sb_page, 0xD0 + i * 4);
-		}
+		spare_size = 0;
+		raw_page_size = page_size;
+		with_ecc = false;
 	}
 
-	if (allocatable_cluster_end == 0 || allocatable_cluster_end > 1000000)
-	{
-		allocatable_cluster_end = clusters_per_card;
-	}
-
-	{
-		uint32_t total_pages = clusters_per_card * pages_per_cluster;
-		uint64_t expected_with_ecc = static_cast<uint64_t>(total_pages) * (page_size + spare_size);
-		uint64_t expected_no_ecc = static_cast<uint64_t>(total_pages) * page_size;
-
-		file.seekg(0, std::ios::end);
-		uint64_t file_size = static_cast<uint64_t>(file.tellg());
-		file.seekg(0, std::ios::beg);
-
-		if (file_size <= expected_no_ecc || file_size < expected_with_ecc)
-		{
-			spare_size = 0;
-			raw_page_size = page_size;
-			ignore_ecc = true;
-			with_ecc = false;
-			page_cache.clear();
-		}
-	}
-
+	page_cache[0] = std::move(sb_page);
 	read_fat_from_card();
+}
+
+bool PS2MemoryCard::Impl::root_directory_ok()
+{
+	const auto entries = read_dirents(rootdir_fat_cluster);
+	return entries.size() >= 2 &&
+	       entries[0].name == "." &&
+	       entries[1].name == ".." &&
+	       (entries[0].mode & DF_DIR) &&
+	       (entries[1].mode & DF_DIR);
+}
+
+void PS2MemoryCard::Impl::read_superblock()
+{
+	auto sb_page = load_superblock();
+
+	const uint32_t total_pages = clusters_per_card * pages_per_cluster;
+	const uint32_t ecc_spare = divRoundUp(page_size, 128) * 4;
+	const uint64_t expected_with_ecc = static_cast<uint64_t>(total_pages) * (page_size + ecc_spare);
+
+	file.seekg(0, std::ios::end);
+	const uint64_t file_size = static_cast<uint64_t>(file.tellg());
+
+	bool ecc = with_ecc;
+	if (file_size < expected_with_ecc)
+		ecc = false;
+
+	apply_layout(ecc, std::move(sb_page));
 }
 
 uint32_t PS2MemoryCard::Impl::lookup_fat(uint32_t cluster_num)
@@ -789,9 +874,10 @@ PS2MemoryCard::~PS2MemoryCard()
 	}
 }
 
-void PS2MemoryCard::open(const std::string& path)
+void PS2MemoryCard::open(const std::string& path, bool ignoreEcc)
 {
 	pImpl->filename = path;
+	pImpl->ignore_ecc = ignoreEcc;
 	pImpl->file.open(path, std::ios::in | std::ios::out | std::ios::binary);
 
 	if (!pImpl->file)
@@ -803,7 +889,35 @@ void PS2MemoryCard::open(const std::string& path)
 		}
 	}
 
-	pImpl->read_superblock();
+	auto sb_page = pImpl->load_superblock();
+
+	const uint32_t total_pages = pImpl->clusters_per_card * pImpl->pages_per_cluster;
+	const uint32_t ecc_spare = divRoundUp(pImpl->page_size, 128) * 4;
+	const uint64_t expected_with_ecc =
+		static_cast<uint64_t>(total_pages) * (pImpl->page_size + ecc_spare);
+
+	pImpl->file.seekg(0, std::ios::end);
+	const uint64_t file_size = static_cast<uint64_t>(pImpl->file.tellg());
+	const bool can_ecc = file_size >= expected_with_ecc;
+
+	auto try_layout = [this, &sb_page](bool ecc) {
+		pImpl->apply_layout(ecc, sb_page);
+		try
+		{
+			return pImpl->root_directory_ok();
+		}
+		catch (...)
+		{
+			return false;
+		}
+	};
+
+	if (can_ecc && try_layout(true))
+		return;
+	if (try_layout(false))
+		return;
+
+	throw PS2McCorrupt("Root directory damaged");
 }
 
 void PS2MemoryCard::close()
@@ -824,7 +938,6 @@ void PS2MemoryCard::Impl::init_card_parameters(int sizeInMB, bool disableEcc)
 	pages_per_erase_block = 16;
 	clusters_per_card = (sizeInMB * 1024 * 1024) / 1024;
 	with_ecc = !disableEcc;
-	ignore_ecc = disableEcc;
 
 	if (disableEcc)
 	{
@@ -914,6 +1027,8 @@ void PS2MemoryCard::Impl::write_superblock(uint32_t first_ifc, uint32_t indirect
 
 	sb[336] = 2;
 	sb[337] = with_ecc ? 0x2B : 0x2A;
+	card_type = 2;
+	card_flags = sb[337];
 
 	write_page(0, sb);
 
@@ -2229,7 +2344,6 @@ void PS2MemoryCard::saveAs(const std::string& filename, bool withEcc)
 	renameReplace(dest, tmpPath);
 
 	pImpl->with_ecc = withEcc;
-	pImpl->ignore_ecc = !withEcc;
 	if (withEcc)
 	{
 		pImpl->calculate_derived();

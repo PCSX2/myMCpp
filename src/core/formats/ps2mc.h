@@ -80,6 +80,14 @@ public:
 class PS2MemoryCard
 {
 public:
+	struct CardFormat
+	{
+		const char* displayName;
+		const char* filterName;
+		const char* extension;
+		bool usesEcc;
+	};
+
 	struct CardInfo
 	{
 		uint64_t imageSizeBytes = 0;
@@ -107,7 +115,10 @@ public:
 	PS2MemoryCard();
 	~PS2MemoryCard();
 
-	void open(const std::string& filename);
+	static const std::vector<CardFormat>& getFormats();
+	static bool usesEccForPath(const std::string& path, bool unknownFallback = true);
+
+	void open(const std::string& filename, bool ignoreEcc = false);
 	void close();
 	void create(const std::string& filename, int sizeInMB = 8, bool disableEcc = false);
 
