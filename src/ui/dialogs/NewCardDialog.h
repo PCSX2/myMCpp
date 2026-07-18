@@ -9,9 +9,6 @@
 
 #include "ui_NewCardDialog.h"
 
-class QRadioButton;
-class QButtonGroup;
-
 class NewCardDialog : public QDialog
 {
 	Q_OBJECT
@@ -22,14 +19,18 @@ public:
 	~NewCardDialog();
 
 	int getCardSizeMB() const;
-	bool getDisableEcc() const;
+	QString getCardName() const;
+	QString getCardExtension() const;
+	bool usesEcc() const;
+	QString getFileName() const;
 
 protected:
 	void changeEvent(QEvent* event) override;
 
 private:
-	void updateSelectionDetails();
+	void retranslateFormatCombo();
+	void nameTextChanged();
+	void updateState();
 
 	std::unique_ptr<Ui::NewCardDialog> ui;
-	QButtonGroup* sizeGroup;
 };

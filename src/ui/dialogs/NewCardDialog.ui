@@ -6,197 +6,254 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>460</width>
-    <height>540</height>
+    <width>480</width>
+    <height>507</height>
    </rect>
   </property>
-  <property name="minimumSize">
-   <size>
-    <width>430</width>
-    <height>0</height>
-   </size>
-  </property>
   <property name="windowTitle">
-   <string>Create New Memory Card</string>
+   <string>Create Memory Card</string>
   </property>
   <property name="modal">
    <bool>true</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="mainLayout">
+   <property name="spacing">
+    <number>10</number>
+   </property>
+   <property name="leftMargin">
+    <number>12</number>
+   </property>
+   <property name="topMargin">
+    <number>12</number>
+   </property>
+   <property name="rightMargin">
+    <number>12</number>
+   </property>
+   <property name="bottomMargin">
+    <number>12</number>
+   </property>
    <item>
-    <layout class="QHBoxLayout" name="headerLayout">
+    <layout class="QHBoxLayout" name="headerLayout" stretch="0,1">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
      <item>
-      <widget class="QLabel" name="introIconLabel">
+      <widget class="QLabel" name="iconLabel">
        <property name="minimumSize">
         <size>
-         <width>36</width>
-         <height>36</height>
+         <width>48</width>
+         <height>48</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>36</width>
-         <height>36</height>
+         <width>48</width>
+         <height>48</height>
         </size>
        </property>
-       <property name="text">
-        <string/>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="introLabel">
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Create Memory Card&lt;/span&gt;&lt;br/&gt;Pick a name, format, and size. 8 MB is safest for compatibility.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::TextFormat::RichText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+       </property>
        <property name="wordWrap">
         <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>Choose the size and format for your new memory card. Smaller cards are usually the safest choice for game compatibility.</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QGroupBox" name="sizeGroup">
-     <property name="title">
-      <string>Card Size Preset</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QRadioButton" name="size8MB">
-        <property name="text">
-         <string>8 MB (Recommended)</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="size8Hint">
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Official size used by standard PS2 cards. Best overall compatibility.</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="size16MB">
-        <property name="text">
-         <string>16 MB</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="size16Hint">
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Expanded capacity with generally good compatibility in many titles.</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="size32MB">
-        <property name="text">
-         <string>32 MB</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="size32Hint">
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Larger third-party style size. Useful when you need extra space.</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="size64MB">
-        <property name="text">
-         <string>64 MB</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="size64Hint">
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Very large card size. Some games and tools may not handle this reliably.</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+    <layout class="QVBoxLayout" name="nameLayout">
+     <item>
+      <widget class="QLabel" name="nameLabel">
+       <property name="text">
+        <string>Memory Card Name:</string>
+       </property>
+       <property name="buddy">
+        <cstring>nameEdit</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="nameEdit"/>
+     </item>
+    </layout>
    </item>
    <item>
-    <widget class="QGroupBox" name="optionsGroup">
-     <property name="title">
-      <string>Options</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <widget class="QCheckBox" name="disableEccCheckbox">
-        <property name="toolTip">
-         <string>Create image data without error correction bytes.
-Useful for specific raw-image workflows.</string>
-        </property>
-        <property name="text">
-         <string>Create without ECC bytes</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="eccHintLabel">
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Keep ECC enabled unless you specifically need a raw image format.</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+    <layout class="QVBoxLayout" name="formatLayout">
+     <item>
+      <widget class="QLabel" name="formatLabel">
+       <property name="text">
+        <string>Format:</string>
+       </property>
+       <property name="buddy">
+        <cstring>formatCombo</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="formatCombo"/>
+     </item>
+    </layout>
    </item>
    <item>
-    <widget class="QGroupBox" name="selectionGroup">
-     <property name="title">
-      <string>Selection Summary</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
-      <item>
-       <widget class="QLabel" name="selectionSummaryLabel">
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Current selection:</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+    <layout class="QVBoxLayout" name="size8Layout">
+     <item>
+      <widget class="QRadioButton" name="size8MB">
+       <property name="text">
+        <string>8 MB (Recommended)</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">sizeButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="size8Hint">
+       <property name="text">
+        <string>Official PS2 size. Best compatibility.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="buddy">
+        <cstring>size8MB</cstring>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="size16Layout">
+     <item>
+      <widget class="QRadioButton" name="size16MB">
+       <property name="text">
+        <string>16 MB</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">sizeButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="size16Hint">
+       <property name="text">
+        <string>More space, still works with most games.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="buddy">
+        <cstring>size16MB</cstring>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="size32Layout">
+     <item>
+      <widget class="QRadioButton" name="size32MB">
+       <property name="text">
+        <string>32 MB</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">sizeButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="size32Hint">
+       <property name="text">
+        <string>Extra space. Some games may not like it.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="buddy">
+        <cstring>size32MB</cstring>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="size64Layout">
+     <item>
+      <widget class="QRadioButton" name="size64MB">
+       <property name="text">
+        <string>64 MB</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">sizeButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="size64Hint">
+       <property name="text">
+        <string>Very large. Compatibility can be spotty.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="buddy">
+        <cstring>size64MB</cstring>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>nameEdit</tabstop>
+  <tabstop>formatCombo</tabstop>
+  <tabstop>size8MB</tabstop>
+  <tabstop>size16MB</tabstop>
+  <tabstop>size32MB</tabstop>
+  <tabstop>size64MB</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -232,4 +289,7 @@ Useful for specific raw-image workflows.</string>
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="sizeButtonGroup"/>
+ </buttongroups>
 </ui>
