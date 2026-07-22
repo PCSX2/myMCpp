@@ -1088,7 +1088,7 @@ Continue?</translation>
   <context>
     <name>MainWindow</name>
     <message>
-      <location filename="../MainWindow.cpp" line="+143"/>
+      <location filename="../MainWindow.cpp" line="+170"/>
       <source>Settings...</source>
       <translation>Configurações...</translation>
     </message>
@@ -1226,7 +1226,12 @@ Continue?</translation>
 %2</translation>
     </message>
     <message>
-      <location line="+562"/>
+      <location line="+206"/>
+      <source>Created %1</source>
+      <translation type="unfinished">Created %1</translation>
+    </message>
+    <message>
+      <location line="+351"/>
       <source>TBD
 
 For updates, visit: https://github.com/PCSX2/myMCpp/releases</source>
@@ -1574,12 +1579,7 @@ Pick another name if you want a copy.</translation>
       <translation type="unfinished">Add ECC and Save Copy As...</translation>
     </message>
     <message>
-      <location line="+6"/>
-      <source>All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</source>
-      <translation type="unfinished">All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</translation>
-    </message>
-    <message>
-      <location line="+10"/>
+      <location line="+16"/>
       <source>That file is already open.
 
 Pick another name for the ECC copy.</source>
@@ -1644,29 +1644,18 @@ Pick another name for the ECC copy.</translation>
       <translation type="unfinished">Failed to import file: %1</translation>
     </message>
     <message>
-      <location line="-1062"/>
+      <location line="-1057"/>
       <source>Open Memory Card</source>
       <translation>Abrir Cartão de Memória</translation>
     </message>
     <message>
-      <location line="+68"/>
-      <location line="+13"/>
+      <location line="+64"/>
+      <location line="+14"/>
       <source>Create Memory Card</source>
       <translation>Criar Cartão de Memória</translation>
     </message>
     <message>
-      <location line="-11"/>
-      <location line="+681"/>
-      <source>PCSX2 Memory Card (*.ps2);;MemCard PRO2 (*.mc2 *.mcd);;All Files (*.*)</source>
-      <translation>Cartão de Memória PCSX2 (*.ps2);;MemCard PRO2(*.mc2 *.mcd);;Todos os Arquivos (*.*)</translation>
-    </message>
-    <message>
-      <location line="-627"/>
-      <source>Created %1 MB memory card</source>
-      <translation>Criou Cartão de Memória de %1 MB</translation>
-    </message>
-    <message>
-      <location line="+19"/>
+      <location line="+60"/>
       <source>Import Save</source>
       <translation>Importar Jogo Salvo</translation>
     </message>
@@ -1676,10 +1665,10 @@ Pick another name for the ECC copy.</translation>
       <translation>Arquivos de Jogo Salvo PS2 (*.psu *.max *.sps *.xps *.cbs *.psv);;EMS/PSU (*.psu);;MAX Drive (*.max);;SharkPort (*.sps);;X-Port (*.xps);;CodeBreaker (*.cbs);;PSV (*.psv);;Todos os Arquivos (*.*)</translation>
     </message>
     <message>
-      <location line="-534"/>
+      <location line="-529"/>
       <location line="+88"/>
       <location line="+208"/>
-      <location line="+401"/>
+      <location line="+396"/>
       <source>Export</source>
       <translation>Exportar</translation>
     </message>
@@ -1689,50 +1678,30 @@ Pick another name for the ECC copy.</translation>
       <translation>Por favor, selecione um jogo salvo para exportar</translation>
     </message>
     <message>
-      <location line="-801"/>
-      <location line="+808"/>
+      <location line="-796"/>
+      <location line="+803"/>
       <source>Export Save</source>
       <translation>Exportar Jogo Salvo</translation>
     </message>
     <message>
-      <location line="-952"/>
-      <source>PCSX2</source>
-      <translation type="unfinished">PCSX2</translation>
-    </message>
-    <message>
-      <location line="+2"/>
-      <source>MemCard PRO2</source>
-      <translation type="unfinished">MemCard PRO2</translation>
-    </message>
-    <message>
-      <location line="+2"/>
-      <source>PS3 VMC</source>
-      <translation type="unfinished">PS3 VMC</translation>
-    </message>
-    <message>
-      <location line="+2"/>
-      <source>Raw</source>
-      <translation type="unfinished">Raw</translation>
-    </message>
-    <message>
-      <location line="+1"/>
+      <location line="-970"/>
       <location line="+6"/>
       <source>Memory Card</source>
       <translation type="unfinished">Memory Card</translation>
     </message>
     <message>
-      <location line="+51"/>
+      <location line="+81"/>
       <source>Icon preview unavailable: %1</source>
       <translation type="unfinished">Icon preview unavailable: %1</translation>
     </message>
     <message>
       <location line="+78"/>
-      <location line="+812"/>
+      <location line="+807"/>
       <source>EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</source>
       <translation>Formato EMS/PSU (*.psu);;Formato MAX Drive (*.max);;Todos os Arquivos (*.*)</translation>
     </message>
     <message>
-      <location line="-812"/>
+      <location line="-807"/>
       <source>MAX Drive Format (*.max);;EMS/PSU Format (*.psu);;All Files (*.*)</source>
       <translation type="unfinished">MAX Drive Format (*.max);;EMS/PSU Format (*.psu);;All Files (*.*)</translation>
     </message>
@@ -1742,13 +1711,20 @@ Pick another name for the ECC copy.</translation>
       <translation type="unfinished">Export File</translation>
     </message>
     <message>
-      <location line="+2"/>
+      <location line="-147"/>
+      <location line="+16"/>
+      <location line="+133"/>
       <location line="+282"/>
       <source>All Files (*.*)</source>
       <translation type="unfinished">All Files (*.*)</translation>
     </message>
     <message>
-      <location line="-274"/>
+      <location line="-432"/>
+      <source>All Memory Cards (%1)</source>
+      <translation type="unfinished">All Memory Cards (%1)</translation>
+    </message>
+    <message>
+      <location line="+158"/>
       <source>Exported %1</source>
       <translation type="unfinished">Exported %1</translation>
     </message>
@@ -1833,12 +1809,7 @@ Pick another name for the ECC copy.</translation>
 %1</translation>
     </message>
     <message>
-      <location line="+51"/>
-      <source>All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd *.bin *.mc);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;Raw Memory Card (*.bin *.mc);;All Files (*.*)</source>
-      <translation type="unfinished">All Memory Cards (*.ps2 *.vm2 *.vmc *.mc2 *.mcd *.bin *.mc);;PCSX2 Memory Card (*.ps2);;PS3 Virtual Memory Card (*.vm2 *.vmc);;MemCard PRO2 (*.mc2 *.mcd);;Raw Memory Card (*.bin *.mc);;All Files (*.*)</translation>
-    </message>
-    <message>
-      <location line="+28"/>
+      <location line="+74"/>
       <location line="+79"/>
       <source>Remove ECC and Save &amp;Copy As...</source>
       <translation type="unfinished">Remove ECC and Save &amp;Copy As...</translation>
@@ -1867,7 +1838,7 @@ Pick another name for the ECC copy.</translation>
       <translation type="unfinished">Reloaded %1</translation>
     </message>
     <message>
-      <location line="+34"/>
+      <location line="+36"/>
       <source>&apos;%1&apos; already exists.
 
 Creating a memory card here will overwrite that file and erase any saves on it.
@@ -1880,7 +1851,7 @@ Creating a memory card here will overwrite that file and erase any saves on it.
 Continue?</translation>
     </message>
     <message>
-      <location line="+188"/>
+      <location line="+186"/>
       <location line="+7"/>
       <location line="+5"/>
       <source>Import</source>
@@ -1940,14 +1911,14 @@ Continue?</translation>
       <translation type="unfinished">Exported Save: %1</translation>
     </message>
     <message>
-      <location line="-567"/>
-      <location line="+577"/>
+      <location line="-562"/>
+      <location line="+572"/>
       <location line="+8"/>
       <source>Delete</source>
       <translation>Deletar</translation>
     </message>
     <message>
-      <location line="-566"/>
+      <location line="-561"/>
       <source>Delete Save</source>
       <translation>Deletar jogo salvo</translation>
     </message>
@@ -1959,7 +1930,7 @@ Continue?</translation>
     </message>
     <message>
       <location line="+8"/>
-      <location line="+572"/>
+      <location line="+567"/>
       <source>Deleted %1</source>
       <translation>Deletou %1</translation>
     </message>
@@ -2001,9 +1972,9 @@ This action cannot be undone.</translation>
       <translation>Nenhum cartão de memória aberto</translation>
     </message>
     <message>
-      <location line="-1171"/>
+      <location line="-1166"/>
       <location line="+301"/>
-      <location line="+834"/>
+      <location line="+829"/>
       <location line="+109"/>
       <location line="+89"/>
       <location line="+59"/>
@@ -2474,130 +2445,70 @@ This action cannot be undone.</translation>
   <context>
     <name>NewCardDialog</name>
     <message>
-      <location filename="../dialogs/NewCardDialog.ui" line="+20"/>
-      <source>Create New Memory Card</source>
-      <translation type="unfinished">Create New Memory Card</translation>
+      <location filename="../dialogs/NewCardDialog.ui" line="+14"/>
+      <source>Create Memory Card</source>
+      <translation>Criar Cartão de Memória</translation>
     </message>
     <message>
-      <location line="+33"/>
-      <source>Choose the size and format for your new memory card. Smaller cards are usually the safest choice for game compatibility.</source>
-      <translation type="unfinished">Choose the size and format for your new memory card. Smaller cards are usually the safest choice for game compatibility.</translation>
+      <location line="+51"/>
+      <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Create Memory Card&lt;/span&gt;&lt;br/&gt;Pick a name, format, and size. 8 MB is safest for compatibility.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+      <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Create Memory Card&lt;/span&gt;&lt;br/&gt;Pick a name, format, and size. 8 MB is safest for compatibility.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-      <location line="+9"/>
-      <source>Card Size Preset</source>
-      <translation type="unfinished">Card Size Preset</translation>
+      <location line="+20"/>
+      <source>Memory Card Name:</source>
+      <translation type="unfinished">Memory Card Name:</translation>
     </message>
     <message>
-      <location line="+6"/>
+      <location line="+17"/>
+      <source>Format:</source>
+      <translation type="unfinished">Format:</translation>
+    </message>
+    <message>
+      <location line="+17"/>
       <source>8 MB (Recommended)</source>
       <translation type="unfinished">8 MB (Recommended)</translation>
     </message>
     <message>
       <location line="+13"/>
-      <source>Official size used by standard PS2 cards. Best overall compatibility.</source>
-      <translation type="unfinished">Official size used by standard PS2 cards. Best overall compatibility.</translation>
+      <source>Official PS2 size. Best compatibility.</source>
+      <translation type="unfinished">Official PS2 size. Best compatibility.</translation>
     </message>
     <message>
-      <location line="+7"/>
+      <location line="+30"/>
+      <source>More space, still works with most games.</source>
+      <translation type="unfinished">More space, still works with most games.</translation>
+    </message>
+    <message>
+      <location line="+30"/>
+      <source>Extra space. Some games may not like it.</source>
+      <translation type="unfinished">Extra space. Some games may not like it.</translation>
+    </message>
+    <message>
+      <location line="+30"/>
+      <source>Very large. Compatibility can be spotty.</source>
+      <translation type="unfinished">Very large. Compatibility can be spotty.</translation>
+    </message>
+    <message>
+      <location line="-70"/>
       <source>16 MB</source>
       <translation type="unfinished">16 MB</translation>
     </message>
     <message>
-      <location line="+10"/>
-      <source>Expanded capacity with generally good compatibility in many titles.</source>
-      <translation type="unfinished">Expanded capacity with generally good compatibility in many titles.</translation>
-    </message>
-    <message>
-      <location line="+7"/>
+      <location line="+30"/>
       <source>32 MB</source>
       <translation type="unfinished">32 MB</translation>
     </message>
     <message>
-      <location line="+10"/>
-      <source>Larger third-party style size. Useful when you need extra space.</source>
-      <translation type="unfinished">Larger third-party style size. Useful when you need extra space.</translation>
-    </message>
-    <message>
-      <location line="+7"/>
+      <location line="+30"/>
       <source>64 MB</source>
       <translation type="unfinished">64 MB</translation>
     </message>
     <message>
-      <location line="+10"/>
-      <source>Very large card size. Some games and tools may not handle this reliably.</source>
-      <translation type="unfinished">Very large card size. Some games and tools may not handle this reliably.</translation>
-    </message>
-    <message>
-      <location line="+10"/>
-      <source>Options</source>
-      <translation type="unfinished">Options</translation>
-    </message>
-    <message>
-      <location line="+6"/>
-      <source>Create image data without error correction bytes.
-Useful for specific raw-image workflows.</source>
-      <translation type="unfinished">Create image data without error correction bytes.
-Useful for specific raw-image workflows.</translation>
-    </message>
-    <message>
-      <location line="+4"/>
-      <source>Create without ECC bytes</source>
-      <translation type="unfinished">Create without ECC bytes</translation>
-    </message>
-    <message>
-      <location line="+10"/>
-      <source>Keep ECC enabled unless you specifically need a raw image format.</source>
-      <translation type="unfinished">Keep ECC enabled unless you specifically need a raw image format.</translation>
-    </message>
-    <message>
-      <location line="+10"/>
-      <source>Selection Summary</source>
-      <translation type="unfinished">Selection Summary</translation>
-    </message>
-    <message>
-      <location line="+9"/>
-      <source>Current selection:</source>
-      <translation type="unfinished">Current selection:</translation>
-    </message>
-    <message>
-      <location filename="../dialogs/NewCardDialog.cpp" line="+31"/>
+      <location filename="../dialogs/NewCardDialog.cpp" line="+28"/>
+      <location line="+46"/>
       <source>Continue...</source>
       <translation type="unfinished">Continue...</translation>
-    </message>
-    <message>
-      <location line="+40"/>
-      <source>Best compatibility</source>
-      <translation type="unfinished">Best compatibility</translation>
-    </message>
-    <message>
-      <location line="+2"/>
-      <source>Good compatibility with most titles</source>
-      <translation type="unfinished">Good compatibility with most titles</translation>
-    </message>
-    <message>
-      <location line="+2"/>
-      <source>Lower compatibility in some games</source>
-      <translation type="unfinished">Lower compatibility in some games</translation>
-    </message>
-    <message>
-      <location line="+3"/>
-      <source>ECC disabled (smaller raw image)</source>
-      <translation type="unfinished">ECC disabled (smaller raw image)</translation>
-    </message>
-    <message>
-      <location line="+1"/>
-      <source>ECC enabled (recommended default)</source>
-      <translation type="unfinished">ECC enabled (recommended default)</translation>
-    </message>
-    <message>
-      <location line="+3"/>
-      <source>Current selection: %1 MB
-%2
-%3</source>
-      <translation type="unfinished">Current selection: %1 MB
-%2
-%3</translation>
     </message>
   </context>
   <context>
