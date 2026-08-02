@@ -16,3 +16,6 @@ docs/** linguist-documentation
 
 # Exclude license HTML from language graph
 resources/licenses.html linguist-detectable=false
+
+# Ignore 3rdparty code from language statistics
+3rdparty/** linguist-vendored
