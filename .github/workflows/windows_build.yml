@@ -35,6 +35,9 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: read
+
 jobs:
   build_windows:
     name: ${{ inputs.jobName }}

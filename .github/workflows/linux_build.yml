@@ -36,6 +36,9 @@ on:
         type: string
         default: x64
 
+permissions:
+  contents: read
+
 jobs:
   build_linux:
     name: ${{ inputs.jobName }}

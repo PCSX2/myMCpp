@@ -7,6 +7,9 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+
 jobs:
   build_linux_x64_clang:
     name: "🐧 Linux x64 (Clang)"
