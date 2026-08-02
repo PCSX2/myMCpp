@@ -337,8 +337,8 @@ void PS2MemoryCard::Impl::write_cluster(uint32_t cluster_num, const std::vector<
 	{
 		uint32_t page_num = cluster_num * pages_per_cluster + i;
 		std::vector<uint8_t> page_data(
-			data.begin() + i * page_size,
-			data.begin() + (i + 1) * page_size);
+			data.begin() + static_cast<size_t>(i) * page_size,
+			data.begin() + static_cast<size_t>(i + 1) * page_size);
 		write_page(page_num, page_data);
 	}
 }

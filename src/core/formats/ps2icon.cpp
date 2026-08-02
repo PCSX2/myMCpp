@@ -126,7 +126,7 @@ namespace PS2Icon
 			throw std::runtime_error("Icon file too small for vertex data");
 		}
 
-		vertexData.resize(animationShapes * vertexCount);
+		vertexData.resize(static_cast<size_t>(animationShapes) * vertexCount);
 		normalUVData.resize(vertexCount);
 		colorData.resize(vertexCount);
 
@@ -134,7 +134,7 @@ namespace PS2Icon
 		{
 			for (uint32_t s = 0; s < animationShapes; ++s)
 			{
-				size_t vertexIdx = s * vertexCount + i;
+				size_t vertexIdx = static_cast<size_t>(s) * vertexCount + i;
 				vertexData[vertexIdx].x = readLE<int16_t>(data, offset);
 				vertexData[vertexIdx].y = readLE<int16_t>(data, offset + 2);
 				vertexData[vertexIdx].z = readLE<int16_t>(data, offset + 4);
@@ -389,7 +389,7 @@ namespace PS2Icon
 			return nullptr;
 		}
 
-		return &vertexData[shapeIndex * vertexCount];
+		return &vertexData[static_cast<size_t>(shapeIndex) * vertexCount];
 	}
 
 	const uint16_t* Icon::getTextureData() const
