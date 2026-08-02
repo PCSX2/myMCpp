@@ -63,6 +63,9 @@ private:
 	void closeCard();
 	void importFileToCard(const QString& savePath, const QString& hostFilePath);
 	void importSaveFiles(const QStringList& paths);
+	void deleteSelectedSave(const QString& savePath);
+	void deleteSelectedSaves(const QStringList& savePaths);
+	void deleteSelectedFiles(const QString& parentPath, const QStringList& fileNames);
 
 	std::unique_ptr<Ui::MainWindow> ui;
 

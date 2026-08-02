@@ -32,7 +32,7 @@ public:
 	ImportResult importSave(PS2MemoryCard* card, const std::shared_ptr<PS2SaveFile>& saveFile, const QString& filename, bool showDialogs = true, bool forceOverwrite = false);
 	bool exportSave(PS2MemoryCard* card, const QString& savePath, const QString& filename, bool showSuccessDialog = true);
 	bool exportSaveAsFolder(PS2MemoryCard* card, const QString& savePath, const QString& targetDir, bool showSuccessDialog = true);
-	void deleteSave(PS2MemoryCard* card, const QString& savePath);
+	bool deleteSave(PS2MemoryCard* card, const QString& savePath, bool showDialogs = true);
 	void formatCard(PS2MemoryCard* card, const QString& cardPath, int sizeMB = -1);
 
 	void setStatusBar(QStatusBar* statusBar);
