@@ -164,7 +164,7 @@ if(APPLE)
     myMCpp_compile_metal(myMCpp-core)
 endif()
 
-target_link_libraries(myMCpp-core PRIVATE zlib)
+target_link_libraries(myMCpp-core PRIVATE zlibstatic)
 target_include_directories(myMCpp-core PRIVATE ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
 
 if(MSVC)
