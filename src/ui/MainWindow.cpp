@@ -1731,8 +1731,8 @@ void MainWindow::importFileToCard(const QString& savePath, const QString& hostFi
 			return;
 		}
 
-		QByteArray data = file.readAll();
-		std::vector<uint8_t> fileData(data.begin(), data.end());
+		QByteArray rawBytes = file.readAll();
+		std::vector<uint8_t> fileData(rawBytes.begin(), rawBytes.end());
 
 		QFileInfo fileInfo(hostFilePath);
 		QString targetPath = savePath;
