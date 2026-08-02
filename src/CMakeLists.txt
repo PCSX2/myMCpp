@@ -86,14 +86,6 @@ if(WIN32)
     endif()
 
     add_custom_command(TARGET myMCpp POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E echo "Copying zlib DLL to output directory..."
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:zlib>
-        $<TARGET_FILE_DIR:myMCpp>
-        VERBATIM
-    )
-
-    add_custom_command(TARGET myMCpp POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E echo "Copying resources folder to output directory..."
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/resources
