@@ -426,72 +426,11 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	});
 
 	connect(ui->cardBrowser, &MemoryCardBrowser::deleteFilesRequested, this, [this](const QString& savePath, const QStringList& fileNames) {
-		if (!memoryCard || fileNames.isEmpty())
-			return;
-
-		if (m_config && m_config->getWarnOnDelete())
-		{
-			const QString message = fileNames.size() == 1 ?
-			                            tr("Are you sure you want to delete '%1'?").arg(fileNames.first()) :
-			                            tr("Are you sure you want to delete the %1 selected file(s)?").arg(fileNames.size());
-			QMessageBox::StandardButton reply = QMessageBox::question(this, tr("Delete Files"),
-				message,
-				QMessageBox::Yes | QMessageBox::No);
-
-			if (reply == QMessageBox::No)
-				return;
-		}
-
-		int ok = 0, failed = 0;
-		QStringList failedNames;
-		for (const QString& name : fileNames)
-		{
-			try
-			{
-				QString fullPath = savePath + "/" + name;
-				memoryCard->remove(fullPath.toStdString());
-				++ok;
-			}
-			catch (const std::exception&)
-			{
-				++failed;
-				failedNames.append(name);
-			}
-		}
-
-		if (failed > 0)
-		{
-			QMessageBox::warning(this, tr("Delete"),
-				tr("Deleted %1 file(s); %2 failed:\n%3").arg(ok).arg(failed).arg(failedNames.join("\n")));
-		}
-		ui->statusBar->showMessage(failed == 0 ?
-									   tr("Deleted %1 files").arg(ok) :
-									   tr("Deleted %1, %2 failed").arg(ok).arg(failed),
-			5000);
-		updateCardView();
-		ui->cardBrowser->navigateTo(savePath);
-		ui->detailsPanel->clear();
+		deleteSelectedFiles(savePath, fileNames);
 	});
 
 	connect(ui->cardBrowser, &MemoryCardBrowser::deleteSaveRequested, this, [this](const QString& savePath) {
-		if (!memoryCard)
-			return;
-
-		if (m_config && m_config->getWarnOnDelete())
-		{
-			QMessageBox::StandardButton reply;
-			reply = QMessageBox::question(this, tr("Delete Save"),
-				tr("Are you sure you want to delete '%1'?").arg(savePath),
-				QMessageBox::Yes | QMessageBox::No);
-
-			if (reply == QMessageBox::No)
-				return;
-		}
-
-		actionHandler->deleteSave(memoryCard.get(), savePath);
-		ui->statusBar->showMessage(tr("Deleted %1").arg(savePath), 5000);
-		updateCardView();
-		ui->detailsPanel->clear();
+		deleteSelectedSave(savePath);
 	});
 
 	connect(ui->cardBrowser, &MemoryCardBrowser::importFileRequested, this, [this](const QString& savePath, const QString& hostFilePath) {
@@ -630,38 +569,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	});
 
 	connect(ui->cardBrowser, &MemoryCardBrowser::deleteMultipleSavesRequested, this, [this](const QStringList& savePaths) {
-		if (!memoryCard || savePaths.isEmpty())
-			return;
-
-		if (m_config && m_config->getWarnOnDelete())
-		{
-			QStringList displayNames;
-			for (const QString& path : savePaths)
-			{
-				QString name = path;
-				if (name.startsWith('/'))
-					name.remove(0, 1);
-				displayNames.append(name);
-			}
-
-			const QString listText = displayNames.join("\n");
-			QMessageBox::StandardButton reply = QMessageBox::question(
-				this,
-				tr("Delete Selected Saves"),
-				tr("Are you sure you want to delete the following saves?\n\n%1").arg(listText),
-				QMessageBox::Yes | QMessageBox::No);
-
-			if (reply == QMessageBox::No)
-				return;
-		}
-
-		for (const QString& savePath : savePaths)
-		{
-			actionHandler->deleteSave(memoryCard.get(), savePath);
-		}
-
-		updateCardView();
-		ui->detailsPanel->clear();
+		deleteSelectedSaves(savePaths);
 	});
 
 	actionHandler->setStatusBar(ui->statusBar);
@@ -1029,19 +937,49 @@ void MainWindow::onExportSave()
 
 void MainWindow::onDeleteFile()
 {
-	QString savePath = ui->cardBrowser->getSelectedPath();
+	if (!memoryCard)
+		return;
 
-	if (savePath.isEmpty())
+	if (ui->cardBrowser->isInsideSave())
+	{
+		const QStringList selectedPaths = ui->cardBrowser->getSelectedPaths();
+		if (selectedPaths.isEmpty())
+		{
+			QMessageBox::information(this, tr("Delete"),
+				tr("Please select a file or folder to delete"));
+			return;
+		}
+
+		QStringList fileNames;
+		for (const QString& path : selectedPaths)
+			fileNames.append(QFileInfo(path).fileName());
+
+		deleteSelectedFiles(ui->cardBrowser->getCurrentPath(), fileNames);
+		return;
+	}
+
+	const QStringList savePaths = ui->cardBrowser->getSelectedSavePaths();
+	if (savePaths.isEmpty())
 	{
 		QMessageBox::information(this, tr("Delete"),
 			tr("Please select a file or folder to delete"));
 		return;
 	}
 
+	if (savePaths.size() == 1)
+		deleteSelectedSave(savePaths.first());
+	else
+		deleteSelectedSaves(savePaths);
+}
+
+void MainWindow::deleteSelectedSave(const QString& savePath)
+{
+	if (!memoryCard || savePath.isEmpty())
+		return;
+
 	if (m_config && m_config->getWarnOnDelete())
 	{
-		QMessageBox::StandardButton reply;
-		reply = QMessageBox::question(this, tr("Delete"),
+		QMessageBox::StandardButton reply = QMessageBox::question(this, tr("Delete"),
 			tr("Are you sure you want to delete '%1'?\nThis action cannot be undone.").arg(savePath),
 			QMessageBox::Yes | QMessageBox::No);
 
@@ -1049,16 +987,133 @@ void MainWindow::onDeleteFile()
 			return;
 	}
 
-	actionHandler->deleteSave(memoryCard.get(), savePath);
+	if (!actionHandler->deleteSave(memoryCard.get(), savePath))
+		return;
+
 	if (m_discordRpc)
 	{
 		m_discordRpc->setTemporaryPresence(
 			tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
 			tr("Deleted: %1").arg(QFileInfo(savePath).fileName()));
 	}
-	ui->statusBar->showMessage(tr("Deleted %1").arg(savePath), 5000);
 
 	updateCardView();
+	ui->detailsPanel->clear();
+}
+
+void MainWindow::deleteSelectedSaves(const QStringList& savePaths)
+{
+	if (!memoryCard || savePaths.isEmpty())
+		return;
+
+	if (m_config && m_config->getWarnOnDelete())
+	{
+		QStringList displayNames;
+		for (const QString& path : savePaths)
+		{
+			QString name = path;
+			if (name.startsWith('/'))
+				name.remove(0, 1);
+			displayNames.append(name);
+		}
+
+		QMessageBox::StandardButton reply = QMessageBox::question(
+			this,
+			tr("Delete Selected Saves"),
+			tr("Are you sure you want to delete the following saves?\n\n%1").arg(displayNames.join("\n")),
+			QMessageBox::Yes | QMessageBox::No);
+
+		if (reply == QMessageBox::No)
+			return;
+	}
+
+	int ok = 0, failed = 0;
+	QStringList failedNames;
+	for (const QString& savePath : savePaths)
+	{
+		if (actionHandler->deleteSave(memoryCard.get(), savePath, false))
+		{
+			++ok;
+		}
+		else
+		{
+			++failed;
+			QString name = savePath;
+			if (name.startsWith('/'))
+				name.remove(0, 1);
+			failedNames.append(name);
+		}
+	}
+
+	if (failed > 0)
+	{
+		QMessageBox::warning(this, tr("Delete"),
+			tr("Deleted %1 save(s); %2 failed:\n%3").arg(ok).arg(failed).arg(failedNames.join("\n")));
+	}
+
+	ui->statusBar->showMessage(failed == 0 ?
+								   tr("Deleted %1 saves").arg(ok) :
+								   tr("Deleted %1, %2 failed").arg(ok).arg(failed),
+		5000);
+
+	if (m_discordRpc && ok > 0)
+	{
+		m_discordRpc->setTemporaryPresence(
+			tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
+			tr("Deleted %1 Saves").arg(ok));
+	}
+
+	updateCardView();
+	ui->detailsPanel->clear();
+}
+
+void MainWindow::deleteSelectedFiles(const QString& parentPath, const QStringList& fileNames)
+{
+	if (!memoryCard || fileNames.isEmpty())
+		return;
+
+	if (m_config && m_config->getWarnOnDelete())
+	{
+		const QString message = fileNames.size() == 1 ?
+		                            tr("Are you sure you want to delete '%1'?").arg(fileNames.first()) :
+		                            tr("Are you sure you want to delete the %1 selected file(s)?").arg(fileNames.size());
+		QMessageBox::StandardButton reply = QMessageBox::question(this, tr("Delete Files"),
+			message,
+			QMessageBox::Yes | QMessageBox::No);
+
+		if (reply == QMessageBox::No)
+			return;
+	}
+
+	int ok = 0, failed = 0;
+	QStringList failedNames;
+	for (const QString& name : fileNames)
+	{
+		const QString fullPath = parentPath + "/" + name;
+		if (actionHandler->deleteSave(memoryCard.get(), fullPath, false))
+		{
+			++ok;
+		}
+		else
+		{
+			++failed;
+			failedNames.append(name);
+		}
+	}
+
+	if (failed > 0)
+	{
+		QMessageBox::warning(this, tr("Delete"),
+			tr("Deleted %1 file(s); %2 failed:\n%3").arg(ok).arg(failed).arg(failedNames.join("\n")));
+	}
+
+	ui->statusBar->showMessage(failed == 0 ?
+								   tr("Deleted %1 files").arg(ok) :
+								   tr("Deleted %1, %2 failed").arg(ok).arg(failed),
+		5000);
+
+	updateCardView();
+	ui->cardBrowser->navigateTo(parentPath);
 	ui->detailsPanel->clear();
 }
 
@@ -1214,8 +1269,8 @@ void MainWindow::onCardItemSelected()
 		return fallback;
 	};
 
-	QString selectedPath = ui->cardBrowser->getSelectedPath();
-	if (!memoryCard || selectedPath.isEmpty())
+	const QStringList selectedPaths = ui->cardBrowser->getSelectedPaths();
+	if (!memoryCard || selectedPaths.isEmpty())
 	{
 		if (!ui->cardBrowser->isInsideSave())
 		{

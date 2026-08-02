@@ -317,12 +317,13 @@ bool CardActionHandler::exportSaveAsFolder(PS2MemoryCard* card, const QString& s
 	}
 }
 
-void CardActionHandler::deleteSave(PS2MemoryCard* card, const QString& savePath)
+bool CardActionHandler::deleteSave(PS2MemoryCard* card, const QString& savePath, bool showDialogs)
 {
 	if (!card)
 	{
-		QMessageBox::warning(parentWidget, tr("Warning"), tr("No memory card open"));
-		return;
+		if (showDialogs)
+			QMessageBox::warning(parentWidget, tr("Warning"), tr("No memory card open"));
+		return false;
 	}
 
 	QString saveName = savePath;
@@ -331,26 +332,24 @@ void CardActionHandler::deleteSave(PS2MemoryCard* card, const QString& savePath)
 		saveName = saveName.mid(1);
 	}
 
-	int ret = QMessageBox::question(parentWidget, tr("Confirm Delete"),
-		tr("Delete this save?\n\n%1").arg(saveName),
-		QMessageBox::Yes | QMessageBox::No);
-
-	if (ret == QMessageBox::Yes)
+	try
 	{
-		try
-		{
-			card->remove(savePath.toStdString());
+		card->remove(savePath.toStdString());
 
-			if (statusBar)
-			{
-				statusBar->showMessage(tr("Deleted: %1").arg(saveName), 3000);
-			}
+		if (showDialogs && statusBar)
+		{
+			statusBar->showMessage(tr("Deleted: %1").arg(saveName), 3000);
 		}
-		catch (const std::exception& e)
+		return true;
+	}
+	catch (const std::exception& e)
+	{
+		if (showDialogs)
 		{
 			QMessageBox::critical(parentWidget, tr("Error"),
 				tr("Failed to delete save:\n\n%1").arg(e.what()));
 		}
+		return false;
 	}
 }
 

@@ -24,6 +24,8 @@ public:
 
 	QString getCurrentSavePath() const;
 	QString getSelectedPath() const;
+	QStringList getSelectedPaths() const;
+	QStringList getSelectedSavePaths() const;
 	bool hasSaveSelected() const;
 
 	void navigateTo(const QString& path);

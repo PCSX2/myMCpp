@@ -280,14 +280,49 @@ QString MemoryCardBrowser::getSelectedPath() const
 	}
 }
 
+QStringList MemoryCardBrowser::getSelectedPaths() const
+{
+	QStringList paths;
+	const QList<QTreeWidgetItem*> selected = selectedItems();
+	for (const QTreeWidgetItem* item : selected)
+	{
+		if (!item)
+			continue;
+		const QString name = item->data(0, Qt::UserRole).toString();
+		if (name.isEmpty() || name == "..")
+			continue;
+
+		if (m_currentPath == "/")
+			paths.append("/" + name);
+		else
+			paths.append(m_currentPath + "/" + name);
+	}
+	return paths;
+}
+
+QStringList MemoryCardBrowser::getSelectedSavePaths() const
+{
+	QStringList paths;
+	if (m_currentPath != "/")
+		return paths;
+
+	const QList<QTreeWidgetItem*> selected = selectedItems();
+	for (const QTreeWidgetItem* item : selected)
+	{
+		if (!item)
+			continue;
+		const QString name = item->data(0, Qt::UserRole).toString();
+		const bool isDir = item->data(0, Qt::UserRole + 1).toBool();
+		if (name.isEmpty() || name == ".." || !isDir)
+			continue;
+		paths.append("/" + name);
+	}
+	return paths;
+}
+
 bool MemoryCardBrowser::hasSaveSelected() const
 {
-	QTreeWidgetItem* item = currentItem();
-	if (!item)
-		return false;
-
-	QString name = item->data(0, Qt::UserRole).toString();
-	return name != "..";
+	return !getSelectedPaths().isEmpty();
 }
 
 void MemoryCardBrowser::selectAll()
@@ -326,17 +361,7 @@ void MemoryCardBrowser::contextMenuEvent(QContextMenuEvent* event)
 	{
 		if (m_currentPath == "/")
 		{
-			QStringList savePaths;
-			for (QTreeWidgetItem* it : selected)
-			{
-				if (!it)
-					continue;
-				const QString name = it->data(0, Qt::UserRole).toString();
-				const bool isDir = it->data(0, Qt::UserRole + 1).toBool();
-				if (name.isEmpty() || name == ".." || !isDir)
-					continue;
-				savePaths.append("/" + name);
-			}
+			const QStringList savePaths = getSelectedSavePaths();
 
 			if (!savePaths.isEmpty())
 			{
