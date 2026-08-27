@@ -91,7 +91,6 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 	}
 
 	QString fullTitle = saveName;
-	try
 	{
 		std::string title = card->getSaveTitle(savePath.toStdString());
 		std::string subtitle = card->getSaveSubtitle(savePath.toStdString());
@@ -105,25 +104,24 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 			}
 		}
 	}
-	catch (...)
-	{
-	}
 
 	ui->titleLabel->setText(fullTitle);
 	ui->dirNameLabel->setText(saveName);
 
 	QString details = tr("Size: %1\nModified: %2").arg(size, modified);
 
-	try
 	{
 		auto entries = card->listDir(savePath.toStdString());
 		int fileCount = 0;
 
-		for (const auto& entry : entries)
+		if (!card->GetError().IsValid())
 		{
-			if (!(entry.mode & DF_DIR) && !(entry.mode & DF_HIDDEN))
+			for (const auto& entry : entries)
 			{
-				fileCount++;
+				if (!(entry.mode & DF_DIR) && !(entry.mode & DF_HIDDEN))
+				{
+					fileCount++;
+				}
 			}
 		}
 
@@ -132,13 +130,9 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 			details += tr("\nFiles: %1").arg(fileCount);
 		}
 	}
-	catch (...)
-	{
-	}
 
 	ui->detailsLabel->setText(details);
 
-	try
 	{
 		auto iconData = card->getIconData(savePath.toStdString());
 
@@ -173,19 +167,10 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 			}
 			else
 			{
-				iconWidget->hide();
+				if (iconWidget)
+					iconWidget->hide();
 			}
 		}
-	}
-	catch (const std::exception&)
-	{
-		if (iconWidget)
-			iconWidget->hide();
-	}
-	catch (...)
-	{
-		if (iconWidget)
-			iconWidget->hide();
 	}
 	updatePlayPauseButton();
 }

@@ -4,10 +4,10 @@
 #pragma once
 
 #include "ps2mc_dir.h"
+#include "Error.h"
 #include <string>
 #include <vector>
 #include <memory>
-#include <stdexcept>
 
 class PS2SaveFile;
 
@@ -22,60 +22,6 @@ const int PS2MC_INDIRECT_FAT_OFFSET = 0x2000;
 const int PS2MC_STANDARD_PAGE_SIZE = 512;
 const int PS2MC_STANDARD_PAGES_PER_CARD = 16384;
 const int PS2MC_STANDARD_PAGES_PER_ERASE_BLOCK = 16;
-
-class PS2McError : public std::runtime_error
-{
-public:
-	explicit PS2McError(const std::string& msg)
-		: std::runtime_error(msg)
-	{
-	}
-};
-
-class PS2McIOError : public PS2McError
-{
-public:
-	explicit PS2McIOError(const std::string& msg)
-		: PS2McError(msg)
-	{
-	}
-};
-
-class PS2McPathNotFound : public PS2McIOError
-{
-public:
-	explicit PS2McPathNotFound(const std::string& path)
-		: PS2McIOError("Path not found: " + path)
-	{
-	}
-};
-
-class PS2McFileNotFound : public PS2McIOError
-{
-public:
-	explicit PS2McFileNotFound(const std::string& path)
-		: PS2McIOError("File not found: " + path)
-	{
-	}
-};
-
-class PS2McDirNotFound : public PS2McIOError
-{
-public:
-	explicit PS2McDirNotFound(const std::string& path)
-		: PS2McIOError("Directory not found: " + path)
-	{
-	}
-};
-
-class PS2McCorrupt : public PS2McIOError
-{
-public:
-	explicit PS2McCorrupt(const std::string& msg)
-		: PS2McIOError("Corrupt memory card: " + msg)
-	{
-	}
-};
 
 class PS2MemoryCard
 {
@@ -115,30 +61,33 @@ public:
 	PS2MemoryCard();
 	~PS2MemoryCard();
 
+	const Error& GetError() const { return m_error; }
+
 	static const std::vector<CardFormat>& getFormats();
 	static bool usesEccForPath(const std::string& path, bool unknownFallback = true);
 
-	void open(const std::string& filename, bool ignoreEcc = false);
+	bool open(const std::string& filename, bool ignoreEcc = false);
 	void close();
-	void create(const std::string& filename, int sizeInMB = 8, bool disableEcc = false);
+	bool create(const std::string& filename, int sizeInMB = 8, bool disableEcc = false);
 
 	std::vector<PS2McDirEntry> listDir(const std::string& path = "/");
+	bool hasEntry(const std::string& path);
 	PS2McDirEntry getEntry(const std::string& path);
-	void makeDir(const std::string& path);
-	void remove(const std::string& path);
+	bool makeDir(const std::string& path);
+	bool remove(const std::string& path);
 
 	uint16_t getMode(const std::string& path);
-	void setMode(const std::string& path, uint16_t mode);
+	bool setMode(const std::string& path, uint16_t mode);
 
-	void setModifiedTime(const std::string& path, std::time_t newTime);
-	void renameEntry(const std::string& path, const std::string& newName);
+	bool setModifiedTime(const std::string& path, std::time_t newTime);
+	bool renameEntry(const std::string& path, const std::string& newName);
 
-	std::vector<uint8_t> readFile(const std::string& path);
-	void exportFile(const std::string& mcPath, const std::string& hostPath);
-	void writeFile(const std::string& path, const std::vector<uint8_t>& data);
+	std::vector<uint8_t> readFile(const std::string& path, bool quiet = false);
+	bool exportFile(const std::string& mcPath, const std::string& hostPath);
+	bool writeFile(const std::string& path, const std::vector<uint8_t>& data);
 
 	bool importSaveFile(class PS2SaveFile& save, bool ignoreExisting = false, const std::string& targetDir = "");
-	void exportSaveFile(const std::string& savePath, class PS2SaveFile& save);
+	bool exportSaveFile(const std::string& savePath, class PS2SaveFile& save);
 
 	std::vector<uint8_t> getIconData(const std::string& savePath);
 
@@ -157,11 +106,12 @@ public:
 
 	std::string getPsxTitle(const std::string& savePath);
 
-	void saveAs(const std::string& filename, bool withEcc = true);
+	bool saveAs(const std::string& filename, bool withEcc = true);
 
 	CardInfo getCardInfo();
 
 private:
+	Error m_error;
 	class Impl;
 	std::unique_ptr<Impl> pImpl;
 };

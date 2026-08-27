@@ -55,92 +55,77 @@ void MemoryCardBrowser::loadRootDirectory()
 	if (!m_card)
 		return;
 
-	try
+	auto entries = m_card->listDir("/");
+	if (m_card->GetError().IsValid())
 	{
-		auto entries = m_card->listDir("/");
+		QMessageBox::critical(this, tr("Error"),
+			tr("Failed to read memory card: %1").arg(QString::fromStdString(m_card->GetError().GetDescription())));
+		return;
+	}
 
-		for (const auto& entry : entries)
+	for (const auto& entry : entries)
+	{
+		if ((entry.mode & DF_EXISTS) && !(entry.mode & DF_HIDDEN))
 		{
-			if ((entry.mode & DF_EXISTS) && !(entry.mode & DF_HIDDEN))
+			if (entry.name == "." || entry.name == "..")
+				continue;
+
+			QTreeWidgetItem* item = new QTreeWidgetItem(this);
+			QString savePath = "/" + QString::fromStdString(entry.name);
+			QString displayName;
+
+			bool isDir = (entry.mode & DF_DIR) != 0;
+
+			if (isDir)
 			{
-				if (entry.name == "." || entry.name == "..")
-					continue;
+				std::string title = m_card->getSaveTitle(savePath.toStdString());
+				std::string subtitle = m_card->getSaveSubtitle(savePath.toStdString());
 
-				QTreeWidgetItem* item = new QTreeWidgetItem(this);
-				QString savePath = "/" + QString::fromStdString(entry.name);
-				QString displayName;
-
-				bool isDir = (entry.mode & DF_DIR) != 0;
-
-				if (isDir)
+				if (!title.empty())
 				{
-					try
+					displayName = QString::fromStdString(title);
+					if (!subtitle.empty())
 					{
-						std::string title = m_card->getSaveTitle(savePath.toStdString());
-						std::string subtitle = m_card->getSaveSubtitle(savePath.toStdString());
-
-						if (!title.empty())
-						{
-							displayName = QString::fromStdString(title);
-							if (!subtitle.empty())
-							{
-								displayName += " " + QString::fromStdString(subtitle);
-							}
-						}
-					}
-					catch (...)
-					{
+						displayName += " " + QString::fromStdString(subtitle);
 					}
 				}
-
-				if (displayName.isEmpty())
-				{
-					displayName = QString::fromStdString(entry.name);
-				}
-
-				item->setText(0, displayName);
-
-				if (isDir)
-				{
-					try
-					{
-						uint32_t saveSize = m_card->getSaveSize(savePath.toStdString());
-						double sizeKB = saveSize / 1024.0;
-						item->setText(1, tr("%1 KB").arg(static_cast<int>(sizeKB)));
-					}
-					catch (...)
-					{
-						item->setText(1, tr("?"));
-					}
-				}
-				else
-				{
-					double sizeKB = entry.length / 1024.0;
-					if (sizeKB < 1.0)
-						item->setText(1, tr("%1 B").arg(entry.length));
-					else
-						item->setText(1, tr("%1 KB").arg(static_cast<int>(sizeKB)));
-				}
-
-				item->setData(0, Qt::UserRole, QString::fromStdString(entry.name));
-				item->setData(0, Qt::UserRole + 1, isDir);
-				auto time = todToTime(entry.modified);
-				QDateTime dateTime = QDateTime::fromSecsSinceEpoch(time);
-				item->setText(2, dateTime.toString("yyyy-MM-dd hh:mm"));
-
-				addTopLevelItem(item);
 			}
-		}
 
-		expandAll();
-		clearSelection();
-		setCurrentItem(nullptr);
+			if (displayName.isEmpty())
+			{
+				displayName = QString::fromStdString(entry.name);
+			}
+
+			item->setText(0, displayName);
+
+			if (isDir)
+			{
+				uint32_t saveSize = m_card->getSaveSize(savePath.toStdString());
+				double sizeKB = saveSize / 1024.0;
+				item->setText(1, tr("%1 KB").arg(static_cast<int>(sizeKB)));
+			}
+			else
+			{
+				double sizeKB = entry.length / 1024.0;
+				if (sizeKB < 1.0)
+					item->setText(1, tr("%1 B").arg(entry.length));
+				else
+					item->setText(1, tr("%1 KB").arg(static_cast<int>(sizeKB)));
+			}
+
+			item->setData(0, Qt::UserRole, QString::fromStdString(entry.name));
+			item->setData(0, Qt::UserRole + 1, isDir);
+			auto time = todToTime(entry.modified);
+			QDateTime dateTime = QDateTime::fromSecsSinceEpoch(time);
+			item->setText(2, dateTime.toString("yyyy-MM-dd hh:mm"));
+
+			addTopLevelItem(item);
+		}
 	}
-	catch (const std::exception& e)
-	{
-		QMessageBox::critical(nullptr, tr("Error"),
-			tr("Failed to read memory card: %1").arg(e.what()));
-	}
+
+	expandAll();
+	clearSelection();
+	setCurrentItem(nullptr);
 }
 
 void MemoryCardBrowser::loadSaveDirectory(const QString& savePath)
@@ -150,61 +135,59 @@ void MemoryCardBrowser::loadSaveDirectory(const QString& savePath)
 	if (!m_card)
 		return;
 
-	try
+	QTreeWidgetItem* parentItem = new QTreeWidgetItem(this);
+	parentItem->setText(0, "..");
+	parentItem->setText(1, "");
+	parentItem->setText(2, "");
+	parentItem->setData(0, Qt::UserRole, "..");
+	parentItem->setData(0, Qt::UserRole + 1, true);
+	addTopLevelItem(parentItem);
+
+	auto entries = m_card->listDir(savePath.toStdString());
+	if (m_card->GetError().IsValid())
 	{
-		QTreeWidgetItem* parentItem = new QTreeWidgetItem(this);
-		parentItem->setText(0, "..");
-		parentItem->setText(1, "");
-		parentItem->setText(2, "");
-		parentItem->setData(0, Qt::UserRole, "..");
-		parentItem->setData(0, Qt::UserRole + 1, true);
-		addTopLevelItem(parentItem);
+		QMessageBox::critical(this, tr("Error"),
+			tr("Failed to read save directory: %1").arg(QString::fromStdString(m_card->GetError().GetDescription())));
+		return;
+	}
 
-		auto entries = m_card->listDir(savePath.toStdString());
+	for (const auto& entry : entries)
+	{
+		if (!(entry.mode & DF_EXISTS) || (entry.mode & DF_HIDDEN))
+			continue;
 
-		for (const auto& entry : entries)
+		if (entry.name == "." || entry.name == "..")
+			continue;
+
+		QTreeWidgetItem* item = new QTreeWidgetItem(this);
+
+		item->setText(0, QString::fromStdString(entry.name));
+
+		bool isDir = (entry.mode & DF_DIR) != 0;
+		item->setData(0, Qt::UserRole, QString::fromStdString(entry.name));
+		item->setData(0, Qt::UserRole + 1, isDir);
+
+		if (!isDir)
 		{
-			if (!(entry.mode & DF_EXISTS) || (entry.mode & DF_HIDDEN))
-				continue;
-
-			if (entry.name == "." || entry.name == "..")
-				continue;
-
-			QTreeWidgetItem* item = new QTreeWidgetItem(this);
-
-			item->setText(0, QString::fromStdString(entry.name));
-
-			bool isDir = (entry.mode & DF_DIR) != 0;
-			item->setData(0, Qt::UserRole, QString::fromStdString(entry.name));
-			item->setData(0, Qt::UserRole + 1, isDir);
-
-			if (!isDir)
-			{
-				double sizeKB = entry.length / 1024.0;
-				if (sizeKB < 1.0)
-					item->setText(1, tr("%1 B").arg(entry.length));
-				else
-					item->setText(1, tr("%1 KB").arg(static_cast<int>(sizeKB)));
-			}
+			double sizeKB = entry.length / 1024.0;
+			if (sizeKB < 1.0)
+				item->setText(1, tr("%1 B").arg(entry.length));
 			else
-			{
-				item->setText(1, tr("<DIR>"));
-			}
-
-			auto time = todToTime(entry.modified);
-			QDateTime dateTime = QDateTime::fromSecsSinceEpoch(time);
-			item->setText(2, dateTime.toString("yyyy-MM-dd hh:mm"));
-
-			addTopLevelItem(item);
+				item->setText(1, tr("%1 KB").arg(static_cast<int>(sizeKB)));
+		}
+		else
+		{
+			item->setText(1, tr("<DIR>"));
 		}
 
-		expandAll();
+		auto time = todToTime(entry.modified);
+		QDateTime dateTime = QDateTime::fromSecsSinceEpoch(time);
+		item->setText(2, dateTime.toString("yyyy-MM-dd hh:mm"));
+
+		addTopLevelItem(item);
 	}
-	catch (const std::exception& e)
-	{
-		QMessageBox::critical(nullptr, tr("Error"),
-			tr("Failed to read save directory: %1").arg(e.what()));
-	}
+
+	expandAll();
 }
 
 void MemoryCardBrowser::navigateTo(const QString& path)

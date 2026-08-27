@@ -18,52 +18,60 @@ namespace
 {
 	inline bool modeIsDir(uint16_t mode) { return (mode & DF_DIR) != 0; }
 	inline bool modeIsFile(uint16_t mode) { return (mode & DF_FILE) != 0; }
-
-	std::vector<uint8_t> readFixed(std::ifstream& f, size_t n)
-	{
-		std::vector<uint8_t> buf(n);
-		f.read(reinterpret_cast<char*>(buf.data()), n);
-		if (static_cast<size_t>(f.gcount()) != n)
-		{
-			throw PS2SaveError("Unexpected EOF");
-		}
-		return buf;
-	}
 } // namespace
 
 class PS2SaveFile::Impl
 {
 public:
+	Error& m_error;
 	std::vector<PS2SaveEntry> entries;
 	std::string title;
 	SaveFormat format;
 
-	Impl()
-		: format(SaveFormat::UNKNOWN)
+	explicit Impl(Error& error)
+		: m_error(error)
+		, format(SaveFormat::UNKNOWN)
 	{
 	}
 
-	void loadEms(std::ifstream& file);
-	void loadMaxDrive(std::ifstream& file);
-	void loadSharkPort(std::ifstream& file);
-	void loadCodeBreaker(std::ifstream& file);
-	void loadPsv(std::ifstream& file);
-	void saveEms(std::ofstream& file);
-	void saveMaxDrive(std::ofstream& file);
+	bool readBytes(std::ifstream& f, void* dest, size_t n)
+	{
+		f.read(reinterpret_cast<char*>(dest), n);
+		if (static_cast<size_t>(f.gcount()) != n)
+		{
+			return m_error.Fail("Unexpected EOF");
+		}
+		return true;
+	}
+
+	bool readFixed(std::ifstream& f, size_t n, std::vector<uint8_t>& out)
+	{
+		out.resize(n);
+		return readBytes(f, out.data(), n);
+	}
+
+	bool loadEms(std::ifstream& file);
+	bool loadMaxDrive(std::ifstream& file);
+	bool loadSharkPort(std::ifstream& file);
+	bool loadCodeBreaker(std::ifstream& file);
+	bool loadPsv(std::ifstream& file);
+	bool saveEms(std::ofstream& file);
+	bool saveMaxDrive(std::ofstream& file);
 };
 
 PS2SaveFile::PS2SaveFile()
-	: pImpl(std::make_unique<Impl>())
+	: pImpl(std::make_unique<Impl>(m_error))
 {
 }
 PS2SaveFile::~PS2SaveFile() = default;
 
-void PS2SaveFile::load(const std::string& filename)
+bool PS2SaveFile::load(const std::string& filename)
 {
+	m_error.Clear();
 	std::ifstream file(filename, std::ios::binary);
 	if (!file)
 	{
-		throw PS2SaveError("Failed to open: " + filename);
+		return m_error.Fail("Failed to open: " + filename);
 	}
 
 	pImpl->format = detectFormat(filename);
@@ -71,32 +79,28 @@ void PS2SaveFile::load(const std::string& filename)
 	switch (pImpl->format)
 	{
 		case SaveFormat::MAX_DRIVE:
-			pImpl->loadMaxDrive(file);
-			break;
+			return pImpl->loadMaxDrive(file);
 		case SaveFormat::EMS:
-			pImpl->loadEms(file);
-			break;
+			return pImpl->loadEms(file);
 		case SaveFormat::SHARKPORT:
 		case SaveFormat::XPORT: // X-Port uses same format as SharkPort
-			pImpl->loadSharkPort(file);
-			break;
+			return pImpl->loadSharkPort(file);
 		case SaveFormat::CODEBREAKER:
-			pImpl->loadCodeBreaker(file);
-			break;
+			return pImpl->loadCodeBreaker(file);
 		case SaveFormat::PSV:
-			pImpl->loadPsv(file);
-			break;
+			return pImpl->loadPsv(file);
 		default:
-			throw PS2SaveError("Unknown save format");
+			return m_error.Fail("Unknown save format");
 	}
 }
 
-void PS2SaveFile::save(const std::string& filename, SaveFormat format)
+bool PS2SaveFile::save(const std::string& filename, SaveFormat format)
 {
+	m_error.Clear();
 	std::ofstream file(filename, std::ios::binary);
 	if (!file)
 	{
-		throw PS2SaveError("Failed to create: " + filename);
+		return m_error.Fail("Failed to create: " + filename);
 	}
 
 	if (format == SaveFormat::UNKNOWN)
@@ -107,13 +111,11 @@ void PS2SaveFile::save(const std::string& filename, SaveFormat format)
 	switch (format)
 	{
 		case SaveFormat::MAX_DRIVE:
-			pImpl->saveMaxDrive(file);
-			break;
+			return pImpl->saveMaxDrive(file);
 		case SaveFormat::EMS:
-			pImpl->saveEms(file);
-			break;
+			return pImpl->saveEms(file);
 		default:
-			throw PS2SaveError("Unsupported save format for writing");
+			return m_error.Fail("Unsupported save format for writing");
 	}
 }
 
@@ -241,12 +243,11 @@ std::string PS2SaveFile::formatToExtension(SaveFormat format)
 	}
 }
 
-void PS2SaveFile::Impl::loadMaxDrive(std::ifstream& file)
+bool PS2SaveFile::Impl::loadMaxDrive(std::ifstream& file)
 {
 	char hdr[0x5C];
-	file.read(hdr, 0x5C);
-	if (file.gcount() != 0x5C)
-		throw PS2SaveError("Corrupt MAX header");
+	if (!readBytes(file, hdr, 0x5C))
+		return m_error.Fail("Corrupt MAX header");
 	struct Hdr
 	{
 		char magic[12];
@@ -260,7 +261,7 @@ void PS2SaveFile::Impl::loadMaxDrive(std::ifstream& file)
 	const Hdr* h = reinterpret_cast<const Hdr*>(hdr);
 	if (std::memcmp(h->magic, PS2SAVE_MAX_MAGIC, 12) != 0)
 	{
-		throw PS2SaveError("Not a MAX Drive save");
+		return m_error.Fail("Not a MAX Drive save");
 	}
 	std::string dirname = zeroTerminate(std::string(h->dirname, 32));
 	uint32_t clen = h->clen;
@@ -273,17 +274,18 @@ void PS2SaveFile::Impl::loadMaxDrive(std::ifstream& file)
 		file.seekg(0, std::ios::end);
 		size_t remaining = static_cast<size_t>(file.tellg()) - 0x5C;
 		file.seekg(0x5C, std::ios::beg);
-		compressed.resize(remaining);
-		file.read(reinterpret_cast<char*>(compressed.data()), remaining);
+		if (!readFixed(file, remaining, compressed))
+			return false;
 	}
 	else
 	{
-		compressed = readFixed(file, clen - 4); // -4 because crc already read
+		if (!readFixed(file, clen - 4, compressed)) // -4 because crc already read
+			return false;
 	}
 
 	auto decompressed = lzariDecompress(compressed, length);
 	if (decompressed.size() != length)
-		throw PS2SaveError("MAX decompress size mismatch");
+		return m_error.Fail("MAX decompress size mismatch");
 
 	entries.clear();
 	entries.reserve(dirlen);
@@ -292,13 +294,13 @@ void PS2SaveFile::Impl::loadMaxDrive(std::ifstream& file)
 	for (uint32_t i = 0; i < dirlen; ++i)
 	{
 		if (off + 36 > decompressed.size())
-			throw PS2SaveError("MAX directory truncated");
+			return m_error.Fail("MAX directory truncated");
 		uint32_t l = *reinterpret_cast<const uint32_t*>(&decompressed[off]);
 		std::string name(reinterpret_cast<const char*>(&decompressed[off + 4]), 32);
 		name = zeroTerminate(name);
 		off += 36;
 		if (off + l > decompressed.size())
-			throw PS2SaveError("MAX file truncated");
+			return m_error.Fail("MAX file truncated");
 		std::vector<uint8_t> data(decompressed.begin() + off, decompressed.begin() + off + l);
 		off += l;
 		off = roundUp(static_cast<int>(off) + 8, 16) - 8;
@@ -317,65 +319,91 @@ void PS2SaveFile::Impl::loadMaxDrive(std::ifstream& file)
 	}
 	title = dirname;
 	format = SaveFormat::MAX_DRIVE;
+	return true;
 }
 
-void PS2SaveFile::Impl::loadSharkPort(std::ifstream& file)
+bool PS2SaveFile::Impl::loadSharkPort(std::ifstream& file)
 {
 	const std::string fmtName = (format == SaveFormat::XPORT) ? "X-Port" : "SharkPort";
 
-	auto magic = readFixed(file, 17);
+	std::vector<uint8_t> magic;
+	if (!readFixed(file, 17, magic))
+		return false;
 	if (std::memcmp(magic.data(), PS2SAVE_SPS_MAGIC, 13) != 0)
 	{
-		throw PS2SaveError("Not a " + fmtName + " save");
+		return m_error.Fail("Not a " + fmtName + " save");
 	}
 
 	uint32_t savetype = 0;
-	file.read(reinterpret_cast<char*>(&savetype), 4);
+	if (!readBytes(file, &savetype, 4))
+		return false;
 
 	uint32_t dirname_len = 0;
-	file.read(reinterpret_cast<char*>(&dirname_len), 4);
-	auto dirname_data = readFixed(file, dirname_len);
+	if (!readBytes(file, &dirname_len, 4))
+		return false;
+	std::vector<uint8_t> dirname_data;
+	if (!readFixed(file, dirname_len, dirname_data))
+		return false;
 	std::string dirname(dirname_data.begin(), dirname_data.end());
 
 	uint32_t datestamp_len = 0;
-	file.read(reinterpret_cast<char*>(&datestamp_len), 4);
-	readFixed(file, datestamp_len);
+	if (!readBytes(file, &datestamp_len, 4))
+		return false;
+	std::vector<uint8_t> unused;
+	if (!readFixed(file, datestamp_len, unused))
+		return false;
 
 	uint32_t comment_len = 0;
-	file.read(reinterpret_cast<char*>(&comment_len), 4);
-	readFixed(file, comment_len);
+	if (!readBytes(file, &comment_len, 4))
+		return false;
+	if (!readFixed(file, comment_len, unused))
+		return false;
 
 	uint32_t flen = 0;
-	file.read(reinterpret_cast<char*>(&flen), 4);
+	if (!readBytes(file, &flen, 4))
+		return false;
 
 	uint16_t hlen = 0;
-	file.read(reinterpret_cast<char*>(&hlen), 2);
+	if (!readBytes(file, &hlen, 2))
+		return false;
 
 	std::vector<uint8_t> name_buf(64);
-	file.read(reinterpret_cast<char*>(name_buf.data()), 64);
+	if (!readBytes(file, name_buf.data(), 64))
+		return false;
 
 	uint32_t dirlen = 0;
-	file.read(reinterpret_cast<char*>(&dirlen), 4);
+	if (!readBytes(file, &dirlen, 4))
+		return false;
 
-	readFixed(file, 8); // skip 8 bytes
+	if (!readFixed(file, 8, unused)) // skip 8 bytes
+		return false;
 
 	uint16_t dirmode = 0;
-	file.read(reinterpret_cast<char*>(&dirmode), 2);
+	if (!readBytes(file, &dirmode, 2))
+		return false;
 
-	readFixed(file, 2); // skip 2 bytes
+	if (!readFixed(file, 2, unused)) // skip 2 bytes
+		return false;
 
-	auto created_data = readFixed(file, 8);
+	std::vector<uint8_t> created_data;
+	if (!readFixed(file, 8, created_data))
+		return false;
 
-	auto modified_data = readFixed(file, 8);
+	std::vector<uint8_t> modified_data;
+	if (!readFixed(file, 8, modified_data))
+		return false;
 
 	if (hlen > 98)
-		readFixed(file, hlen - 98);
+	{
+		if (!readFixed(file, hlen - 98, unused))
+			return false;
+	}
 
 	dirmode = ((dirmode / 256) % 256) + ((dirmode % 256) * 256);
 
 	if (!(dirmode & DF_DIR) || dirlen < 2)
 	{
-		throw PS2SaveError("Invalid " + fmtName + " directory header");
+		return m_error.Fail("Invalid " + fmtName + " directory header");
 	}
 
 	entries.clear();
@@ -384,38 +412,53 @@ void PS2SaveFile::Impl::loadSharkPort(std::ifstream& file)
 	for (uint32_t i = 0; i < dirlen - 2; ++i)
 	{
 		uint16_t fhlen = 0;
-		file.read(reinterpret_cast<char*>(&fhlen), 2);
+		if (!readBytes(file, &fhlen, 2))
+			return false;
 
 		std::vector<uint8_t> fname_buf(64);
-		file.read(reinterpret_cast<char*>(fname_buf.data()), 64);
+		if (!readBytes(file, fname_buf.data(), 64))
+			return false;
 		std::string fname(reinterpret_cast<const char*>(fname_buf.data()));
 		fname = zeroTerminate(fname);
 
 		uint32_t fsize = 0;
-		file.read(reinterpret_cast<char*>(&fsize), 4);
-		readFixed(file, 8); // skip 8 bytes
+		if (!readBytes(file, &fsize, 4))
+			return false;
+		if (!readFixed(file, 8, unused)) // skip 8 bytes
+			return false;
 
 		uint16_t fmode = 0;
-		file.read(reinterpret_cast<char*>(&fmode), 2);
-		readFixed(file, 2); // skip 2 bytes
+		if (!readBytes(file, &fmode, 2))
+			return false;
+		if (!readFixed(file, 2, unused)) // skip 2 bytes
+			return false;
 
-		auto fcreated_data = readFixed(file, 8);
+		std::vector<uint8_t> fcreated_data;
+		if (!readFixed(file, 8, fcreated_data))
+			return false;
 		PS2McTod fcreated = unpackTod(fcreated_data);
 
-		auto fmodified_data = readFixed(file, 8);
+		std::vector<uint8_t> fmodified_data;
+		if (!readFixed(file, 8, fmodified_data))
+			return false;
 		PS2McTod fmodified = unpackTod(fmodified_data);
 
 		if (fhlen > 98)
-			readFixed(file, fhlen - 98);
+		{
+			if (!readFixed(file, fhlen - 98, unused))
+				return false;
+		}
 
 		fmode = ((fmode / 256) % 256) + ((fmode % 256) * 256);
 
 		if (!(fmode & DF_FILE))
 		{
-			throw PS2SaveError("Non-file in " + fmtName + " directory");
+			return m_error.Fail("Non-file in " + fmtName + " directory");
 		}
 
-		auto fdata = readFixed(file, fsize);
+		std::vector<uint8_t> fdata;
+		if (!readFixed(file, fsize, fdata))
+			return false;
 
 		PS2McDirEntry ent;
 		ent.mode = fmode | DF_EXISTS;
@@ -432,6 +475,7 @@ void PS2SaveFile::Impl::loadSharkPort(std::ifstream& file)
 	{
 		format = SaveFormat::SHARKPORT;
 	}
+	return true;
 }
 
 namespace
@@ -490,22 +534,26 @@ namespace
 	}
 } // namespace
 
-void PS2SaveFile::Impl::loadCodeBreaker(std::ifstream& file)
+bool PS2SaveFile::Impl::loadCodeBreaker(std::ifstream& file)
 {
-	auto magic = readFixed(file, 4);
+	std::vector<uint8_t> magic;
+	if (!readFixed(file, 4, magic))
+		return false;
 	if (std::memcmp(magic.data(), PS2SAVE_CBS_MAGIC, 4) != 0)
 	{
-		throw PS2SaveError("Not a CodeBreaker save");
+		return m_error.Fail("Not a CodeBreaker save");
 	}
 
 	uint32_t d04 = 0, hlen = 0;
-	file.read(reinterpret_cast<char*>(&d04), 4);
-	file.read(reinterpret_cast<char*>(&hlen), 4);
+	if (!readBytes(file, &d04, 4) || !readBytes(file, &hlen, 4))
+		return false;
 
 	if (hlen < 124)
-		throw PS2SaveError("CodeBreaker header too short");
+		return m_error.Fail("CodeBreaker header too short");
 
-	std::vector<uint8_t> header = readFixed(file, hlen - 12);
+	std::vector<uint8_t> header;
+	if (!readFixed(file, hlen - 12, header))
+		return false;
 
 	uint32_t dlen = 0, flen = 0;
 	std::memcpy(&dlen, header.data() + 0, 4);
@@ -548,10 +596,12 @@ void PS2SaveFile::Impl::loadCodeBreaker(std::ifstream& file)
 	}
 	if (body_len != flen && body_len != flen - hlen)
 	{
-		throw PS2SaveError("Unexpected EOF");
+		return m_error.Fail("Unexpected EOF");
 	}
 
-	auto body = readFixed(file, body_len);
+	std::vector<uint8_t> body;
+	if (!readFixed(file, body_len, body))
+		return false;
 
 	std::vector<uint8_t> rc4_key(std::begin(PS2SAVE_CBS_RC4S), std::end(PS2SAVE_CBS_RC4S));
 	auto decrypted = rc4_crypt(rc4_key, body);
@@ -565,7 +615,7 @@ void PS2SaveFile::Impl::loadCodeBreaker(std::ifstream& file)
 
 	if (inflateInit(&stream) != Z_OK || inflate(&stream, Z_FINISH) != Z_STREAM_END)
 	{
-		throw PS2SaveError("CodeBreaker zlib decompress failed");
+		return m_error.Fail("CodeBreaker zlib decompress failed");
 	}
 	inflateEnd(&stream);
 
@@ -599,7 +649,7 @@ void PS2SaveFile::Impl::loadCodeBreaker(std::ifstream& file)
 
 		if (!(fmode & DF_FILE))
 		{
-			throw PS2SaveError("Non-file in CodeBreaker save");
+			return m_error.Fail("Non-file in CodeBreaker save");
 		}
 
 		std::vector<uint8_t> fdata(decompressed.begin() + off, decompressed.begin() + off + fsize);
@@ -617,63 +667,80 @@ void PS2SaveFile::Impl::loadCodeBreaker(std::ifstream& file)
 
 	title = zeroTerminate(std::string(dirname, 32));
 	format = SaveFormat::CODEBREAKER;
+	return true;
 }
 
-void PS2SaveFile::Impl::loadPsv(std::ifstream& file)
+bool PS2SaveFile::Impl::loadPsv(std::ifstream& file)
 {
-	auto magic_data = readFixed(file, 4);
+	std::vector<uint8_t> magic_data;
+	if (!readFixed(file, 4, magic_data))
+		return false;
 	if (std::memcmp(magic_data.data(), PS2SAVE_PSV_MAGIC, 4) != 0)
 	{
-		throw PS2SaveError("Not a PSV file");
+		return m_error.Fail("Not a PSV file");
 	}
 
 	uint32_t version = 0, next_section_size = 0, savetype = 0;
-	file.read(reinterpret_cast<char*>(&version), 4);
-	readFixed(file, 40); // signature
-	readFixed(file, 8); // reserved
-	file.read(reinterpret_cast<char*>(&next_section_size), 4);
-	file.read(reinterpret_cast<char*>(&savetype), 4);
+	if (!readBytes(file, &version, 4))
+		return false;
+	std::vector<uint8_t> unused;
+	if (!readFixed(file, 40, unused)) // signature
+		return false;
+	if (!readFixed(file, 8, unused)) // reserved
+		return false;
+	if (!readBytes(file, &next_section_size, 4))
+		return false;
+	if (!readBytes(file, &savetype, 4))
+		return false;
 
 	if (version != 0)
 	{
-		throw PS2SaveError("Unsupported PSV version");
+		return m_error.Fail("Unsupported PSV version");
 	}
 
 	if (savetype != 2 && savetype != 1)
 	{
-		throw PS2SaveError("Unsupported PSV save type");
+		return m_error.Fail("Unsupported PSV save type");
 	}
 
 	if (savetype == 2)
 	{
-		uint32_t unused, sys_pos, sys_size;
+		uint32_t unused_field, sys_pos, sys_size;
 		uint32_t icon1_pos, icon1_size, icon2_pos, icon2_size;
 		uint32_t icon3_pos, icon3_size, files_count;
 
-		file.read(reinterpret_cast<char*>(&unused), 4);
-		file.read(reinterpret_cast<char*>(&sys_pos), 4);
-		file.read(reinterpret_cast<char*>(&sys_size), 4);
-		file.read(reinterpret_cast<char*>(&icon1_pos), 4);
-		file.read(reinterpret_cast<char*>(&icon1_size), 4);
-		file.read(reinterpret_cast<char*>(&icon2_pos), 4);
-		file.read(reinterpret_cast<char*>(&icon2_size), 4);
-		file.read(reinterpret_cast<char*>(&icon3_pos), 4);
-		file.read(reinterpret_cast<char*>(&icon3_size), 4);
-		file.read(reinterpret_cast<char*>(&files_count), 4);
+		if (!readBytes(file, &unused_field, 4) ||
+			!readBytes(file, &sys_pos, 4) ||
+			!readBytes(file, &sys_size, 4) ||
+			!readBytes(file, &icon1_pos, 4) ||
+			!readBytes(file, &icon1_size, 4) ||
+			!readBytes(file, &icon2_pos, 4) ||
+			!readBytes(file, &icon2_size, 4) ||
+			!readBytes(file, &icon3_pos, 4) ||
+			!readBytes(file, &icon3_size, 4) ||
+			!readBytes(file, &files_count, 4))
+		{
+			return false;
+		}
 
-		auto root_created_data = readFixed(file, 8);
-		auto root_modified_data = readFixed(file, 8);
+		std::vector<uint8_t> root_created_data;
+		if (!readFixed(file, 8, root_created_data))
+			return false;
+		std::vector<uint8_t> root_modified_data;
+		if (!readFixed(file, 8, root_modified_data))
+			return false;
 		uint32_t root_size = 0;
 		uint32_t root_mode = 0;
-		file.read(reinterpret_cast<char*>(&root_size), 4);
-		file.read(reinterpret_cast<char*>(&root_mode), 4);
+		if (!readBytes(file, &root_size, 4) || !readBytes(file, &root_mode, 4))
+			return false;
 
 		std::vector<uint8_t> root_filename(32);
-		file.read(reinterpret_cast<char*>(root_filename.data()), 32);
+		if (!readBytes(file, root_filename.data(), 32))
+			return false;
 
 		if (!(root_mode & DF_DIR))
 		{
-			throw PS2SaveError("PSV root is not a directory");
+			return m_error.Fail("PSV root is not a directory");
 		}
 
 		title = zeroTerminate(std::string(reinterpret_cast<const char*>(root_filename.data()), 32));
@@ -684,18 +751,24 @@ void PS2SaveFile::Impl::loadPsv(std::ifstream& file)
 		std::vector<std::pair<uint32_t, PS2McDirEntry>> file_list;
 		for (uint32_t i = 0; i < files_count; ++i)
 		{
-			auto file_created_data = readFixed(file, 8);
-			auto file_modified_data = readFixed(file, 8);
+			std::vector<uint8_t> file_created_data;
+			if (!readFixed(file, 8, file_created_data))
+				return false;
+			std::vector<uint8_t> file_modified_data;
+			if (!readFixed(file, 8, file_modified_data))
+				return false;
 			uint32_t file_size = 0;
 			uint32_t file_mode = 0;
-			file.read(reinterpret_cast<char*>(&file_size), 4);
-			file.read(reinterpret_cast<char*>(&file_mode), 4);
+			if (!readBytes(file, &file_size, 4) || !readBytes(file, &file_mode, 4))
+				return false;
 
 			std::vector<uint8_t> filename_buf(32);
-			file.read(reinterpret_cast<char*>(filename_buf.data()), 32);
+			if (!readBytes(file, filename_buf.data(), 32))
+				return false;
 
 			uint32_t file_offset = 0;
-			file.read(reinterpret_cast<char*>(&file_offset), 4);
+			if (!readBytes(file, &file_offset, 4))
+				return false;
 
 			PS2McDirEntry ent;
 			ent.mode = static_cast<uint16_t>(file_mode | DF_EXISTS);
@@ -713,22 +786,28 @@ void PS2SaveFile::Impl::loadPsv(std::ifstream& file)
 		for (const auto& [offset, ent] : file_list)
 		{
 			file.seekg(offset);
-			auto fdata = readFixed(file, ent.length);
+			std::vector<uint8_t> fdata;
+			if (!readFixed(file, ent.length, fdata))
+				return false;
 			entries.push_back({ent, std::move(fdata)});
 		}
 	}
 	else
 	{
 		uint32_t save_size = 0, save_offset = 0;
-		file.read(reinterpret_cast<char*>(&save_size), 4);
-		file.read(reinterpret_cast<char*>(&save_offset), 4);
-		readFixed(file, 20); // reserved
+		if (!readBytes(file, &save_size, 4) || !readBytes(file, &save_offset, 4))
+			return false;
+		if (!readFixed(file, 20, unused)) // reserved
+			return false;
 		uint32_t unused_next = 0;
-		file.read(reinterpret_cast<char*>(&unused_next), 4);
-		readFixed(file, 4); // reserved
+		if (!readBytes(file, &unused_next, 4))
+			return false;
+		if (!readFixed(file, 4, unused)) // reserved
+			return false;
 
 		std::vector<uint8_t> prod_code(20);
-		file.read(reinterpret_cast<char*>(prod_code.data()), 20);
+		if (!readBytes(file, prod_code.data(), 20))
+			return false;
 
 		title = zeroTerminate(std::string(reinterpret_cast<const char*>(prod_code.data()), 20));
 
@@ -742,14 +821,17 @@ void PS2SaveFile::Impl::loadPsv(std::ifstream& file)
 		ent.created = ent.modified = timeToTod(std::time(nullptr));
 
 		file.seekg(save_offset);
-		auto fdata = readFixed(file, save_size);
+		std::vector<uint8_t> fdata;
+		if (!readFixed(file, save_size, fdata))
+			return false;
 		entries.push_back({ent, std::move(fdata)});
 	}
 
 	format = SaveFormat::PSV;
+	return true;
 }
 
-void PS2SaveFile::Impl::saveMaxDrive(std::ofstream& file)
+bool PS2SaveFile::Impl::saveMaxDrive(std::ofstream& file)
 {
 	std::vector<uint8_t> blob;
 	const bool hasDirHeader = !entries.empty() && (entries[0].dirEntry.mode & DF_DIR);
@@ -800,19 +882,26 @@ void PS2SaveFile::Impl::saveMaxDrive(std::ofstream& file)
 	file.write(reinterpret_cast<const char*>(&length), 4);
 	file.write(reinterpret_cast<const char*>(compressed.data()), compressed.size());
 	file.flush();
+	if (!file)
+		return m_error.Fail("Failed to write MAX save");
+	return true;
 }
 
-void PS2SaveFile::Impl::loadEms(std::ifstream& file)
+bool PS2SaveFile::Impl::loadEms(std::ifstream& file)
 {
-	auto direntRaw = readFixed(file, PS2MC_DIRENT_LENGTH);
-	auto dotRaw = readFixed(file, PS2MC_DIRENT_LENGTH);
-	auto dotdotRaw = readFixed(file, PS2MC_DIRENT_LENGTH);
+	std::vector<uint8_t> direntRaw, dotRaw, dotdotRaw;
+	if (!readFixed(file, PS2MC_DIRENT_LENGTH, direntRaw) ||
+		!readFixed(file, PS2MC_DIRENT_LENGTH, dotRaw) ||
+		!readFixed(file, PS2MC_DIRENT_LENGTH, dotdotRaw))
+	{
+		return false;
+	}
 	auto dirent = unpackDirEntry(direntRaw);
 	auto dotent = unpackDirEntry(dotRaw);
 	auto dotdot = unpackDirEntry(dotdotRaw);
 	if (!modeIsDir(dirent.mode) || !modeIsDir(dotent.mode) || !modeIsDir(dotdot.mode) || dirent.length < 2)
 	{
-		throw PS2SaveError("Not a valid PSU file");
+		return m_error.Fail("Not a valid PSU file");
 	}
 	uint32_t fileCount = dirent.length - 2;
 	entries.clear();
@@ -823,7 +912,9 @@ void PS2SaveFile::Impl::loadEms(std::ifstream& file)
 	entries.push_back(std::move(dirSlot));
 	for (uint32_t i = 0; i < fileCount; ++i)
 	{
-		auto entRaw = readFixed(file, PS2MC_DIRENT_LENGTH);
+		std::vector<uint8_t> entRaw;
+		if (!readFixed(file, PS2MC_DIRENT_LENGTH, entRaw))
+			return false;
 		auto ent = unpackDirEntry(entRaw);
 		if (!modeIsFile(ent.mode))
 		{
@@ -831,17 +922,24 @@ void PS2SaveFile::Impl::loadEms(std::ifstream& file)
 			Logger::warn("Skipping subdir (entry {}): {}", i, name);
 			continue;
 		}
-		auto data = readFixed(file, ent.length);
+		std::vector<uint8_t> data;
+		if (!readFixed(file, ent.length, data))
+			return false;
 		size_t pad = roundUp(static_cast<int>(ent.length), 1024) - ent.length;
 		if (pad)
-			readFixed(file, pad);
+		{
+			std::vector<uint8_t> padData;
+			if (!readFixed(file, pad, padData))
+				return false;
+		}
 		entries.push_back({ent, std::move(data)});
 	}
 	format = SaveFormat::EMS;
 	title = dirent.name;
+	return true;
 }
 
-void PS2SaveFile::Impl::saveEms(std::ofstream& file)
+bool PS2SaveFile::Impl::saveEms(std::ofstream& file)
 {
 	const bool hasDirHeader = !entries.empty() && (entries[0].dirEntry.mode & DF_DIR);
 	const size_t numFiles = hasDirHeader ? entries.size() - 1 : entries.size();
@@ -885,6 +983,9 @@ void PS2SaveFile::Impl::saveEms(std::ofstream& file)
 		}
 	}
 	file.flush();
+	if (!file)
+		return m_error.Fail("Failed to write PSU save");
+	return true;
 }
 
 std::string sjisToUtf8(const std::string& sjis)
