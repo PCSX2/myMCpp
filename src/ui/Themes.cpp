@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "Themes.h"
-#include "Config.h"
+#include "common/Config.h"
 
 #include <QtGui/QPalette>
 #include <QtGui/QPixmapCache>

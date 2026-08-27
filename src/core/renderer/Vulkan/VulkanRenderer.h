@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "../Renderer.h"
-#include "WindowInfo.h"
-#include "../Common/RendererCommon.h"
+#include "core/renderer/Renderer.h"
+#include "core/renderer/Common/RendererCommon.h"
+#include "common/WindowInfo.h"
 #include "VulkanDevice.h"
 #include "VulkanSwapchain.h"
 #include "VulkanPipeline.h"

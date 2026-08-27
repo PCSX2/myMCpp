@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <vector>
 #include <string>
-#include "../../../common/Error.h"
+#include "common/Error.h"
 
 struct WindowInfo;
 

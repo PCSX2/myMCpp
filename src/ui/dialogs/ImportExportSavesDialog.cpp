@@ -3,7 +3,7 @@
 
 #include "ImportExportSavesDialog.h"
 #include "ui_ImportExportSavesDialog.h"
-#include "PS2SaveFile.h"
+#include "core/formats/PS2SaveFile.h"
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QHeaderView>

@@ -4,7 +4,7 @@
 #pragma once
 
 #include "PS2McDir.h"
-#include "Error.h"
+#include "common/Error.h"
 #include <string>
 #include <vector>
 #include <memory>

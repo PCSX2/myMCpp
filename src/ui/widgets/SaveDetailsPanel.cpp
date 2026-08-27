@@ -3,11 +3,13 @@
 
 #include "SaveDetailsPanel.h"
 #include "IconWidget.h"
-#include "Config.h"
-#include <QStyle>
-#include "PS2MemoryCard.h"
-#include "PS2IconSys.h"
 #include "TranslationManager.h"
+
+#include "core/formats/PS2MemoryCard.h"
+#include "core/formats/PS2IconSys.h"
+
+#include "common/Config.h"
+#include <QStyle>
 
 SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)
 	: QWidget(parent)

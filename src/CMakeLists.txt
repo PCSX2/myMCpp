@@ -17,6 +17,10 @@ target_link_libraries(myMCpp PRIVATE
     myMCpp-cli
 )
 
+target_include_directories(myMCpp PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 # Took inspiration from https://github.com/PCSX2/pcsx2/blob/master/pcsx2-qt/CMakeLists.txt for the translation generation
 file(GLOB TS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/ui/Translations/myMCpp_*.ts")
 

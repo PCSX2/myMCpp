@@ -21,6 +21,10 @@ set(ZLIB_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(SKIP_BUILD_EXAMPLES ON CACHE BOOL "" FORCE)
 add_subdirectory(zlib)
 
+# glad
+add_library(glad INTERFACE)
+target_include_directories(glad INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/glad/include)
+
 # glm
 add_subdirectory(glm)
 

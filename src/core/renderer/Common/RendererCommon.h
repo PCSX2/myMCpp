@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "../Renderer.h"
+#include "core/renderer/Renderer.h"
 #include <glm/glm.hpp>
 #include <array>
 #include <vector>

@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "VulkanRenderer.h"
-#include "PS2Icon.h"
-#include "PS2IconSys.h"
-#include "Logger.h"
-#include "../../../common/Config.h"
+#include "core/formats/PS2Icon.h"
+#include "core/formats/PS2IconSys.h"
+#include "common/Logger.h"
+#include "common/Config.h"
 #include <vk_mem_alloc.h>
 #include <cstring>
 #include <algorithm>
@@ -18,7 +18,7 @@
 #endif
 
 #ifdef __APPLE__
-#include "CocoaTools.h"
+#include "common/CocoaTools.h"
 #endif
 
 VulkanRenderer::VulkanRenderer(const WindowInfo& windowInfo, Config* config)

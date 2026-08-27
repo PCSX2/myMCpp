@@ -74,7 +74,7 @@ endif()
 
 target_include_directories(myMCpp-core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/formats
+    ${CMAKE_SOURCE_DIR}/src
 )
 
 target_link_libraries(myMCpp-core PUBLIC
@@ -82,13 +82,8 @@ target_link_libraries(myMCpp-core PUBLIC
     nlohmann_json::nlohmann_json
     OpenGL::GL
     glfw
-)
-
-target_include_directories(myMCpp-core PUBLIC
-    ${glm_SOURCE_DIR}
-    ${glfw_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/3rdparty/glad/include
-    ${CMAKE_SOURCE_DIR}/3rdparty/glslang
+    glm::glm
+    glad
 )
 
 target_sources(myMCpp-core PRIVATE

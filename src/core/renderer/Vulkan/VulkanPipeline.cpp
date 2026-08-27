@@ -6,8 +6,8 @@
 #include <array>
 #include <fstream>
 #include <sstream>
-#include "Logger.h"
-#include "ResourcePath.h"
+#include "common/Logger.h"
+#include "common/ResourcePath.h"
 #include <vector>
 
 #include <glslang/Public/ShaderLang.h>

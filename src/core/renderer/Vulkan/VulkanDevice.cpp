@@ -4,23 +4,23 @@
 #define VMA_IMPLEMENTATION
 #include <vk_mem_alloc.h>
 #include "VulkanDevice.h"
-#include "WindowInfo.h"
+#include "common/WindowInfo.h"
 
 #if defined(_WIN32)
 #include <windows.h>
 #include <vulkan/vulkan_win32.h>
 #elif defined(__APPLE__)
 #include <vulkan/vulkan_metal.h>
-#include "CocoaTools.h"
+#include "common/CocoaTools.h"
 #elif defined(__linux__)
-#include "../Renderer.h"
+#include "core/renderer/Renderer.h"
 #include <X11/Xlib.h>
 #include <vulkan/vulkan_xlib.h>
 #include <wayland-client.h>
 #include <vulkan/vulkan_wayland.h>
 #endif
 
-#include "Logger.h"
+#include "common/Logger.h"
 
 #ifndef NDEBUG
 static VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,

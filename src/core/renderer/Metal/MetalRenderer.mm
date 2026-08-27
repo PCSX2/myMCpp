@@ -5,10 +5,10 @@
 #include "MetalDevice.h"
 #include "MetalPipeline.h"
 #include "MetalResources.h"
-#include "Logger.h"
-#include "CocoaTools.h"
-#include "../../../common/Config.h"
-#include "PS2Icon.h"
+#include "common/Logger.h"
+#include "common/CocoaTools.h"
+#include "common/Config.h"
+#include "core/formats/PS2Icon.h"
 
 #import <Metal/Metal.h>
 #import <QuartzCore/CAMetalLayer.h>

@@ -38,7 +38,7 @@ call "$(SolutionDir)scripts\generate_svnrev.cmd" "$(SolutionDir)" "$(SolutionDir
     </PreBuildEvent>
     <ClCompile>
       <PreprocessorDefinitions>_LIB;UTF8PROC_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\core;$(SolutionDir)build\$(Platform)\$(Configuration)\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..;$(ProjectDir);$(SolutionDir)build\$(Platform)\$(Configuration)\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
 

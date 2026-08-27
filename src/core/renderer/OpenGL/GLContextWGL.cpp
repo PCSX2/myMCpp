@@ -15,8 +15,8 @@
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-#include "Logger.h"
-#include "../../../common/Error.h"
+#include "common/Logger.h"
+#include "common/Error.h"
 #include <cstring>
 
 extern "C" {

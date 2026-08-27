@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "DiscordRPCManager.h"
-#include "Logger.h"
+#include "common/Logger.h"
 
 #include <discord_rpc.h>
 #include <QDateTime>

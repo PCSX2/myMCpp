@@ -3,10 +3,10 @@
 // PS2 icon parsing is adapted from mymc++ / mymc icon handling and community PS2 icon format documentation.
 
 #include "PS2Icon.h"
+#include "common/Logger.h"
 #include <cstring>
 #include <stdexcept>
 #include <algorithm>
-#include "Logger.h"
 
 namespace PS2Icon
 {

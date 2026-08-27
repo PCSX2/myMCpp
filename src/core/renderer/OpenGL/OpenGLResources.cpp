@@ -11,7 +11,7 @@
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-#include "Logger.h"
+#include "common/Logger.h"
 
 OpenGLResources::OpenGLResources() = default;
 

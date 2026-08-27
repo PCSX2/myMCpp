@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "MetalResources.h"
-#include "../Common/RendererCommon.h"
+#include "core/renderer/Common/RendererCommon.h"
 
 namespace
 {

@@ -4,9 +4,12 @@
 #include "GraphicsSettingsWidget.h"
 #include "SettingsWindow.h"
 #include "ui_GraphicsSettingsWidget.h"
-#include "Config.h"
+
 #include "TranslationManager.h"
-#include "../../core/renderer/Renderer.h"
+
+#include "core/renderer/Renderer.h"
+
+#include "common/Config.h"
 
 GraphicsSettingsWidget::GraphicsSettingsWidget(SettingsWindow* dialog, QWidget* parent)
 	: SettingsWidget(dialog, parent)

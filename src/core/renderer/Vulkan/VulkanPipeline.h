@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <vector>
-#include "../../../common/Error.h"
+#include "common/Error.h"
 
 class VulkanDevice;
 class VulkanSwapchain;

@@ -10,7 +10,7 @@
 #import <OpenGL/OpenGL.h>
 #include <dlfcn.h>
 
-#include "Logger.h"
+#include "common/Logger.h"
 
 GLContextAGL::GLContextAGL(const WindowInfo& windowInfo)
 	: GLContext(windowInfo)

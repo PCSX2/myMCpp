@@ -4,8 +4,10 @@
 #include "FilesSettingsWidget.h"
 #include "SettingsWindow.h"
 #include "ui_FilesSettingsWidget.h"
-#include "Config.h"
+
 #include "QtUtils.h"
+
+#include "common/Config.h"
 #include <QFileDialog>
 
 FilesSettingsWidget::FilesSettingsWidget(SettingsWindow* dialog, QWidget* parent)

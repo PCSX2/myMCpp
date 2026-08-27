@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <array>
 #include <vector>
-#include "../../../common/Error.h"
+#include "common/Error.h"
 
 class VulkanDevice;
 struct VulkanBGVertex;

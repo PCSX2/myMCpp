@@ -4,7 +4,8 @@
 #include "AdvancedSettingsWidget.h"
 #include "SettingsWindow.h"
 #include "ui_AdvancedSettingsWidget.h"
-#include "Config.h"
+
+#include "common/Config.h"
 #include <QFileDialog>
 #include <QMessageBox>
 
