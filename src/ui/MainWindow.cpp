@@ -2,22 +2,26 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "MainWindow.h"
-#include "MemoryCardBrowser.h"
-#include "SaveDetailsPanel.h"
-#include "IconWidget.h"
 #include "CardActionHandler.h"
-#include "NewCardDialog.h"
-#include "dialogs/AboutDialog.h"
-#include "dialogs/ImportExportSavesDialog.h"
-#include "PS2MemoryCard.h"
-#include "PS2SaveFile.h"
-#include "Settings/SettingsWindow.h"
 #include "DiscordRPCManager.h"
-#include "Config.h"
 #include "Themes.h"
-#include "version.h"
-#include "BuildVersion.h"
+#include "TranslationManager.h"
 #include "QtUtils.h"
+#include "widgets/MemoryCardBrowser.h"
+#include "widgets/SaveDetailsPanel.h"
+#include "widgets/IconWidget.h"
+#include "dialogs/AboutDialog.h"
+#include "dialogs/NewCardDialog.h"
+#include "dialogs/ImportExportSavesDialog.h"
+#include "Settings/SettingsWindow.h"
+
+#include "core/formats/PS2MemoryCard.h"
+#include "core/formats/PS2SaveFile.h"
+
+#include "common/Config.h"
+#include "common/version.h"
+#include "common/BuildVersion.h"
+
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>

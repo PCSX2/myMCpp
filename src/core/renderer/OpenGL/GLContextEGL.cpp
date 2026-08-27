@@ -8,8 +8,8 @@
 #include <EGL/egl.h>
 #include <wayland-egl.h>
 #include <wayland-client.h>
-#include "Logger.h"
-#include "../../../common/Error.h"
+#include "common/Logger.h"
+#include "common/Error.h"
 #include <cstring>
 
 GLContextEGL::GLContextEGL(const WindowInfo& windowInfo)

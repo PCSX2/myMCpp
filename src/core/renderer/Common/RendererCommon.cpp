@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "RendererCommon.h"
-#include "PS2Icon.h"
-#include "PS2IconSys.h"
+#include "core/formats/PS2Icon.h"
+#include "core/formats/PS2IconSys.h"
+#include "common/Logger.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include "Logger.h"
 #include <cmath>
 
 LightingState::LightingState()

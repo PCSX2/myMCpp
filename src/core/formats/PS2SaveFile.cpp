@@ -3,10 +3,10 @@
 // PS2 save container handling (MAX/EMS/SharkPort/CodeBreaker/PSV) follows the mymc++ / mymc implementations and PS2 save format documentation.
 
 #include "PS2SaveFile.h"
-#include "Logger.h"
-#include "round.h"
-#include "lzari.h"
-#include "sjis.h"
+#include "common/Logger.h"
+#include "common/round.h"
+#include "common/lzari.h"
+#include "common/sjis.h"
 #include <fstream>
 #include <cstring>
 #include <algorithm>

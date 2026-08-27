@@ -3,9 +3,9 @@
 
 #include "AboutDialog.h"
 #include "ui_AboutDialog.h"
-#include "ResourcePath.h"
-#include "version.h"
-#include "BuildVersion.h"
+#include "common/ResourcePath.h"
+#include "common/version.h"
+#include "common/BuildVersion.h"
 #include <QDesktopServices>
 #include <QTextBrowser>
 #include <QDialogButtonBox>

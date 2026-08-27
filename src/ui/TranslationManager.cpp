@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "TranslationManager.h"
-#include "Config.h"
-#include "Logger.h"
+#include "common/Config.h"
+#include "common/Logger.h"
 
 #include <QApplication>
 #include <QDir>

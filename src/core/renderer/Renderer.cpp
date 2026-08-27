@@ -10,7 +10,7 @@
 #if defined(__APPLE__)
 #include "Metal/MetalRenderer.h"
 #endif
-#include "../../common/Config.h"
+#include "common/Config.h"
 
 std::vector<Renderer*> RendererFactory::s_activeRenderers;
 

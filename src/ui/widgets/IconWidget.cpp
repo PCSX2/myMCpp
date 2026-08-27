@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "IconWidget.h"
-#include "Config.h"
-#include "../../common/Logger.h"
-#include "../../common/Error.h"
-#include "../common/WindowInfo.h"
+#include "common/Config.h"
+#include "common/Logger.h"
+#include "common/Error.h"
+#include "common/WindowInfo.h"
 #include <QResizeEvent>
 #include <QMouseEvent>
 #include <QWheelEvent>

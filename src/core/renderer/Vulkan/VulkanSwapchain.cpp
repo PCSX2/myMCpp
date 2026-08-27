@@ -8,7 +8,7 @@
 
 #include <algorithm>
 #include <array>
-#include "Logger.h"
+#include "common/Logger.h"
 
 VulkanSwapchain::VulkanSwapchain() = default;
 

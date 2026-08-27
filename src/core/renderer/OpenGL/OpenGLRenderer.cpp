@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
-#include "Logger.h"
+#include "common/Logger.h"
 #include <sstream>
 #include <chrono>
 #include <cstdint>
@@ -20,10 +20,10 @@
 #pragma clang diagnostic pop
 #endif
 #include "OpenGLRenderer.h"
-#include "../../../common/Error.h"
-#include "PS2IconSys.h"
-#include "PS2Icon.h"
-#include "../../../common/Config.h"
+#include "core/formats/PS2IconSys.h"
+#include "core/formats/PS2Icon.h"
+#include "common/Error.h"
+#include "common/Config.h"
 
 namespace fs = std::filesystem;
 

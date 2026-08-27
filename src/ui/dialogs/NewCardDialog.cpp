@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "NewCardDialog.h"
-#include "PS2MemoryCard.h"
+#include "core/formats/PS2MemoryCard.h"
 #include <QIcon>
 #include <QPushButton>
 #include <QSignalBlocker>

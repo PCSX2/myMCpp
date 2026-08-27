@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "QtMain.h"
-
-#include "Config.h"
 #include "MainWindow.h"
 #include "TranslationManager.h"
-#include "ResourcePath.h"
-#include "version.h"
-#include "Logger.h"
+
+#include "common/Config.h"
+#include "common/ResourcePath.h"
+#include "common/version.h"
+#include "common/Logger.h"
 
 #include <QCoreApplication>
 #include <QLibraryInfo>
 
 #if defined(__APPLE__)
-#include "CocoaTools.h"
+#include "common/CocoaTools.h"
 #endif
 
 namespace fs = std::filesystem;

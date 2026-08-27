@@ -4,8 +4,10 @@
 #include "GeneralSettingsWidget.h"
 #include "SettingsWindow.h"
 #include "ui_GeneralSettingsWidget.h"
-#include "Config.h"
+
 #include "TranslationManager.h"
+
+#include "common/Config.h"
 
 GeneralSettingsWidget::GeneralSettingsWidget(SettingsWindow* dialog, QWidget* parent)
 	: SettingsWidget(dialog, parent)

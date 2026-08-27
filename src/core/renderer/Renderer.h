@@ -7,8 +7,8 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include "../../common/Error.h"
-#include "WindowInfo.h"
+#include "common/Error.h"
+#include "common/WindowInfo.h"
 
 class Config;
 

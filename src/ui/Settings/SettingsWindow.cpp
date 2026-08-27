@@ -2,16 +2,16 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "SettingsWindow.h"
-#include "Config.h"
-#include "Logger.h"
-#include "Themes.h"
-#include "TranslationManager.h"
 #include "ui_SettingsWindow.h"
-
 #include "GeneralSettingsWidget.h"
 #include "GraphicsSettingsWidget.h"
 #include "FilesSettingsWidget.h"
 #include "AdvancedSettingsWidget.h"
+
+#include "Themes.h"
+#include "TranslationManager.h"
+
+#include "common/Config.h"
 
 #include <QTimer>
 #include <QEvent>

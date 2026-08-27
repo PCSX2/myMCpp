@@ -3,7 +3,7 @@
 // icon.sys structure decoding is based on mymc++ / mymc and public docs such as PS2 Save Tools and Martin Åkesson’s PS2 icon format notes.
 
 #include "PS2IconSys.h"
-#include "sjis.h"
+#include "common/sjis.h"
 #include <cstring>
 
 class PS2IconSys::Impl

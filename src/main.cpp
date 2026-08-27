@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
-#include "ps2mc_cli.h"
-#include "Config.h"
-#include "version.h"
-#include "BuildVersion.h"
-#include "QtMain.h"
+#include "cli/PS2McCommandLine.h"
+#include "common/Config.h"
+#include "common/version.h"
+#include "common/BuildVersion.h"
+#include "common/Logger.h"
+#include "ui/QtMain.h"
 #include <filesystem>
-#include "Logger.h"
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>

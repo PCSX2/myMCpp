@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "Config.h"
-#include <fstream>
 #include "Logger.h"
+#include <fstream>
 
 Config::Config()
 {

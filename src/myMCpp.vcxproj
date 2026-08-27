@@ -35,7 +35,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)core;$(ProjectDir)core\formats;$(ProjectDir)common;$(ProjectDir)cli;$(ProjectDir)ui;$(SolutionDir)build\$(Platform)\$(Configuration)\generated;$(SolutionDir)build\$(Platform)\$(Configuration)\obj\myMCpp-qt\qt\uic;$(Qt_INCLUDEPATH_);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)build\$(Platform)\$(Configuration)\generated;$(SolutionDir)build\$(Platform)\$(Configuration)\obj\myMCpp-qt\qt\uic;$(Qt_INCLUDEPATH_);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

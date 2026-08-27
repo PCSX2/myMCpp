@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0+
 // PS2 memory card layout and algorithms adapted from mymc++ / mymc (Florian Märkl, Ross Ridge) and public PS2 save format documentation.
 
-#include "Logger.h"
 #include "PS2MemoryCard.h"
 #include "PS2McEcc.h"
 #include "PS2McDir.h"
 #include "PS2IconSys.h"
 #include "PS2SaveFile.h"
-#include "sjis.h"
-#include "round.h"
+#include "common/Logger.h"
+#include "common/sjis.h"
+#include "common/round.h"
 #include <fstream>
 #include <cstring>
 #include <vector>

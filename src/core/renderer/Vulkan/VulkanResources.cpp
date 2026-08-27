@@ -6,7 +6,7 @@
 #include "VulkanPipeline.h"
 
 #include <cstring>
-#include "Logger.h"
+#include "common/Logger.h"
 
 VulkanResources::VulkanResources() = default;
 

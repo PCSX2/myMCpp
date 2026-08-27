@@ -4,7 +4,7 @@
 #pragma once
 
 #include <Metal/Metal.h>
-#include "../../../common/Error.h"
+#include "common/Error.h"
 
 class MetalPipeline
 {

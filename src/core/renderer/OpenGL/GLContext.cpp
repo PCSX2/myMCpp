@@ -20,8 +20,8 @@
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-#include "../../../common/Error.h"
-#include "../../../common/Logger.h"
+#include "common/Error.h"
+#include "common/Logger.h"
 
 GLContext::GLContext(const WindowInfo& windowInfo)
 	: m_windowInfo(windowInfo)

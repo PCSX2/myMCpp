@@ -5,7 +5,7 @@
 
 #include <cstdint>
 #include <cstddef>
-#include "../../../common/Error.h"
+#include "common/Error.h"
 
 typedef unsigned int GLuint;
 typedef int GLint;

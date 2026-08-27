@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "WindowInfo.h"
+#include "common/WindowInfo.h"
 #include <cstdint>
 #include <memory>
 #include <string>
