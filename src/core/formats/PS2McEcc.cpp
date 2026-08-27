@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0+
 // ECC routines are a C++ version of the mymc++ / mymc ECC code and related public PS2 memory card ECC references.
 
-#include "ps2mc_ecc.h"
+#include "PS2McEcc.h"
 #include "round.h"
 #include <algorithm>
 
 namespace
 {
-	int popcount(uint32_t a)
+	int popCount(uint32_t a)
 	{
 		int count = 0;
 		while (a != 0)
@@ -19,7 +19,7 @@ namespace
 		return count;
 	}
 
-	int parityb(uint8_t a)
+	int parityB(uint8_t a)
 	{
 		a = (a ^ (a >> 1));
 		a = (a ^ (a >> 2));
@@ -32,7 +32,7 @@ namespace
 		std::array<uint8_t, 256> table;
 		for (int i = 0; i < 256; i++)
 		{
-			table[i] = static_cast<uint8_t>(parityb(static_cast<uint8_t>(i)));
+			table[i] = static_cast<uint8_t>(parityB(static_cast<uint8_t>(i)));
 		}
 		return table;
 	}
@@ -41,7 +41,7 @@ namespace
 	{
 		std::array<uint8_t, 256> masks;
 		const uint8_t cpmasks[] = {0x55, 0x33, 0x0F, 0x00, 0xAA, 0xCC, 0xF0};
-		auto parity_table = makeParityTable();
+		auto parityTableLocal = makeParityTable();
 
 		for (int b = 0; b < 256; b++)
 		{
@@ -49,7 +49,7 @@ namespace
 			for (int i = 0; i < 7; i++)
 			{
 				size_t idx = static_cast<size_t>(b & cpmasks[i]);
-				mask = static_cast<uint8_t>(mask | (static_cast<uint8_t>(parity_table[idx]) << i));
+				mask = static_cast<uint8_t>(mask | (static_cast<uint8_t>(parityTableLocal[idx]) << i));
 			}
 			masks[b] = mask;
 		}
@@ -62,23 +62,23 @@ namespace
 
 std::array<uint8_t, 3> eccCalculate(const std::vector<uint8_t>& data)
 {
-	uint8_t column_parity = 0x77;
-	uint8_t line_parity_0 = 0x7F;
-	uint8_t line_parity_1 = 0x7F;
+	uint8_t columnParity = 0x77;
+	uint8_t lineParity0 = 0x7F;
+	uint8_t lineParity1 = 0x7F;
 
-	size_t len = std::min(data.size(), size_t(128));
+	size_t len = std::min(data.size(), static_cast<size_t>(128));
 	for (size_t i = 0; i < len; i++)
 	{
 		uint8_t b = data[i];
-		column_parity ^= columnParityMasks[b];
+		columnParity ^= columnParityMasks[b];
 		if (parityTable[b])
 		{
-			line_parity_0 ^= ~i;
-			line_parity_1 ^= i;
+			lineParity0 ^= ~i;
+			lineParity1 ^= i;
 		}
 	}
 
-	return {column_parity, static_cast<uint8_t>(line_parity_0 & 0x7F), line_parity_1};
+	return {columnParity, static_cast<uint8_t>(lineParity0 & 0x7F), lineParity1};
 }
 
 int eccCheck(std::vector<uint8_t>& data, std::array<uint8_t, 3>& ecc)
@@ -90,24 +90,24 @@ int eccCheck(std::vector<uint8_t>& data, std::array<uint8_t, 3>& ecc)
 		return ECC_CHECK_OK;
 	}
 
-	uint8_t cp_diff = (computed[0] ^ ecc[0]) & 0x77;
-	uint8_t lp0_diff = (computed[1] ^ ecc[1]) & 0x7F;
-	uint8_t lp1_diff = (computed[2] ^ ecc[2]) & 0x7F;
+	uint8_t cpDiff = (computed[0] ^ ecc[0]) & 0x77;
+	uint8_t lp0Diff = (computed[1] ^ ecc[1]) & 0x7F;
+	uint8_t lp1Diff = (computed[2] ^ ecc[2]) & 0x7F;
 
-	uint8_t lp_comp = lp0_diff ^ lp1_diff;
-	uint8_t cp_comp = static_cast<uint8_t>((cp_diff >> 4) ^ (cp_diff & 0x07));
+	uint8_t lpComp = lp0Diff ^ lp1Diff;
+	uint8_t cpComp = static_cast<uint8_t>((cpDiff >> 4) ^ (cpDiff & 0x07));
 
-	if (lp_comp == 0x7F && cp_comp == 0x07)
+	if (lpComp == 0x7F && cpComp == 0x07)
 	{
-		if (lp1_diff < data.size())
+		if (lp1Diff < data.size())
 		{
-			data[lp1_diff] = static_cast<uint8_t>(data[lp1_diff] ^ (1u << (cp_diff >> 4)));
+			data[lp1Diff] = static_cast<uint8_t>(data[lp1Diff] ^ (1u << (cpDiff >> 4)));
 			ecc = eccCalculate(data);
 			return ECC_CHECK_CORRECTED;
 		}
 	}
 
-	if ((cp_diff == 0 && lp0_diff == 0 && lp1_diff == 0) || (popcount(lp_comp) + popcount(cp_comp) == 1))
+	if ((cpDiff == 0 && lp0Diff == 0 && lp1Diff == 0) || (popCount(lpComp) + popCount(cpComp) == 1))
 	{
 		ecc = computed;
 		return ECC_CHECK_CORRECTED;
@@ -124,9 +124,8 @@ std::vector<uint8_t> eccCalculatePage(const std::vector<uint8_t>& page, int page
 	for (int i = 0; i < numChunks; i++)
 	{
 		size_t offset = i * 128;
-		size_t len = std::min(size_t(128), page.size() - offset);
-		std::vector<uint8_t> chunk(page.begin() + offset,
-			page.begin() + offset + len);
+		size_t len = std::min(static_cast<size_t>(128), page.size() - offset);
+		std::vector<uint8_t> chunk(page.begin() + offset, page.begin() + offset + len);
 		if (chunk.size() < 128)
 		{
 			chunk.resize(128, 0);
@@ -147,9 +146,8 @@ int eccCheckPage(std::vector<uint8_t>& page, std::vector<uint8_t>& spare, int pa
 	for (int i = 0; i < numChunks; i++)
 	{
 		size_t offset = i * 128;
-		size_t len = std::min(size_t(128), page.size() - offset);
-		std::vector<uint8_t> chunk(page.begin() + offset,
-			page.begin() + offset + len);
+		size_t len = std::min(static_cast<size_t>(128), page.size() - offset);
+		std::vector<uint8_t> chunk(page.begin() + offset, page.begin() + offset + len);
 		if (chunk.size() < 128)
 		{
 			chunk.resize(128, 0);
@@ -161,13 +159,13 @@ int eccCheckPage(std::vector<uint8_t>& page, std::vector<uint8_t>& spare, int pa
 			std::copy(spare.begin() + i * 3, spare.begin() + i * 3 + 3, ecc.begin());
 		}
 
-		int check_result = eccCheck(chunk, ecc);
-		if (check_result != ECC_CHECK_OK)
+		int checkResult = eccCheck(chunk, ecc);
+		if (checkResult != ECC_CHECK_OK)
 		{
 			std::copy(chunk.begin(), chunk.begin() + len, page.begin() + offset);
 			std::copy(ecc.begin(), ecc.end(), spare.begin() + i * 3);
 
-			if (check_result == ECC_CHECK_FAILED)
+			if (checkResult == ECC_CHECK_FAILED)
 			{
 				result = ECC_CHECK_FAILED;
 			}

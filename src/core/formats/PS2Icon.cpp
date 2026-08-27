@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 // PS2 icon parsing is adapted from mymc++ / mymc icon handling and community PS2 icon format documentation.
 
-#include "ps2icon.h"
+#include "PS2Icon.h"
 #include <cstring>
 #include <stdexcept>
 #include <algorithm>
@@ -36,15 +36,15 @@ namespace PS2Icon
 	}
 
 	Icon::Icon()
-		: valid(false)
-		, animationShapes(0)
-		, textureFlags(0)
-		, vertexCount(0)
-		, frameLength(0)
-		, animSpeed(0.0f)
-		, playOffset(0)
-		, frameCount(0)
-		, enableAlpha(false)
+		: m_valid(false)
+		, m_animationShapes(0)
+		, m_textureFlags(0)
+		, m_vertexCount(0)
+		, m_frameLength(0)
+		, m_animSpeed(0.0f)
+		, m_playOffset(0)
+		, m_frameCount(0)
+		, m_enableAlpha(false)
 	{
 	}
 
@@ -59,8 +59,8 @@ namespace PS2Icon
 
 	bool Icon::load(const std::string& data)
 	{
-		valid = false;
-		errorMsg.clear();
+		m_valid = false;
+		m_errorMsg.clear();
 
 		const uint8_t* bytes = reinterpret_cast<const uint8_t*>(data.data());
 		size_t length = data.size();
@@ -84,7 +84,7 @@ namespace PS2Icon
 				Logger::warn("PS2Icon::load: Extra data at end of file ({} bytes)", length - offset);
 			}
 
-			valid = true;
+			m_valid = true;
 			return true;
 		}
 		catch (const std::exception& e)
@@ -103,54 +103,54 @@ namespace PS2Icon
 		}
 
 		uint32_t magic = readLE<uint32_t>(data, offset);
-		animationShapes = readLE<uint32_t>(data, offset + 4);
+		m_animationShapes = readLE<uint32_t>(data, offset + 4);
 		uint32_t texType = readLE<uint32_t>(data, offset + 8);
-		vertexCount = readLE<uint32_t>(data, offset + 16);
+		m_vertexCount = readLE<uint32_t>(data, offset + 16);
 
 		if (magic != ICON_MAGIC)
 		{
 			throw std::runtime_error("Invalid icon magic");
 		}
 
-		textureFlags = texType;
+		m_textureFlags = texType;
 
 		return offset + ICON_HDR_SIZE;
 	}
 
 	size_t Icon::loadVertexData(const uint8_t* data, size_t length, size_t offset)
 	{
-		size_t stride = VERTEX_COORDS_SIZE * animationShapes + NORMAL_UV_COLOR_SIZE;
+		size_t stride = VERTEX_COORDS_SIZE * m_animationShapes + NORMAL_UV_COLOR_SIZE;
 
-		if (length < offset + vertexCount * stride)
+		if (length < offset + m_vertexCount * stride)
 		{
 			throw std::runtime_error("Icon file too small for vertex data");
 		}
 
-		vertexData.resize(static_cast<size_t>(animationShapes) * vertexCount);
-		normalUVData.resize(vertexCount);
-		colorData.resize(vertexCount);
+		m_vertexData.resize(static_cast<size_t>(m_animationShapes) * m_vertexCount);
+		m_normalUVData.resize(m_vertexCount);
+		m_colorData.resize(m_vertexCount);
 
-		for (uint32_t i = 0; i < vertexCount; ++i)
+		for (uint32_t i = 0; i < m_vertexCount; ++i)
 		{
-			for (uint32_t s = 0; s < animationShapes; ++s)
+			for (uint32_t s = 0; s < m_animationShapes; ++s)
 			{
-				size_t vertexIdx = static_cast<size_t>(s) * vertexCount + i;
-				vertexData[vertexIdx].x = readLE<int16_t>(data, offset);
-				vertexData[vertexIdx].y = readLE<int16_t>(data, offset + 2);
-				vertexData[vertexIdx].z = readLE<int16_t>(data, offset + 4);
+				size_t vertexIdx = static_cast<size_t>(s) * m_vertexCount + i;
+				m_vertexData[vertexIdx].x = readLE<int16_t>(data, offset);
+				m_vertexData[vertexIdx].y = readLE<int16_t>(data, offset + 2);
+				m_vertexData[vertexIdx].z = readLE<int16_t>(data, offset + 4);
 				offset += VERTEX_COORDS_SIZE;
 			}
 
-			normalUVData[i].nx = readLE<int16_t>(data, offset);
-			normalUVData[i].ny = readLE<int16_t>(data, offset + 2);
-			normalUVData[i].nz = readLE<int16_t>(data, offset + 4);
-			normalUVData[i].u = readLE<int16_t>(data, offset + 8);
-			normalUVData[i].v = readLE<int16_t>(data, offset + 10);
+			m_normalUVData[i].nx = readLE<int16_t>(data, offset);
+			m_normalUVData[i].ny = readLE<int16_t>(data, offset + 2);
+			m_normalUVData[i].nz = readLE<int16_t>(data, offset + 4);
+			m_normalUVData[i].u = readLE<int16_t>(data, offset + 8);
+			m_normalUVData[i].v = readLE<int16_t>(data, offset + 10);
 
-			colorData[i].r = data[offset + 12];
-			colorData[i].g = data[offset + 13];
-			colorData[i].b = data[offset + 14];
-			colorData[i].a = data[offset + 15];
+			m_colorData[i].r = data[offset + 12];
+			m_colorData[i].g = data[offset + 13];
+			m_colorData[i].b = data[offset + 14];
+			m_colorData[i].a = data[offset + 15];
 
 			offset += NORMAL_UV_COLOR_SIZE;
 		}
@@ -166,13 +166,13 @@ namespace PS2Icon
 		}
 
 		uint32_t animIdTag = readLE<uint32_t>(data, offset);
-		frameLength = readLE<uint32_t>(data, offset + 4);
+		m_frameLength = readLE<uint32_t>(data, offset + 4);
 
 		uint32_t animSpeedBits = readLE<uint32_t>(data, offset + 8);
-		std::memcpy(&animSpeed, &animSpeedBits, sizeof(float));
+		std::memcpy(&m_animSpeed, &animSpeedBits, sizeof(float));
 
-		playOffset = readLE<uint32_t>(data, offset + 12);
-		frameCount = readLE<uint32_t>(data, offset + 16);
+		m_playOffset = readLE<uint32_t>(data, offset + 12);
+		m_frameCount = readLE<uint32_t>(data, offset + 16);
 
 		offset += ANIM_HDR_SIZE;
 
@@ -181,22 +181,20 @@ namespace PS2Icon
 			throw std::runtime_error("Invalid animation ID tag");
 		}
 
-
-		if (static_cast<size_t>(frameCount) > (length - offset) / FRAME_DATA_SIZE)
+		if (static_cast<size_t>(m_frameCount) > (length - offset) / FRAME_DATA_SIZE)
 		{
 			throw std::runtime_error("Icon file too small for animation frames");
 		}
 
-
-		frames.resize(frameCount);
+		m_frames.resize(m_frameCount);
 
 		uint32_t loadedFrames = 0;
 
-		for (uint32_t i = 0; i < frameCount; ++i)
+		for (uint32_t i = 0; i < m_frameCount; ++i)
 		{
 			if (length < offset + FRAME_DATA_SIZE)
 			{
-				Logger::warn("PS2Icon: EOF reached reading frame header {}/{}, stopping.", i, frameCount);
+				Logger::warn("PS2Icon: EOF reached reading frame header {}/{}, stopping.", i, m_frameCount);
 				break;
 			}
 
@@ -208,22 +206,22 @@ namespace PS2Icon
 			if (static_cast<size_t>(keyCount) > (length - (offset + FRAME_DATA_SIZE)) / FRAME_KEY_SIZE)
 			{
 				Logger::warn("PS2Icon: Invalid key count {} at frame {}/{} (avail bytes: {}). Truncating animation.",
-					keyCount, i, frameCount, length - (offset + FRAME_DATA_SIZE));
+					keyCount, i, m_frameCount, length - (offset + FRAME_DATA_SIZE));
 				break;
 			}
 
 			offset += FRAME_DATA_SIZE;
 
-			frames[i].shapeId = shapeId;
-			frames[i].keys.resize(keyCount);
+			m_frames[i].shapeId = shapeId;
+			m_frames[i].keys.resize(keyCount);
 
 			for (uint32_t k = 0; k < keyCount; ++k)
 			{
 				uint32_t timeBits = readLE<uint32_t>(data, offset);
 				uint32_t valueBits = readLE<uint32_t>(data, offset + 4);
 
-				std::memcpy(&frames[i].keys[k].time, &timeBits, sizeof(float));
-				std::memcpy(&frames[i].keys[k].value, &valueBits, sizeof(float));
+				std::memcpy(&m_frames[i].keys[k].time, &timeBits, sizeof(float));
+				std::memcpy(&m_frames[i].keys[k].value, &valueBits, sizeof(float));
 
 				offset += FRAME_KEY_SIZE;
 			}
@@ -231,10 +229,10 @@ namespace PS2Icon
 			loadedFrames++;
 		}
 
-		if (loadedFrames < frameCount)
+		if (loadedFrames < m_frameCount)
 		{
-			frames.resize(loadedFrames);
-			Logger::info("PS2Icon: Loaded {}/{} frames", loadedFrames, frameCount);
+			m_frames.resize(loadedFrames);
+			Logger::info("PS2Icon: Loaded {}/{} frames", loadedFrames, m_frameCount);
 		}
 
 		return offset;
@@ -246,23 +244,23 @@ namespace PS2Icon
 		const size_t texturePixelCount = static_cast<size_t>(TEXTURE_WIDTH) * static_cast<size_t>(TEXTURE_HEIGHT);
 
 		// Check if texture data exists (bit 2 = 0x04)
-		if (!(textureFlags & 0x04))
+		if (!(m_textureFlags & 0x04))
 		{
-			Logger::info("PS2Icon: No texture data (textureFlags=0x{:02X})", textureFlags);
-			texture.assign(texturePixelCount, DEFAULT_TEXEL);
+			Logger::info("PS2Icon: No texture data (textureFlags=0x{:02X})", m_textureFlags);
+			m_texture.assign(texturePixelCount, DEFAULT_TEXEL);
 			return offset;
 		}
 
 		if (offset >= length)
 		{
 			Logger::warn("PS2Icon: Texture flag set but no data remaining");
-			texture.assign(texturePixelCount, DEFAULT_TEXEL);
+			m_texture.assign(texturePixelCount, DEFAULT_TEXEL);
 			return offset;
 		}
 
 		// Check if texture is compressed (bit 3 = 0x08)
-		bool isCompressed = (textureFlags & 0x08) != 0;
-		Logger::info("PS2Icon: textureFlags=0x{:02X}, compressed={}", textureFlags, isCompressed);
+		bool isCompressed = (m_textureFlags & 0x08) != 0;
+		Logger::info("PS2Icon: textureFlags=0x{:02X}, compressed={}", m_textureFlags, isCompressed);
 
 		if (isCompressed)
 		{
@@ -282,18 +280,18 @@ namespace PS2Icon
 			Logger::warn("PS2Icon: Texture truncated. Expected {} bytes, got {}. Padding with zeros.", TEXTURE_SIZE, avail);
 		}
 
-		texture.resize(TEXTURE_WIDTH * TEXTURE_HEIGHT);
+		m_texture.resize(TEXTURE_WIDTH * TEXTURE_HEIGHT);
 
 		size_t pixelsToRead = std::min(avail, static_cast<size_t>(TEXTURE_SIZE)) / 2;
 
 		for (size_t i = 0; i < pixelsToRead; ++i)
 		{
-			texture[i] = readLE<uint16_t>(data, offset + i * 2);
+			m_texture[i] = readLE<uint16_t>(data, offset + i * 2);
 		}
 
 		for (size_t i = pixelsToRead; i < TEXTURE_WIDTH * TEXTURE_HEIGHT; ++i)
 		{
-			texture[i] = 0;
+			m_texture[i] = 0;
 		}
 
 		return std::min(length, offset + TEXTURE_SIZE);
@@ -321,7 +319,7 @@ namespace PS2Icon
 		}
 
 		// Decompress RLE texture data
-		texture.resize(TEXTURE_WIDTH * TEXTURE_HEIGHT);
+		m_texture.resize(TEXTURE_WIDTH * TEXTURE_HEIGHT);
 
 		size_t texOffset = 0;
 		size_t rleOffset = 0;
@@ -340,14 +338,14 @@ namespace PS2Icon
 					throw std::runtime_error("Compressed texture data too short");
 				}
 
-				if (texOffset + subLength > texture.size())
+				if (texOffset + subLength > m_texture.size())
 				{
 					throw std::runtime_error("Decompressed texture exceeds size");
 				}
 
 				for (uint32_t i = 0; i < subLength; ++i)
 				{
-					texture[texOffset++] = readLE<uint16_t>(data, offset + rleOffset);
+					m_texture[texOffset++] = readLE<uint16_t>(data, offset + rleOffset);
 					rleOffset += 2;
 				}
 			}
@@ -363,7 +361,7 @@ namespace PS2Icon
 						break;
 					}
 
-					if (texOffset + rep > texture.size())
+					if (texOffset + rep > m_texture.size())
 					{
 						throw std::runtime_error("Decompressed texture exceeds size");
 					}
@@ -373,7 +371,7 @@ namespace PS2Icon
 
 					for (uint32_t i = 0; i < rep; ++i)
 					{
-						texture[texOffset++] = value;
+						m_texture[texOffset++] = value;
 					}
 				}
 			}
@@ -384,23 +382,23 @@ namespace PS2Icon
 
 	const VertexCoord* Icon::getVertexData(uint32_t shapeIndex) const
 	{
-		if (shapeIndex >= animationShapes || vertexData.empty())
+		if (shapeIndex >= m_animationShapes || m_vertexData.empty())
 		{
 			return nullptr;
 		}
 
-		return &vertexData[static_cast<size_t>(shapeIndex) * vertexCount];
+		return &m_vertexData[static_cast<size_t>(shapeIndex) * m_vertexCount];
 	}
 
 	const uint16_t* Icon::getTextureData() const
 	{
-		return texture.empty() ? nullptr : texture.data();
+		return m_texture.empty() ? nullptr : m_texture.data();
 	}
 
 	void Icon::setError(const std::string& msg)
 	{
-		valid = false;
-		errorMsg = "Icon error: " + msg;
+		m_valid = false;
+		m_errorMsg = "Icon error: " + msg;
 	}
 
 } // namespace PS2Icon

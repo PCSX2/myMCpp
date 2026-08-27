@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 // Directory entry packing/unpacking follows the mymc++ / mymc implementation and PS2 Browser directory structure docs.
 
-#include "ps2mc_dir.h"
+#include "PS2McDir.h"
 #include <algorithm>
 #include <ctime>
 
@@ -26,7 +26,7 @@ PS2McTod unpackTod(const std::vector<uint8_t>& data)
 		tod.hour = data[3];
 		tod.mday = data[4];
 		tod.month = data[5];
-		tod.year = data[6] | (data[7] << 8);
+		tod.year = static_cast<uint16_t>(data[6] | (data[7] << 8));
 	}
 	return tod;
 }
@@ -53,20 +53,20 @@ PS2McDirEntry unpackDirEntry(const std::vector<uint8_t>& data)
 		return entry;
 	}
 
-	entry.mode = data[0] | (data[1] << 8);
-	entry.unused = data[2] | (data[3] << 8);
-	entry.length = data[4] | (data[5] << 8) | (data[6] << 16) | (data[7] << 24);
+	entry.mode = static_cast<uint16_t>(data[0] | (data[1] << 8));
+	entry.unused = static_cast<uint16_t>(data[2] | (data[3] << 8));
+	entry.length = static_cast<uint32_t>(data[4] | (data[5] << 8) | (data[6] << 16) | (data[7] << 24));
 
-	std::vector<uint8_t> created_data(data.begin() + 8, data.begin() + 16);
-	entry.created = unpackTod(created_data);
+	std::vector<uint8_t> createdData(data.begin() + 8, data.begin() + 16);
+	entry.created = unpackTod(createdData);
 
-	entry.cluster = data[16] | (data[17] << 8) | (data[18] << 16) | (data[19] << 24);
-	entry.dirEntry = data[20] | (data[21] << 8) | (data[22] << 16) | (data[23] << 24);
+	entry.cluster = static_cast<uint32_t>(data[16] | (data[17] << 8) | (data[18] << 16) | (data[19] << 24));
+	entry.dirEntry = static_cast<uint32_t>(data[20] | (data[21] << 8) | (data[22] << 16) | (data[23] << 24));
 
-	std::vector<uint8_t> modified_data(data.begin() + 24, data.begin() + 32);
-	entry.modified = unpackTod(modified_data);
+	std::vector<uint8_t> modifiedData(data.begin() + 24, data.begin() + 32);
+	entry.modified = unpackTod(modifiedData);
 
-	entry.attr = data[32] | (data[33] << 8) | (data[34] << 16) | (data[35] << 24);
+	entry.attr = static_cast<uint32_t>(data[32] | (data[33] << 8) | (data[34] << 16) | (data[35] << 24));
 
 	std::string name(data.begin() + 64, data.begin() + PS2MC_DIRENT_LENGTH);
 	entry.name = zeroTerminate(name);
@@ -87,8 +87,8 @@ std::vector<uint8_t> packDirEntry(const PS2McDirEntry& entry)
 	data[6] = (entry.length >> 16) & 0xFF;
 	data[7] = (entry.length >> 24) & 0xFF;
 
-	auto created_data = packTod(entry.created);
-	std::copy(created_data.begin(), created_data.end(), data.begin() + 8);
+	auto createdData = packTod(entry.created);
+	std::copy(createdData.begin(), createdData.end(), data.begin() + 8);
 
 	data[16] = entry.cluster & 0xFF;
 	data[17] = (entry.cluster >> 8) & 0xFF;
@@ -99,16 +99,16 @@ std::vector<uint8_t> packDirEntry(const PS2McDirEntry& entry)
 	data[22] = (entry.dirEntry >> 16) & 0xFF;
 	data[23] = (entry.dirEntry >> 24) & 0xFF;
 
-	auto modified_data = packTod(entry.modified);
-	std::copy(modified_data.begin(), modified_data.end(), data.begin() + 24);
+	auto modifiedData = packTod(entry.modified);
+	std::copy(modifiedData.begin(), modifiedData.end(), data.begin() + 24);
 
 	data[32] = entry.attr & 0xFF;
 	data[33] = (entry.attr >> 8) & 0xFF;
 	data[34] = (entry.attr >> 16) & 0xFF;
 	data[35] = (entry.attr >> 24) & 0xFF;
 
-	size_t name_len = std::min(entry.name.size(), size_t(448));
-	std::copy(entry.name.begin(), entry.name.begin() + name_len, data.begin() + 64);
+	size_t nameLen = std::min(entry.name.size(), static_cast<size_t>(448));
+	std::copy(entry.name.begin(), entry.name.begin() + nameLen, data.begin() + 64);
 
 	return data;
 }
@@ -117,44 +117,44 @@ std::time_t todToTime(const PS2McTod& tod)
 {
 	// Values on card are in JST (UTC+9).
 	// Convert JST -> UTC so the returned time_t is not timezone dependent.
-	std::tm timeinfo = {};
-	timeinfo.tm_sec = tod.sec;
-	timeinfo.tm_min = tod.min;
-	timeinfo.tm_hour = tod.hour;
-	timeinfo.tm_mday = tod.mday;
-	timeinfo.tm_mon = tod.month - 1;
-	timeinfo.tm_year = tod.year - 1900;
-	timeinfo.tm_isdst = -1;
+	std::tm timeInfo = {};
+	timeInfo.tm_sec = tod.sec;
+	timeInfo.tm_min = tod.min;
+	timeInfo.tm_hour = tod.hour;
+	timeInfo.tm_mday = tod.mday;
+	timeInfo.tm_mon = tod.month - 1;
+	timeInfo.tm_year = tod.year - 1900;
+	timeInfo.tm_isdst = -1;
 
-	std::time_t jst_time;
+	std::time_t jstTime;
 #if defined(_WIN32)
-	jst_time = _mkgmtime(&timeinfo);
+	jstTime = _mkgmtime(&timeInfo);
 #else
-	jst_time = timegm(&timeinfo);
+	jstTime = timegm(&timeInfo);
 #endif
 
 	// JST is UTC+9.
-	return jst_time - static_cast<std::time_t>(9 * 60 * 60);
+	return jstTime - static_cast<std::time_t>(9 * 60 * 60);
 }
 
 PS2McTod timeToTod(std::time_t time)
 {
 	// Store timestamps on card in JST (UTC+9),
 	// regardless of whatever the host system's local timezone is.
-	std::time_t jst_time = time + static_cast<std::time_t>(9 * 60 * 60);
+	std::time_t jstTime = time + static_cast<std::time_t>(9 * 60 * 60);
 
-	std::tm timeinfo{};
+	std::tm timeInfo{};
 #if defined(_WIN32)
-	gmtime_s(&timeinfo, &jst_time);
+	gmtime_s(&timeInfo, &jstTime);
 #else
-	gmtime_r(&jst_time, &timeinfo);
+	gmtime_r(&jstTime, &timeInfo);
 #endif
 	PS2McTod tod{};
-	tod.sec = static_cast<uint8_t>(timeinfo.tm_sec);
-	tod.min = static_cast<uint8_t>(timeinfo.tm_min);
-	tod.hour = static_cast<uint8_t>(timeinfo.tm_hour);
-	tod.mday = static_cast<uint8_t>(timeinfo.tm_mday);
-	tod.month = static_cast<uint8_t>(timeinfo.tm_mon + 1);
-	tod.year = static_cast<uint16_t>(timeinfo.tm_year + 1900);
+	tod.sec = static_cast<uint8_t>(timeInfo.tm_sec);
+	tod.min = static_cast<uint8_t>(timeInfo.tm_min);
+	tod.hour = static_cast<uint8_t>(timeInfo.tm_hour);
+	tod.mday = static_cast<uint8_t>(timeInfo.tm_mday);
+	tod.month = static_cast<uint8_t>(timeInfo.tm_mon + 1);
+	tod.year = static_cast<uint16_t>(timeInfo.tm_year + 1900);
 	return tod;
 }

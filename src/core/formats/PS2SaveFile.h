@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "ps2mc_dir.h"
+#include "PS2McDir.h"
 #include "Error.h"
 #include <string>
 #include <vector>
@@ -57,7 +57,7 @@ public:
 private:
 	Error m_error;
 	class Impl;
-	std::unique_ptr<Impl> pImpl;
+	std::unique_ptr<Impl> m_impl;
 };
 
 std::string makeLongname(const std::string& dirname, const PS2SaveFile& save);

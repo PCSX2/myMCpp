@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "CardActionHandler.h"
-#include "ps2mc.h"
-#include "ps2save.h"
+#include "PS2MemoryCard.h"
+#include "PS2SaveFile.h"
 #include "QtUtils.h"
 #include <QMessageBox>
 #include <QStatusBar>

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "MemoryCardBrowser.h"
-#include "ps2mc.h"
+#include "PS2MemoryCard.h"
 #include "TranslationManager.h"
 #include <QMessageBox>
 #include <QDateTime>

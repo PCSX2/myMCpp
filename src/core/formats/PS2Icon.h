@@ -59,28 +59,28 @@ namespace PS2Icon
 		bool load(const std::string& data);
 
 		// Getters for icon properties
-		uint32_t getAnimationShapes() const { return animationShapes; }
-		uint32_t getTextureFlags() const { return textureFlags; }
-		bool hasTexture() const { return (textureFlags & TEX_FLAG_EXISTS) != 0; }
-		bool isTextureCompressed() const { return (textureFlags & TEX_FLAG_COMPRESSED) != 0; }
-		uint32_t getVertexCount() const { return vertexCount; }
-		uint32_t getFrameLength() const { return frameLength; }
-		float getAnimSpeed() const { return animSpeed; }
-		uint32_t getPlayOffset() const { return playOffset; }
-		uint32_t getFrameCount() const { return frameCount; }
-		bool hasAlpha() const { return enableAlpha; }
+		uint32_t getAnimationShapes() const { return m_animationShapes; }
+		uint32_t getTextureFlags() const { return m_textureFlags; }
+		bool hasTexture() const { return (m_textureFlags & TEX_FLAG_EXISTS) != 0; }
+		bool isTextureCompressed() const { return (m_textureFlags & TEX_FLAG_COMPRESSED) != 0; }
+		uint32_t getVertexCount() const { return m_vertexCount; }
+		uint32_t getFrameLength() const { return m_frameLength; }
+		float getAnimSpeed() const { return m_animSpeed; }
+		uint32_t getPlayOffset() const { return m_playOffset; }
+		uint32_t getFrameCount() const { return m_frameCount; }
+		bool hasAlpha() const { return m_enableAlpha; }
 
 		// Get vertex data for specific animation shape
 		const VertexCoord* getVertexData(uint32_t shapeIndex = 0) const;
 
 		// Get normal/UV data (shared across all shapes)
-		const NormalUV* getNormalUVData() const { return normalUVData.data(); }
+		const NormalUV* getNormalUVData() const { return m_normalUVData.data(); }
 
 		// Get color data (shared across all shapes)
-		const VertexColor* getColorData() const { return colorData.data(); }
+		const VertexColor* getColorData() const { return m_colorData.data(); }
 
 		// Get animation frames
-		const std::vector<AnimationFrame>& getFrames() const { return frames; }
+		const std::vector<AnimationFrame>& getFrames() const { return m_frames; }
 
 		// Get texture data (16-bit RGBA5551 format)
 		const uint16_t* getTextureData() const;
@@ -88,35 +88,35 @@ namespace PS2Icon
 		int getTextureHeight() const { return TEXTURE_HEIGHT; }
 
 		// Check if icon loaded successfully
-		bool isValid() const { return valid; }
-		const std::string& getError() const { return errorMsg; }
+		bool isValid() const { return m_valid; }
+		const std::string& getError() const { return m_errorMsg; }
 
 	private:
-		bool valid;
-		std::string errorMsg;
+		bool m_valid;
+		std::string m_errorMsg;
 
 		// Icon header data
-		uint32_t animationShapes;
-		uint32_t textureFlags;
-		uint32_t vertexCount;
+		uint32_t m_animationShapes;
+		uint32_t m_textureFlags;
+		uint32_t m_vertexCount;
 
 		// Vertex data (3D coordinates per shape)
-		std::vector<VertexCoord> vertexData; // Size: animationShapes * vertexCount
+		std::vector<VertexCoord> m_vertexData; // Size: m_animationShapes * m_vertexCount
 
 		// Shared vertex attributes
-		std::vector<NormalUV> normalUVData; // Size: vertexCount
-		std::vector<VertexColor> colorData; // Size: vertexCount
+		std::vector<NormalUV> m_normalUVData; // Size: m_vertexCount
+		std::vector<VertexColor> m_colorData; // Size: m_vertexCount
 
 		// Animation data
-		uint32_t frameLength;
-		float animSpeed;
-		uint32_t playOffset;
-		uint32_t frameCount;
-		std::vector<AnimationFrame> frames;
+		uint32_t m_frameLength;
+		float m_animSpeed;
+		uint32_t m_playOffset;
+		uint32_t m_frameCount;
+		std::vector<AnimationFrame> m_frames;
 
 		// Texture data (RGBA5551 format)
-		std::vector<uint16_t> texture;
-		bool enableAlpha;
+		std::vector<uint16_t> m_texture;
+		bool m_enableAlpha;
 
 		// Loading funcs
 		size_t loadHeader(const uint8_t* data, size_t length, size_t offset);

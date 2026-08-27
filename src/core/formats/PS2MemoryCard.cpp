@@ -3,11 +3,11 @@
 // PS2 memory card layout and algorithms adapted from mymc++ / mymc (Florian Märkl, Ross Ridge) and public PS2 save format documentation.
 
 #include "Logger.h"
-#include "ps2mc.h"
-#include "ps2mc_ecc.h"
-#include "ps2mc_dir.h"
-#include "ps2iconsys.h"
-#include "ps2save.h"
+#include "PS2MemoryCard.h"
+#include "PS2McEcc.h"
+#include "PS2McDir.h"
+#include "PS2IconSys.h"
+#include "PS2SaveFile.h"
 #include "sjis.h"
 #include "round.h"
 #include <fstream>
@@ -59,17 +59,23 @@ bool PS2MemoryCard::usesEccForPath(const std::string& path, bool unknownFallback
 	std::filesystem::path p(path);
 	std::string ext = p.extension().string();
 	if (ext.empty())
+	{
 		return unknownFallback;
+	}
 
 	ext = ext.substr(1);
 
 	for (char& c : ext)
+	{
 		c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+	}
 
 	for (const CardFormat& format : getFormats())
 	{
 		if (ext == format.extension)
+		{
 			return format.usesEcc;
+		}
 	}
 	return unknownFallback;
 }
@@ -96,241 +102,241 @@ class PS2MemoryCard::Impl
 {
 public:
 	Error& m_error;
-	std::fstream file;
-	std::string filename;
+	std::fstream m_file;
+	std::string m_filename;
 
-	uint32_t page_size = 512;
-	uint32_t pages_per_cluster = 2;
-	uint32_t cluster_size = 1024;
-	uint32_t pages_per_erase_block = 16;
-	uint32_t spare_size = 16; // ECC spare data size
-	uint32_t raw_page_size = 528; // page_size + spare_size
+	uint32_t m_pageSize = 512;
+	uint32_t m_pagesPerCluster = 2;
+	uint32_t m_clusterSize = 1024;
+	uint32_t m_pagesPerEraseBlock = 16;
+	uint32_t m_spareSize = 16; // ECC spare data size
+	uint32_t m_rawPageSize = 528; // m_pageSize + m_spareSize
 
-	bool with_ecc = true;
-	bool ignore_ecc = false;
+	bool m_withEcc = true;
+	bool m_ignoreEcc = false;
 
-	uint32_t clusters_per_card = 8192;
-	uint32_t allocatable_cluster_offset = 0;
-	uint32_t allocatable_cluster_end = 0;
-	uint32_t rootdir_fat_cluster = 0;
+	uint32_t m_clustersPerCard = 8192;
+	uint32_t m_allocatableClusterOffset = 0;
+	uint32_t m_allocatableClusterEnd = 0;
+	uint32_t m_rootDirFatCluster = 0;
 
-	uint32_t entries_per_cluster = 256; // cluster_size / 4
+	uint32_t m_entriesPerCluster = 256; // m_clusterSize / 4
 
-	std::vector<uint32_t> fat;
+	std::vector<uint32_t> m_fat;
 
-	std::array<uint32_t, 32> indirect_fat_cluster_list = {};
+	std::array<uint32_t, 32> m_indirectFatClusterList = {};
 
-	uint8_t card_type = 0;
-	uint8_t card_flags = 0;
-	uint32_t backup_block1 = 0;
-	uint32_t backup_block2 = 0;
-	std::array<uint32_t, 32> bad_block_list = {};
+	uint8_t m_cardType = 0;
+	uint8_t m_cardFlags = 0;
+	uint32_t m_backupBlock1 = 0;
+	uint32_t m_backupBlock2 = 0;
+	std::array<uint32_t, 32> m_badBlockList = {};
 
-	bool modified = false;
-	std::map<uint32_t, std::vector<uint8_t>> page_cache;
-	std::map<uint32_t, std::vector<uint8_t>> fat_cluster_cache;
+	bool m_modified = false;
+	std::map<uint32_t, std::vector<uint8_t>> m_pageCache;
+	std::map<uint32_t, std::vector<uint8_t>> m_fatClusterCache;
 
 	explicit Impl(Error& error)
 		: m_error(error)
 	{
 	}
 
-	void calculate_derived();
-	bool parse_superblock_fields(const std::vector<uint8_t>& page);
-	std::vector<uint8_t> load_superblock();
-	bool apply_layout(bool ecc, std::vector<uint8_t> sb_page);
-	bool root_directory_ok();
-	bool read_superblock();
-	std::vector<uint8_t> read_page(uint32_t page_num);
-	bool write_page(uint32_t page_num, const std::vector<uint8_t>& data);
-	std::vector<uint8_t> read_cluster(uint32_t cluster_num);
-	bool write_cluster(uint32_t cluster_num, const std::vector<uint8_t>& data);
-	std::vector<uint32_t> read_fat_cluster(uint32_t fat_cluster_num);
-	bool read_fat_from_card();
-	bool write_fat_to_card();
-	uint32_t lookup_fat(uint32_t cluster_num);
-	bool find_entry(const std::string& path, uint32_t& parent_cluster, PS2McDirEntry& out_entry, bool* path_not_found = nullptr, bool quiet = false);
-	std::vector<PS2McDirEntry> read_dirents(uint32_t dir_cluster);
-	bool write_dirents(uint32_t dir_cluster, const std::vector<PS2McDirEntry>& entries);
+	void calculateDerived();
+	bool parseSuperblockFields(const std::vector<uint8_t>& page);
+	std::vector<uint8_t> loadSuperblock();
+	bool applyLayout(bool ecc, std::vector<uint8_t> sb_page);
+	bool rootDirectoryOk();
+	bool readSuperblock();
+	std::vector<uint8_t> readPage(uint32_t page_num);
+	bool writePage(uint32_t page_num, const std::vector<uint8_t>& data);
+	std::vector<uint8_t> readCluster(uint32_t cluster_num);
+	bool writeCluster(uint32_t cluster_num, const std::vector<uint8_t>& data);
+	std::vector<uint32_t> readFatCluster(uint32_t fat_cluster_num);
+	bool readFatFromCard();
+	bool writeFatToCard();
+	uint32_t lookupFat(uint32_t cluster_num);
+	bool findEntry(const std::string& path, uint32_t& parent_cluster, PS2McDirEntry& out_entry, bool* path_not_found = nullptr, bool quiet = false);
+	std::vector<PS2McDirEntry> readDirents(uint32_t dir_cluster);
+	bool writeDirents(uint32_t dir_cluster, const std::vector<PS2McDirEntry>& entries);
 	bool syncParentDirectoryEntryLength(uint32_t child_dir_cluster);
-	uint32_t allocate_cluster();
-	std::vector<uint32_t> allocate_clusters(uint32_t count);
-	void free_cluster_chain(uint32_t start_cluster);
+	uint32_t allocateCluster();
+	std::vector<uint32_t> allocateClusters(uint32_t count);
+	void freeClusterChain(uint32_t start_cluster);
 
-	void init_card_parameters(int sizeInMB, bool disableEcc);
-	void calculate_fat_layout(uint32_t& first_ifc, uint32_t& indirect_fat_clusters, uint32_t& fat_clusters);
-	bool create_empty_card_file(const std::string& filename, uint64_t totalBytes);
-	bool write_superblock(uint32_t first_ifc, uint32_t indirect_fat_clusters, uint32_t good_block1, uint32_t good_block2);
-	bool init_indirect_fat_clusters(uint32_t first_ifc, uint32_t indirect_fat_clusters, uint32_t epc);
-	bool init_root_directory();
+	void initCardParameters(int sizeInMB, bool disableEcc);
+	void calculateFatLayout(uint32_t& first_ifc, uint32_t& indirect_fat_clusters, uint32_t& fat_clusters);
+	bool createEmptyCardFile(const std::string& filename, uint64_t totalBytes);
+	bool writeSuperblock(uint32_t first_ifc, uint32_t indirect_fat_clusters, uint32_t good_block1, uint32_t good_block2);
+	bool initIndirectFatClusters(uint32_t first_ifc, uint32_t indirect_fat_clusters, uint32_t epc);
+	bool initRootDirectory();
 };
 
-void PS2MemoryCard::Impl::calculate_derived()
+void PS2MemoryCard::Impl::calculateDerived()
 {
-	spare_size = divRoundUp(page_size, 128) * 4;
-	raw_page_size = page_size + spare_size;
-	cluster_size = page_size * pages_per_cluster;
-	entries_per_cluster = cluster_size / 4; // 4 bytes per FAT entry
+	m_spareSize = divRoundUp(m_pageSize, 128) * 4;
+	m_rawPageSize = m_pageSize + m_spareSize;
+	m_clusterSize = m_pageSize * m_pagesPerCluster;
+	m_entriesPerCluster = m_clusterSize / 4; // 4 bytes per FAT entry
 }
 
-bool PS2MemoryCard::Impl::parse_superblock_fields(const std::vector<uint8_t>& page)
+bool PS2MemoryCard::Impl::parseSuperblockFields(const std::vector<uint8_t>& page)
 {
-	page_size = readLE<uint16_t>(page, 40);
-	pages_per_cluster = readLE<uint16_t>(page, 42);
-	pages_per_erase_block = readLE<uint16_t>(page, 44);
+	m_pageSize = readLE<uint16_t>(page, 40);
+	m_pagesPerCluster = readLE<uint16_t>(page, 42);
+	m_pagesPerEraseBlock = readLE<uint16_t>(page, 44);
 
-	if (page_size == 0 || pages_per_cluster == 0)
+	if (m_pageSize == 0 || m_pagesPerCluster == 0)
 	{
 		return m_error.Fail("Invalid page/cluster size in superblock");
 	}
 
-	calculate_derived();
+	calculateDerived();
 
-	clusters_per_card = readLE<uint32_t>(page, 48);
-	allocatable_cluster_offset = readLE<uint32_t>(page, 52);
-	allocatable_cluster_end = readLE<uint32_t>(page, 56);
-	rootdir_fat_cluster = readLE<uint32_t>(page, 60);
+	m_clustersPerCard = readLE<uint32_t>(page, 48);
+	m_allocatableClusterOffset = readLE<uint32_t>(page, 52);
+	m_allocatableClusterEnd = readLE<uint32_t>(page, 56);
+	m_rootDirFatCluster = readLE<uint32_t>(page, 60);
 
 	for (int i = 0; i < 32; ++i)
 	{
-		indirect_fat_cluster_list[i] = readLE<uint32_t>(page, 80 + i * 4);
+		m_indirectFatClusterList[i] = readLE<uint32_t>(page, 80 + i * 4);
 	}
 
 	if (page.size() > 0x44 + 4)
 	{
-		backup_block1 = readLE<uint32_t>(page, 0x40);
-		backup_block2 = readLE<uint32_t>(page, 0x44);
+		m_backupBlock1 = readLE<uint32_t>(page, 0x40);
+		m_backupBlock2 = readLE<uint32_t>(page, 0x44);
 	}
 
 	if (page.size() > 0x151)
 	{
-		card_type = page[0x150];
-		card_flags = page[0x151];
+		m_cardType = page[0x150];
+		m_cardFlags = page[0x151];
 	}
 
 	if (page.size() > 0xD0 + 32 * 4)
 	{
 		for (int i = 0; i < 32; ++i)
 		{
-			bad_block_list[i] = readLE<uint32_t>(page, 0xD0 + i * 4);
+			m_badBlockList[i] = readLE<uint32_t>(page, 0xD0 + i * 4);
 		}
 	}
 
-	if (allocatable_cluster_end == 0 || allocatable_cluster_end > 1000000)
+	if (m_allocatableClusterEnd == 0 || m_allocatableClusterEnd > 1000000)
 	{
-		allocatable_cluster_end = clusters_per_card;
+		m_allocatableClusterEnd = m_clustersPerCard;
 	}
 	return true;
 }
 
-std::vector<uint8_t> PS2MemoryCard::Impl::read_page(uint32_t page_num)
+std::vector<uint8_t> PS2MemoryCard::Impl::readPage(uint32_t page_num)
 {
-	if (!file.is_open())
+	if (!m_file.is_open())
 	{
 		m_error.Fail("Memory card not open");
 		return {};
 	}
 
-	if (page_cache.count(page_num))
+	if (m_pageCache.count(page_num))
 	{
-		return page_cache[page_num];
+		return m_pageCache[page_num];
 	}
 
-	uint64_t offset = static_cast<uint64_t>(page_num) * raw_page_size;
+	uint64_t offset = static_cast<uint64_t>(page_num) * m_rawPageSize;
 
-	file.seekg(offset);
-	if (!file)
+	m_file.seekg(static_cast<std::streamoff>(offset));
+	if (!m_file)
 	{
 		m_error.Fail("Seek failed");
 		return {};
 	}
 
-	std::vector<uint8_t> page_data(page_size);
-	file.read(reinterpret_cast<char*>(page_data.data()), page_size);
+	std::vector<uint8_t> page_data(m_pageSize);
+	m_file.read(reinterpret_cast<char*>(page_data.data()), m_pageSize);
 
-	if (file.gcount() != static_cast<std::streamsize>(page_size))
+	if (m_file.gcount() != static_cast<std::streamsize>(m_pageSize))
 	{
 		m_error.Fail("Failed to read complete page");
 		return {};
 	}
 
-	if (spare_size > 0)
+	if (m_spareSize > 0)
 	{
-		std::vector<uint8_t> spare(spare_size);
-		file.read(reinterpret_cast<char*>(spare.data()), spare_size);
+		std::vector<uint8_t> spare(m_spareSize);
+		m_file.read(reinterpret_cast<char*>(spare.data()), m_spareSize);
 
-		if (file.gcount() != static_cast<std::streamsize>(spare_size))
+		if (m_file.gcount() != static_cast<std::streamsize>(m_spareSize))
 		{
 			m_error.Fail("Failed to read ECC spare data");
 			return {};
 		}
 
-		const int ecc_status = eccCheckPage(page_data, spare, page_size);
-		if (ecc_status == ECC_CHECK_FAILED && !ignore_ecc)
+		const int ecc_status = eccCheckPage(page_data, spare, m_pageSize);
+		if (ecc_status == ECC_CHECK_FAILED && !m_ignoreEcc)
 		{
 			m_error.Fail("Unrecoverable ECC error (page " + std::to_string(page_num) + ")");
 			return {};
 		}
 	}
 
-	page_cache[page_num] = page_data;
+	m_pageCache[page_num] = page_data;
 	return page_data;
 }
 
-bool PS2MemoryCard::Impl::write_page(uint32_t page_num, const std::vector<uint8_t>& data)
+bool PS2MemoryCard::Impl::writePage(uint32_t page_num, const std::vector<uint8_t>& data)
 {
-	if (!file.is_open())
+	if (!m_file.is_open())
 	{
 		return m_error.Fail("Memory card not open");
 	}
 
-	if (data.size() != page_size)
+	if (data.size() != m_pageSize)
 	{
 		return m_error.Fail("Invalid page data size");
 	}
 
-	uint64_t offset = static_cast<uint64_t>(page_num) * raw_page_size;
-	file.seekp(offset);
-	if (!file)
+	uint64_t offset = static_cast<uint64_t>(page_num) * m_rawPageSize;
+	m_file.seekp(static_cast<std::streamoff>(offset));
+	if (!m_file)
 	{
 		return m_error.Fail("Seek failed");
 	}
 
-	file.write(reinterpret_cast<const char*>(data.data()), page_size);
-	if (!file)
+	m_file.write(reinterpret_cast<const char*>(data.data()), m_pageSize);
+	if (!m_file)
 	{
 		return m_error.Fail("Failed to write page");
 	}
 
-	if (spare_size > 0)
+	if (m_spareSize > 0)
 	{
-		std::vector<uint8_t> spare(spare_size, 0);
-		auto ecc_data = eccCalculatePage(data, page_size);
-		for (size_t i = 0; i < ecc_data.size() && i < spare_size; ++i)
+		std::vector<uint8_t> spare(m_spareSize, 0);
+		auto ecc_data = eccCalculatePage(data, m_pageSize);
+		for (size_t i = 0; i < ecc_data.size() && i < m_spareSize; ++i)
 		{
 			spare[i] = ecc_data[i];
 		}
-		file.write(reinterpret_cast<const char*>(spare.data()), spare_size);
-		if (!file)
+		m_file.write(reinterpret_cast<const char*>(spare.data()), m_spareSize);
+		if (!m_file)
 		{
 			return m_error.Fail("Failed to write page");
 		}
 	}
 
-	modified = true;
-	page_cache[page_num] = data;
+	m_modified = true;
+	m_pageCache[page_num] = data;
 	return true;
 }
 
-std::vector<uint8_t> PS2MemoryCard::Impl::read_cluster(uint32_t cluster_num)
+std::vector<uint8_t> PS2MemoryCard::Impl::readCluster(uint32_t cluster_num)
 {
 	std::vector<uint8_t> result;
-	result.reserve(cluster_size);
+	result.reserve(m_clusterSize);
 
-	for (uint32_t i = 0; i < pages_per_cluster; ++i)
+	for (uint32_t i = 0; i < m_pagesPerCluster; ++i)
 	{
-		uint32_t page_num = cluster_num * pages_per_cluster + i;
-		auto page_data = read_page(page_num);
+		uint32_t page_num = cluster_num * m_pagesPerCluster + i;
+		auto page_data = readPage(page_num);
 		if (page_data.empty())
 		{
 			return {};
@@ -341,20 +347,20 @@ std::vector<uint8_t> PS2MemoryCard::Impl::read_cluster(uint32_t cluster_num)
 	return result;
 }
 
-bool PS2MemoryCard::Impl::write_cluster(uint32_t cluster_num, const std::vector<uint8_t>& data)
+bool PS2MemoryCard::Impl::writeCluster(uint32_t cluster_num, const std::vector<uint8_t>& data)
 {
-	if (data.size() != cluster_size)
+	if (data.size() != m_clusterSize)
 	{
 		return m_error.Fail("Invalid cluster data size");
 	}
 
-	for (uint32_t i = 0; i < pages_per_cluster; ++i)
+	for (uint32_t i = 0; i < m_pagesPerCluster; ++i)
 	{
-		uint32_t page_num = cluster_num * pages_per_cluster + i;
+		uint32_t page_num = cluster_num * m_pagesPerCluster + i;
 		std::vector<uint8_t> page_data(
-			data.begin() + static_cast<size_t>(i) * page_size,
-			data.begin() + static_cast<size_t>(i + 1) * page_size);
-		if (!write_page(page_num, page_data))
+			data.begin() + static_cast<size_t>(i) * m_pageSize,
+			data.begin() + static_cast<size_t>(i + 1) * m_pageSize);
+		if (!writePage(page_num, page_data))
 		{
 			return false;
 		}
@@ -362,57 +368,57 @@ bool PS2MemoryCard::Impl::write_cluster(uint32_t cluster_num, const std::vector<
 	return true;
 }
 
-std::vector<uint32_t> PS2MemoryCard::Impl::read_fat_cluster(uint32_t fat_cluster_num)
+std::vector<uint32_t> PS2MemoryCard::Impl::readFatCluster(uint32_t fat_cluster_num)
 {
-	if (fat_cluster_cache.count(fat_cluster_num))
+	if (m_fatClusterCache.count(fat_cluster_num))
 	{
-		auto cluster_data = fat_cluster_cache[fat_cluster_num];
-		std::vector<uint32_t> result(entries_per_cluster);
-		for (uint32_t i = 0; i < entries_per_cluster; ++i)
+		auto cluster_data = m_fatClusterCache[fat_cluster_num];
+		std::vector<uint32_t> result(m_entriesPerCluster);
+		for (uint32_t i = 0; i < m_entriesPerCluster; ++i)
 		{
 			result[i] = readLE<uint32_t>(cluster_data, i * 4);
 		}
 		return result;
 	}
 
-	auto cluster_data = read_cluster(fat_cluster_num);
+	auto cluster_data = readCluster(fat_cluster_num);
 	if (cluster_data.empty())
 	{
 		return {};
 	}
-	std::vector<uint32_t> result(entries_per_cluster);
-	for (uint32_t i = 0; i < entries_per_cluster; ++i)
+	std::vector<uint32_t> result(m_entriesPerCluster);
+	for (uint32_t i = 0; i < m_entriesPerCluster; ++i)
 	{
 		result[i] = readLE<uint32_t>(cluster_data, i * 4);
 	}
 
-	fat_cluster_cache[fat_cluster_num] = cluster_data;
+	m_fatClusterCache[fat_cluster_num] = cluster_data;
 	return result;
 }
 
-bool PS2MemoryCard::Impl::read_fat_from_card()
+bool PS2MemoryCard::Impl::readFatFromCard()
 {
-	fat.clear();
-	fat.resize(allocatable_cluster_end, PS2MC_FAT_CHAIN_END_UNALLOC);
+	m_fat.clear();
+	m_fat.resize(m_allocatableClusterEnd, PS2MC_FAT_CHAIN_END_UNALLOC);
 
 	uint32_t fat_entry = 0;
 
-	for (uint32_t dbl_offset = 0; dbl_offset < 32 && fat_entry < fat.size(); ++dbl_offset)
+	for (uint32_t dbl_offset = 0; dbl_offset < 32 && fat_entry < m_fat.size(); ++dbl_offset)
 	{
-		uint32_t indirect_cluster = indirect_fat_cluster_list[dbl_offset];
+		uint32_t indirect_cluster = m_indirectFatClusterList[dbl_offset];
 
 		if (indirect_cluster == 0 || indirect_cluster == 0xFFFFFFFF)
 		{
 			continue;
 		}
 
-		auto indirect_data = read_cluster(indirect_cluster);
+		auto indirect_data = readCluster(indirect_cluster);
 		if (indirect_data.empty())
 		{
 			return false;
 		}
 
-		for (uint32_t indirect_offset = 0; indirect_offset < entries_per_cluster && fat_entry < fat.size(); ++indirect_offset)
+		for (uint32_t indirect_offset = 0; indirect_offset < m_entriesPerCluster && fat_entry < m_fat.size(); ++indirect_offset)
 		{
 			uint32_t fat_cluster_ptr = readLE<uint32_t>(indirect_data, indirect_offset * 4);
 
@@ -421,7 +427,7 @@ bool PS2MemoryCard::Impl::read_fat_from_card()
 				continue;
 			}
 
-			auto fat_cluster = read_fat_cluster(fat_cluster_ptr);
+			auto fat_cluster = readFatCluster(fat_cluster_ptr);
 			if (fat_cluster.empty())
 			{
 				return false;
@@ -429,11 +435,11 @@ bool PS2MemoryCard::Impl::read_fat_from_card()
 
 			for (uint32_t j = 0; j < fat_cluster.size(); ++j)
 			{
-				if (fat_entry >= fat.size())
+				if (fat_entry >= m_fat.size())
 				{
 					break;
 				}
-				fat[fat_entry] = fat_cluster[j];
+				m_fat[fat_entry] = fat_cluster[j];
 				fat_entry++;
 			}
 		}
@@ -441,12 +447,12 @@ bool PS2MemoryCard::Impl::read_fat_from_card()
 	return true;
 }
 
-std::vector<uint8_t> PS2MemoryCard::Impl::load_superblock()
+std::vector<uint8_t> PS2MemoryCard::Impl::loadSuperblock()
 {
-	file.seekg(0, std::ios::beg);
-	std::vector<uint8_t> sb_page(page_size);
-	file.read(reinterpret_cast<char*>(sb_page.data()), page_size);
-	if (file.gcount() != static_cast<std::streamsize>(page_size))
+	m_file.seekg(0, std::ios::beg);
+	std::vector<uint8_t> sb_page(m_pageSize);
+	m_file.read(reinterpret_cast<char*>(sb_page.data()), m_pageSize);
+	if (m_file.gcount() != static_cast<std::streamsize>(m_pageSize))
 	{
 		m_error.Fail("Failed to read superblock");
 		return {};
@@ -459,60 +465,62 @@ std::vector<uint8_t> PS2MemoryCard::Impl::load_superblock()
 		return {};
 	}
 
-	if (!parse_superblock_fields(sb_page))
+	if (!parseSuperblockFields(sb_page))
 	{
 		return {};
 	}
 	return sb_page;
 }
 
-bool PS2MemoryCard::Impl::apply_layout(bool ecc, std::vector<uint8_t> sb_page)
+bool PS2MemoryCard::Impl::applyLayout(bool ecc, std::vector<uint8_t> sb_page)
 {
-	page_cache.clear();
-	fat_cluster_cache.clear();
-	if (!parse_superblock_fields(sb_page))
+	m_pageCache.clear();
+	m_fatClusterCache.clear();
+	if (!parseSuperblockFields(sb_page))
 	{
 		return false;
 	}
 
 	if (ecc)
 	{
-		with_ecc = true;
-		if (spare_size > 0)
+		m_withEcc = true;
+		if (m_spareSize > 0)
 		{
-			std::vector<uint8_t> spare(spare_size);
-			file.seekg(page_size, std::ios::beg);
-			file.read(reinterpret_cast<char*>(spare.data()), spare_size);
-			if (file.gcount() == static_cast<std::streamsize>(spare_size))
+			std::vector<uint8_t> spare(m_spareSize);
+			m_file.seekg(m_pageSize, std::ios::beg);
+			m_file.read(reinterpret_cast<char*>(spare.data()), m_spareSize);
+			if (m_file.gcount() == static_cast<std::streamsize>(m_spareSize))
 			{
 				std::vector<uint8_t> page = sb_page;
-				const int ecc_status = eccCheckPage(page, spare, static_cast<int>(page_size));
+				const int ecc_status = eccCheckPage(page, spare, static_cast<int>(m_pageSize));
 				if (ecc_status != ECC_CHECK_FAILED)
 				{
 					sb_page = std::move(page);
 					if (ecc_status == ECC_CHECK_CORRECTED)
-						if (!parse_superblock_fields(sb_page))
+					{
+						if (!parseSuperblockFields(sb_page))
 						{
 							return false;
 						}
+					}
 				}
 			}
 		}
 	}
 	else
 	{
-		spare_size = 0;
-		raw_page_size = page_size;
-		with_ecc = false;
+		m_spareSize = 0;
+		m_rawPageSize = m_pageSize;
+		m_withEcc = false;
 	}
 
-	page_cache[0] = std::move(sb_page);
-	return read_fat_from_card();
+	m_pageCache[0] = std::move(sb_page);
+	return readFatFromCard();
 }
 
-bool PS2MemoryCard::Impl::root_directory_ok()
+bool PS2MemoryCard::Impl::rootDirectoryOk()
 {
-	const auto entries = read_dirents(rootdir_fat_cluster);
+	const auto entries = readDirents(m_rootDirFatCluster);
 	return entries.size() >= 2 &&
 	       entries[0].name == "." &&
 	       entries[1].name == ".." &&
@@ -520,39 +528,41 @@ bool PS2MemoryCard::Impl::root_directory_ok()
 	       (entries[1].mode & DF_DIR);
 }
 
-bool PS2MemoryCard::Impl::read_superblock()
+bool PS2MemoryCard::Impl::readSuperblock()
 {
-	auto sb_page = load_superblock();
+	auto sb_page = loadSuperblock();
 	if (sb_page.empty())
 	{
 		return false;
 	}
 
-	const uint32_t total_pages = clusters_per_card * pages_per_cluster;
-	const uint32_t ecc_spare = divRoundUp(page_size, 128) * 4;
-	const uint64_t expected_with_ecc = static_cast<uint64_t>(total_pages) * (page_size + ecc_spare);
+	const uint32_t total_pages = m_clustersPerCard * m_pagesPerCluster;
+	const uint32_t ecc_spare = divRoundUp(m_pageSize, 128) * 4;
+	const uint64_t expected_with_ecc = static_cast<uint64_t>(total_pages) * (m_pageSize + ecc_spare);
 
-	file.seekg(0, std::ios::end);
-	const uint64_t file_size = static_cast<uint64_t>(file.tellg());
+	m_file.seekg(0, std::ios::end);
+	const uint64_t file_size = static_cast<uint64_t>(m_file.tellg());
 
-	bool ecc = with_ecc;
+	bool ecc = m_withEcc;
 	if (file_size < expected_with_ecc)
+	{
 		ecc = false;
+	}
 
-	return apply_layout(ecc, std::move(sb_page));
+	return applyLayout(ecc, std::move(sb_page));
 }
 
-uint32_t PS2MemoryCard::Impl::lookup_fat(uint32_t cluster_num)
+uint32_t PS2MemoryCard::Impl::lookupFat(uint32_t cluster_num)
 {
-	if (cluster_num >= fat.size())
+	if (cluster_num >= m_fat.size())
 	{
 		m_error.Fail("FAT index out of range");
 		return PS2MC_FAT_CHAIN_END;
 	}
-	return fat[cluster_num];
+	return m_fat[cluster_num];
 }
 
-bool PS2MemoryCard::Impl::find_entry(const std::string& path, uint32_t& parent_cluster, PS2McDirEntry& out_entry, bool* path_not_found, bool quiet)
+bool PS2MemoryCard::Impl::findEntry(const std::string& path, uint32_t& parent_cluster, PS2McDirEntry& out_entry, bool* path_not_found, bool quiet)
 {
 	if (path_not_found)
 	{
@@ -583,18 +593,18 @@ bool PS2MemoryCard::Impl::find_entry(const std::string& path, uint32_t& parent_c
 		out_entry = {};
 		out_entry.mode = DF_DIR | DF_EXISTS;
 		out_entry.name = "/";
-		out_entry.cluster = rootdir_fat_cluster;
+		out_entry.cluster = m_rootDirFatCluster;
 		return true;
 	}
 
-	uint32_t current_cluster = rootdir_fat_cluster;
+	uint32_t current_cluster = m_rootDirFatCluster;
 	parent_cluster = current_cluster;
 	PS2McDirEntry found_entry{};
 
 	for (size_t i = 0; i < parts.size(); ++i)
 	{
 		const auto& part = parts[i];
-		auto entries = read_dirents(current_cluster);
+		auto entries = readDirents(current_cluster);
 		if (m_error.IsValid())
 		{
 			return false;
@@ -643,10 +653,10 @@ bool PS2MemoryCard::Impl::find_entry(const std::string& path, uint32_t& parent_c
 	return true;
 }
 
-std::vector<PS2McDirEntry> PS2MemoryCard::Impl::read_dirents(uint32_t dir_cluster)
+std::vector<PS2McDirEntry> PS2MemoryCard::Impl::readDirents(uint32_t dir_cluster)
 {
 	std::vector<PS2McDirEntry> entries;
-	if (dir_cluster >= fat.size())
+	if (dir_cluster >= m_fat.size())
 	{
 		m_error.Fail("Directory cluster out of range");
 		return {};
@@ -655,7 +665,7 @@ std::vector<PS2McDirEntry> PS2MemoryCard::Impl::read_dirents(uint32_t dir_cluste
 	uint32_t current_cluster = dir_cluster;
 	int iteration = 0;
 
-	while (current_cluster != PS2MC_FAT_CHAIN_END && current_cluster < fat.size())
+	while (current_cluster != PS2MC_FAT_CHAIN_END && current_cluster < m_fat.size())
 	{
 		iteration++;
 		if (iteration > 1000)
@@ -663,20 +673,22 @@ std::vector<PS2McDirEntry> PS2MemoryCard::Impl::read_dirents(uint32_t dir_cluste
 			m_error.Fail("Directory chain exceeds safety limit");
 			return {};
 		}
-		uint32_t disk_cluster = current_cluster + allocatable_cluster_offset;
-		auto cluster_data = read_cluster(disk_cluster);
+		uint32_t disk_cluster = current_cluster + m_allocatableClusterOffset;
+		auto cluster_data = readCluster(disk_cluster);
 		if (cluster_data.empty())
 		{
 			return {};
 		}
 
-		uint32_t entries_per_cluster_block = cluster_size / PS2MC_DIRENT_LENGTH;
+		uint32_t entries_per_cluster_block = m_clusterSize / PS2MC_DIRENT_LENGTH;
 
 		for (uint32_t i = 0; i < entries_per_cluster_block; ++i)
 		{
 			uint32_t offset = i * PS2MC_DIRENT_LENGTH;
 			if (offset + PS2MC_DIRENT_LENGTH > cluster_data.size())
+			{
 				break;
+			}
 
 			std::vector<uint8_t> ent_data(
 				cluster_data.begin() + offset,
@@ -692,12 +704,12 @@ std::vector<PS2McDirEntry> PS2MemoryCard::Impl::read_dirents(uint32_t dir_cluste
 			entries.push_back(entry);
 		}
 
-		if (current_cluster >= fat.size())
+		if (current_cluster >= m_fat.size())
 		{
 			break;
 		}
 
-		uint32_t next = fat[current_cluster];
+		uint32_t next = m_fat[current_cluster];
 
 		if ((next & PS2MC_FAT_CLUSTER_MASK) == PS2MC_FAT_CHAIN_END_UNALLOC)
 		{
@@ -706,7 +718,7 @@ std::vector<PS2McDirEntry> PS2MemoryCard::Impl::read_dirents(uint32_t dir_cluste
 
 		next = next & PS2MC_FAT_CLUSTER_MASK;
 
-		if (next >= fat.size() || next == PS2MC_FAT_CHAIN_END_UNALLOC)
+		if (next >= m_fat.size() || next == PS2MC_FAT_CHAIN_END_UNALLOC)
 		{
 			break;
 		}
@@ -717,9 +729,9 @@ std::vector<PS2McDirEntry> PS2MemoryCard::Impl::read_dirents(uint32_t dir_cluste
 	return entries;
 }
 
-bool PS2MemoryCard::Impl::write_dirents(uint32_t dir_cluster, const std::vector<PS2McDirEntry>& entries)
+bool PS2MemoryCard::Impl::writeDirents(uint32_t dir_cluster, const std::vector<PS2McDirEntry>& entries)
 {
-	if (dir_cluster >= fat.size())
+	if (dir_cluster >= m_fat.size())
 	{
 		return m_error.Fail("Directory cluster out of range");
 	}
@@ -740,8 +752,8 @@ bool PS2MemoryCard::Impl::write_dirents(uint32_t dir_cluster, const std::vector<
 			return m_error.Fail("Directory chain exceeds safety limit");
 		}
 
-		std::vector<uint8_t> cluster_data(cluster_size, 0);
-		uint32_t entries_per_cluster_block = cluster_size / PS2MC_DIRENT_LENGTH;
+		std::vector<uint8_t> cluster_data(m_clusterSize, 0);
+		uint32_t entries_per_cluster_block = m_clusterSize / PS2MC_DIRENT_LENGTH;
 
 		for (uint32_t i = 0; i < entries_per_cluster_block && entry_idx < entries.size(); ++i, ++entry_idx)
 		{
@@ -750,25 +762,25 @@ bool PS2MemoryCard::Impl::write_dirents(uint32_t dir_cluster, const std::vector<
 			std::copy(packed.begin(), packed.end(), cluster_data.begin() + offset);
 		}
 
-		uint32_t disk_cluster = current_cluster + allocatable_cluster_offset;
-		if (!write_cluster(disk_cluster, cluster_data))
+		uint32_t disk_cluster = current_cluster + m_allocatableClusterOffset;
+		if (!writeCluster(disk_cluster, cluster_data))
 		{
 			return false;
 		}
 
 		if (entry_idx < entries.size())
 		{
-			uint32_t next = fat[current_cluster] & PS2MC_FAT_CLUSTER_MASK;
+			uint32_t next = m_fat[current_cluster] & PS2MC_FAT_CLUSTER_MASK;
 
-			if (next >= fat.size() || next == PS2MC_FAT_CHAIN_END_UNALLOC || next == PS2MC_FAT_CHAIN_END)
+			if (next >= m_fat.size() || next == PS2MC_FAT_CHAIN_END_UNALLOC || next == PS2MC_FAT_CHAIN_END)
 			{
-				uint32_t new_cluster = allocate_cluster();
+				uint32_t new_cluster = allocateCluster();
 				if (new_cluster == PS2MC_FAT_CHAIN_END)
 				{
 					return false;
 				}
-				fat[current_cluster] = (fat[current_cluster] & ~PS2MC_FAT_CLUSTER_MASK) | (new_cluster | PS2MC_FAT_ALLOCATED_BIT);
-				fat[new_cluster] = PS2MC_FAT_CHAIN_END;
+				m_fat[current_cluster] = (m_fat[current_cluster] & ~PS2MC_FAT_CLUSTER_MASK) | (new_cluster | PS2MC_FAT_ALLOCATED_BIT);
+				m_fat[new_cluster] = PS2MC_FAT_CHAIN_END;
 				current_cluster = new_cluster;
 			}
 			else
@@ -783,16 +795,16 @@ bool PS2MemoryCard::Impl::write_dirents(uint32_t dir_cluster, const std::vector<
 	}
 
 	// Terminate the FAT chain at the current cluster if there was an old chain pointing further
-	uint32_t next = fat[current_cluster] & PS2MC_FAT_CLUSTER_MASK;
-	if (next != PS2MC_FAT_CHAIN_END && next != PS2MC_FAT_CHAIN_END_UNALLOC && next < fat.size())
+	uint32_t next = m_fat[current_cluster] & PS2MC_FAT_CLUSTER_MASK;
+	if (next != PS2MC_FAT_CHAIN_END && next != PS2MC_FAT_CHAIN_END_UNALLOC && next < m_fat.size())
 	{
-		fat[current_cluster] = PS2MC_FAT_CHAIN_END;
+		m_fat[current_cluster] = PS2MC_FAT_CHAIN_END;
 
 		// Free all subsequent clusters in the old chain
-		while (next != PS2MC_FAT_CHAIN_END && next != PS2MC_FAT_CHAIN_END_UNALLOC && next < fat.size())
+		while (next != PS2MC_FAT_CHAIN_END && next != PS2MC_FAT_CHAIN_END_UNALLOC && next < m_fat.size())
 		{
-			uint32_t temp = fat[next] & PS2MC_FAT_CLUSTER_MASK;
-			fat[next] = PS2MC_FAT_CHAIN_END_UNALLOC;
+			uint32_t temp = m_fat[next] & PS2MC_FAT_CLUSTER_MASK;
+			m_fat[next] = PS2MC_FAT_CHAIN_END_UNALLOC;
 			next = temp;
 		}
 	}
@@ -801,7 +813,7 @@ bool PS2MemoryCard::Impl::write_dirents(uint32_t dir_cluster, const std::vector<
 
 bool PS2MemoryCard::Impl::syncParentDirectoryEntryLength(uint32_t child_dir_cluster)
 {
-	auto child = read_dirents(child_dir_cluster);
+	auto child = readDirents(child_dir_cluster);
 	if (m_error.IsValid())
 	{
 		return false;
@@ -814,7 +826,7 @@ bool PS2MemoryCard::Impl::syncParentDirectoryEntryLength(uint32_t child_dir_clus
 	const uint32_t ancestor = child[0].cluster;
 	const uint32_t slot = child[0].dirEntry;
 
-	auto ancestor_entries = read_dirents(ancestor);
+	auto ancestor_entries = readDirents(ancestor);
 	if (m_error.IsValid())
 	{
 		return false;
@@ -839,19 +851,19 @@ bool PS2MemoryCard::Impl::syncParentDirectoryEntryLength(uint32_t child_dir_clus
 	}
 	if (updated)
 	{
-		return write_dirents(ancestor, ancestor_entries);
+		return writeDirents(ancestor, ancestor_entries);
 	}
 	return true;
 }
 
-uint32_t PS2MemoryCard::Impl::allocate_cluster()
+uint32_t PS2MemoryCard::Impl::allocateCluster()
 {
-	for (uint32_t i = 0; i < fat.size(); ++i)
+	for (uint32_t i = 0; i < m_fat.size(); ++i)
 	{
-		if ((fat[i] & PS2MC_FAT_ALLOCATED_BIT) == 0 && fat[i] == PS2MC_FAT_CHAIN_END_UNALLOC)
+		if ((m_fat[i] & PS2MC_FAT_ALLOCATED_BIT) == 0 && m_fat[i] == PS2MC_FAT_CHAIN_END_UNALLOC)
 		{
-			fat[i] = PS2MC_FAT_CHAIN_END; // Mark as end of chain
-			modified = true;
+			m_fat[i] = PS2MC_FAT_CHAIN_END; // Mark as end of chain
+			m_modified = true;
 			return i;
 		}
 	}
@@ -860,19 +872,19 @@ uint32_t PS2MemoryCard::Impl::allocate_cluster()
 	return PS2MC_FAT_CHAIN_END;
 }
 
-std::vector<uint32_t> PS2MemoryCard::Impl::allocate_clusters(uint32_t count)
+std::vector<uint32_t> PS2MemoryCard::Impl::allocateClusters(uint32_t count)
 {
 	std::vector<uint32_t> clusters;
 	clusters.reserve(count);
 
 	for (uint32_t i = 0; i < count; ++i)
 	{
-		uint32_t cluster = allocate_cluster();
+		uint32_t cluster = allocateCluster();
 		if (cluster == PS2MC_FAT_CHAIN_END)
 		{
 			for (uint32_t c : clusters)
 			{
-				fat[c] = PS2MC_FAT_CHAIN_END_UNALLOC;
+				m_fat[c] = PS2MC_FAT_CHAIN_END_UNALLOC;
 			}
 			return {};
 		}
@@ -880,30 +892,30 @@ std::vector<uint32_t> PS2MemoryCard::Impl::allocate_clusters(uint32_t count)
 
 		if (i > 0)
 		{
-			fat[clusters[i - 1]] = cluster | PS2MC_FAT_ALLOCATED_BIT;
+			m_fat[clusters[i - 1]] = cluster | PS2MC_FAT_ALLOCATED_BIT;
 		}
 	}
 
 	if (!clusters.empty())
 	{
-		fat[clusters.back()] = PS2MC_FAT_CHAIN_END;
+		m_fat[clusters.back()] = PS2MC_FAT_CHAIN_END;
 	}
 
 	return clusters;
 }
 
-void PS2MemoryCard::Impl::free_cluster_chain(uint32_t start_cluster)
+void PS2MemoryCard::Impl::freeClusterChain(uint32_t start_cluster)
 {
 	uint32_t current = start_cluster;
 
-	while (current < fat.size())
+	while (current < m_fat.size())
 	{
-		const uint32_t raw = fat[current];
+		const uint32_t raw = m_fat[current];
 		const uint32_t masked = raw & PS2MC_FAT_CLUSTER_MASK;
 
-		fat[current] = PS2MC_FAT_CHAIN_END_UNALLOC;
+		m_fat[current] = PS2MC_FAT_CHAIN_END_UNALLOC;
 
-		if (raw == PS2MC_FAT_CHAIN_END || masked >= fat.size() || masked == PS2MC_FAT_CHAIN_END_UNALLOC)
+		if (raw == PS2MC_FAT_CHAIN_END || masked >= m_fat.size() || masked == PS2MC_FAT_CHAIN_END_UNALLOC)
 		{
 			break;
 		}
@@ -911,61 +923,72 @@ void PS2MemoryCard::Impl::free_cluster_chain(uint32_t start_cluster)
 		current = masked;
 	}
 
-	modified = true;
+	m_modified = true;
 }
 
-bool PS2MemoryCard::Impl::write_fat_to_card()
+bool PS2MemoryCard::Impl::writeFatToCard()
 {
 	uint32_t fat_entry_idx = 0;
 
 	for (int i = 0; i < 32; ++i)
 	{
-		uint32_t indirect_cluster = indirect_fat_cluster_list[i];
+		uint32_t indirect_cluster = m_indirectFatClusterList[i];
 		if (indirect_cluster == 0 || indirect_cluster == 0xFFFFFFFF)
+		{
 			continue;
+		}
 
-		auto indirect_data = read_cluster(indirect_cluster);
+		auto indirect_data = readCluster(indirect_cluster);
 		if (indirect_data.empty())
 		{
 			return false;
 		}
-		for (uint32_t j = 0; j < entries_per_cluster; ++j)
+		for (uint32_t j = 0; j < m_entriesPerCluster; ++j)
 		{
 			uint32_t fat_cluster_phys = readLE<uint32_t>(indirect_data, j * 4);
 
 			if (fat_cluster_phys == 0 || fat_cluster_phys == 0xFFFFFFFF)
-				continue;
-
-			if (fat_entry_idx >= fat.size())
-				break;
-
-			std::vector<uint8_t> fat_data(cluster_size, 0);
-
-			for (uint32_t k = 0; k < entries_per_cluster && fat_entry_idx < fat.size(); ++k)
 			{
-				uint32_t entry = fat[fat_entry_idx++];
+				continue;
+			}
+
+			if (fat_entry_idx >= m_fat.size())
+			{
+				break;
+			}
+
+			std::vector<uint8_t> fat_data(m_clusterSize, 0);
+
+			for (uint32_t k = 0; k < m_entriesPerCluster && fat_entry_idx < m_fat.size(); ++k)
+			{
+				uint32_t entry = m_fat[fat_entry_idx++];
 				writeLE(fat_data, k * 4, entry);
 			}
 
-			if (!write_cluster(fat_cluster_phys, fat_data))
+			if (!writeCluster(fat_cluster_phys, fat_data))
 			{
 				return false;
 			}
 
-			if (fat_entry_idx >= fat.size())
+			if (fat_entry_idx >= m_fat.size())
+			{
 				break;
+			}
 		}
 
-		if (fat_entry_idx >= fat.size())
+		if (fat_entry_idx >= m_fat.size())
+		{
 			break;
+		}
 	}
 	return true;
 }
 
 PS2MemoryCard::PS2MemoryCard()
-	: pImpl(std::make_unique<Impl>(m_error))
+	: m_impl(std::make_unique<Impl>(m_error))
 {
 }
+
 PS2MemoryCard::~PS2MemoryCard()
 {
 	close();
@@ -974,45 +997,49 @@ PS2MemoryCard::~PS2MemoryCard()
 bool PS2MemoryCard::open(const std::string& path, bool ignoreEcc)
 {
 	m_error.Clear();
-	pImpl->filename = path;
-	pImpl->ignore_ecc = ignoreEcc;
-	pImpl->file.open(path, std::ios::in | std::ios::out | std::ios::binary);
+	m_impl->m_filename = path;
+	m_impl->m_ignoreEcc = ignoreEcc;
+	m_impl->m_file.open(path, std::ios::in | std::ios::out | std::ios::binary);
 
-	if (!pImpl->file)
+	if (!m_impl->m_file)
 	{
-		pImpl->file.open(path, std::ios::in | std::ios::binary);
-		if (!pImpl->file)
+		m_impl->m_file.open(path, std::ios::in | std::ios::binary);
+		if (!m_impl->m_file)
 		{
 			return m_error.Fail("Failed to open memory card: " + path);
 		}
 	}
 
-	auto sb_page = pImpl->load_superblock();
+	auto sb_page = m_impl->loadSuperblock();
 	if (sb_page.empty())
 	{
 		close();
 		return false;
 	}
 
-	const uint32_t total_pages = pImpl->clusters_per_card * pImpl->pages_per_cluster;
-	const uint32_t ecc_spare = divRoundUp(pImpl->page_size, 128) * 4;
+	const uint32_t total_pages = m_impl->m_clustersPerCard * m_impl->m_pagesPerCluster;
+	const uint32_t ecc_spare = divRoundUp(m_impl->m_pageSize, 128) * 4;
 	const uint64_t expected_with_ecc =
-		static_cast<uint64_t>(total_pages) * (pImpl->page_size + ecc_spare);
+		static_cast<uint64_t>(total_pages) * (m_impl->m_pageSize + ecc_spare);
 
-	pImpl->file.seekg(0, std::ios::end);
-	const uint64_t file_size = static_cast<uint64_t>(pImpl->file.tellg());
+	m_impl->m_file.seekg(0, std::ios::end);
+	const uint64_t file_size = static_cast<uint64_t>(m_impl->m_file.tellg());
 	const bool can_ecc = file_size >= expected_with_ecc;
 
 	auto try_layout = [this, &sb_page](bool ecc) {
-		return pImpl->apply_layout(ecc, sb_page) && pImpl->root_directory_ok();
+		return m_impl->applyLayout(ecc, sb_page) && m_impl->rootDirectoryOk();
 	};
 
 	m_error.Clear();
 	if (can_ecc && try_layout(true))
+	{
 		return true;
+	}
 	m_error.Clear();
 	if (try_layout(false))
+	{
 		return true;
+	}
 
 	if (m_error.IsValid())
 	{
@@ -1025,40 +1052,40 @@ bool PS2MemoryCard::open(const std::string& path, bool ignoreEcc)
 
 void PS2MemoryCard::close()
 {
-	if (pImpl->file.is_open())
+	if (m_impl->m_file.is_open())
 	{
-		pImpl->file.flush();
-		pImpl->file.close();
+		m_impl->m_file.flush();
+		m_impl->m_file.close();
 	}
-	pImpl->page_cache.clear();
-	pImpl->fat_cluster_cache.clear();
+	m_impl->m_pageCache.clear();
+	m_impl->m_fatClusterCache.clear();
 }
 
-void PS2MemoryCard::Impl::init_card_parameters(int sizeInMB, bool disableEcc)
+void PS2MemoryCard::Impl::initCardParameters(int sizeInMB, bool disableEcc)
 {
-	page_size = 512;
-	pages_per_cluster = 2;
-	pages_per_erase_block = 16;
-	clusters_per_card = (sizeInMB * 1024 * 1024) / 1024;
-	with_ecc = !disableEcc;
+	m_pageSize = 512;
+	m_pagesPerCluster = 2;
+	m_pagesPerEraseBlock = 16;
+	m_clustersPerCard = (sizeInMB * 1024 * 1024) / 1024;
+	m_withEcc = !disableEcc;
 
 	if (disableEcc)
 	{
-		spare_size = 0;
-		raw_page_size = page_size;
+		m_spareSize = 0;
+		m_rawPageSize = m_pageSize;
 	}
 	else
 	{
-		calculate_derived();
+		calculateDerived();
 	}
 }
 
-void PS2MemoryCard::Impl::calculate_fat_layout(uint32_t& first_ifc, uint32_t& indirect_fat_clusters_out, uint32_t& fat_clusters_out)
+void PS2MemoryCard::Impl::calculateFatLayout(uint32_t& first_ifc, uint32_t& indirect_fat_clusters_out, uint32_t& fat_clusters_out)
 {
 	first_ifc = 8;
-	uint32_t epc = cluster_size / 4;
+	uint32_t epc = m_clusterSize / 4;
 
-	uint32_t allocatable_clusters_est = clusters_per_card - (first_ifc + 2);
+	uint32_t allocatable_clusters_est = m_clustersPerCard - (first_ifc + 2);
 	uint32_t fat_clusters = (allocatable_clusters_est + epc - 1) / epc;
 	uint32_t indirect_fat_clusters = (fat_clusters + epc - 1) / epc;
 	if (indirect_fat_clusters > 32)
@@ -1067,21 +1094,21 @@ void PS2MemoryCard::Impl::calculate_fat_layout(uint32_t& first_ifc, uint32_t& in
 		fat_clusters = indirect_fat_clusters * epc;
 	}
 
-	allocatable_cluster_offset = first_ifc + indirect_fat_clusters + fat_clusters;
+	m_allocatableClusterOffset = first_ifc + indirect_fat_clusters + fat_clusters;
 
-	uint32_t pages_per_card = clusters_per_card * pages_per_cluster;
-	uint32_t erase_blocks_per_card = pages_per_card / pages_per_erase_block;
+	uint32_t pages_per_card = m_clustersPerCard * m_pagesPerCluster;
+	uint32_t erase_blocks_per_card = pages_per_card / m_pagesPerEraseBlock;
 	uint32_t good_block2 = erase_blocks_per_card - 2;
-	uint32_t clusters_per_erase_block = pages_per_erase_block / pages_per_cluster;
+	uint32_t clusters_per_erase_block = m_pagesPerEraseBlock / m_pagesPerCluster;
 
-	allocatable_cluster_end = (good_block2 * clusters_per_erase_block) - allocatable_cluster_offset;
-	rootdir_fat_cluster = 0;
+	m_allocatableClusterEnd = (good_block2 * clusters_per_erase_block) - m_allocatableClusterOffset;
+	m_rootDirFatCluster = 0;
 
 	indirect_fat_clusters_out = indirect_fat_clusters;
 	fat_clusters_out = fat_clusters;
 }
 
-bool PS2MemoryCard::Impl::create_empty_card_file(const std::string& fname, uint64_t totalBytes)
+bool PS2MemoryCard::Impl::createEmptyCardFile(const std::string& fname, uint64_t totalBytes)
 {
 	std::ofstream ofs(fname, std::ios::binary | std::ios::out);
 	if (!ofs)
@@ -1093,7 +1120,7 @@ bool PS2MemoryCard::Impl::create_empty_card_file(const std::string& fname, uint6
 	uint64_t written = 0;
 	while (written < totalBytes)
 	{
-		uint64_t toWrite = (std::min)((uint64_t)chunk.size(), totalBytes - written);
+		uint64_t toWrite = (std::min)(static_cast<uint64_t>(chunk.size()), totalBytes - written);
 		ofs.write(chunk.data(), toWrite);
 		if (!ofs)
 		{
@@ -1104,27 +1131,27 @@ bool PS2MemoryCard::Impl::create_empty_card_file(const std::string& fname, uint6
 	return true;
 }
 
-bool PS2MemoryCard::Impl::write_superblock(uint32_t first_ifc, uint32_t indirect_fat_clusters, uint32_t good_block1, uint32_t good_block2)
+bool PS2MemoryCard::Impl::writeSuperblock(uint32_t first_ifc, uint32_t indirect_fat_clusters, uint32_t good_block1, uint32_t good_block2)
 {
-	std::vector<uint8_t> sb(page_size, 0);
+	std::vector<uint8_t> sb(m_pageSize, 0);
 	std::memcpy(sb.data(), "Sony PS2 Memory Card Format ", 28);
 	std::memcpy(sb.data() + 28, "1.2.0.0", 8);
 
-	writeLE<uint16_t>(sb, 40, static_cast<uint16_t>(page_size));
-	writeLE<uint16_t>(sb, 42, static_cast<uint16_t>(pages_per_cluster));
-	writeLE<uint16_t>(sb, 44, static_cast<uint16_t>(pages_per_erase_block));
+	writeLE<uint16_t>(sb, 40, static_cast<uint16_t>(m_pageSize));
+	writeLE<uint16_t>(sb, 42, static_cast<uint16_t>(m_pagesPerCluster));
+	writeLE<uint16_t>(sb, 44, static_cast<uint16_t>(m_pagesPerEraseBlock));
 	writeLE<uint16_t>(sb, 46, 0xFF00);
-	writeLE<uint32_t>(sb, 48, clusters_per_card);
-	writeLE<uint32_t>(sb, 52, allocatable_cluster_offset);
-	writeLE<uint32_t>(sb, 56, allocatable_cluster_end);
-	writeLE<uint32_t>(sb, 60, rootdir_fat_cluster);
+	writeLE<uint32_t>(sb, 48, m_clustersPerCard);
+	writeLE<uint32_t>(sb, 52, m_allocatableClusterOffset);
+	writeLE<uint32_t>(sb, 56, m_allocatableClusterEnd);
+	writeLE<uint32_t>(sb, 60, m_rootDirFatCluster);
 	writeLE<uint32_t>(sb, 64, good_block1);
 	writeLE<uint32_t>(sb, 68, good_block2);
 
 	for (uint32_t i = 0; i < indirect_fat_clusters; ++i)
 	{
 		uint32_t ifc_phys = first_ifc + i;
-		indirect_fat_cluster_list[i] = ifc_phys;
+		m_indirectFatClusterList[i] = ifc_phys;
 		writeLE<uint32_t>(sb, 80 + i * 4, ifc_phys);
 	}
 
@@ -1134,23 +1161,23 @@ bool PS2MemoryCard::Impl::write_superblock(uint32_t first_ifc, uint32_t indirect
 	}
 
 	sb[336] = 2;
-	sb[337] = with_ecc ? 0x2B : 0x2A;
-	card_type = 2;
-	card_flags = sb[337];
+	sb[337] = m_withEcc ? 0x2B : 0x2A;
+	m_cardType = 2;
+	m_cardFlags = sb[337];
 
-	if (!write_page(0, sb))
+	if (!writePage(0, sb))
 	{
 		return false;
 	}
 
-	const uint64_t backup2_offset = static_cast<uint64_t>(good_block2) * pages_per_erase_block * raw_page_size;
-	std::vector<uint8_t> erased_page(raw_page_size, 0xFF);
-	file.seekp(static_cast<std::streamoff>(backup2_offset));
-	for (uint32_t i = 0; i < pages_per_erase_block; ++i)
+	const uint64_t backup2_offset = static_cast<uint64_t>(good_block2) * m_pagesPerEraseBlock * m_rawPageSize;
+	std::vector<uint8_t> erased_page(m_rawPageSize, 0xFF);
+	m_file.seekp(static_cast<std::streamoff>(backup2_offset));
+	for (uint32_t i = 0; i < m_pagesPerEraseBlock; ++i)
 	{
-		file.write(reinterpret_cast<const char*>(erased_page.data()),
+		m_file.write(reinterpret_cast<const char*>(erased_page.data()),
 			static_cast<std::streamsize>(erased_page.size()));
-		if (!file)
+		if (!m_file)
 		{
 			return m_error.Fail("Failed to initialize backup erase block");
 		}
@@ -1158,18 +1185,18 @@ bool PS2MemoryCard::Impl::write_superblock(uint32_t first_ifc, uint32_t indirect
 	return true;
 }
 
-bool PS2MemoryCard::Impl::init_indirect_fat_clusters(uint32_t first_ifc, uint32_t indirect_fat_clusters, uint32_t epc)
+bool PS2MemoryCard::Impl::initIndirectFatClusters(uint32_t first_ifc, uint32_t indirect_fat_clusters, uint32_t epc)
 {
 	uint32_t current_fat_cluster_phys = first_ifc + indirect_fat_clusters;
 
 	for (uint32_t i = 0; i < indirect_fat_clusters; ++i)
 	{
 		uint32_t ifc_phys = first_ifc + i;
-		std::vector<uint8_t> ifc_data(cluster_size, 0);
+		std::vector<uint8_t> ifc_data(m_clusterSize, 0);
 
 		for (uint32_t j = 0; j < epc; ++j)
 		{
-			if (current_fat_cluster_phys < allocatable_cluster_offset)
+			if (current_fat_cluster_phys < m_allocatableClusterOffset)
 			{
 				writeLE<uint32_t>(ifc_data, j * 4, current_fat_cluster_phys++);
 			}
@@ -1178,7 +1205,7 @@ bool PS2MemoryCard::Impl::init_indirect_fat_clusters(uint32_t first_ifc, uint32_
 				writeLE<uint32_t>(ifc_data, j * 4, 0xFFFFFFFF);
 			}
 		}
-		if (!write_cluster(ifc_phys, ifc_data))
+		if (!writeCluster(ifc_phys, ifc_data))
 		{
 			return false;
 		}
@@ -1186,13 +1213,13 @@ bool PS2MemoryCard::Impl::init_indirect_fat_clusters(uint32_t first_ifc, uint32_
 	return true;
 }
 
-bool PS2MemoryCard::Impl::init_root_directory()
+bool PS2MemoryCard::Impl::initRootDirectory()
 {
-	fat.clear();
-	fat.resize(allocatable_cluster_end, PS2MC_FAT_CHAIN_END_UNALLOC);
-	fat[0] = PS2MC_FAT_CHAIN_END;
+	m_fat.clear();
+	m_fat.resize(m_allocatableClusterEnd, PS2MC_FAT_CHAIN_END_UNALLOC);
+	m_fat[0] = PS2MC_FAT_CHAIN_END;
 
-	if (!write_fat_to_card())
+	if (!writeFatToCard())
 	{
 		return false;
 	}
@@ -1217,7 +1244,7 @@ bool PS2MemoryCard::Impl::init_root_directory()
 	dotdot.modified = dot.modified;
 	rootEntries.push_back(dotdot);
 
-	return write_dirents(0, rootEntries);
+	return writeDirents(0, rootEntries);
 }
 
 bool PS2MemoryCard::create(const std::string& filename, int sizeInMB, bool disableEcc)
@@ -1225,49 +1252,49 @@ bool PS2MemoryCard::create(const std::string& filename, int sizeInMB, bool disab
 	m_error.Clear();
 	close();
 
-	pImpl->filename = filename;
-	pImpl->init_card_parameters(sizeInMB, disableEcc);
+	m_impl->m_filename = filename;
+	m_impl->initCardParameters(sizeInMB, disableEcc);
 
 	uint32_t first_ifc, indirect_fat_clusters, fat_clusters;
-	pImpl->calculate_fat_layout(first_ifc, indirect_fat_clusters, fat_clusters);
+	m_impl->calculateFatLayout(first_ifc, indirect_fat_clusters, fat_clusters);
 
-	uint32_t pages_per_card = pImpl->clusters_per_card * pImpl->pages_per_cluster;
-	uint32_t erase_blocks_per_card = pages_per_card / pImpl->pages_per_erase_block;
+	uint32_t pages_per_card = m_impl->m_clustersPerCard * m_impl->m_pagesPerCluster;
+	uint32_t erase_blocks_per_card = pages_per_card / m_impl->m_pagesPerEraseBlock;
 	uint32_t good_block1 = erase_blocks_per_card - 1;
 	uint32_t good_block2 = erase_blocks_per_card - 2;
 
-	uint64_t totalBytes = static_cast<uint64_t>(pImpl->clusters_per_card) *
-	                      pImpl->pages_per_cluster * pImpl->raw_page_size;
+	uint64_t totalBytes = static_cast<uint64_t>(m_impl->m_clustersPerCard) *
+	                      m_impl->m_pagesPerCluster * m_impl->m_rawPageSize;
 
-	if (!pImpl->create_empty_card_file(filename, totalBytes))
+	if (!m_impl->createEmptyCardFile(filename, totalBytes))
 	{
 		return false;
 	}
 
-	pImpl->file.open(filename, std::ios::in | std::ios::out | std::ios::binary);
-	if (!pImpl->file)
+	m_impl->m_file.open(filename, std::ios::in | std::ios::out | std::ios::binary);
+	if (!m_impl->m_file)
 	{
 		return m_error.Fail("Failed to open created card");
 	}
 
-	if (!pImpl->write_superblock(first_ifc, indirect_fat_clusters, good_block1, good_block2))
+	if (!m_impl->writeSuperblock(first_ifc, indirect_fat_clusters, good_block1, good_block2))
 	{
 		return false;
 	}
 
-	uint32_t epc = pImpl->cluster_size / 4;
-	if (!pImpl->init_indirect_fat_clusters(first_ifc, indirect_fat_clusters, epc))
+	uint32_t epc = m_impl->m_clusterSize / 4;
+	if (!m_impl->initIndirectFatClusters(first_ifc, indirect_fat_clusters, epc))
 	{
 		return false;
 	}
 
-	return pImpl->init_root_directory();
+	return m_impl->initRootDirectory();
 }
 
 std::vector<PS2McDirEntry> PS2MemoryCard::listDir(const std::string& path)
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		m_error.Fail("Memory card not open");
 		return {};
@@ -1277,12 +1304,12 @@ std::vector<PS2McDirEntry> PS2MemoryCard::listDir(const std::string& path)
 
 	if (check_path == "/")
 	{
-		return pImpl->read_dirents(pImpl->rootdir_fat_cluster);
+		return m_impl->readDirents(m_impl->m_rootDirFatCluster);
 	}
 
 	uint32_t parent_cluster = 0;
 	PS2McDirEntry entry{};
-	if (!pImpl->find_entry(check_path, parent_cluster, entry))
+	if (!m_impl->findEntry(check_path, parent_cluster, entry))
 	{
 		return {};
 	}
@@ -1293,12 +1320,12 @@ std::vector<PS2McDirEntry> PS2MemoryCard::listDir(const std::string& path)
 		return {};
 	}
 
-	return pImpl->read_dirents(entry.cluster);
+	return m_impl->readDirents(entry.cluster);
 }
 
 bool PS2MemoryCard::hasEntry(const std::string& path)
 {
-	if (!pImpl || !pImpl->file.is_open())
+	if (!m_impl || !m_impl->m_file.is_open())
 	{
 		return false;
 	}
@@ -1312,7 +1339,7 @@ bool PS2MemoryCard::hasEntry(const std::string& path)
 	uint32_t parent_cluster = 0;
 	PS2McDirEntry entry{};
 	bool path_not_found = false;
-	if (pImpl->find_entry(check_path, parent_cluster, entry, &path_not_found, /*quiet=*/true))
+	if (m_impl->findEntry(check_path, parent_cluster, entry, &path_not_found, /*quiet=*/true))
 	{
 		return (entry.mode & DF_EXISTS) != 0;
 	}
@@ -1322,7 +1349,7 @@ bool PS2MemoryCard::hasEntry(const std::string& path)
 PS2McDirEntry PS2MemoryCard::getEntry(const std::string& path)
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		m_error.Fail("Memory card not open");
 		return {};
@@ -1333,20 +1360,20 @@ PS2McDirEntry PS2MemoryCard::getEntry(const std::string& path)
 		PS2McDirEntry root{};
 		root.mode = DF_DIR | DF_EXISTS;
 		root.name = "/";
-		root.cluster = pImpl->rootdir_fat_cluster;
+		root.cluster = m_impl->m_rootDirFatCluster;
 		return root;
 	}
 
 	uint32_t parent_cluster = 0;
 	PS2McDirEntry entry{};
-	pImpl->find_entry(path, parent_cluster, entry);
+	m_impl->findEntry(path, parent_cluster, entry);
 	return entry;
 }
 
 std::vector<uint8_t> PS2MemoryCard::readFile(const std::string& path, bool quiet)
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		if (!quiet)
 		{
@@ -1357,7 +1384,7 @@ std::vector<uint8_t> PS2MemoryCard::readFile(const std::string& path, bool quiet
 
 	uint32_t parent_cluster = 0;
 	PS2McDirEntry entry{};
-	if (!pImpl->find_entry(path, parent_cluster, entry, nullptr, quiet))
+	if (!m_impl->findEntry(path, parent_cluster, entry, nullptr, quiet))
 	{
 		return {};
 	}
@@ -1378,23 +1405,23 @@ std::vector<uint8_t> PS2MemoryCard::readFile(const std::string& path, bool quiet
 	uint32_t current_cluster = entry.cluster;
 	uint32_t bytes_read = 0;
 
-	while (bytes_read < entry.length && current_cluster != PS2MC_FAT_CHAIN_END && current_cluster < pImpl->fat.size())
+	while (bytes_read < entry.length && current_cluster != PS2MC_FAT_CHAIN_END && current_cluster < m_impl->m_fat.size())
 	{
-		uint32_t disk_cluster = current_cluster + pImpl->allocatable_cluster_offset;
-		auto cluster_data = pImpl->read_cluster(disk_cluster);
+		uint32_t disk_cluster = current_cluster + m_impl->m_allocatableClusterOffset;
+		auto cluster_data = m_impl->readCluster(disk_cluster);
 		if (cluster_data.empty())
 		{
 			return {};
 		}
 		uint32_t remaining = entry.length - bytes_read;
-		uint32_t to_read = remaining < pImpl->cluster_size ? remaining : pImpl->cluster_size;
+		uint32_t to_read = remaining < m_impl->m_clusterSize ? remaining : m_impl->m_clusterSize;
 
 		result.insert(result.end(),
 			cluster_data.begin(),
 			cluster_data.begin() + to_read);
 		bytes_read += to_read;
 
-		uint32_t next = pImpl->fat[current_cluster] & PS2MC_FAT_CLUSTER_MASK;
+		uint32_t next = m_impl->m_fat[current_cluster] & PS2MC_FAT_CLUSTER_MASK;
 		if (next == PS2MC_FAT_CHAIN_END_UNALLOC)
 		{
 			break;
@@ -1532,7 +1559,7 @@ uint32_t PS2MemoryCard::getSaveSize(const std::string& savePath)
 		return 0;
 	}
 
-	uint32_t totalSize = roundUp(static_cast<uint32_t>(entries.size()) * PS2MC_DIRENT_LENGTH, pImpl->cluster_size);
+	uint32_t totalSize = roundUp(static_cast<uint32_t>(entries.size()) * PS2MC_DIRENT_LENGTH, m_impl->m_clusterSize);
 
 	for (const auto& entry : entries)
 	{
@@ -1548,7 +1575,7 @@ uint32_t PS2MemoryCard::getSaveSize(const std::string& savePath)
 		}
 		else
 		{
-			totalSize += roundUp(entry.length, pImpl->cluster_size);
+			totalSize += roundUp(entry.length, m_impl->m_clusterSize);
 		}
 	}
 
@@ -1558,26 +1585,26 @@ uint32_t PS2MemoryCard::getSaveSize(const std::string& savePath)
 uint32_t PS2MemoryCard::getFreeSpace()
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		m_error.Fail("Memory card not open");
 		return 0;
 	}
 	uint32_t free_clusters = 0;
-	for (uint32_t entry : pImpl->fat)
+	for (uint32_t entry : m_impl->m_fat)
 	{
 		if ((entry & PS2MC_FAT_ALLOCATED_BIT) == 0 && entry == PS2MC_FAT_CHAIN_END_UNALLOC)
 		{
 			free_clusters++;
 		}
 	}
-	return free_clusters * pImpl->cluster_size;
+	return free_clusters * m_impl->m_clusterSize;
 }
 
 PS2MemoryCard::CardInfo PS2MemoryCard::getCardInfo()
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		m_error.Fail("Memory card not open");
 		return {};
@@ -1585,21 +1612,21 @@ PS2MemoryCard::CardInfo PS2MemoryCard::getCardInfo()
 
 	CardInfo info{};
 
-	info.pageSize = pImpl->page_size;
-	info.rawPageSize = pImpl->raw_page_size;
-	info.spareSize = pImpl->spare_size;
-	info.withEcc = pImpl->with_ecc && pImpl->spare_size > 0;
-	info.cardType = pImpl->card_type;
-	info.cardFlags = pImpl->card_flags;
-	info.pagesPerCluster = pImpl->pages_per_cluster;
-	info.clusterSize = pImpl->cluster_size;
-	info.clustersPerCard = pImpl->clusters_per_card;
-	info.allocatableOffset = pImpl->allocatable_cluster_offset;
-	info.allocatableCount = pImpl->allocatable_cluster_end;
-	info.rootDirCluster = pImpl->rootdir_fat_cluster;
+	info.pageSize = m_impl->m_pageSize;
+	info.rawPageSize = m_impl->m_rawPageSize;
+	info.spareSize = m_impl->m_spareSize;
+	info.withEcc = m_impl->m_withEcc && m_impl->m_spareSize > 0;
+	info.cardType = m_impl->m_cardType;
+	info.cardFlags = m_impl->m_cardFlags;
+	info.pagesPerCluster = m_impl->m_pagesPerCluster;
+	info.clusterSize = m_impl->m_clusterSize;
+	info.clustersPerCard = m_impl->m_clustersPerCard;
+	info.allocatableOffset = m_impl->m_allocatableClusterOffset;
+	info.allocatableCount = m_impl->m_allocatableClusterEnd;
+	info.rootDirCluster = m_impl->m_rootDirFatCluster;
 
 	uint32_t freeClusters = 0;
-	for (uint32_t entry : pImpl->fat)
+	for (uint32_t entry : m_impl->m_fat)
 	{
 		if ((entry & PS2MC_FAT_ALLOCATED_BIT) == 0 && entry == PS2MC_FAT_CHAIN_END_UNALLOC)
 		{
@@ -1614,17 +1641,17 @@ PS2MemoryCard::CardInfo PS2MemoryCard::getCardInfo()
 	info.usedClusters = usedClusters;
 
 	uint32_t reservedClusters = 0;
-	if (pImpl->clusters_per_card > info.allocatableOffset + info.allocatableCount)
+	if (m_impl->m_clustersPerCard > info.allocatableOffset + info.allocatableCount)
 	{
-		reservedClusters = pImpl->clusters_per_card - (info.allocatableOffset + info.allocatableCount);
+		reservedClusters = m_impl->m_clustersPerCard - (info.allocatableOffset + info.allocatableCount);
 	}
 	info.reservedClusters = reservedClusters;
 
-	info.backupBlock1 = pImpl->backup_block1;
-	info.backupBlock2 = pImpl->backup_block2;
+	info.backupBlock1 = m_impl->m_backupBlock1;
+	info.backupBlock2 = m_impl->m_backupBlock2;
 
 	uint32_t badCount = 0;
-	for (uint32_t v : pImpl->bad_block_list)
+	for (uint32_t v : m_impl->m_badBlockList)
 	{
 		if (v != 0 && v != 0xFFFFFFFF)
 		{
@@ -1637,7 +1664,7 @@ PS2MemoryCard::CardInfo PS2MemoryCard::getCardInfo()
 	info.freeBytes = static_cast<uint64_t>(freeClusters) * info.clusterSize;
 
 	info.imageSizeBytes =
-		static_cast<uint64_t>(pImpl->page_size) * pImpl->pages_per_cluster * pImpl->clusters_per_card;
+		static_cast<uint64_t>(m_impl->m_pageSize) * m_impl->m_pagesPerCluster * m_impl->m_clustersPerCard;
 
 	return info;
 }
@@ -1645,7 +1672,7 @@ PS2MemoryCard::CardInfo PS2MemoryCard::getCardInfo()
 bool PS2MemoryCard::makeDir(const std::string& path)
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		return m_error.Fail("Memory card not open");
 	}
@@ -1658,7 +1685,7 @@ bool PS2MemoryCard::makeDir(const std::string& path)
 	uint32_t unusedParent = 0;
 	PS2McDirEntry existingEntry{};
 	bool path_not_found = false;
-	if (pImpl->find_entry(path, unusedParent, existingEntry, &path_not_found, /*quiet=*/true))
+	if (m_impl->findEntry(path, unusedParent, existingEntry, &path_not_found, /*quiet=*/true))
 	{
 		if (existingEntry.mode & DF_EXISTS)
 		{
@@ -1679,7 +1706,7 @@ bool PS2MemoryCard::makeDir(const std::string& path)
 	if (parent_path != "/")
 	{
 		PS2McDirEntry parent_entry{};
-		if (!pImpl->find_entry(parent_path, parent_cluster, parent_entry))
+		if (!m_impl->findEntry(parent_path, parent_cluster, parent_entry))
 		{
 			return false;
 		}
@@ -1687,16 +1714,16 @@ bool PS2MemoryCard::makeDir(const std::string& path)
 	}
 	else
 	{
-		parent_cluster = pImpl->rootdir_fat_cluster;
+		parent_cluster = m_impl->m_rootDirFatCluster;
 	}
 
-	uint32_t dir_cluster = pImpl->allocate_cluster();
+	uint32_t dir_cluster = m_impl->allocateCluster();
 	if (dir_cluster == PS2MC_FAT_CHAIN_END)
 	{
 		return false;
 	}
 
-	auto parent_entries = pImpl->read_dirents(parent_cluster);
+	auto parent_entries = m_impl->readDirents(parent_cluster);
 	if (m_error.IsValid())
 	{
 		return false;
@@ -1735,7 +1762,7 @@ bool PS2MemoryCard::makeDir(const std::string& path)
 	dotdot_entry.dirEntry = 0;
 	new_dir_entries.push_back(dotdot_entry);
 
-	if (!pImpl->write_dirents(dir_cluster, new_dir_entries))
+	if (!m_impl->writeDirents(dir_cluster, new_dir_entries))
 	{
 		return false;
 	}
@@ -1746,24 +1773,24 @@ bool PS2MemoryCard::makeDir(const std::string& path)
 		parent_entries[0].length = static_cast<uint32_t>(parent_entries.size());
 	}
 
-	if (!pImpl->write_dirents(parent_cluster, parent_entries))
+	if (!m_impl->writeDirents(parent_cluster, parent_entries))
 	{
 		return false;
 	}
 
-	if (!pImpl->write_fat_to_card())
+	if (!m_impl->writeFatToCard())
 	{
 		return false;
 	}
 
-	pImpl->modified = true;
+	m_impl->m_modified = true;
 	return true;
 }
 
 bool PS2MemoryCard::writeFile(const std::string& path, const std::vector<uint8_t>& data)
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		return m_error.Fail("Memory card not open");
 	}
@@ -1776,7 +1803,7 @@ bool PS2MemoryCard::writeFile(const std::string& path, const std::vector<uint8_t
 	uint32_t unusedParent = 0;
 	PS2McDirEntry existingEntry{};
 	bool path_not_found = false;
-	if (pImpl->find_entry(path, unusedParent, existingEntry, &path_not_found, /*quiet=*/true) && (existingEntry.mode & DF_EXISTS))
+	if (m_impl->findEntry(path, unusedParent, existingEntry, &path_not_found, /*quiet=*/true) && (existingEntry.mode & DF_EXISTS))
 	{
 		return m_error.Fail("File already exists: " + path);
 	}
@@ -1794,7 +1821,7 @@ bool PS2MemoryCard::writeFile(const std::string& path, const std::vector<uint8_t
 	if (parent_path != "/")
 	{
 		PS2McDirEntry parent_entry{};
-		if (!pImpl->find_entry(parent_path, parent_cluster, parent_entry))
+		if (!m_impl->findEntry(parent_path, parent_cluster, parent_entry))
 		{
 			return false;
 		}
@@ -1802,15 +1829,15 @@ bool PS2MemoryCard::writeFile(const std::string& path, const std::vector<uint8_t
 	}
 	else
 	{
-		parent_cluster = pImpl->rootdir_fat_cluster;
+		parent_cluster = m_impl->m_rootDirFatCluster;
 	}
 
 	// Calculate clusters needed
-	uint32_t clusters_needed = (static_cast<uint32_t>(data.size()) + pImpl->cluster_size - 1) / pImpl->cluster_size;
+	uint32_t clusters_needed = (static_cast<uint32_t>(data.size()) + m_impl->m_clusterSize - 1) / m_impl->m_clusterSize;
 	std::vector<uint32_t> file_clusters;
 	if (clusters_needed > 0)
 	{
-		file_clusters = pImpl->allocate_clusters(clusters_needed);
+		file_clusters = m_impl->allocateClusters(clusters_needed);
 		if (file_clusters.empty())
 		{
 			return false;
@@ -1821,16 +1848,16 @@ bool PS2MemoryCard::writeFile(const std::string& path, const std::vector<uint8_t
 	for (uint32_t cluster : file_clusters)
 	{
 		uint32_t remaining = static_cast<uint32_t>(data.size()) - offset;
-		uint32_t to_write = (pImpl->cluster_size < remaining) ? pImpl->cluster_size : remaining;
-		std::vector<uint8_t> cluster_data(pImpl->cluster_size, 0);
+		uint32_t to_write = (m_impl->m_clusterSize < remaining) ? m_impl->m_clusterSize : remaining;
+		std::vector<uint8_t> cluster_data(m_impl->m_clusterSize, 0);
 
 		if (to_write > 0)
 		{
 			std::copy(data.begin() + offset, data.begin() + offset + to_write, cluster_data.begin());
 		}
 
-		uint32_t disk_cluster = cluster + pImpl->allocatable_cluster_offset;
-		if (!pImpl->write_cluster(disk_cluster, cluster_data))
+		uint32_t disk_cluster = cluster + m_impl->m_allocatableClusterOffset;
+		if (!m_impl->writeCluster(disk_cluster, cluster_data))
 		{
 			return false;
 		}
@@ -1846,7 +1873,7 @@ bool PS2MemoryCard::writeFile(const std::string& path, const std::vector<uint8_t
 	file_entry.created = timeToTod(time(nullptr));
 	file_entry.modified = file_entry.created;
 
-	auto parent_entries = pImpl->read_dirents(parent_cluster);
+	auto parent_entries = m_impl->readDirents(parent_cluster);
 	if (m_error.IsValid())
 	{
 		return false;
@@ -1856,25 +1883,25 @@ bool PS2MemoryCard::writeFile(const std::string& path, const std::vector<uint8_t
 	{
 		parent_entries[0].length = static_cast<uint32_t>(parent_entries.size());
 	}
-	if (!pImpl->write_dirents(parent_cluster, parent_entries) ||
-		!pImpl->syncParentDirectoryEntryLength(parent_cluster))
+	if (!m_impl->writeDirents(parent_cluster, parent_entries) ||
+		!m_impl->syncParentDirectoryEntryLength(parent_cluster))
 	{
 		return false;
 	}
 
-	if (!pImpl->write_fat_to_card())
+	if (!m_impl->writeFatToCard())
 	{
 		return false;
 	}
 
-	pImpl->modified = true;
+	m_impl->m_modified = true;
 	return true;
 }
 
 bool PS2MemoryCard::remove(const std::string& path)
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		return m_error.Fail("Memory card not open");
 	}
@@ -1886,7 +1913,7 @@ bool PS2MemoryCard::remove(const std::string& path)
 
 	uint32_t parent_cluster = 0;
 	PS2McDirEntry entry{};
-	if (!pImpl->find_entry(path, parent_cluster, entry))
+	if (!m_impl->findEntry(path, parent_cluster, entry))
 	{
 		return false;
 	}
@@ -1907,7 +1934,9 @@ bool PS2MemoryCard::remove(const std::string& path)
 		for (const auto& sub : contents)
 		{
 			if (sub.name == "." || sub.name == "..")
+			{
 				continue;
+			}
 			if (sub.mode & DF_EXISTS)
 			{
 				if (!remove(path + "/" + sub.name))
@@ -1918,25 +1947,25 @@ bool PS2MemoryCard::remove(const std::string& path)
 		}
 
 		uint32_t cluster = entry.cluster;
-		while (cluster != PS2MC_FAT_CHAIN_END && cluster < pImpl->fat.size())
+		while (cluster != PS2MC_FAT_CHAIN_END && cluster < m_impl->m_fat.size())
 		{
-			uint32_t next = pImpl->fat[cluster] & PS2MC_FAT_CLUSTER_MASK;
-			pImpl->fat[cluster] = PS2MC_FAT_CHAIN_END_UNALLOC;
+			uint32_t next = m_impl->m_fat[cluster] & PS2MC_FAT_CLUSTER_MASK;
+			m_impl->m_fat[cluster] = PS2MC_FAT_CHAIN_END_UNALLOC;
 			cluster = next;
 		}
 	}
 	else
 	{
 		uint32_t cluster = entry.cluster;
-		while (cluster != PS2MC_FAT_CHAIN_END && cluster < pImpl->fat.size())
+		while (cluster != PS2MC_FAT_CHAIN_END && cluster < m_impl->m_fat.size())
 		{
-			uint32_t next = pImpl->fat[cluster] & PS2MC_FAT_CLUSTER_MASK;
-			pImpl->fat[cluster] = PS2MC_FAT_CHAIN_END_UNALLOC;
+			uint32_t next = m_impl->m_fat[cluster] & PS2MC_FAT_CLUSTER_MASK;
+			m_impl->m_fat[cluster] = PS2MC_FAT_CHAIN_END_UNALLOC;
 			cluster = next;
 		}
 	}
 
-	auto parent_entries = pImpl->read_dirents(parent_cluster);
+	auto parent_entries = m_impl->readDirents(parent_cluster);
 	if (m_error.IsValid())
 	{
 		return false;
@@ -1950,29 +1979,29 @@ bool PS2MemoryCard::remove(const std::string& path)
 		}
 	}
 
-	if (!pImpl->write_dirents(parent_cluster, parent_entries))
+	if (!m_impl->writeDirents(parent_cluster, parent_entries))
 	{
 		return false;
 	}
 
-	if (!pImpl->write_fat_to_card())
+	if (!m_impl->writeFatToCard())
 	{
 		return false;
 	}
-	pImpl->file.flush();
-	if (!pImpl->file)
+	m_impl->m_file.flush();
+	if (!m_impl->m_file)
 	{
 		return m_error.Fail("Failed to flush memory card file");
 	}
 
-	pImpl->modified = true;
+	m_impl->m_modified = true;
 	return true;
 }
 
 bool PS2MemoryCard::importSaveFile(PS2SaveFile& save, bool ignoreExisting, const std::string& targetDir)
 {
 	m_error.Clear();
-	if (!pImpl || !pImpl->file.is_open())
+	if (!m_impl || !m_impl->m_file.is_open())
 	{
 		return m_error.Fail("No memory card open");
 	}
@@ -2015,7 +2044,7 @@ bool PS2MemoryCard::importSaveFile(PS2SaveFile& save, bool ignoreExisting, const
 	uint32_t dummy = 0;
 	PS2McDirEntry checkExisting{};
 	bool path_not_found = false;
-	if (pImpl->find_entry(savePath, dummy, checkExisting, &path_not_found, /*quiet=*/true))
+	if (m_impl->findEntry(savePath, dummy, checkExisting, &path_not_found, /*quiet=*/true))
 	{
 		if (!ignoreExisting)
 		{
@@ -2051,13 +2080,13 @@ bool PS2MemoryCard::importSaveFile(PS2SaveFile& save, bool ignoreExisting, const
 
 		uint32_t parent_cluster_inner = 0;
 		PS2McDirEntry currentEntry{};
-		if (!pImpl->find_entry(filePath, parent_cluster_inner, currentEntry))
+		if (!m_impl->findEntry(filePath, parent_cluster_inner, currentEntry))
 		{
 			return false;
 		}
 		else
 		{
-			auto parentEntries = pImpl->read_dirents(parent_cluster_inner);
+			auto parentEntries = m_impl->readDirents(parent_cluster_inner);
 			if (m_error.IsValid())
 			{
 				return false;
@@ -2084,8 +2113,8 @@ bool PS2MemoryCard::importSaveFile(PS2SaveFile& save, bool ignoreExisting, const
 			}
 			if (updated)
 			{
-				if (!pImpl->write_dirents(parent_cluster_inner, parentEntries) ||
-					!pImpl->syncParentDirectoryEntryLength(parent_cluster_inner))
+				if (!m_impl->writeDirents(parent_cluster_inner, parentEntries) ||
+					!m_impl->syncParentDirectoryEntryLength(parent_cluster_inner))
 				{
 					return false;
 				}
@@ -2096,12 +2125,12 @@ bool PS2MemoryCard::importSaveFile(PS2SaveFile& save, bool ignoreExisting, const
 	{
 		uint32_t saveParentCluster = 0;
 		PS2McDirEntry unusedEntry{};
-		if (!pImpl->find_entry(savePath, saveParentCluster, unusedEntry))
+		if (!m_impl->findEntry(savePath, saveParentCluster, unusedEntry))
 		{
 			return false;
 		}
 
-		auto parentRows = pImpl->read_dirents(saveParentCluster);
+		auto parentRows = m_impl->readDirents(saveParentCluster);
 		if (m_error.IsValid())
 		{
 			return false;
@@ -2123,14 +2152,14 @@ bool PS2MemoryCard::importSaveFile(PS2SaveFile& save, bool ignoreExisting, const
 				break;
 			}
 		}
-		if (!pImpl->write_dirents(saveParentCluster, parentRows))
+		if (!m_impl->writeDirents(saveParentCluster, parentRows))
 		{
 			return false;
 		}
 	}
 
-	uint32_t rootParent = pImpl->rootdir_fat_cluster;
-	auto finalRoot = pImpl->read_dirents(rootParent);
+	uint32_t rootParent = m_impl->m_rootDirFatCluster;
+	auto finalRoot = m_impl->readDirents(rootParent);
 	if (m_error.IsValid())
 	{
 		return false;
@@ -2138,18 +2167,18 @@ bool PS2MemoryCard::importSaveFile(PS2SaveFile& save, bool ignoreExisting, const
 	if (!finalRoot.empty() && (finalRoot[0].mode & DF_DIR))
 	{
 		finalRoot[0].length = static_cast<uint32_t>(finalRoot.size());
-		if (!pImpl->write_dirents(rootParent, finalRoot))
+		if (!m_impl->writeDirents(rootParent, finalRoot))
 		{
 			return false;
 		}
 	}
 
-	if (!pImpl->write_fat_to_card())
+	if (!m_impl->writeFatToCard())
 	{
 		return false;
 	}
-	pImpl->file.flush();
-	if (!pImpl->file)
+	m_impl->m_file.flush();
+	if (!m_impl->m_file)
 	{
 		return m_error.Fail("Failed to flush memory card file");
 	}
@@ -2160,7 +2189,7 @@ bool PS2MemoryCard::importSaveFile(PS2SaveFile& save, bool ignoreExisting, const
 bool PS2MemoryCard::exportSaveFile(const std::string& savePath, PS2SaveFile& save)
 {
 	m_error.Clear();
-	if (!pImpl || !pImpl->file.is_open())
+	if (!m_impl || !m_impl->m_file.is_open())
 	{
 		return m_error.Fail("No memory card open");
 	}
@@ -2168,7 +2197,7 @@ bool PS2MemoryCard::exportSaveFile(const std::string& savePath, PS2SaveFile& sav
 	// Read the save directory entry
 	uint32_t parent_cluster = 0;
 	PS2McDirEntry dirEntry{};
-	if (!pImpl->find_entry(savePath, parent_cluster, dirEntry))
+	if (!m_impl->findEntry(savePath, parent_cluster, dirEntry))
 	{
 		return false;
 	}
@@ -2187,7 +2216,7 @@ bool PS2MemoryCard::exportSaveFile(const std::string& savePath, PS2SaveFile& sav
 	entries.push_back(dirSaveEntry);
 
 	// Read all files in the directory
-	auto dirContents = pImpl->read_dirents(dirEntry.cluster);
+	auto dirContents = m_impl->readDirents(dirEntry.cluster);
 	if (m_error.IsValid())
 	{
 		return false;
@@ -2236,7 +2265,7 @@ bool PS2MemoryCard::exportSaveFile(const std::string& savePath, PS2SaveFile& sav
 uint16_t PS2MemoryCard::getMode(const std::string& path)
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		m_error.Fail("Memory card not open");
 		return 0;
@@ -2244,7 +2273,7 @@ uint16_t PS2MemoryCard::getMode(const std::string& path)
 
 	uint32_t parent_cluster = 0;
 	PS2McDirEntry entry{};
-	if (!pImpl->find_entry(path, parent_cluster, entry))
+	if (!m_impl->findEntry(path, parent_cluster, entry))
 	{
 		return 0;
 	}
@@ -2254,20 +2283,20 @@ uint16_t PS2MemoryCard::getMode(const std::string& path)
 bool PS2MemoryCard::setMode(const std::string& path, uint16_t mode)
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		return m_error.Fail("Memory card not open");
 	}
 
 	uint32_t parent_cluster = 0;
 	PS2McDirEntry entry{};
-	if (!pImpl->find_entry(path, parent_cluster, entry))
+	if (!m_impl->findEntry(path, parent_cluster, entry))
 	{
 		return false;
 	}
 
 	// Read all entries in the parent directory
-	auto entries = pImpl->read_dirents(parent_cluster);
+	auto entries = m_impl->readDirents(parent_cluster);
 	if (m_error.IsValid())
 	{
 		return false;
@@ -2291,25 +2320,25 @@ bool PS2MemoryCard::setMode(const std::string& path, uint16_t mode)
 	}
 
 	// Write all entries back
-	return pImpl->write_dirents(parent_cluster, entries);
+	return m_impl->writeDirents(parent_cluster, entries);
 }
 
 bool PS2MemoryCard::setModifiedTime(const std::string& path, std::time_t newTime)
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		return m_error.Fail("Memory card not open");
 	}
 
 	uint32_t parent_cluster = 0;
 	PS2McDirEntry entry{};
-	if (!pImpl->find_entry(path, parent_cluster, entry))
+	if (!m_impl->findEntry(path, parent_cluster, entry))
 	{
 		return false;
 	}
 
-	auto entries = pImpl->read_dirents(parent_cluster);
+	auto entries = m_impl->readDirents(parent_cluster);
 	if (m_error.IsValid())
 	{
 		return false;
@@ -2332,18 +2361,18 @@ bool PS2MemoryCard::setModifiedTime(const std::string& path, std::time_t newTime
 		return m_error.Fail("Entry not found in parent directory");
 	}
 
-	if (!pImpl->write_dirents(parent_cluster, entries))
+	if (!m_impl->writeDirents(parent_cluster, entries))
 	{
 		return false;
 	}
-	pImpl->modified = true;
+	m_impl->m_modified = true;
 	return true;
 }
 
 bool PS2MemoryCard::renameEntry(const std::string& path, const std::string& newName)
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		return m_error.Fail("Memory card not open");
 	}
@@ -2365,12 +2394,12 @@ bool PS2MemoryCard::renameEntry(const std::string& path, const std::string& newN
 
 	uint32_t parent_cluster = 0;
 	PS2McDirEntry entry{};
-	if (!pImpl->find_entry(path, parent_cluster, entry))
+	if (!m_impl->findEntry(path, parent_cluster, entry))
 	{
 		return false;
 	}
 
-	auto entries = pImpl->read_dirents(parent_cluster);
+	auto entries = m_impl->readDirents(parent_cluster);
 	if (m_error.IsValid())
 	{
 		return false;
@@ -2400,18 +2429,18 @@ bool PS2MemoryCard::renameEntry(const std::string& path, const std::string& newN
 		return m_error.Fail("Entry not found in parent directory");
 	}
 
-	if (!pImpl->write_dirents(parent_cluster, entries))
+	if (!m_impl->writeDirents(parent_cluster, entries))
 	{
 		return false;
 	}
-	pImpl->modified = true;
+	m_impl->m_modified = true;
 	return true;
 }
 
 uint32_t PS2MemoryCard::getAllocatableSpace()
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		m_error.Fail("Memory card not open");
 		return 0;
@@ -2419,15 +2448,15 @@ uint32_t PS2MemoryCard::getAllocatableSpace()
 
 	// Return total usable space on card (excluding system clusters)
 	// This is the total clusters available for user data
-	uint32_t totalClusters = pImpl->clusters_per_card;
-	uint32_t systemClusters = pImpl->allocatable_cluster_offset; // Clusters reserved for FAT, etc.
-	return (totalClusters - systemClusters) * pImpl->cluster_size;
+	uint32_t totalClusters = m_impl->m_clustersPerCard;
+	uint32_t systemClusters = m_impl->m_allocatableClusterOffset; // Clusters reserved for FAT, etc.
+	return (totalClusters - systemClusters) * m_impl->m_clusterSize;
 }
 
 bool PS2MemoryCard::check()
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		return m_error.Fail("Memory card not open");
 	}
@@ -2466,13 +2495,13 @@ bool PS2MemoryCard::check()
 
 bool PS2MemoryCard::hasEcc() const
 {
-	return pImpl->with_ecc;
+	return m_impl->m_withEcc;
 }
 
 std::string PS2MemoryCard::getPsxTitle(const std::string& savePath)
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		m_error.Fail("Memory card not open");
 		return "";
@@ -2504,7 +2533,9 @@ std::string PS2MemoryCard::getPsxTitle(const std::string& savePath)
 					std::string title(reinterpret_cast<const char*>(&data[4]), 64);
 					size_t nullPos = title.find('\0');
 					if (nullPos != std::string::npos)
+					{
 						title = title.substr(0, nullPos);
+					}
 					return ShiftJIS::toUtf8(title);
 				}
 			}
@@ -2519,70 +2550,70 @@ std::string PS2MemoryCard::getPsxTitle(const std::string& savePath)
 bool PS2MemoryCard::saveAs(const std::string& filename, bool withEcc)
 {
 	m_error.Clear();
-	if (!pImpl->file.is_open())
+	if (!m_impl->m_file.is_open())
 	{
 		return m_error.Fail("Memory card not open");
 	}
 
 	std::error_code ec;
 	bool sameFile = std::filesystem::equivalent(
-		std::filesystem::path(pImpl->filename), std::filesystem::path(filename), ec);
+		std::filesystem::path(m_impl->m_filename), std::filesystem::path(filename), ec);
 	if (ec)
 	{
 		sameFile = false;
 	}
 
-	if (pImpl->modified)
+	if (m_impl->m_modified)
 	{
-		if (!pImpl->write_fat_to_card())
+		if (!m_impl->writeFatToCard())
 		{
 			return false;
 		}
 	}
-	pImpl->file.flush();
-	if (!pImpl->file)
+	m_impl->m_file.flush();
+	if (!m_impl->m_file)
 	{
 		return m_error.Fail("Failed to flush memory card file");
 	}
 
-	if (sameFile && withEcc == pImpl->with_ecc)
+	if (sameFile && withEcc == m_impl->m_withEcc)
 	{
 		return true;
 	}
 
-	const std::filesystem::path dest(sameFile ? pImpl->filename : filename);
+	const std::filesystem::path dest(sameFile ? m_impl->m_filename : filename);
 
-	if (withEcc == pImpl->with_ecc)
+	if (withEcc == m_impl->m_withEcc)
 	{
-		pImpl->file.close();
-		pImpl->page_cache.clear();
-		pImpl->fat_cluster_cache.clear();
+		m_impl->m_file.close();
+		m_impl->m_pageCache.clear();
+		m_impl->m_fatClusterCache.clear();
 
-		std::filesystem::copy_file(pImpl->filename, dest,
+		std::filesystem::copy_file(m_impl->m_filename, dest,
 			std::filesystem::copy_options::overwrite_existing, ec);
 		if (ec)
 		{
-			pImpl->file.open(pImpl->filename, std::ios::in | std::ios::out | std::ios::binary);
-			if (!pImpl->file)
+			m_impl->m_file.open(m_impl->m_filename, std::ios::in | std::ios::out | std::ios::binary);
+			if (!m_impl->m_file)
 			{
-				pImpl->file.open(pImpl->filename, std::ios::in | std::ios::binary);
+				m_impl->m_file.open(m_impl->m_filename, std::ios::in | std::ios::binary);
 			}
 			return m_error.Fail("Failed to copy memory card file: " + ec.message());
 		}
 
-		pImpl->file.open(pImpl->filename, std::ios::in | std::ios::out | std::ios::binary);
-		if (!pImpl->file)
+		m_impl->m_file.open(m_impl->m_filename, std::ios::in | std::ios::out | std::ios::binary);
+		if (!m_impl->m_file)
 		{
-			pImpl->file.open(pImpl->filename, std::ios::in | std::ios::binary);
+			m_impl->m_file.open(m_impl->m_filename, std::ios::in | std::ios::binary);
 		}
-		if (!pImpl->file)
+		if (!m_impl->m_file)
 		{
 			return m_error.Fail("Failed to reopen memory card after save");
 		}
-		return pImpl->read_superblock();
+		return m_impl->readSuperblock();
 	}
 
-	const uint32_t pageCount = pImpl->clusters_per_card * pImpl->pages_per_cluster;
+	const uint32_t pageCount = m_impl->m_clustersPerCard * m_impl->m_pagesPerCluster;
 	const std::filesystem::path tmpPath = dest.string() + ".tmp";
 	std::filesystem::remove(tmpPath, ec);
 
@@ -2594,16 +2625,16 @@ bool PS2MemoryCard::saveAs(const std::string& filename, bool withEcc)
 
 	for (uint32_t i = 0; i < pageCount; ++i)
 	{
-		auto pageData = pImpl->read_page(i);
+		auto pageData = m_impl->readPage(i);
 		if (pageData.empty())
 		{
 			out.close();
 			std::filesystem::remove(tmpPath, ec);
 			return false;
 		}
-		if (pageData.size() > pImpl->page_size)
+		if (pageData.size() > m_impl->m_pageSize)
 		{
-			pageData.resize(pImpl->page_size);
+			pageData.resize(m_impl->m_pageSize);
 		}
 
 		const char* MAGIC = "Sony PS2 Memory Card Format ";
@@ -2623,18 +2654,18 @@ bool PS2MemoryCard::saveAs(const std::string& filename, bool withEcc)
 		}
 
 		out.write(reinterpret_cast<const char*>(pageData.data()),
-			static_cast<std::streamsize>(pImpl->page_size));
+			static_cast<std::streamsize>(m_impl->m_pageSize));
 		if (!out)
 		{
 			std::filesystem::remove(tmpPath, ec);
 			return m_error.Fail("Failed to write memory card file");
 		}
 
-		if (withEcc && !pImpl->with_ecc)
+		if (withEcc && !m_impl->m_withEcc)
 		{
-			uint32_t targetSpareSize = divRoundUp(pImpl->page_size, 128) * 4;
+			uint32_t targetSpareSize = divRoundUp(m_impl->m_pageSize, 128) * 4;
 			std::vector<uint8_t> spareBytes(targetSpareSize, 0);
-			auto ecc = eccCalculatePage(pageData, static_cast<int>(pImpl->page_size));
+			auto ecc = eccCalculatePage(pageData, static_cast<int>(m_impl->m_pageSize));
 			for (size_t j = 0; j < ecc.size() && j < targetSpareSize; ++j)
 			{
 				spareBytes[j] = ecc[j];
@@ -2656,33 +2687,33 @@ bool PS2MemoryCard::saveAs(const std::string& filename, bool withEcc)
 		return renameReplace(dest, tmpPath, m_error);
 	}
 
-	pImpl->file.close();
-	pImpl->page_cache.clear();
-	pImpl->fat_cluster_cache.clear();
+	m_impl->m_file.close();
+	m_impl->m_pageCache.clear();
+	m_impl->m_fatClusterCache.clear();
 	if (!renameReplace(dest, tmpPath, m_error))
 	{
 		return false;
 	}
 
-	pImpl->with_ecc = withEcc;
+	m_impl->m_withEcc = withEcc;
 	if (withEcc)
 	{
-		pImpl->calculate_derived();
+		m_impl->calculateDerived();
 	}
 	else
 	{
-		pImpl->spare_size = 0;
-		pImpl->raw_page_size = pImpl->page_size;
+		m_impl->m_spareSize = 0;
+		m_impl->m_rawPageSize = m_impl->m_pageSize;
 	}
 
-	pImpl->file.open(pImpl->filename, std::ios::in | std::ios::out | std::ios::binary);
-	if (!pImpl->file)
+	m_impl->m_file.open(m_impl->m_filename, std::ios::in | std::ios::out | std::ios::binary);
+	if (!m_impl->m_file)
 	{
-		pImpl->file.open(pImpl->filename, std::ios::in | std::ios::binary);
+		m_impl->m_file.open(m_impl->m_filename, std::ios::in | std::ios::binary);
 	}
-	if (!pImpl->file)
+	if (!m_impl->m_file)
 	{
 		return m_error.Fail("Failed to reopen memory card after save");
 	}
-	return pImpl->read_superblock();
+	return m_impl->readSuperblock();
 }
