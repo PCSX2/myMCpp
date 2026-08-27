@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: 2025-2026 SternXD
 // SPDX-License-Identifier: GPL-3.0+
 
-#include "ps2mc_cli.h"
-#include "PS2MemoryCard.h"
-#include "PS2SaveFile.h"
-#include "../common/Logger.h"
-#include "version.h"
-#include "BuildVersion.h"
+#include "PS2McCommandLine.h"
+#include "core/formats/PS2MemoryCard.h"
+#include "core/formats/PS2SaveFile.h"
+#include "common/Logger.h"
+#include "common/version.h"
+#include "common/BuildVersion.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -95,12 +95,12 @@ int PS2McCommandLine::execute(int argc, char* argv[])
 		}
 		else if (arg == "-i" || arg == "--ignore-ecc")
 		{
-			ignoreEcc = true;
+			m_ignoreEcc = true;
 			++i;
 		}
 		else if (arg == "-e" || arg == "--no-ecc")
 		{
-			noEcc = true;
+			m_noEcc = true;
 			++i;
 		}
 		else if (arg.substr(0, 1) != "-" || arg == "-")
@@ -118,7 +118,7 @@ int PS2McCommandLine::execute(int argc, char* argv[])
 	if (i < args.size() && args[i].substr(0, 1) != "-")
 	{
 		memcardPath = args[i];
-		currentMemCardPath = memcardPath;
+		m_currentMemCardPath = memcardPath;
 		++i;
 	}
 
@@ -136,10 +136,10 @@ int PS2McCommandLine::execute(int argc, char* argv[])
 
 	if (!memcardPath.empty() && command != "format")
 	{
-		memoryCard = std::make_unique<PS2MemoryCard>();
-		if (!memoryCard->open(memcardPath, ignoreEcc))
+		m_memoryCard = std::make_unique<PS2MemoryCard>();
+		if (!m_memoryCard->open(memcardPath, m_ignoreEcc))
 		{
-			Logger::error("Error opening memory card: {}", memoryCard->GetError().GetDescription());
+			Logger::error("Error opening memory card: {}", m_memoryCard->GetError().GetDescription());
 			return 1;
 		}
 	}
@@ -196,17 +196,17 @@ int PS2McCommandLine::execute(int argc, char* argv[])
 
 int PS2McCommandLine::cmdLs(const std::vector<std::string>& args)
 {
-	if (!memoryCard)
+	if (!m_memoryCard)
 	{
 		Logger::error("No memory card open");
 		return 1;
 	}
 
 	std::string path = args.empty() ? "/" : args[0];
-	auto entries = memoryCard->listDir(path);
-	if (memoryCard->GetError().IsValid())
+	auto entries = m_memoryCard->listDir(path);
+	if (m_memoryCard->GetError().IsValid())
 	{
-		Logger::error("Error: {}", memoryCard->GetError().GetDescription());
+		Logger::error("Error: {}", m_memoryCard->GetError().GetDescription());
 		return 1;
 	}
 
@@ -241,16 +241,16 @@ int PS2McCommandLine::cmdLs(const std::vector<std::string>& args)
 int PS2McCommandLine::cmdDir(const std::vector<std::string>& args)
 {
 	(void)args; // args not used for dir command
-	if (!memoryCard)
+	if (!m_memoryCard)
 	{
 		Logger::error("No memory card open");
 		return 1;
 	}
 
-	auto entries = memoryCard->listDir("/");
-	if (memoryCard->GetError().IsValid())
+	auto entries = m_memoryCard->listDir("/");
+	if (m_memoryCard->GetError().IsValid())
 	{
-		Logger::error("Error: {}", memoryCard->GetError().GetDescription());
+		Logger::error("Error: {}", m_memoryCard->GetError().GetDescription());
 		return 1;
 	}
 
@@ -266,19 +266,19 @@ int PS2McCommandLine::cmdDir(const std::vector<std::string>& args)
 		std::string title, subtitle;
 		if (ent.mode & DF_PSX)
 		{
-			title = memoryCard->getPsxTitle(dirPath);
+			title = m_memoryCard->getPsxTitle(dirPath);
 			if (title.empty())
 				title = "Corrupt";
 		}
 		else
 		{
-			title = memoryCard->getSaveTitle(dirPath);
+			title = m_memoryCard->getSaveTitle(dirPath);
 			if (title.empty())
 				title = "Corrupt";
-			subtitle = memoryCard->getSaveSubtitle(dirPath);
+			subtitle = m_memoryCard->getSaveSubtitle(dirPath);
 		}
 
-		uint32_t sizeBytes = memoryCard->getSaveSize(dirPath);
+		uint32_t sizeBytes = m_memoryCard->getSaveSize(dirPath);
 		uint32_t sizeKB = sizeBytes / 1024;
 
 		std::string protection;
@@ -312,10 +312,10 @@ int PS2McCommandLine::cmdDir(const std::vector<std::string>& args)
 	}
 
 	// Print free space summary
-	uint32_t freeSpace = memoryCard->getFreeSpace() / 1024;
-	if (memoryCard->GetError().IsValid())
+	uint32_t freeSpace = m_memoryCard->getFreeSpace() / 1024;
+	if (m_memoryCard->GetError().IsValid())
 	{
-		Logger::error("Error: {}", memoryCard->GetError().GetDescription());
+		Logger::error("Error: {}", m_memoryCard->GetError().GetDescription());
 		return 1;
 	}
 	std::string freeStr;
@@ -341,16 +341,16 @@ int PS2McCommandLine::cmdDir(const std::vector<std::string>& args)
 
 int PS2McCommandLine::cmdExtract(const std::vector<std::string>& args)
 {
-	if (!memoryCard || args.empty())
+	if (!m_memoryCard || args.empty())
 	{
 		Logger::error("No memory card open or filename required");
 		return 1;
 	}
 
-	auto data = memoryCard->readFile(args[0]);
-	if (memoryCard->GetError().IsValid())
+	auto data = m_memoryCard->readFile(args[0]);
+	if (m_memoryCard->GetError().IsValid())
 	{
-		Logger::error("Error: {}", memoryCard->GetError().GetDescription());
+		Logger::error("Error: {}", m_memoryCard->GetError().GetDescription());
 		return 1;
 	}
 	std::string outFile = args.size() > 1 ? args[1] : fs::path(args[0]).filename().string();
@@ -372,7 +372,7 @@ int PS2McCommandLine::cmdExtract(const std::vector<std::string>& args)
 
 int PS2McCommandLine::cmdAdd(const std::vector<std::string>& args)
 {
-	if (!memoryCard || args.empty())
+	if (!m_memoryCard || args.empty())
 	{
 		Logger::error("No memory card open or filename required");
 		return 1;
@@ -391,9 +391,9 @@ int PS2McCommandLine::cmdAdd(const std::vector<std::string>& args)
 			std::istreambuf_iterator<char>());
 
 		std::string fname = fs::path(filepath).filename().string();
-		if (!memoryCard->writeFile("/" + fname, data))
+		if (!m_memoryCard->writeFile("/" + fname, data))
 		{
-			Logger::error("Error: {}", memoryCard->GetError().GetDescription());
+			Logger::error("Error: {}", m_memoryCard->GetError().GetDescription());
 			return 1;
 		}
 	}
@@ -402,7 +402,7 @@ int PS2McCommandLine::cmdAdd(const std::vector<std::string>& args)
 
 int PS2McCommandLine::cmdImport(const std::vector<std::string>& args)
 {
-	if (!memoryCard || args.empty())
+	if (!m_memoryCard || args.empty())
 	{
 		Logger::error("No memory card open or save file required");
 		return 1;
@@ -438,7 +438,7 @@ int PS2McCommandLine::cmdImport(const std::vector<std::string>& args)
 
 		std::cout << "Importing " << filepath << " to /" << saveName << "...";
 
-		bool result = memoryCard->importSaveFile(save, false, "");
+		bool result = m_memoryCard->importSaveFile(save, false, "");
 
 		if (result)
 		{
@@ -447,9 +447,9 @@ int PS2McCommandLine::cmdImport(const std::vector<std::string>& args)
 		}
 		else
 		{
-			if (memoryCard->GetError().IsValid())
+			if (m_memoryCard->GetError().IsValid())
 			{
-				std::cout << " FAILED: " << memoryCard->GetError().GetDescription() << "\n";
+				std::cout << " FAILED: " << m_memoryCard->GetError().GetDescription() << "\n";
 				return 1;
 			}
 			std::cout << " SKIPPED (already exists)\n";
@@ -472,7 +472,7 @@ int PS2McCommandLine::cmdImport(const std::vector<std::string>& args)
 
 int PS2McCommandLine::cmdExport(const std::vector<std::string>& args)
 {
-	if (!memoryCard || args.empty())
+	if (!m_memoryCard || args.empty())
 	{
 		Logger::error("No memory card open or save directory required");
 		return 1;
@@ -490,9 +490,9 @@ int PS2McCommandLine::cmdExport(const std::vector<std::string>& args)
 		}
 
 		PS2SaveFile save;
-		if (!memoryCard->exportSaveFile(path, save))
+		if (!m_memoryCard->exportSaveFile(path, save))
 		{
-			Logger::error("Error exporting {}: {}", path, memoryCard->GetError().GetDescription());
+			Logger::error("Error exporting {}: {}", path, m_memoryCard->GetError().GetDescription());
 			return 1;
 		}
 
@@ -526,15 +526,15 @@ int PS2McCommandLine::cmdExport(const std::vector<std::string>& args)
 
 int PS2McCommandLine::cmdDelete(const std::vector<std::string>& args)
 {
-	if (!memoryCard || args.empty())
+	if (!m_memoryCard || args.empty())
 	{
 		Logger::error("No memory card open or save name required");
 		return 1;
 	}
 
-	if (!memoryCard->remove(args[0]))
+	if (!m_memoryCard->remove(args[0]))
 	{
-		Logger::error("Error: {}", memoryCard->GetError().GetDescription());
+		Logger::error("Error: {}", m_memoryCard->GetError().GetDescription());
 		return 1;
 	}
 	return 0;
@@ -547,7 +547,7 @@ int PS2McCommandLine::cmdRemove(const std::vector<std::string>& args)
 
 int PS2McCommandLine::cmdMkdir(const std::vector<std::string>& args)
 {
-	if (!memoryCard || args.empty())
+	if (!m_memoryCard || args.empty())
 	{
 		Logger::error("No memory card open or directory path required");
 		return 1;
@@ -555,9 +555,9 @@ int PS2McCommandLine::cmdMkdir(const std::vector<std::string>& args)
 
 	for (const auto& path : args)
 	{
-		if (!memoryCard->makeDir(path))
+		if (!m_memoryCard->makeDir(path))
 		{
-			Logger::error("Error: {}", memoryCard->GetError().GetDescription());
+			Logger::error("Error: {}", m_memoryCard->GetError().GetDescription());
 			return 1;
 		}
 	}
@@ -573,7 +573,7 @@ int PS2McCommandLine::cmdFormat(const std::vector<std::string>& args)
 	}
 
 	auto mc = std::make_unique<PS2MemoryCard>();
-	if (!mc->create(args[0], 8, noEcc || !PS2MemoryCard::usesEccForPath(args[0]))) // 8 MB default
+	if (!mc->create(args[0], 8, m_noEcc || !PS2MemoryCard::usesEccForPath(args[0]))) // 8 MB default
 	{
 		Logger::error("Error: {}", mc->GetError().GetDescription());
 		return 1;
@@ -584,13 +584,13 @@ int PS2McCommandLine::cmdFormat(const std::vector<std::string>& args)
 int PS2McCommandLine::cmdCheck(const std::vector<std::string>& args)
 {
 	(void)args;
-	if (!memoryCard)
+	if (!m_memoryCard)
 	{
 		Logger::error("No memory card open");
 		return 1;
 	}
 
-	bool result = memoryCard->check();
+	bool result = m_memoryCard->check();
 	if (result)
 	{
 		std::cout << "No errors found.\n";
@@ -598,9 +598,9 @@ int PS2McCommandLine::cmdCheck(const std::vector<std::string>& args)
 	}
 	else
 	{
-		if (memoryCard->GetError().IsValid())
+		if (m_memoryCard->GetError().IsValid())
 		{
-			std::cout << "Errors found in file system: " << memoryCard->GetError().GetDescription() << "\n";
+			std::cout << "Errors found in file system: " << m_memoryCard->GetError().GetDescription() << "\n";
 		}
 		else
 		{
@@ -613,16 +613,16 @@ int PS2McCommandLine::cmdCheck(const std::vector<std::string>& args)
 int PS2McCommandLine::cmdDf(const std::vector<std::string>& args)
 {
 	(void)args;
-	if (!memoryCard)
+	if (!m_memoryCard)
 	{
 		Logger::error("No memory card open");
 		return 1;
 	}
 
-	uint32_t free = memoryCard->getFreeSpace();
-	if (memoryCard->GetError().IsValid())
+	uint32_t free = m_memoryCard->getFreeSpace();
+	if (m_memoryCard->GetError().IsValid())
 	{
-		Logger::error("Error: {}", memoryCard->GetError().GetDescription());
+		Logger::error("Error: {}", m_memoryCard->GetError().GetDescription());
 		return 1;
 	}
 	std::cout << "Free space: " << free << " bytes\n";
@@ -631,7 +631,7 @@ int PS2McCommandLine::cmdDf(const std::vector<std::string>& args)
 
 int PS2McCommandLine::cmdClear(const std::vector<std::string>& args)
 {
-	if (!memoryCard || args.empty())
+	if (!m_memoryCard || args.empty())
 	{
 		Logger::error("Usage: clear [--read] [--write] [--execute] [--protected] [--psx] [--pocketstation] [--hidden] <path>\n\n");
 		return 1;
@@ -676,16 +676,16 @@ int PS2McCommandLine::cmdClear(const std::vector<std::string>& args)
 	// Clear flags for each path
 	for (const auto& path : paths)
 	{
-		uint16_t current_mode = memoryCard->getMode(path);
-		if (memoryCard->GetError().IsValid())
+		uint16_t current_mode = m_memoryCard->getMode(path);
+		if (m_memoryCard->GetError().IsValid())
 		{
-			Logger::error("Error: {}", memoryCard->GetError().GetDescription());
+			Logger::error("Error: {}", m_memoryCard->GetError().GetDescription());
 			return 1;
 		}
 		uint16_t new_mode = current_mode & ~clear_mask;
-		if (!memoryCard->setMode(path, new_mode))
+		if (!m_memoryCard->setMode(path, new_mode))
 		{
-			Logger::error("Error: {}", memoryCard->GetError().GetDescription());
+			Logger::error("Error: {}", m_memoryCard->GetError().GetDescription());
 			return 1;
 		}
 		std::cout << "Cleared flags for: " << path << " (0x" << std::hex << current_mode << " -> 0x" << new_mode << std::dec << ")\n";
@@ -696,7 +696,7 @@ int PS2McCommandLine::cmdClear(const std::vector<std::string>& args)
 
 int PS2McCommandLine::cmdSet(const std::vector<std::string>& args)
 {
-	if (!memoryCard || args.empty())
+	if (!m_memoryCard || args.empty())
 	{
 		Logger::error("Usage: set [--read] [--write] [--execute] [--protected] [--psx] [--pocketstation] [--hidden] [-x <hex_value>] <path>...\n");
 		return 1;
@@ -808,10 +808,10 @@ int PS2McCommandLine::cmdSet(const std::vector<std::string>& args)
 	// Set mode for each path
 	for (const auto& path : paths)
 	{
-		uint16_t current_mode = memoryCard->getMode(path);
-		if (memoryCard->GetError().IsValid())
+		uint16_t current_mode = m_memoryCard->getMode(path);
+		if (m_memoryCard->GetError().IsValid())
 		{
-			Logger::error("Error: {}", memoryCard->GetError().GetDescription());
+			Logger::error("Error: {}", m_memoryCard->GetError().GetDescription());
 			return 1;
 		}
 		uint16_t new_mode;
@@ -825,9 +825,9 @@ int PS2McCommandLine::cmdSet(const std::vector<std::string>& args)
 			new_mode = (current_mode & clear_mask) | set_mask;
 		}
 
-		if (!memoryCard->setMode(path, new_mode))
+		if (!m_memoryCard->setMode(path, new_mode))
 		{
-			Logger::error("Error: {}", memoryCard->GetError().GetDescription());
+			Logger::error("Error: {}", m_memoryCard->GetError().GetDescription());
 			return 1;
 		}
 		std::cout << "Set mode for: " << path << " (0x" << std::hex << current_mode << " -> 0x" << new_mode << std::dec << ")\n";
@@ -839,21 +839,21 @@ int PS2McCommandLine::cmdSet(const std::vector<std::string>& args)
 int PS2McCommandLine::cmdEccCheck(const std::vector<std::string>& args)
 {
 	(void)args;
-	if (!memoryCard)
+	if (!m_memoryCard)
 	{
 		Logger::error("No memory card open");
 		return 1;
 	}
 
-	bool hasEcc = memoryCard->hasEcc();
+	bool hasEcc = m_memoryCard->hasEcc();
 
-	std::cout << "Memory card: " << currentMemCardPath << "\n";
+	std::cout << "Memory card: " << m_currentMemCardPath << "\n";
 	std::cout << "ECC status: " << (hasEcc ? "Enabled" : "Disabled") << "\n";
 
 	if (hasEcc)
 	{
 		std::cout << "Running file system check with ECC validation...\n";
-		bool result = memoryCard->check();
+		bool result = m_memoryCard->check();
 		if (result)
 		{
 			std::cout << "No errors found.\n";
@@ -861,9 +861,9 @@ int PS2McCommandLine::cmdEccCheck(const std::vector<std::string>& args)
 		}
 		else
 		{
-			if (memoryCard->GetError().IsValid())
+			if (m_memoryCard->GetError().IsValid())
 			{
-				std::cout << "Errors detected in file system: " << memoryCard->GetError().GetDescription() << "\n";
+				std::cout << "Errors detected in file system: " << m_memoryCard->GetError().GetDescription() << "\n";
 			}
 			else
 			{
