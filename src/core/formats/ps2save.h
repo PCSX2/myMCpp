@@ -4,34 +4,16 @@
 #pragma once
 
 #include "ps2mc_dir.h"
+#include "Error.h"
 #include <string>
 #include <vector>
 #include <memory>
-#include <stdexcept>
 
 const char PS2SAVE_MAX_MAGIC[] = "Ps2PowerSave";
 const char PS2SAVE_SPS_MAGIC[] = "\x0d\0\0\0SharkPortSave";
 const char PS2SAVE_CBS_MAGIC[] = "CFU\0";
 const char PS2SAVE_NPO_MAGIC[] = "nPort";
 const char PS2SAVE_PSV_MAGIC[] = "\x00VSP";
-
-class PS2SaveError : public std::runtime_error
-{
-public:
-	explicit PS2SaveError(const std::string& msg)
-		: std::runtime_error(msg)
-	{
-	}
-};
-
-class PS2SaveCorrupt : public PS2SaveError
-{
-public:
-	explicit PS2SaveCorrupt(const std::string& msg)
-		: PS2SaveError("Corrupt save file: " + msg)
-	{
-	}
-};
 
 enum class SaveFormat
 {
@@ -57,8 +39,10 @@ public:
 	PS2SaveFile();
 	~PS2SaveFile();
 
-	void load(const std::string& filename);
-	void save(const std::string& filename, SaveFormat format = SaveFormat::MAX_DRIVE);
+	const Error& GetError() const { return m_error; }
+
+	bool load(const std::string& filename);
+	bool save(const std::string& filename, SaveFormat format = SaveFormat::MAX_DRIVE);
 
 	std::vector<PS2SaveEntry>& getEntries();
 	const std::vector<PS2SaveEntry>& getEntries() const;
@@ -71,6 +55,7 @@ public:
 	static std::string formatToExtension(SaveFormat format);
 
 private:
+	Error m_error;
 	class Impl;
 	std::unique_ptr<Impl> pImpl;
 };

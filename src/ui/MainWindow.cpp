@@ -226,16 +226,15 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 
 		if (!filename.isEmpty())
 		{
-			try
+			QString fullPath = savePath + "/" + fileName;
+			if (memoryCard->exportFile(fullPath.toStdString(), filename.toStdString()))
 			{
-				QString fullPath = savePath + "/" + fileName;
-				memoryCard->exportFile(fullPath.toStdString(), filename.toStdString());
 				ui->statusBar->showMessage(tr("Exported %1").arg(fileName), 5000);
 			}
-			catch (const std::exception& e)
+			else
 			{
 				QMessageBox::critical(this, tr("Error"),
-					tr("Failed to export file: %1").arg(e.what()));
+					tr("Failed to export file: %1").arg(QString::fromStdString(memoryCard->GetError().GetDescription())));
 			}
 		}
 	});
@@ -377,19 +376,18 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		QStringList failedNames;
 		for (const QString& fileName : fileNames)
 		{
-			try
+			QString fullPath = savePath + "/" + fileName;
+			QString cleanFileName = QtUtils::sanitizeFilename(fileName);
+			if (cleanFileName != fileName)
 			{
-				QString fullPath = savePath + "/" + fileName;
-				QString cleanFileName = QtUtils::sanitizeFilename(fileName);
-				if (cleanFileName != fileName)
-				{
-					sanitizedChanges.append(tr("'%1' -> '%2'").arg(fileName, cleanFileName));
-				}
-				QString targetFilePath = dir.filePath(cleanFileName);
-				memoryCard->exportFile(fullPath.toStdString(), targetFilePath.toStdString());
+				sanitizedChanges.append(tr("'%1' -> '%2'").arg(fileName, cleanFileName));
+			}
+			QString targetFilePath = dir.filePath(cleanFileName);
+			if (memoryCard->exportFile(fullPath.toStdString(), targetFilePath.toStdString()))
+			{
 				++ok;
 			}
-			catch (const std::exception&)
+			else
 			{
 				++failed;
 				failedNames.append(fileName);
@@ -460,22 +458,19 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		QString folderName = QInputDialog::getText(this, tr("New Folder"),
 			tr("Folder name:"), QLineEdit::Normal, "", &ok);
 
-
-
 		if (ok && !folderName.isEmpty())
 		{
-			try
+			QString fullPath = parentPath == "/" ? "/" + folderName : parentPath + "/" + folderName;
+			if (memoryCard->makeDir(fullPath.toStdString()))
 			{
-				QString fullPath = parentPath == "/" ? "/" + folderName : parentPath + "/" + folderName;
-				memoryCard->makeDir(fullPath.toStdString());
 				ui->statusBar->showMessage(tr("Created folder %1").arg(folderName), 5000);
 				ui->cardBrowser->navigateTo(parentPath);
 				updateCardView();
 			}
-			catch (const std::exception& e)
+			else
 			{
 				QMessageBox::critical(this, tr("Error"),
-					tr("Failed to create folder: %1").arg(e.what()));
+					tr("Failed to create folder: %1").arg(QString::fromStdString(memoryCard->GetError().GetDescription())));
 			}
 		}
 	});
@@ -768,11 +763,15 @@ void MainWindow::importSaveFiles(const QStringList& paths)
 		ImportExportSavesDialog::ImportItem item;
 		item.filePath = filepath;
 
-		try
+		auto save = std::make_shared<PS2SaveFile>();
+		if (!save->load(filepath.toStdString()))
 		{
-			auto save = std::make_shared<PS2SaveFile>();
-			save->load(filepath.toStdString());
-
+			item.corrupt = true;
+			item.errorText = QString::fromStdString(save->GetError().GetDescription());
+			item.gameTitle = QFileInfo(filepath).fileName();
+		}
+		else
+		{
 			std::string saveName = save->getTitle();
 			if (saveName.empty())
 			{
@@ -810,25 +809,23 @@ void MainWindow::importSaveFiles(const QStringList& paths)
 
 			if (memoryCard)
 			{
-				try
+				if (memoryCard->hasEntry("/" + dirId))
 				{
-					memoryCard->getEntry("/" + dirId);
 					item.exists = true;
 					item.overwriteSelected = forceOverwrite;
 				}
-				catch (...)
+				else if (memoryCard->GetError().IsValid())
+				{
+					item.corrupt = true;
+					item.errorText = QString::fromStdString(memoryCard->GetError().GetDescription());
+				}
+				else
 				{
 					item.exists = false;
 				}
 			}
 
 			item.saveFile = save;
-		}
-		catch (const std::exception& e)
-		{
-			item.corrupt = true;
-			item.errorText = QString::fromStdString(e.what());
-			item.gameTitle = QFileInfo(filepath).fileName();
 		}
 
 		importItems.append(item);
@@ -1248,24 +1245,18 @@ void MainWindow::onCardItemSelected()
 			return fallback;
 		}
 
-		try
-		{
-			const std::string savePath = ui->cardBrowser->getCurrentPath().toStdString();
-			const std::string title = memoryCard->getSaveTitle(savePath);
-			const std::string subtitle = memoryCard->getSaveSubtitle(savePath);
+		const std::string savePath = ui->cardBrowser->getCurrentPath().toStdString();
+		const std::string title = memoryCard->getSaveTitle(savePath);
+		const std::string subtitle = memoryCard->getSaveSubtitle(savePath);
 
-			if (!title.empty())
-			{
-				QString display = QString::fromStdString(title);
-				if (!subtitle.empty())
-				{
-					display += QStringLiteral(" ") + QString::fromStdString(subtitle);
-				}
-				return display;
-			}
-		}
-		catch (...)
+		if (!title.empty())
 		{
+			QString display = QString::fromStdString(title);
+			if (!subtitle.empty())
+			{
+				display += QStringLiteral(" ") + QString::fromStdString(subtitle);
+			}
+			return display;
 		}
 
 		return fallback;
@@ -1378,68 +1369,71 @@ void MainWindow::onEditTimestamp(const QString& mcPath)
 	if (!memoryCard)
 		return;
 
-	try
-	{
-		const std::string path = mcPath.toStdString();
-		PS2McDirEntry entry = memoryCard->getEntry(path);
-		std::time_t currentTime = todToTime(entry.modified);
-
-		QDateTime currentDateTime;
-		if (currentTime == 0)
-		{
-			currentDateTime = QDateTime::currentDateTime();
-		}
-		else
-		{
-			currentDateTime = QDateTime::fromSecsSinceEpoch(static_cast<qint64>(currentTime));
-		}
-
-		QDialog dialog(this);
-		dialog.setWindowTitle(tr("Edit Modified Date"));
-
-		QVBoxLayout* layout = new QVBoxLayout(&dialog);
-
-		QLabel* pathLabel = new QLabel(mcPath, &dialog);
-		pathLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-		layout->addWidget(pathLabel);
-
-		QDateTimeEdit* dateTimeEdit = new QDateTimeEdit(currentDateTime, &dialog);
-		dateTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
-		dateTimeEdit->setCalendarPopup(true);
-		layout->addWidget(dateTimeEdit);
-
-		QPushButton* nowButton = new QPushButton(tr("Set to Now"), &dialog);
-		connect(nowButton, &QPushButton::clicked, &dialog, [dateTimeEdit]() {
-			dateTimeEdit->setDateTime(QDateTime::currentDateTime());
-		});
-		layout->addWidget(nowButton);
-
-		QDialogButtonBox* buttonBox = new QDialogButtonBox(
-			QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
-		layout->addWidget(buttonBox);
-
-		connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
-		connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-
-		if (dialog.exec() != QDialog::Accepted)
-			return;
-
-		QDateTime newDateTime = dateTimeEdit->dateTime();
-		if (!newDateTime.isValid())
-			return;
-
-		std::time_t newTime = static_cast<std::time_t>(newDateTime.toSecsSinceEpoch());
-
-		memoryCard->setModifiedTime(path, newTime);
-
-		updateCardView();
-		ui->cardBrowser->navigateTo(ui->cardBrowser->getCurrentPath());
-	}
-	catch (const std::exception& e)
+	const std::string path = mcPath.toStdString();
+	PS2McDirEntry entry = memoryCard->getEntry(path);
+	if (memoryCard->GetError().IsValid())
 	{
 		QMessageBox::critical(this, tr("Error"),
-			tr("Failed to edit timestamp: %1").arg(e.what()));
+			tr("Failed to read entry: %1").arg(QString::fromStdString(memoryCard->GetError().GetDescription())));
+		return;
 	}
+	std::time_t currentTime = todToTime(entry.modified);
+
+	QDateTime currentDateTime;
+	if (currentTime == 0)
+	{
+		currentDateTime = QDateTime::currentDateTime();
+	}
+	else
+	{
+		currentDateTime = QDateTime::fromSecsSinceEpoch(static_cast<qint64>(currentTime));
+	}
+
+	QDialog dialog(this);
+	dialog.setWindowTitle(tr("Edit Modified Date"));
+
+	QVBoxLayout* layout = new QVBoxLayout(&dialog);
+
+	QLabel* pathLabel = new QLabel(mcPath, &dialog);
+	pathLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+	layout->addWidget(pathLabel);
+
+	QDateTimeEdit* dateTimeEdit = new QDateTimeEdit(currentDateTime, &dialog);
+	dateTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
+	dateTimeEdit->setCalendarPopup(true);
+	layout->addWidget(dateTimeEdit);
+
+	QPushButton* nowButton = new QPushButton(tr("Set to Now"), &dialog);
+	connect(nowButton, &QPushButton::clicked, &dialog, [dateTimeEdit]() {
+		dateTimeEdit->setDateTime(QDateTime::currentDateTime());
+	});
+	layout->addWidget(nowButton);
+
+	QDialogButtonBox* buttonBox = new QDialogButtonBox(
+		QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+	layout->addWidget(buttonBox);
+
+	connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+	connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+	if (dialog.exec() != QDialog::Accepted)
+		return;
+
+	QDateTime newDateTime = dateTimeEdit->dateTime();
+	if (!newDateTime.isValid())
+		return;
+
+	std::time_t newTime = static_cast<std::time_t>(newDateTime.toSecsSinceEpoch());
+
+	if (!memoryCard->setModifiedTime(path, newTime))
+	{
+		QMessageBox::critical(this, tr("Error"),
+			tr("Failed to edit timestamp: %1").arg(QString::fromStdString(memoryCard->GetError().GetDescription())));
+		return;
+	}
+
+	updateCardView();
+	ui->cardBrowser->navigateTo(ui->cardBrowser->getCurrentPath());
 }
 
 void MainWindow::updateCardView()
@@ -1452,24 +1446,29 @@ void MainWindow::updateStatusBar()
 {
 	if (memoryCard)
 	{
-		try
+		uint32_t freeSpace = memoryCard->getFreeSpace();
+		if (memoryCard->GetError().IsValid())
 		{
-			uint32_t freeSpace = memoryCard->getFreeSpace();
-			uint32_t allocatable = memoryCard->getAllocatableSpace();
-			double freeMB = freeSpace / (1024.0 * 1024.0);
-			double totalMB = allocatable / (1024.0 * 1024.0);
-			bool hasEcc = memoryCard->hasEcc();
-			QString eccLabel = hasEcc ? tr("ECC") : tr("No ECC");
-			ui->statusBar->showMessage(
-				tr("Free: %2 MB / Total: %1 MB (%3)")
-					.arg(totalMB, 0, 'f', 2)
-					.arg(freeMB, 0, 'f', 2)
-					.arg(eccLabel));
+			ui->statusBar->showMessage(tr("Failed to read free space: %1")
+					.arg(QString::fromStdString(memoryCard->GetError().GetDescription())));
+			return;
 		}
-		catch (...)
+		uint32_t allocatable = memoryCard->getAllocatableSpace();
+		if (memoryCard->GetError().IsValid())
 		{
-			ui->statusBar->showMessage(tr("Memory card open"));
+			ui->statusBar->showMessage(tr("Failed to read card capacity: %1")
+					.arg(QString::fromStdString(memoryCard->GetError().GetDescription())));
+			return;
 		}
+		double freeMB = freeSpace / (1024.0 * 1024.0);
+		double totalMB = allocatable / (1024.0 * 1024.0);
+		bool hasEcc = memoryCard->hasEcc();
+		QString eccLabel = hasEcc ? tr("ECC") : tr("No ECC");
+		ui->statusBar->showMessage(
+			tr("Free: %2 MB / Total: %1 MB (%3)")
+				.arg(totalMB, 0, 'f', 2)
+				.arg(freeMB, 0, 'f', 2)
+				.arg(eccLabel));
 	}
 	else
 	{
@@ -1533,22 +1532,20 @@ void MainWindow::onSaveAs()
 		return;
 	}
 
-	try
-	{
-		memoryCard->saveAs(filename.toStdString(), memoryCard->hasEcc());
-		if (m_discordRpc)
-		{
-			m_discordRpc->setTemporaryPresence(
-				tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
-				tr("Copy saved: %1").arg(QFileInfo(filename).fileName()));
-		}
-		ui->statusBar->showMessage(tr("Copy saved to %1").arg(filename), 5000);
-	}
-	catch (const std::exception& e)
+	if (!memoryCard->saveAs(filename.toStdString(), memoryCard->hasEcc()))
 	{
 		QMessageBox::critical(this, tr("Error"),
-			tr("Failed to save: %1").arg(e.what()));
+			tr("Failed to save: %1").arg(QString::fromStdString(memoryCard->GetError().GetDescription())));
+		return;
 	}
+
+	if (m_discordRpc)
+	{
+		m_discordRpc->setTemporaryPresence(
+			tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
+			tr("Copy saved: %1").arg(QFileInfo(filename).fileName()));
+	}
+	ui->statusBar->showMessage(tr("Copy saved to %1").arg(filename), 5000);
 }
 
 void MainWindow::onCardInfo()
@@ -1556,88 +1553,99 @@ void MainWindow::onCardInfo()
 	if (!memoryCard)
 		return;
 
-	try
-	{
-		PS2MemoryCard::CardInfo info = memoryCard->getCardInfo();
-
-		QDialog dialog(this);
-		dialog.setWindowTitle(tr("Card Info"));
-
-		QFormLayout* layout = new QFormLayout(&dialog);
-
-		auto addRow = [layout](const QString& label, const QString& value) {
-			layout->addRow(new QLabel(label), new QLabel(value));
-		};
-
-		auto addSection = [layout](const QString& label) {
-			QLabel* header = new QLabel(label);
-			header->setStyleSheet(QStringLiteral("font-weight: bold; margin-top: 8px;"));
-			layout->addRow(header, new QLabel);
-		};
-
-		const double imageMiB = static_cast<double>(info.imageSizeBytes) / (1024.0 * 1024.0);
-		const double usedMiB = static_cast<double>(info.usedBytes) / (1024.0 * 1024.0);
-		const double freeMiB = static_cast<double>(info.freeBytes) / (1024.0 * 1024.0);
-
-		addSection(tr("Header"));
-		addRow(tr("Magic"), QString::fromLatin1(PS2MC_MAGIC));
-		addRow(tr("Image Size"), tr("%1 MiB").arg(imageMiB, 0, 'f', 2));
-
-		addSection(tr("Geometry"));
-		addRow(tr("Page Length"), tr("%1 bytes").arg(info.pageSize));
-		addRow(tr("Page Physical"), tr("%1 bytes").arg(info.rawPageSize));
-		addRow(tr("Pages / Cluster"), QString::number(info.pagesPerCluster));
-		addRow(tr("Cluster Size"), tr("%1 KiB").arg(info.clusterSize / 1024.0, 0, 'f', 2));
-		addRow(tr("Clusters / Card"), QString::number(info.clustersPerCard));
-
-		addSection(tr("Type and Flags"));
-		QString typeLabel = tr("Unknown (%1)").arg(info.cardType);
-		if (info.cardType == 2)
-			typeLabel = tr("PS2 (2)");
-		else if (info.cardType == 1)
-			typeLabel = tr("PSX (1)");
-		addRow(tr("Card Type"), typeLabel);
-
-		QStringList flagBits;
-		if (info.cardFlags & 0x01)
-			flagBits << tr("USE_ECC");
-		if (info.cardFlags & 0x08)
-			flagBits << tr("BAD_BLOCK");
-		if (info.cardFlags & 0x10)
-			flagBits << tr("ERASE_ZEROES");
-		QString flagsText = tr("0x%1").arg(QString::number(info.cardFlags, 16).toUpper());
-		if (!flagBits.isEmpty())
-			flagsText += tr(" (%1)").arg(flagBits.join(tr(", ")));
-		addRow(tr("Card Flags"), flagsText);
-
-		addRow(tr("ECC Layout"), info.withEcc ? tr("Yes (512+16)") : tr("No (512 only)"));
-
-		addSection(tr("Allocation"));
-		addRow(tr("Alloc Offset"), QString::number(info.allocatableOffset));
-		addRow(tr("Alloc Count"), QString::number(info.allocatableCount));
-		addRow(tr("Reserved Clusters"), QString::number(info.reservedClusters));
-		addRow(tr("Root Dir Cluster"), QString::number(info.rootDirCluster));
-		addRow(tr("Backup Block 1"), QString::number(info.backupBlock1));
-		addRow(tr("Backup Block 2"), QString::number(info.backupBlock2));
-		addRow(tr("Bad Blocks"), QString::number(info.badBlockCount));
-
-		addSection(tr("Usage"));
-		addRow(tr("Used / Free Clusters"),
-			tr("%1 / %2").arg(info.usedClusters).arg(info.freeClusters));
-		addRow(tr("Used Bytes"), tr("%1 MiB").arg(usedMiB, 0, 'f', 2));
-		addRow(tr("Free Bytes"), tr("%1 MiB").arg(freeMiB, 0, 'f', 2));
-
-		addSection(tr("Health"));
-		const bool fsOk = memoryCard->check();
-		addRow(tr("Filesystem Check"), fsOk ? tr("OK") : tr("Problems detected"));
-
-		dialog.exec();
-	}
-	catch (const std::exception& e)
+	PS2MemoryCard::CardInfo info = memoryCard->getCardInfo();
+	if (memoryCard->GetError().IsValid())
 	{
 		QMessageBox::critical(this, tr("Error"),
-			tr("Failed to read card info: %1").arg(e.what()));
+			tr("Failed to read card info: %1").arg(QString::fromStdString(memoryCard->GetError().GetDescription())));
+		return;
 	}
+
+	QDialog dialog(this);
+	dialog.setWindowTitle(tr("Card Info"));
+
+	QFormLayout* layout = new QFormLayout(&dialog);
+
+	auto addRow = [layout](const QString& label, const QString& value) {
+		layout->addRow(new QLabel(label), new QLabel(value));
+	};
+
+	auto addSection = [layout](const QString& label) {
+		QLabel* header = new QLabel(label);
+		header->setStyleSheet(QStringLiteral("font-weight: bold; margin-top: 8px;"));
+		layout->addRow(header, new QLabel);
+	};
+
+	const double imageMiB = static_cast<double>(info.imageSizeBytes) / (1024.0 * 1024.0);
+	const double usedMiB = static_cast<double>(info.usedBytes) / (1024.0 * 1024.0);
+	const double freeMiB = static_cast<double>(info.freeBytes) / (1024.0 * 1024.0);
+
+	addSection(tr("Header"));
+	addRow(tr("Magic"), QString::fromLatin1(PS2MC_MAGIC));
+	addRow(tr("Image Size"), tr("%1 MiB").arg(imageMiB, 0, 'f', 2));
+
+	addSection(tr("Geometry"));
+	addRow(tr("Page Length"), tr("%1 bytes").arg(info.pageSize));
+	addRow(tr("Page Physical"), tr("%1 bytes").arg(info.rawPageSize));
+	addRow(tr("Pages / Cluster"), QString::number(info.pagesPerCluster));
+	addRow(tr("Cluster Size"), tr("%1 KiB").arg(info.clusterSize / 1024.0, 0, 'f', 2));
+	addRow(tr("Clusters / Card"), QString::number(info.clustersPerCard));
+
+	addSection(tr("Type and Flags"));
+	QString typeLabel = tr("Unknown (%1)").arg(info.cardType);
+	if (info.cardType == 2)
+		typeLabel = tr("PS2 (2)");
+	else if (info.cardType == 1)
+		typeLabel = tr("PSX (1)");
+	addRow(tr("Card Type"), typeLabel);
+
+	QStringList flagBits;
+	if (info.cardFlags & 0x01)
+		flagBits << tr("USE_ECC");
+	if (info.cardFlags & 0x08)
+		flagBits << tr("BAD_BLOCK");
+	if (info.cardFlags & 0x10)
+		flagBits << tr("ERASE_ZEROES");
+	QString flagsText = tr("0x%1").arg(QString::number(info.cardFlags, 16).toUpper());
+	if (!flagBits.isEmpty())
+		flagsText += tr(" (%1)").arg(flagBits.join(tr(", ")));
+	addRow(tr("Card Flags"), flagsText);
+
+	addRow(tr("ECC Layout"), info.withEcc ? tr("Yes (512+16)") : tr("No (512 only)"));
+
+	addSection(tr("Allocation"));
+	addRow(tr("Alloc Offset"), QString::number(info.allocatableOffset));
+	addRow(tr("Alloc Count"), QString::number(info.allocatableCount));
+	addRow(tr("Reserved Clusters"), QString::number(info.reservedClusters));
+	addRow(tr("Root Dir Cluster"), QString::number(info.rootDirCluster));
+	addRow(tr("Backup Block 1"), QString::number(info.backupBlock1));
+	addRow(tr("Backup Block 2"), QString::number(info.backupBlock2));
+	addRow(tr("Bad Blocks"), QString::number(info.badBlockCount));
+
+	addSection(tr("Usage"));
+	addRow(tr("Used / Free Clusters"),
+		tr("%1 / %2").arg(info.usedClusters).arg(info.freeClusters));
+	addRow(tr("Used Bytes"), tr("%1 MiB").arg(usedMiB, 0, 'f', 2));
+	addRow(tr("Free Bytes"), tr("%1 MiB").arg(freeMiB, 0, 'f', 2));
+
+	addSection(tr("Health"));
+	const bool fsOk = memoryCard->check();
+	QString checkStatus;
+	if (fsOk)
+	{
+		checkStatus = tr("OK");
+	}
+	else if (memoryCard->GetError().IsValid())
+	{
+		checkStatus = tr("Problems detected (%1)").arg(QString::fromStdString(memoryCard->GetError().GetDescription()));
+	}
+	else
+	{
+		checkStatus = tr("Problems detected");
+	}
+	addRow(tr("Filesystem Check"), checkStatus);
+
+	dialog.exec();
 }
 
 void MainWindow::onSelectAll()
@@ -1681,22 +1689,20 @@ void MainWindow::onEccTool()
 		return;
 	}
 
-	try
-	{
-		memoryCard->saveAs(filename.toStdString(), !hasEcc);
-		if (m_discordRpc)
-		{
-			m_discordRpc->setTemporaryPresence(
-				tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
-				hasEcc ? tr("Removed ECC") : tr("Added ECC"));
-		}
-		ui->statusBar->showMessage(tr("ECC copy saved to %1").arg(filename), 5000);
-	}
-	catch (const std::exception& e)
+	if (!memoryCard->saveAs(filename.toStdString(), !hasEcc))
 	{
 		QMessageBox::critical(this, tr("Error"),
-			tr("Failed to save: %1").arg(e.what()));
+			tr("Failed to save: %1").arg(QString::fromStdString(memoryCard->GetError().GetDescription())));
+		return;
 	}
+
+	if (m_discordRpc)
+	{
+		m_discordRpc->setTemporaryPresence(
+			tr("Card: %1").arg(makeCardDisplayLabel(currentCardPath)),
+			hasEcc ? tr("Removed ECC") : tr("Added ECC"));
+	}
+	ui->statusBar->showMessage(tr("ECC copy saved to %1").arg(filename), 5000);
 }
 
 void MainWindow::onRenameEntry(const QString& mcPath)
@@ -1728,25 +1734,22 @@ void MainWindow::onRenameEntry(const QString& mcPath)
 		return;
 	}
 
-	try
-	{
-		memoryCard->renameEntry(mcPath.toStdString(), newName.toStdString());
-
-		QString parentPath;
-		int slash = mcPath.lastIndexOf('/');
-		if (slash <= 0)
-			parentPath = "/";
-		else
-			parentPath = mcPath.left(slash);
-
-		updateCardView();
-		ui->cardBrowser->navigateTo(parentPath);
-	}
-	catch (const std::exception& e)
+	if (!memoryCard->renameEntry(mcPath.toStdString(), newName.toStdString()))
 	{
 		QMessageBox::critical(this, tr("Error"),
-			tr("Failed to rename: %1").arg(e.what()));
+			tr("Failed to rename: %1").arg(QString::fromStdString(memoryCard->GetError().GetDescription())));
+		return;
 	}
+
+	QString parentPath;
+	int slash = mcPath.lastIndexOf('/');
+	if (slash <= 0)
+		parentPath = "/";
+	else
+		parentPath = mcPath.left(slash);
+
+	updateCardView();
+	ui->cardBrowser->navigateTo(parentPath);
 }
 
 void MainWindow::onToggleAscii()
@@ -1796,41 +1799,39 @@ void MainWindow::importFileToCard(const QString& savePath, const QString& hostFi
 	if (!memoryCard)
 		return;
 
-	try
-	{
-		QFile file(hostFilePath);
-		if (!file.open(QIODevice::ReadOnly))
-		{
-			QMessageBox::critical(this, tr("Error"),
-				tr("Failed to open file: %1").arg(hostFilePath));
-			return;
-		}
-
-		QByteArray rawBytes = file.readAll();
-		std::vector<uint8_t> fileData(rawBytes.begin(), rawBytes.end());
-
-		QFileInfo fileInfo(hostFilePath);
-		QString targetPath = savePath;
-		if (!targetPath.endsWith('/'))
-			targetPath += "/";
-		targetPath += fileInfo.fileName();
-
-		memoryCard->writeFile(targetPath.toStdString(), fileData);
-		if (m_discordRpc)
-		{
-			m_discordRpc->setTemporaryPresence(
-				tr("Inside: %1").arg(savePath),
-				tr("Imported File: %1").arg(fileInfo.fileName()));
-		}
-		ui->statusBar->showMessage(tr("Imported %1").arg(fileInfo.fileName()), 5000);
-
-		ui->cardBrowser->navigateTo(savePath);
-	}
-	catch (const std::exception& e)
+	QFile file(hostFilePath);
+	if (!file.open(QIODevice::ReadOnly))
 	{
 		QMessageBox::critical(this, tr("Error"),
-			tr("Failed to import file: %1").arg(e.what()));
+			tr("Failed to open file: %1").arg(hostFilePath));
+		return;
 	}
+
+	QByteArray rawBytes = file.readAll();
+	std::vector<uint8_t> fileData(rawBytes.begin(), rawBytes.end());
+
+	QFileInfo fileInfo(hostFilePath);
+	QString targetPath = savePath;
+	if (!targetPath.endsWith('/'))
+		targetPath += "/";
+	targetPath += fileInfo.fileName();
+
+	if (!memoryCard->writeFile(targetPath.toStdString(), fileData))
+	{
+		QMessageBox::critical(this, tr("Error"),
+			tr("Failed to import file: %1").arg(QString::fromStdString(memoryCard->GetError().GetDescription())));
+		return;
+	}
+
+	if (m_discordRpc)
+	{
+		m_discordRpc->setTemporaryPresence(
+			tr("Inside: %1").arg(savePath),
+			tr("Imported File: %1").arg(fileInfo.fileName()));
+	}
+	ui->statusBar->showMessage(tr("Imported %1").arg(fileInfo.fileName()), 5000);
+
+	ui->cardBrowser->navigateTo(savePath);
 }
 
 void MainWindow::updateForceImportWarning()
