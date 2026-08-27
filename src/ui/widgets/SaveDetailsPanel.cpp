@@ -5,8 +5,8 @@
 #include "IconWidget.h"
 #include "Config.h"
 #include <QStyle>
-#include "ps2mc.h"
-#include "ps2iconsys.h"
+#include "PS2MemoryCard.h"
+#include "PS2IconSys.h"
 #include "TranslationManager.h"
 
 SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)

@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "VulkanRenderer.h"
-#include "ps2icon.h"
-#include "ps2iconsys.h"
+#include "PS2Icon.h"
+#include "PS2IconSys.h"
 #include "Logger.h"
 #include "../../../common/Config.h"
 #include <vk_mem_alloc.h>

@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "ps2mc_cli.h"
-#include "ps2mc.h"
-#include "ps2save.h"
+#include "PS2MemoryCard.h"
+#include "PS2SaveFile.h"
 #include "../common/Logger.h"
 #include "version.h"
 #include "BuildVersion.h"

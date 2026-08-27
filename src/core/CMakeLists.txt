@@ -1,10 +1,10 @@
 set(CORE_SOURCES
-    formats/ps2mc_dir.cpp
-    formats/ps2mc_ecc.cpp
-    formats/ps2mc.cpp
-    formats/ps2save.cpp
-    formats/ps2iconsys.cpp
-    formats/ps2icon.cpp
+    formats/PS2McDir.cpp
+    formats/PS2McEcc.cpp
+    formats/PS2MemoryCard.cpp
+    formats/PS2SaveFile.cpp
+    formats/PS2IconSys.cpp
+    formats/PS2Icon.cpp
     renderer/Renderer.cpp
     renderer/Common/RendererCommon.cpp
     renderer/OpenGL/OpenGLRenderer.cpp
@@ -16,12 +16,12 @@ set(CORE_SOURCES
 )
 
 set(CORE_HEADERS
-    formats/ps2mc_dir.h
-    formats/ps2mc_ecc.h
-    formats/ps2mc.h
-    formats/ps2save.h
-    formats/ps2iconsys.h
-    formats/ps2icon.h
+    formats/PS2McDir.h
+    formats/PS2McEcc.h
+    formats/PS2MemoryCard.h
+    formats/PS2SaveFile.h
+    formats/PS2IconSys.h
+    formats/PS2Icon.h
     renderer/Renderer.h
     renderer/Common/RendererCommon.h
     renderer/OpenGL/OpenGLRenderer.h

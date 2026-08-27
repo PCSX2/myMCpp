@@ -44,12 +44,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="formats\ps2mc_dir.cpp"><Filter>src\formats</Filter></ClCompile>
-    <ClCompile Include="formats\ps2mc_ecc.cpp"><Filter>src\formats</Filter></ClCompile>
-    <ClCompile Include="formats\ps2mc.cpp"><Filter>src\formats</Filter></ClCompile>
-    <ClCompile Include="formats\ps2save.cpp"><Filter>src\formats</Filter></ClCompile>
-    <ClCompile Include="formats\ps2iconsys.cpp"><Filter>src\formats</Filter></ClCompile>
-    <ClCompile Include="formats\ps2icon.cpp"><Filter>src\formats</Filter></ClCompile>
+    <ClCompile Include="formats\PS2McDir.cpp"><Filter>src\formats</Filter></ClCompile>
+    <ClCompile Include="formats\PS2McEcc.cpp"><Filter>src\formats</Filter></ClCompile>
+    <ClCompile Include="formats\PS2MemoryCard.cpp"><Filter>src\formats</Filter></ClCompile>
+    <ClCompile Include="formats\PS2SaveFile.cpp"><Filter>src\formats</Filter></ClCompile>
+    <ClCompile Include="formats\PS2IconSys.cpp"><Filter>src\formats</Filter></ClCompile>
+    <ClCompile Include="formats\PS2Icon.cpp"><Filter>src\formats</Filter></ClCompile>
     <ClCompile Include="renderer\Renderer.cpp"><Filter>src\renderer</Filter></ClCompile>
     <ClCompile Include="renderer\Common\RendererCommon.cpp"><Filter>src\renderer\Common</Filter></ClCompile>
     <ClCompile Include="renderer\OpenGL\OpenGLRenderer.cpp"><Filter>src\renderer\OpenGL</Filter></ClCompile>
@@ -66,12 +66,12 @@
     <ClCompile Include="..\..\3rdparty\glad\src\wgl.c"><Filter>src\3rdparty</Filter></ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="formats\ps2mc_dir.h"><Filter>headers\formats</Filter></ClInclude>
-    <ClInclude Include="formats\ps2mc_ecc.h"><Filter>headers\formats</Filter></ClInclude>
-    <ClInclude Include="formats\ps2mc.h"><Filter>headers\formats</Filter></ClInclude>
-    <ClInclude Include="formats\ps2save.h"><Filter>headers\formats</Filter></ClInclude>
-    <ClInclude Include="formats\ps2iconsys.h"><Filter>headers\formats</Filter></ClInclude>
-    <ClInclude Include="formats\ps2icon.h"><Filter>headers\formats</Filter></ClInclude>
+    <ClInclude Include="formats\PS2McDir.h"><Filter>headers\formats</Filter></ClInclude>
+    <ClInclude Include="formats\PS2McEcc.h"><Filter>headers\formats</Filter></ClInclude>
+    <ClInclude Include="formats\PS2MemoryCard.h"><Filter>headers\formats</Filter></ClInclude>
+    <ClInclude Include="formats\PS2SaveFile.h"><Filter>headers\formats</Filter></ClInclude>
+    <ClInclude Include="formats\PS2IconSys.h"><Filter>headers\formats</Filter></ClInclude>
+    <ClInclude Include="formats\PS2Icon.h"><Filter>headers\formats</Filter></ClInclude>
     <ClInclude Include="renderer\Renderer.h"><Filter>headers\renderer</Filter></ClInclude>
     <ClInclude Include="renderer\Common\RendererCommon.h"><Filter>headers\renderer\Common</Filter></ClInclude>
     <ClInclude Include="renderer\OpenGL\OpenGLRenderer.h"><Filter>headers\renderer\OpenGL</Filter></ClInclude>

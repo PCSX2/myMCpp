@@ -8,7 +8,7 @@
 #include "Logger.h"
 #include "CocoaTools.h"
 #include "../../../common/Config.h"
-#include "ps2icon.h"
+#include "PS2Icon.h"
 
 #import <Metal/Metal.h>
 #import <QuartzCore/CAMetalLayer.h>

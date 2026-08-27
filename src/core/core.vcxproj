@@ -38,12 +38,12 @@
   </ItemDefinitionGroup>
 
   <ItemGroup>
-    <ClCompile Include="formats\ps2mc_dir.cpp" />
-    <ClCompile Include="formats\ps2mc_ecc.cpp" />
-    <ClCompile Include="formats\ps2mc.cpp" />
-    <ClCompile Include="formats\ps2save.cpp" />
-    <ClCompile Include="formats\ps2iconsys.cpp" />
-    <ClCompile Include="formats\ps2icon.cpp" />
+    <ClCompile Include="formats\PS2McDir.cpp" />
+    <ClCompile Include="formats\PS2McEcc.cpp" />
+    <ClCompile Include="formats\PS2MemoryCard.cpp" />
+    <ClCompile Include="formats\PS2SaveFile.cpp" />
+    <ClCompile Include="formats\PS2IconSys.cpp" />
+    <ClCompile Include="formats\PS2Icon.cpp" />
     <ClCompile Include="renderer\Renderer.cpp" />
     <ClCompile Include="renderer\Common\RendererCommon.cpp" />
     <ClCompile Include="renderer\OpenGL\OpenGLRenderer.cpp" />
@@ -60,12 +60,12 @@
     <ClCompile Include="..\..\3rdparty\glad\src\wgl.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="formats\ps2mc_dir.h" />
-    <ClInclude Include="formats\ps2mc_ecc.h" />
-    <ClInclude Include="formats\ps2mc.h" />
-    <ClInclude Include="formats\ps2save.h" />
-    <ClInclude Include="formats\ps2iconsys.h" />
-    <ClInclude Include="formats\ps2icon.h" />
+    <ClInclude Include="formats\PS2McDir.h" />
+    <ClInclude Include="formats\PS2McEcc.h" />
+    <ClInclude Include="formats\PS2MemoryCard.h" />
+    <ClInclude Include="formats\PS2SaveFile.h" />
+    <ClInclude Include="formats\PS2IconSys.h" />
+    <ClInclude Include="formats\PS2Icon.h" />
     <ClInclude Include="renderer\Renderer.h" />
     <ClInclude Include="renderer\Common\RendererCommon.h" />
     <ClInclude Include="renderer\OpenGL\OpenGLRenderer.h" />

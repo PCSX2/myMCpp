@@ -21,8 +21,8 @@
 #endif
 #include "OpenGLRenderer.h"
 #include "../../../common/Error.h"
-#include "ps2iconsys.h"
-#include "ps2icon.h"
+#include "PS2IconSys.h"
+#include "PS2Icon.h"
 #include "../../../common/Config.h"
 
 namespace fs = std::filesystem;
