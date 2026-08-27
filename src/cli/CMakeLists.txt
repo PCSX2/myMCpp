@@ -1,15 +1,16 @@
 set(CLI_SOURCES
-    ps2mc_cli.cpp
+    PS2McCommandLine.cpp
 )
 
 set(CLI_HEADERS
-    ps2mc_cli.h
+    PS2McCommandLine.h
 )
 
 add_library(myMCpp-cli STATIC ${CLI_SOURCES} ${CLI_HEADERS})
 
 target_include_directories(myMCpp-cli PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src
 )
 
 target_link_libraries(myMCpp-cli PUBLIC

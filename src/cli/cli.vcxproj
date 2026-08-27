@@ -32,15 +32,15 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\common;$(ProjectDir)..\core;$(ProjectDir)..\core\formats;$(ProjectDir);$(SolutionDir)build\$(Platform)\$(Configuration)\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..;$(ProjectDir);$(SolutionDir)build\$(Platform)\$(Configuration)\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
 
   <ItemGroup>
-    <ClCompile Include="ps2mc_cli.cpp" />
+    <ClCompile Include="PS2McCommandLine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ps2mc_cli.h" />
+    <ClInclude Include="PS2McCommandLine.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\common\common.vcxproj">

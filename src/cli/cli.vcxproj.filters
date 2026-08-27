@@ -11,9 +11,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ps2mc_cli.cpp"><Filter>src</Filter></ClCompile>
+    <ClCompile Include="PS2McCommandLine.cpp"><Filter>src</Filter></ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ps2mc_cli.h"><Filter>headers</Filter></ClInclude>
+    <ClInclude Include="PS2McCommandLine.h"><Filter>headers</Filter></ClInclude>
   </ItemGroup>
 </Project>
