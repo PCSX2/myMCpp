@@ -178,6 +178,8 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->actionCheckUpdates, &QAction::triggered, this, &MainWindow::onCheckForUpdates);
 	connect(ui->actionAboutQt, &QAction::triggered, this, &MainWindow::onAboutQt);
 
+	connect(ui->cardBrowser, &QTreeWidget::itemSelectionChanged,
+		this, &MainWindow::onCardItemSelected);
 	connect(ui->cardBrowser, &QTreeWidget::currentItemChanged,
 		this, &MainWindow::onCardItemSelected);
 	connect(ui->cardBrowser, &QTreeWidget::itemDoubleClicked,
@@ -1269,8 +1271,18 @@ void MainWindow::onCardItemSelected()
 		return fallback;
 	};
 
+	QTreeWidgetItem* item = ui->cardBrowser->currentItem();
+	if (!item)
+	{
+		const auto selected = ui->cardBrowser->selectedItems();
+		if (!selected.isEmpty())
+		{
+			item = selected.first();
+		}
+	}
+
 	const QStringList selectedPaths = ui->cardBrowser->getSelectedPaths();
-	if (!memoryCard || selectedPaths.isEmpty())
+	if (!memoryCard || (selectedPaths.isEmpty() && !item))
 	{
 		if (!ui->cardBrowser->isInsideSave())
 		{
@@ -1294,13 +1306,21 @@ void MainWindow::onCardItemSelected()
 		return;
 	}
 
-	QTreeWidgetItem* item = ui->cardBrowser->currentItem();
 	if (!item)
 	{
 		return;
 	}
 
 	QString savePath = ui->cardBrowser->getCurrentSavePath();
+	if (savePath.isEmpty() && item)
+	{
+		QString name = item->data(0, Qt::UserRole).toString();
+		if (!name.isEmpty() && name != "..")
+		{
+			savePath = (ui->cardBrowser->getCurrentPath() == "/") ? ("/" + name) : ui->cardBrowser->getCurrentPath();
+		}
+	}
+
 	QString size = item->text(1);
 	QString modified = item->text(2);
 
