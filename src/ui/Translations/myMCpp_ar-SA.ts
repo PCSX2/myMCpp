@@ -1080,7 +1080,7 @@ Continue?</source>
       <translation>الإعدادات...</translation>
     </message>
     <message>
-      <location line="+78"/>
+      <location line="+80"/>
       <source>Export Save as Folder</source>
       <translation>تصدير «حفظ باسم» كمجلد</translation>
     </message>
@@ -1250,19 +1250,19 @@ For updates, visit: https://github.com/PCSX2/myMCpp/releases</source>
       <translation>حفظ</translation>
     </message>
     <message>
-      <location line="+43"/>
-      <location line="+31"/>
+      <location line="+53"/>
+      <location line="+39"/>
       <location line="+485"/>
       <source>Inside: %1</source>
       <translation>في الداخل: %1</translation>
     </message>
     <message>
-      <location line="-515"/>
+      <location line="-523"/>
       <source>Browsing Files</source>
       <translation>تصفح الملفات</translation>
     </message>
     <message>
-      <location line="+28"/>
+      <location line="+36"/>
       <source>Selected Folder: %1</source>
       <translation>المجلد المحدد: %1</translation>
     </message>
@@ -1649,7 +1649,7 @@ Pick another name for the ECC copy.</source>
       <translation>فشل استيراد الملف: %1</translation>
     </message>
     <message>
-      <location line="-1204"/>
+      <location line="-1222"/>
       <source>Open Memory Card</source>
       <translation>فتح بطاقة الذاكرة</translation>
     </message>
@@ -1689,7 +1689,7 @@ Pick another name for the ECC copy.</source>
       <translation>تصدير حفظ</translation>
     </message>
     <message>
-      <location line="-878"/>
+      <location line="-880"/>
       <location line="+6"/>
       <source>Memory Card</source>
       <translation>بطاقة الذاكرة</translation>
@@ -1700,7 +1700,7 @@ Pick another name for the ECC copy.</source>
       <translation>معاينة الرمز غير متاحة: %1</translation>
     </message>
     <message>
-      <location line="+78"/>
+      <location line="+80"/>
       <location line="+715"/>
       <source>EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</source>
       <translation>تنسيق EMS/PSU (*.psu)؛؛تنسيق MAX Drive (*.max)؛؛جميع الملفات (*.*)</translation>
@@ -1716,20 +1716,20 @@ Pick another name for the ECC copy.</source>
       <translation>تصدير الملف</translation>
     </message>
     <message>
-      <location line="-147"/>
+      <location line="-149"/>
       <location line="+16"/>
-      <location line="+133"/>
+      <location line="+135"/>
       <location line="+221"/>
       <source>All Files (*.*)</source>
       <translation>جميع الملفات (*.*)</translation>
     </message>
     <message>
-      <location line="-371"/>
+      <location line="-373"/>
       <source>All Memory Cards (%1)</source>
       <translation type="unfinished">All Memory Cards (%1)</translation>
     </message>
     <message>
-      <location line="+158"/>
+      <location line="+160"/>
       <source>Exported %1</source>
       <translation>تم التصدير %1</translation>
     </message>
@@ -1900,14 +1900,14 @@ Continue?</source>
       <location line="+63"/>
       <location line="+66"/>
       <location line="+69"/>
-      <location line="+193"/>
+      <location line="+211"/>
       <location line="+198"/>
       <location line="+148"/>
       <source>Card: %1</source>
       <translation>البطاقة: %1</translation>
     </message>
     <message>
-      <location line="-769"/>
+      <location line="-787"/>
       <source>Imported %1 Saves</source>
       <translation>مستوردة %1 التوفيرات</translation>
     </message>
@@ -1959,7 +1959,7 @@ This action cannot be undone.</source>
       <translation>التحقق من وجود تحديثات</translation>
     </message>
     <message>
-      <location line="+227"/>
+      <location line="+245"/>
       <source>Memory card open</source>
       <translation>بطاقة الذاكرة مفتوحة</translation>
     </message>
@@ -1969,9 +1969,9 @@ This action cannot be undone.</source>
       <translation>لا توجد بطاقة ذاكرة مفتوحة</translation>
     </message>
     <message>
-      <location line="-1221"/>
+      <location line="-1239"/>
       <location line="+240"/>
-      <location line="+945"/>
+      <location line="+963"/>
       <location line="+109"/>
       <location line="+89"/>
       <location line="+59"/>

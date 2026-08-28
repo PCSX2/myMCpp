@@ -1079,7 +1079,7 @@ Continue?</translation>
       <translation>Configurações...</translation>
     </message>
     <message>
-      <location line="+78"/>
+      <location line="+80"/>
       <source>Export Save as Folder</source>
       <translation type="unfinished">Export Save as Folder</translation>
     </message>
@@ -1249,19 +1249,19 @@ For updates, visit: https://github.com/PCSX2/myMCpp/releases</translation>
       <translation type="unfinished">Save</translation>
     </message>
     <message>
-      <location line="+43"/>
-      <location line="+31"/>
+      <location line="+53"/>
+      <location line="+39"/>
       <location line="+485"/>
       <source>Inside: %1</source>
       <translation type="unfinished">Inside: %1</translation>
     </message>
     <message>
-      <location line="-515"/>
+      <location line="-523"/>
       <source>Browsing Files</source>
       <translation type="unfinished">Browsing Files</translation>
     </message>
     <message>
-      <location line="+28"/>
+      <location line="+36"/>
       <source>Selected Folder: %1</source>
       <translation type="unfinished">Selected Folder: %1</translation>
     </message>
@@ -1648,7 +1648,7 @@ Pick another name for the ECC copy.</translation>
       <translation type="unfinished">Failed to import file: %1</translation>
     </message>
     <message>
-      <location line="-1204"/>
+      <location line="-1222"/>
       <source>Open Memory Card</source>
       <translation>Abrir Cartão de Memória</translation>
     </message>
@@ -1688,7 +1688,7 @@ Pick another name for the ECC copy.</translation>
       <translation>Exportar Jogo Salvo</translation>
     </message>
     <message>
-      <location line="-878"/>
+      <location line="-880"/>
       <location line="+6"/>
       <source>Memory Card</source>
       <translation type="unfinished">Memory Card</translation>
@@ -1699,7 +1699,7 @@ Pick another name for the ECC copy.</translation>
       <translation type="unfinished">Icon preview unavailable: %1</translation>
     </message>
     <message>
-      <location line="+78"/>
+      <location line="+80"/>
       <location line="+715"/>
       <source>EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</source>
       <translation>Formato EMS/PSU (*.psu);;Formato MAX Drive (*.max);;Todos os Arquivos (*.*)</translation>
@@ -1715,20 +1715,20 @@ Pick another name for the ECC copy.</translation>
       <translation type="unfinished">Export File</translation>
     </message>
     <message>
-      <location line="-147"/>
+      <location line="-149"/>
       <location line="+16"/>
-      <location line="+133"/>
+      <location line="+135"/>
       <location line="+221"/>
       <source>All Files (*.*)</source>
       <translation type="unfinished">All Files (*.*)</translation>
     </message>
     <message>
-      <location line="-371"/>
+      <location line="-373"/>
       <source>All Memory Cards (%1)</source>
       <translation type="unfinished">All Memory Cards (%1)</translation>
     </message>
     <message>
-      <location line="+158"/>
+      <location line="+160"/>
       <source>Exported %1</source>
       <translation type="unfinished">Exported %1</translation>
     </message>
@@ -1899,14 +1899,14 @@ Continue?</translation>
       <location line="+63"/>
       <location line="+66"/>
       <location line="+69"/>
-      <location line="+193"/>
+      <location line="+211"/>
       <location line="+198"/>
       <location line="+148"/>
       <source>Card: %1</source>
       <translation type="unfinished">Card: %1</translation>
     </message>
     <message>
-      <location line="-769"/>
+      <location line="-787"/>
       <source>Imported %1 Saves</source>
       <translation type="unfinished">Imported %1 Saves</translation>
     </message>
@@ -1958,7 +1958,7 @@ This action cannot be undone.</translation>
       <translation>Procurar Atualizações</translation>
     </message>
     <message>
-      <location line="+227"/>
+      <location line="+245"/>
       <source>Memory card open</source>
       <translation>Cartão de memória aberto</translation>
     </message>
@@ -1968,9 +1968,9 @@ This action cannot be undone.</translation>
       <translation>Nenhum cartão de memória aberto</translation>
     </message>
     <message>
-      <location line="-1221"/>
+      <location line="-1239"/>
       <location line="+240"/>
-      <location line="+945"/>
+      <location line="+963"/>
       <location line="+109"/>
       <location line="+89"/>
       <location line="+59"/>
