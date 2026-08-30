@@ -165,72 +165,79 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
 <context>
     <name>CardActionHandler</name>
     <message>
-        <location filename="../CardActionHandler.cpp" line="+32"/>
+        <location filename="../CardActionHandler.cpp" line="+35"/>
         <source>Opened: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="-7"/>
+        <location line="+18"/>
+        <location line="+79"/>
+        <location line="+37"/>
+        <location line="+26"/>
+        <location line="+12"/>
+        <location line="+39"/>
+        <location line="+21"/>
+        <location line="+26"/>
         <location line="+7"/>
-        <location line="+22"/>
-        <location line="+112"/>
         <location line="+50"/>
-        <location line="+92"/>
-        <location line="+34"/>
-        <location line="+52"/>
+        <location line="+36"/>
+        <location line="+7"/>
+        <location line="+11"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-361"/>
+        <location line="-368"/>
         <source>Failed to open memory card: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+24"/>
         <source>Created: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-6"/>
         <source>Failed to create memory card: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+16"/>
         <location line="+11"/>
-        <location line="+103"/>
-        <location line="+48"/>
-        <location line="+92"/>
-        <location line="+35"/>
+        <location line="+106"/>
+        <location line="+51"/>
+        <location line="+98"/>
+        <location line="+31"/>
         <source>No memory card open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-278"/>
-        <location line="+17"/>
-        <location line="+86"/>
-        <location line="+48"/>
-        <location line="+92"/>
-        <location line="+35"/>
+        <location line="-286"/>
+        <location line="+15"/>
+        <location line="+91"/>
+        <location line="+51"/>
+        <location line="+98"/>
+        <location line="+31"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-260"/>
+        <location line="-270"/>
         <source>Save file is empty or contains no valid entries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+18"/>
-        <location line="+29"/>
-        <location line="+56"/>
-        <location line="+88"/>
+        <location line="+39"/>
+        <location line="+61"/>
+        <location line="+94"/>
         <location line="+105"/>
         <source>Success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-277"/>
+        <location line="-298"/>
         <source>Successfully imported save: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -240,7 +247,7 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+21"/>
         <source>Save Exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -260,57 +267,59 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="-26"/>
+        <location line="+37"/>
         <source>Failed to import save: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+46"/>
         <source>Successfully exported save to:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+93"/>
+        <location line="+99"/>
         <source>Open Folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-82"/>
-        <location line="+92"/>
+        <location line="-88"/>
+        <location line="+98"/>
         <source>Exported: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-86"/>
-        <location line="+92"/>
+        <location line="-131"/>
+        <location line="+12"/>
+        <location line="+39"/>
         <source>Failed to export save: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-68"/>
-        <location line="+26"/>
+        <location line="+9"/>
+        <location line="+29"/>
         <source>&apos;%1&apos; -&gt; &apos;%2&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-16"/>
+        <location line="-17"/>
         <source>Failed to create directory: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+26"/>
         <source>Failed to write file: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+7"/>
         <source>Failed to write all data to file: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>Successfully exported save as folder to:
 %1</source>
         <translation type="unfinished"></translation>
@@ -322,19 +331,19 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+45"/>
         <source>Deleted: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-7"/>
         <source>Failed to delete save:
 
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+22"/>
         <source>Format Card</source>
         <translation type="unfinished"></translation>
     </message>
@@ -346,7 +355,21 @@ Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+13"/>
+        <source>Failed to read card info:
+
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Failed to format card:
+
+Invalid memory card size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Card formatted successfully</source>
         <translation type="unfinished"></translation>
     </message>
@@ -356,7 +379,7 @@ Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-10"/>
         <source>Failed to format card:
 
 %1</source>
@@ -1064,7 +1087,7 @@ Continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+79"/>
         <source>Export Save as Folder</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1085,26 +1108,26 @@ Continue?</source>
     </message>
     <message>
         <location line="+15"/>
-        <location line="+86"/>
-        <location line="+148"/>
+        <location line="+84"/>
+        <location line="+146"/>
         <source>&apos;%1&apos; -&gt; &apos;%2&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-220"/>
+        <location line="-216"/>
         <source>Exported %1 folder(s); %2 failed:
 %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+88"/>
-        <location line="+146"/>
+        <location line="+87"/>
+        <location line="+143"/>
         <source>Success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-233"/>
+        <location line="-229"/>
         <source>Successfully exported %1 folder(s) to:
 %2</source>
         <translation type="unfinished"></translation>
@@ -1117,13 +1140,13 @@ Continue?</source>
     </message>
     <message>
         <location line="+4"/>
-        <location line="+88"/>
-        <location line="+146"/>
+        <location line="+87"/>
+        <location line="+143"/>
         <source>Open Folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-224"/>
+        <location line="-220"/>
         <source>Exported %1 folders</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1133,7 +1156,7 @@ Continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+52"/>
         <source>Exported %1 file(s); %2 failed:
 %3</source>
         <translation type="unfinished"></translation>
@@ -1146,18 +1169,18 @@ Continue?</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+146"/>
+        <location line="+143"/>
         <source>Note: The following filenames were sanitized due to invalid characters:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-132"/>
+        <location line="-129"/>
         <source>Exported %1 files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+656"/>
+        <location line="+655"/>
         <source>Are you sure you want to delete the %1 selected file(s)?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1184,7 +1207,7 @@ Continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-560"/>
+        <location line="-562"/>
         <source>Successfully exported %1 save(s) to:
 %2</source>
         <translation type="unfinished"></translation>
@@ -1195,7 +1218,7 @@ Continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+324"/>
+        <location line="+326"/>
         <source>Deleted %1 save(s); %2 failed:
 %3</source>
         <translation type="unfinished"></translation>
@@ -1223,14 +1246,14 @@ For updates, visit: https://github.com/PCSX2/myMCpp/releases</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+47"/>
         <location line="+39"/>
-        <location line="+485"/>
+        <location line="+501"/>
         <source>Inside: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-523"/>
+        <location line="-539"/>
         <source>Browsing Files</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1255,7 +1278,12 @@ For updates, visit: https://github.com/PCSX2/myMCpp/releases</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+44"/>
+        <source>Failed to read entry: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>Edit Modified Date</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1265,12 +1293,22 @@ For updates, visit: https://github.com/PCSX2/myMCpp/releases</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+25"/>
         <source>Failed to edit timestamp: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+21"/>
+        <source>Failed to read free space: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Failed to read card capacity: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>ECC</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1285,7 +1323,7 @@ For updates, visit: https://github.com/PCSX2/myMCpp/releases</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+50"/>
         <source>Save Copy As...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1302,7 +1340,7 @@ Pick another name if you want a copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+16"/>
         <source>Copy saved: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1312,7 +1350,7 @@ Pick another name if you want a copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+17"/>
         <source>Card Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1525,27 +1563,32 @@ Pick another name if you want a copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+9"/>
+        <source>Problems detected (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Filesystem Check</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="-10"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+8"/>
         <source>Problems detected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-84"/>
         <source>Failed to read card info: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+111"/>
         <source>Remove ECC and Save Copy As...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1562,7 +1605,7 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+16"/>
         <source>Removed ECC</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1577,7 +1620,7 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+16"/>
         <location line="+11"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
@@ -1593,17 +1636,17 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+7"/>
         <source>Failed to rename: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+66"/>
         <source>Failed to open file: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+24"/>
         <source>Imported File: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1613,12 +1656,12 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-10"/>
         <source>Failed to import file: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1222"/>
+        <location line="-1217"/>
         <source>Open Memory Card</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1639,10 +1682,10 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-437"/>
-        <location line="+88"/>
-        <location line="+147"/>
-        <location line="+365"/>
+        <location line="-433"/>
+        <location line="+87"/>
+        <location line="+144"/>
+        <location line="+367"/>
         <source>Export</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1652,13 +1695,13 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-704"/>
-        <location line="+711"/>
+        <location line="-701"/>
+        <location line="+708"/>
         <source>Export Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-880"/>
+        <location line="-877"/>
         <location line="+6"/>
         <source>Memory Card</source>
         <translation type="unfinished"></translation>
@@ -1670,12 +1713,12 @@ Pick another name for the ECC copy.</source>
     </message>
     <message>
         <location line="+80"/>
-        <location line="+715"/>
+        <location line="+712"/>
         <source>EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-715"/>
+        <location line="-712"/>
         <source>MAX Drive Format (*.max);;EMS/PSU Format (*.psu);;All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1688,17 +1731,17 @@ Pick another name for the ECC copy.</source>
         <location line="-149"/>
         <location line="+16"/>
         <location line="+135"/>
-        <location line="+221"/>
+        <location line="+219"/>
         <source>All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-373"/>
+        <location line="-371"/>
         <source>All Memory Cards (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+160"/>
+        <location line="+159"/>
         <source>Exported %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1708,7 +1751,7 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+208"/>
+        <location line="+207"/>
         <source>Import File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1723,7 +1766,7 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+7"/>
         <source>Created folder %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1738,14 +1781,14 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-127"/>
-        <location line="+148"/>
+        <location line="-123"/>
+        <location line="+144"/>
         <source>Overwrite Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-147"/>
-        <location line="+148"/>
+        <location line="-143"/>
+        <location line="+144"/>
         <source>%1 file(s) already exist in the folder. Overwrite?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1761,14 +1804,14 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-232"/>
-        <location line="+88"/>
-        <location line="+144"/>
+        <location line="-228"/>
+        <location line="+87"/>
+        <location line="+141"/>
         <source>Exported %1, %2 failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+454"/>
+        <location line="+456"/>
         <source>Delete Selected Saves</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1780,7 +1823,7 @@ Pick another name for the ECC copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-390"/>
+        <location line="-392"/>
         <location line="+79"/>
         <source>Remove ECC and Save &amp;Copy As...</source>
         <translation type="unfinished"></translation>
@@ -1818,7 +1861,7 @@ Continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+186"/>
+        <location line="+188"/>
         <location line="+7"/>
         <location line="+5"/>
         <source>Import</source>
@@ -1861,14 +1904,14 @@ Continue?</source>
         <location line="+63"/>
         <location line="+66"/>
         <location line="+69"/>
-        <location line="+211"/>
-        <location line="+198"/>
-        <location line="+148"/>
+        <location line="+205"/>
+        <location line="+210"/>
+        <location line="+157"/>
         <source>Card: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-787"/>
+        <location line="-802"/>
         <source>Imported %1 Saves</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1919,31 +1962,27 @@ This action cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+245"/>
-        <source>Memory card open</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="+252"/>
         <source>No memory card open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-1239"/>
-        <location line="+240"/>
-        <location line="+963"/>
-        <location line="+109"/>
-        <location line="+89"/>
-        <location line="+59"/>
-        <location line="+50"/>
-        <location line="+57"/>
-        <location line="+27"/>
+        <location line="+236"/>
+        <location line="+904"/>
+        <location line="+54"/>
+        <location line="+107"/>
+        <location line="+22"/>
+        <location line="+135"/>
+        <location line="+45"/>
+        <location line="+66"/>
+        <location line="+16"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-281"/>
-        <location line="+148"/>
+        <location line="-283"/>
+        <location line="+157"/>
         <source>Failed to save: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2261,46 +2300,41 @@ This action cannot be undone.</source>
 <context>
     <name>MemoryCardBrowser</name>
     <message>
-        <location filename="../widgets/MemoryCardBrowser.cpp" line="+109"/>
-        <location line="+13"/>
-        <location line="+65"/>
+        <location filename="../widgets/MemoryCardBrowser.cpp" line="+105"/>
+        <location line="+8"/>
+        <location line="+63"/>
         <source>%1 KB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-74"/>
-        <source>?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <location line="+65"/>
+        <location line="-65"/>
+        <location line="+63"/>
         <source>%1 B</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-44"/>
-        <location line="+64"/>
+        <location line="-113"/>
+        <location line="+88"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-63"/>
+        <location line="-87"/>
         <source>Failed to read memory card: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+118"/>
         <source>&lt;DIR&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="-30"/>
         <source>Failed to read save directory: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+144"/>
+        <location line="+183"/>
         <source>Import File...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2471,19 +2505,19 @@ This action cannot be undone.</source>
 <context>
     <name>SaveDetailsPanel</name>
     <message>
-        <location filename="../widgets/SaveDetailsPanel.cpp" line="+115"/>
+        <location filename="../widgets/SaveDetailsPanel.cpp" line="+111"/>
         <source>Size: %1
 Modified: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+19"/>
         <source>
 Files: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+91"/>
+        <location line="+78"/>
         <source>Play animation</source>
         <translation type="unfinished"></translation>
     </message>
