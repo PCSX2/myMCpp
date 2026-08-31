@@ -44,7 +44,7 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
 <context>
     <name>AdvancedSettingsWidget</name>
     <message>
-        <location filename="../Settings/AdvancedSettingsWidget.cpp" line="+18"/>
+        <location filename="../Settings/AdvancedSettingsWidget.cpp" line="+19"/>
         <source>Debug Logging</source>
         <translation type="unfinished">Debug Logging</translation>
     </message>
@@ -188,7 +188,7 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
 <context>
     <name>CardActionHandler</name>
     <message>
-        <location filename="../CardActionHandler.cpp" line="+35"/>
+        <location filename="../CardActionHandler.cpp" line="+36"/>
         <source>Opened: %1</source>
         <translation type="unfinished">Opened: %1</translation>
     </message>
@@ -518,7 +518,7 @@ Invalid memory card size</source>
 <context>
     <name>FilesSettingsWidget</name>
     <message>
-        <location filename="../Settings/FilesSettingsWidget.cpp" line="+18"/>
+        <location filename="../Settings/FilesSettingsWidget.cpp" line="+20"/>
         <source>Memory Card Directory</source>
         <translation type="unfinished">Memory Card Directory</translation>
     </message>
@@ -613,7 +613,7 @@ Invalid memory card size</source>
     </message>
     <message>
         <location line="+11"/>
-        <location filename="../Settings/GeneralSettingsWidget.cpp" line="+33"/>
+        <location filename="../Settings/GeneralSettingsWidget.cpp" line="+35"/>
         <source>None</source>
         <translation type="unfinished">None</translation>
     </message>
@@ -825,7 +825,7 @@ Invalid memory card size</source>
     </message>
     <message>
         <location line="+6"/>
-        <location filename="../Settings/GraphicsSettingsWidget.cpp" line="+24"/>
+        <location filename="../Settings/GraphicsSettingsWidget.cpp" line="+27"/>
         <source>Animate Icons</source>
         <translation type="unfinished">Animate Icons</translation>
     </message>
@@ -1243,7 +1243,7 @@ Continue?</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../MainWindow.cpp" line="+170"/>
+        <location filename="../MainWindow.cpp" line="+174"/>
         <source>Settings...</source>
         <translation type="unfinished">Settings...</translation>
     </message>
@@ -2521,7 +2521,7 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
 <context>
     <name>MemoryCardBrowser</name>
     <message>
-        <location filename="../widgets/MemoryCardBrowser.cpp" line="+105"/>
+        <location filename="../widgets/MemoryCardBrowser.cpp" line="+106"/>
         <location line="+8"/>
         <location line="+63"/>
         <source>%1 KB</source>
@@ -2726,7 +2726,7 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
 <context>
     <name>SaveDetailsPanel</name>
     <message>
-        <location filename="../widgets/SaveDetailsPanel.cpp" line="+111"/>
+        <location filename="../widgets/SaveDetailsPanel.cpp" line="+113"/>
         <source>Size: %1
 Modified: %2</source>
         <translation type="unfinished">Size: %1

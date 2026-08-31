@@ -46,7 +46,7 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
   <context>
     <name>AdvancedSettingsWidget</name>
     <message>
-      <location filename="../Settings/AdvancedSettingsWidget.cpp" line="+18"/>
+      <location filename="../Settings/AdvancedSettingsWidget.cpp" line="+19"/>
       <source>Debug Logging</source>
       <translation>تسجيل أخطاء التصحيح</translation>
     </message>
@@ -167,7 +167,7 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
   <context>
     <name>CardActionHandler</name>
     <message>
-      <location filename="../CardActionHandler.cpp" line="+35"/>
+      <location filename="../CardActionHandler.cpp" line="+36"/>
       <source>Opened: %1</source>
       <translation>تاريخ الافتتاح: %1</translation>
     </message>
@@ -487,7 +487,7 @@ Invalid memory card size</translation>
   <context>
     <name>FilesSettingsWidget</name>
     <message>
-      <location filename="../Settings/FilesSettingsWidget.cpp" line="+18"/>
+      <location filename="../Settings/FilesSettingsWidget.cpp" line="+20"/>
       <source>Memory Card Directory</source>
       <translation>دليل بطاقة الذاكرة</translation>
     </message>
@@ -578,7 +578,7 @@ Invalid memory card size</translation>
     </message>
     <message>
       <location line="+11"/>
-      <location filename="../Settings/GeneralSettingsWidget.cpp" line="+33"/>
+      <location filename="../Settings/GeneralSettingsWidget.cpp" line="+35"/>
       <source>None</source>
       <translation>لا شيء</translation>
     </message>
@@ -790,7 +790,7 @@ Invalid memory card size</translation>
     </message>
     <message>
       <location line="+6"/>
-      <location filename="../Settings/GraphicsSettingsWidget.cpp" line="+24"/>
+      <location filename="../Settings/GraphicsSettingsWidget.cpp" line="+27"/>
       <source>Animate Icons</source>
       <translation>أيقونات متحركة</translation>
     </message>
@@ -1102,7 +1102,7 @@ Continue?</source>
   <context>
     <name>MainWindow</name>
     <message>
-      <location filename="../MainWindow.cpp" line="+170"/>
+      <location filename="../MainWindow.cpp" line="+174"/>
       <source>Settings...</source>
       <translation>الإعدادات...</translation>
     </message>
@@ -2344,7 +2344,7 @@ This action cannot be undone.</source>
   <context>
     <name>MemoryCardBrowser</name>
     <message>
-      <location filename="../widgets/MemoryCardBrowser.cpp" line="+105"/>
+      <location filename="../widgets/MemoryCardBrowser.cpp" line="+106"/>
       <location line="+8"/>
       <location line="+63"/>
       <source>%1 KB</source>
@@ -2549,7 +2549,7 @@ This action cannot be undone.</source>
   <context>
     <name>SaveDetailsPanel</name>
     <message>
-      <location filename="../widgets/SaveDetailsPanel.cpp" line="+111"/>
+      <location filename="../widgets/SaveDetailsPanel.cpp" line="+113"/>
       <source>Size: %1
 Modified: %2</source>
       <translation>الحجم: %1
