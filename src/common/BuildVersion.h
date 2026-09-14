@@ -15,4 +15,7 @@ namespace BuildVersion
 	extern const char* GitRev;
 	extern const char* GitHash;
 	extern const char* GitDate;
+
+	inline const char* GetChannelName() { return (GitTagMid % 2 != 0) ? "Dev" : "Stable"; }
+	inline bool IsDevelopment() { return (GitTagMid % 2 != 0); }
 } // namespace BuildVersion

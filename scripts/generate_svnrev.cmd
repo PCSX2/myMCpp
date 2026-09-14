@@ -77,7 +77,7 @@ if !ERRORLEVEL! EQU 0 (
     FOR /F "tokens=1,2,3 delims=v." %%a in ("%GIT_REV%") DO (
       echo #define GIT_TAG_HI %%a >> "%OUT_FILE%"
       echo #define GIT_TAG_MID %%b >> "%OUT_FILE%"
-      FOR /F "tokens=1 delims=-" %%d in ("%%c%") DO (
+      FOR /F "tokens=1 delims=-" %%d in ("%%c") DO (
         echo #define GIT_TAG_LO %%d >> "%OUT_FILE%"
       )
     )

@@ -51,17 +51,19 @@ void PS2McCommandLine::printVersion()
 	std::string rev = BuildVersion::GitRev ? BuildVersion::GitRev : "";
 	std::string hash = BuildVersion::GitHash ? BuildVersion::GitHash : "";
 
-	std::cout << "myMCpp " << myMCpp_VERSION_STRING;
-
 	if (!rev.empty() && rev != "Unknown")
 	{
-		std::cout << " (" << rev << ")";
+		std::cout << "myMCpp " << rev << " (" << BuildVersion::GetChannelName() << ")";
 	}
 	else if (!hash.empty())
 	{
 		if (hash.size() > 7)
 			hash = hash.substr(0, 7);
-		std::cout << " (git " << hash << ")";
+		std::cout << "myMCpp " << myMCpp_VERSION_STRING << " (git " << hash << ", " << BuildVersion::GetChannelName() << ")";
+	}
+	else
+	{
+		std::cout << "myMCpp " << myMCpp_VERSION_STRING << " (" << BuildVersion::GetChannelName() << ")";
 	}
 
 	std::cout << "\n";

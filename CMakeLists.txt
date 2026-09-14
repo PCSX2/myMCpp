@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16...3.24)
-project(myMCpp VERSION 0.1.0 LANGUAGES C CXX)
+project(myMCpp LANGUAGES C CXX)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(myMCppVersion)
