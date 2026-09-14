@@ -108,22 +108,20 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		Themes::UpdateApplicationTheme(m_config);
 
 	ui->setupUi(this);
-	QString baseTitle = QStringLiteral("%1 v%2")
-	                        .arg(QString::fromUtf8(MYMCpp_APP_NAME))
-	                        .arg(QString::fromUtf8(myMCpp_VERSION_STRING));
-
+	const QString appName = QString::fromUtf8(MYMCpp_APP_NAME);
 	const QString gitTag = QString::fromUtf8(BuildVersion::GitTag);
 	const QString gitRev = QString::fromUtf8(BuildVersion::GitRev);
 	const QString gitHash = QString::fromUtf8(BuildVersion::GitHash);
 
 	if (!gitTag.isEmpty())
-		setWindowTitle(QStringLiteral("%1 (%2)").arg(baseTitle, gitTag));
+		setWindowTitle(QStringLiteral("%1 %2").arg(appName, gitTag));
 	else if (!gitRev.isEmpty() && gitRev != QStringLiteral("Unknown"))
-		setWindowTitle(QStringLiteral("%1 (%2)").arg(baseTitle, gitRev));
+		setWindowTitle(QStringLiteral("%1 %2").arg(appName, gitRev));
 	else if (!gitHash.isEmpty())
-		setWindowTitle(QStringLiteral("%1 (git %2)").arg(baseTitle, gitHash.left(7)));
+		setWindowTitle(QStringLiteral("%1 %2 (git %3)")
+				.arg(appName, QString::fromUtf8(myMCpp_VERSION_STRING), gitHash.left(7)));
 	else
-		setWindowTitle(baseTitle);
+		setWindowTitle(QStringLiteral("%1 %2").arg(appName, QString::fromUtf8(myMCpp_VERSION_STRING)));
 	ui->detailsPanel->setConfig(config);
 	connect(ui->detailsPanel, &SaveDetailsPanel::iconWidgetChanged, this,
 		[this](IconWidget* iconWidget) {

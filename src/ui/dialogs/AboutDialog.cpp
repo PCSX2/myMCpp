@@ -27,19 +27,19 @@ AboutDialog::AboutDialog(QWidget* parent)
 		}
 	}
 
-	QString base = QStringLiteral("%1 v%2")
-	                   .arg(QString::fromUtf8(MYMCpp_APP_NAME))
-	                   .arg(QString::fromUtf8(myMCpp_VERSION_STRING));
-
+	const QString appName = QString::fromUtf8(MYMCpp_APP_NAME);
 	const QString gitRev = QString::fromUtf8(BuildVersion::GitRev);
 	const QString gitHash = QString::fromUtf8(BuildVersion::GitHash);
+	const QString channelName = QString::fromUtf8(BuildVersion::GetChannelName());
 
 	if (!gitRev.isEmpty() && gitRev != QStringLiteral("Unknown"))
-		ui->versionLabel->setText(QStringLiteral("%1 (%2)").arg(base, gitRev));
+		ui->versionLabel->setText(QStringLiteral("%1 %2 (%3)").arg(appName, gitRev, channelName));
 	else if (!gitHash.isEmpty())
-		ui->versionLabel->setText(QStringLiteral("%1 (git %2)").arg(base, gitHash.left(7)));
+		ui->versionLabel->setText(QStringLiteral("%1 %2 (git %3, %4)")
+				.arg(appName, QString::fromUtf8(myMCpp_VERSION_STRING), gitHash.left(7), channelName));
 	else
-		ui->versionLabel->setText(base);
+		ui->versionLabel->setText(QStringLiteral("%1 %2 (%3)")
+				.arg(appName, QString::fromUtf8(myMCpp_VERSION_STRING), channelName));
 
 	adjustSize();
 	setFixedSize(size());

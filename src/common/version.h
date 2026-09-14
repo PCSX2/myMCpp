@@ -3,11 +3,13 @@
 
 #pragma once
 
-#define myMCpp_VERSION_MAJOR 0
-#define myMCpp_VERSION_MINOR 1
-#define myMCpp_VERSION_BUILD 0
+#include "svnrev.h"
 
-#define myMCpp_VERSION_STRING "0.1.0"
+#define myMCpp_VERSION_MAJOR GIT_TAG_HI
+#define myMCpp_VERSION_MINOR GIT_TAG_MID
+#define myMCpp_VERSION_BUILD GIT_TAG_LO
+
+#define myMCpp_VERSION_STRING GIT_REV
 #define MYMCpp_APP_NAME "myMCpp"
 #define MYMCpp_APP_DESCRIPTION "PS2 Memory Card Manager"
 #define MYMCpp_COPYRIGHT "GNU General Public License v3"
