@@ -1101,7 +1101,7 @@ Continue?</translation>
   <context>
     <name>MainWindow</name>
     <message>
-      <location filename="../MainWindow.cpp" line="+174"/>
+      <location filename="../MainWindow.cpp" line="+172"/>
       <source>Settings...</source>
       <translation>Configurações...</translation>
     </message>
@@ -1735,13 +1735,13 @@ Pick another name for the ECC copy.</translation>
       <translation>Exportar Jogo Salvo</translation>
     </message>
     <message>
-      <location line="-877"/>
+      <location line="-875"/>
       <location line="+6"/>
       <source>Memory Card</source>
       <translation type="unfinished">Memory Card</translation>
     </message>
     <message>
-      <location line="+81"/>
+      <location line="+79"/>
       <source>Icon preview unavailable: %1</source>
       <translation type="unfinished">Icon preview unavailable: %1</translation>
     </message>
@@ -1762,20 +1762,20 @@ Pick another name for the ECC copy.</translation>
       <translation type="unfinished">Export File</translation>
     </message>
     <message>
-      <location line="-149"/>
+      <location line="-147"/>
       <location line="+16"/>
-      <location line="+135"/>
+      <location line="+133"/>
       <location line="+219"/>
       <source>All Files (*.*)</source>
       <translation type="unfinished">All Files (*.*)</translation>
     </message>
     <message>
-      <location line="-371"/>
+      <location line="-369"/>
       <source>All Memory Cards (%1)</source>
       <translation type="unfinished">All Memory Cards (%1)</translation>
     </message>
     <message>
-      <location line="+159"/>
+      <location line="+157"/>
       <source>Exported %1</source>
       <translation type="unfinished">Exported %1</translation>
     </message>
