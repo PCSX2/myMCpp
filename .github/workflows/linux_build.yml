@@ -57,10 +57,10 @@ jobs:
         with:
           submodules: recursive
 
-      # actions/checkout elides tags, fetch them primarily for releases
+      # actions/checkout elides tags, restore history when version metadata needs them.
       - name: Fetch Tags
         if: ${{ inputs.fetchTags }}
-        run: git fetch --tags --no-recurse-submodules
+        run: git fetch --unshallow --tags --no-recurse-submodules
 
       - name: Prepare Artifact Metadata
         id: artifact-metadata
