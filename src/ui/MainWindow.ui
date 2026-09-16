@@ -32,6 +32,11 @@
        </column>
        <column>
         <property name="text">
+         <string>Raw Folder Name</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
          <string>Size</string>
         </property>
        </column>

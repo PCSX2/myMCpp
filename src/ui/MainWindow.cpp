@@ -1314,8 +1314,8 @@ void MainWindow::onCardItemSelected()
 		}
 	}
 
-	QString size = item->text(1);
-	QString modified = item->text(2);
+	QString size = item->text(MemoryCardBrowser::ColumnSize);
+	QString modified = item->text(MemoryCardBrowser::ColumnModified);
 
 	ui->detailsPanel->setSave(memoryCard.get(), savePath, size, modified);
 
