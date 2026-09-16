@@ -22,16 +22,19 @@ MemoryCardBrowser::MemoryCardBrowser(QWidget* parent)
 		ui->retranslateUi(this);
 	});
 
-	header()->setSectionResizeMode(0, QHeaderView::Stretch);
-	header()->setSectionResizeMode(1, QHeaderView::Interactive);
-	header()->setSectionResizeMode(2, QHeaderView::Interactive);
-	header()->resizeSection(1, 100);
-	header()->resizeSection(2, 140);
+	header()->setSectionResizeMode(ColumnName, QHeaderView::Stretch);
+	header()->setSectionResizeMode(ColumnRawFolder, QHeaderView::Interactive);
+	header()->setSectionResizeMode(ColumnSize, QHeaderView::Interactive);
+	header()->setSectionResizeMode(ColumnModified, QHeaderView::Interactive);
+	header()->resizeSection(ColumnRawFolder, 180);
+	header()->resizeSection(ColumnSize, 100);
+	header()->resizeSection(ColumnModified, 140);
 }
 
 void MemoryCardBrowser::clear()
 {
 	QTreeWidget::clear();
+	setColumnHidden(ColumnRawFolder, false);
 	m_currentPath = "/";
 }
 
@@ -97,28 +100,30 @@ void MemoryCardBrowser::loadRootDirectory()
 				displayName = QString::fromStdString(entry.name);
 			}
 
-			item->setText(0, displayName);
+			item->setText(ColumnName, displayName);
 
 			if (isDir)
 			{
+				item->setText(ColumnRawFolder, QString::fromStdString(entry.name));
+
 				uint32_t saveSize = m_card->getSaveSize(savePath.toStdString());
 				double sizeKB = saveSize / 1024.0;
-				item->setText(1, tr("%1 KB").arg(static_cast<int>(sizeKB)));
+				item->setText(ColumnSize, tr("%1 KB").arg(static_cast<int>(sizeKB)));
 			}
 			else
 			{
 				double sizeKB = entry.length / 1024.0;
 				if (sizeKB < 1.0)
-					item->setText(1, tr("%1 B").arg(entry.length));
+					item->setText(ColumnSize, tr("%1 B").arg(entry.length));
 				else
-					item->setText(1, tr("%1 KB").arg(static_cast<int>(sizeKB)));
+					item->setText(ColumnSize, tr("%1 KB").arg(static_cast<int>(sizeKB)));
 			}
 
 			item->setData(0, Qt::UserRole, QString::fromStdString(entry.name));
 			item->setData(0, Qt::UserRole + 1, isDir);
 			auto time = todToTime(entry.modified);
 			QDateTime dateTime = QDateTime::fromSecsSinceEpoch(time);
-			item->setText(2, dateTime.toString("yyyy-MM-dd hh:mm"));
+			item->setText(ColumnModified, dateTime.toString("yyyy-MM-dd hh:mm"));
 
 			addTopLevelItem(item);
 		}
@@ -127,6 +132,8 @@ void MemoryCardBrowser::loadRootDirectory()
 	expandAll();
 	clearSelection();
 	setCurrentItem(nullptr);
+
+	setColumnHidden(ColumnRawFolder, false);
 }
 
 void MemoryCardBrowser::loadSaveDirectory(const QString& savePath)
@@ -137,9 +144,7 @@ void MemoryCardBrowser::loadSaveDirectory(const QString& savePath)
 		return;
 
 	QTreeWidgetItem* parentItem = new QTreeWidgetItem(this);
-	parentItem->setText(0, "..");
-	parentItem->setText(1, "");
-	parentItem->setText(2, "");
+	parentItem->setText(ColumnName, "..");
 	parentItem->setData(0, Qt::UserRole, "..");
 	parentItem->setData(0, Qt::UserRole + 1, true);
 	addTopLevelItem(parentItem);
@@ -162,7 +167,7 @@ void MemoryCardBrowser::loadSaveDirectory(const QString& savePath)
 
 		QTreeWidgetItem* item = new QTreeWidgetItem(this);
 
-		item->setText(0, QString::fromStdString(entry.name));
+		item->setText(ColumnName, QString::fromStdString(entry.name));
 
 		bool isDir = (entry.mode & DF_DIR) != 0;
 		item->setData(0, Qt::UserRole, QString::fromStdString(entry.name));
@@ -172,23 +177,25 @@ void MemoryCardBrowser::loadSaveDirectory(const QString& savePath)
 		{
 			double sizeKB = entry.length / 1024.0;
 			if (sizeKB < 1.0)
-				item->setText(1, tr("%1 B").arg(entry.length));
+				item->setText(ColumnSize, tr("%1 B").arg(entry.length));
 			else
-				item->setText(1, tr("%1 KB").arg(static_cast<int>(sizeKB)));
+				item->setText(ColumnSize, tr("%1 KB").arg(static_cast<int>(sizeKB)));
 		}
 		else
 		{
-			item->setText(1, tr("<DIR>"));
+			item->setText(ColumnSize, tr("<DIR>"));
 		}
 
 		auto time = todToTime(entry.modified);
 		QDateTime dateTime = QDateTime::fromSecsSinceEpoch(time);
-		item->setText(2, dateTime.toString("yyyy-MM-dd hh:mm"));
+		item->setText(ColumnModified, dateTime.toString("yyyy-MM-dd hh:mm"));
 
 		addTopLevelItem(item);
 	}
 
 	expandAll();
+
+	setColumnHidden(ColumnRawFolder, true);
 }
 
 void MemoryCardBrowser::navigateTo(const QString& path)

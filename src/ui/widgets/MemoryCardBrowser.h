@@ -16,6 +16,15 @@ class MemoryCardBrowser : public QTreeWidget
 	Q_OBJECT
 
 public:
+	enum Column
+	{
+		ColumnName = 0,
+		ColumnRawFolder,
+		ColumnSize,
+		ColumnModified,
+		ColumnCount
+	};
+
 	explicit MemoryCardBrowser(QWidget* parent = nullptr);
 
 	void loadCard(PS2MemoryCard* card);
