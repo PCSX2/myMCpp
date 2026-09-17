@@ -2219,6 +2219,11 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
     </message>
     <message>
         <location line="+5"/>
+        <source>Raw Folder Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2521,7 +2526,7 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
 <context>
     <name>MemoryCardBrowser</name>
     <message>
-        <location filename="../widgets/MemoryCardBrowser.cpp" line="+106"/>
+        <location filename="../widgets/MemoryCardBrowser.cpp" line="+111"/>
         <location line="+8"/>
         <location line="+63"/>
         <source>%1 KB</source>
@@ -2534,18 +2539,18 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-113"/>
-        <location line="+88"/>
+        <location line="-115"/>
+        <location line="+90"/>
         <source>Error</source>
         <translation type="unfinished">Error</translation>
     </message>
     <message>
-        <location line="-87"/>
+        <location line="-89"/>
         <source>Failed to read memory card: %1</source>
         <translation type="unfinished">Failed to read memory card: %1</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+120"/>
         <source>&lt;DIR&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2555,7 +2560,7 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+183"/>
+        <location line="+185"/>
         <source>Import File...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2641,6 +2646,11 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
     <message>
         <location filename="../widgets/MemoryCardBrowser.ui" line="+24"/>
         <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Raw Folder Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
