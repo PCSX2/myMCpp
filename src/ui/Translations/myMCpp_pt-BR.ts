@@ -2041,6 +2041,11 @@ This action cannot be undone.</translation>
     </message>
     <message>
       <location line="+5"/>
+      <source>Raw Folder Name</source>
+      <translation type="unfinished">Raw Folder Name</translation>
+    </message>
+    <message>
+      <location line="+5"/>
       <source>Size</source>
       <translation type="unfinished">Size</translation>
     </message>
@@ -2343,7 +2348,7 @@ This action cannot be undone.</translation>
   <context>
     <name>MemoryCardBrowser</name>
     <message>
-      <location filename="../widgets/MemoryCardBrowser.cpp" line="+106"/>
+      <location filename="../widgets/MemoryCardBrowser.cpp" line="+111"/>
       <location line="+8"/>
       <location line="+63"/>
       <source>%1 KB</source>
@@ -2356,18 +2361,18 @@ This action cannot be undone.</translation>
       <translation type="unfinished">%1 B</translation>
     </message>
     <message>
-      <location line="-113"/>
-      <location line="+88"/>
+      <location line="-115"/>
+      <location line="+90"/>
       <source>Error</source>
       <translation>Error</translation>
     </message>
     <message>
-      <location line="-87"/>
+      <location line="-89"/>
       <source>Failed to read memory card: %1</source>
       <translation>Erro ao ler cartão de memória: %1</translation>
     </message>
     <message>
-      <location line="+118"/>
+      <location line="+120"/>
       <source>&lt;DIR&gt;</source>
       <translation type="unfinished">&lt;DIR&gt;</translation>
     </message>
@@ -2377,7 +2382,7 @@ This action cannot be undone.</translation>
       <translation type="unfinished">Failed to read save directory: %1</translation>
     </message>
     <message>
-      <location line="+183"/>
+      <location line="+185"/>
       <source>Import File...</source>
       <translation type="unfinished">Import File...</translation>
     </message>
@@ -2464,6 +2469,11 @@ This action cannot be undone.</translation>
       <location filename="../widgets/MemoryCardBrowser.ui" line="+24"/>
       <source>Name</source>
       <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+      <location line="+5"/>
+      <source>Raw Folder Name</source>
+      <translation type="unfinished">Raw Folder Name</translation>
     </message>
     <message>
       <location line="+5"/>
