@@ -19,6 +19,7 @@ jobs:
       artifactPrefixName: "myMCpp-linux-x64-clang"
       platform: x64
       compiler: clang
+      fetchTags: true
     secrets: inherit
 
   build_linux_arm64_clang:
@@ -30,6 +31,7 @@ jobs:
       os: ubuntu-24.04-arm
       platform: arm64
       compiler: clang
+      fetchTags: true
     secrets: inherit
 
   build_macos:
@@ -38,6 +40,7 @@ jobs:
     with:
       jobName: "macOS Universal Build"
       artifactPrefixName: "myMCpp-macos-universal"
+      fetchTags: true
     secrets: inherit
 
   build_windows_x64_clang:
@@ -48,6 +51,7 @@ jobs:
       artifactPrefixName: "myMCpp-windows-x64-clang"
       platform: x64
       compiler: clang
+      fetchTags: true
     secrets: inherit
 
   build_windows_x64_msvc:
@@ -58,6 +62,7 @@ jobs:
       artifactPrefixName: "myMCpp-windows-x64-msvc"
       platform: x64
       compiler: msvc
+      fetchTags: true
     secrets: inherit
 
   build_windows_arm64_clang:
@@ -69,6 +74,7 @@ jobs:
       os: windows-11-arm
       platform: ARM64
       compiler: clang
+      fetchTags: true
     secrets: inherit
 
   build_windows_arm64_msvc:
@@ -80,4 +86,5 @@ jobs:
       os: windows-11-arm
       platform: ARM64
       compiler: msvc
+      fetchTags: true
     secrets: inherit

@@ -2,14 +2,27 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include <windows.h>
+#include "svnrev.h"
+
+#define STRINGIZE2(s) #s
+#define STRINGIZE(s) STRINGIZE2(s)
+
+#define VER_FILE_VERSION     GIT_TAG_HI, GIT_TAG_MID, GIT_TAG_LO, 0
+#define VER_FILE_VERSION_STR STRINGIZE(GIT_TAG_HI) "." STRINGIZE(GIT_TAG_MID) "." STRINGIZE(GIT_TAG_LO) ".0"
+
+#if defined(_DEBUG) || defined(DEBUG)
+#define VER_DEBUG VS_FF_DEBUG
+#else
+#define VER_DEBUG 0
+#endif
 
 IDI_APPICON ICON "icons/AppIcon.ico"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION 0,1,0,0
-PRODUCTVERSION 0,1,0,0
-FILEFLAGSMASK 0x3f
-FILEFLAGS 0x0
+FILEVERSION VER_FILE_VERSION
+PRODUCTVERSION VER_FILE_VERSION
+FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+FILEFLAGS VER_DEBUG
 FILEOS VOS_NT_WINDOWS32
 FILETYPE VFT_APP
 FILESUBTYPE VFT2_UNKNOWN
@@ -20,16 +33,16 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "myMCpp"
             VALUE "FileDescription", "PS2 Memory Card Manager"
-            VALUE "FileVersion", "0.1.0.0"
+            VALUE "FileVersion", GIT_REV
             VALUE "InternalName", "myMCpp"
-            VALUE "LegalCopyright", "GPLv3"
+            VALUE "LegalCopyright", "Copyright (C) 2025-2026 SternXD"
             VALUE "OriginalFilename", "myMCpp.exe"
             VALUE "ProductName", "myMCpp"
-            VALUE "ProductVersion", "0.1.0.0"
+            VALUE "ProductVersion", GIT_REV
         END
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x409, 1252
+        VALUE "Translation", 0x0409, 1252
     END
 END

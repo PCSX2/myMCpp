@@ -72,7 +72,7 @@ if !ERRORLEVEL! EQU 0 (
 ) else (
   echo #define GIT_REV "%GIT_REV%" >> "%OUT_FILE%"
   echo #define GIT_TAGGED_COMMIT 0 >> "%OUT_FILE%"
-  echo %GIT_REV%|FINDSTR /R "^v[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]-*" > NUL
+  echo %GIT_REV%|FINDSTR /R "^v[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*" > NUL
   if !ERRORLEVEL! EQU 0 (
     FOR /F "tokens=1,2,3 delims=v." %%a in ("%GIT_REV%") DO (
       echo #define GIT_TAG_HI %%a >> "%OUT_FILE%"
