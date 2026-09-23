@@ -191,5 +191,8 @@
     <QtUic Include="widgets\SaveDetailsPanel.ui">
       <Filter>ui\widgets</Filter>
     </QtUic>
+    <QtUic Include="widgets\IconWidget.ui">
+      <Filter>ui\widgets</Filter>
+    </QtUic>
   </ItemGroup>
 </Project>

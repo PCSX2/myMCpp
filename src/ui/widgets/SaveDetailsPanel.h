@@ -8,7 +8,6 @@
 class PS2MemoryCard;
 class IconWidget;
 class Config;
-class QVBoxLayout;
 
 #include "ui_SaveDetailsPanel.h"
 

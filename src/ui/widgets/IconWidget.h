@@ -6,9 +6,11 @@
 #include <QWidget>
 #include <QBasicTimer>
 #include "core/formats/PS2Icon.h"
-#include "core/renderer/Renderer.h"
 
 class Config;
+class PS2IconSys;
+class Renderer;
+class QWindow;
 
 class IconWidget : public QWidget
 {
@@ -27,21 +29,16 @@ public:
 	void setRotation(float x, float y, float z);
 	void setZoom(float zoom);
 
-	void setLightingFromIconSys(class PS2IconSys* iconSys);
+	void setLightingFromIconSys(PS2IconSys* iconSys);
 
-	void setBackgroundFromIconSys(class PS2IconSys* iconSys);
+	void setBackgroundFromIconSys(PS2IconSys* iconSys);
 	void setBackgroundColor(float r, float g, float b, float a = 1.0f);
 
-	void applyConfigToRenderer(class PS2IconSys* iconSys);
-
-	void startRendering();
-	void stopRendering();
+	void applyConfigToRenderer(PS2IconSys* iconSys);
 
 	void resetCamera();
 	void zoomIn();
 	void zoomOut();
-
-	Renderer* getRenderer() const { return m_renderer.get(); }
 
 signals:
 	void iconLoaded();
@@ -51,26 +48,25 @@ protected:
 	QSize sizeHint() const override;
 	bool hasHeightForWidth() const override;
 	int heightForWidth(int w) const override;
+	bool eventFilter(QObject* watched, QEvent* event) override;
 	void timerEvent(QTimerEvent* event) override;
-	void resizeEvent(QResizeEvent* event) override;
 	void showEvent(QShowEvent* event) override;
 	void hideEvent(QHideEvent* event) override;
-	QPaintEngine* paintEngine() const override;
-	void mousePressEvent(QMouseEvent* event) override;
-	void mouseMoveEvent(QMouseEvent* event) override;
-	void mouseReleaseEvent(QMouseEvent* event) override;
-	void wheelEvent(QWheelEvent* event) override;
 
 private:
 	bool ensureRenderer();
 	void recreateRenderer();
+	void requestRender();
 	void renderFrame();
+	void startRendering();
+	void stopRendering();
 
 	Config* m_config;
+	QWindow* m_renderWindow;
 	std::shared_ptr<PS2Icon::Icon> m_icon;
 	std::unique_ptr<Renderer> m_renderer;
+	void* m_windowHandle = nullptr;
 	QBasicTimer m_renderTimer;
-	bool m_renderLoopEnabled = false;
 	float m_rotX = 0.0f;
 	float m_rotY = 0.0f;
 	float m_zoom = 1.0f;

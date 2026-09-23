@@ -9,7 +9,6 @@
 #include "core/formats/PS2IconSys.h"
 
 #include "common/Config.h"
-#include <QStyle>
 
 SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)
 	: QWidget(parent)
@@ -18,13 +17,6 @@ SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)
 	, ui(new Ui::SaveDetailsPanel)
 {
 	ui->setupUi(this);
-
-	if (ui->iconContainer)
-	{
-		ui->iconLayout->removeWidget(ui->iconContainer);
-		delete ui->iconContainer;
-		ui->iconContainer = nullptr;
-	}
 
 	connect(&TranslationManager::instance(), &TranslationManager::languageChanged, this, [this]() {
 		ui->retranslateUi(this);
