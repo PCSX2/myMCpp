@@ -14,6 +14,7 @@
         $(ThirdPartyDir)glfw\include;
         $(ThirdPartyDir)glm;
         $(ThirdPartyDir)nlohmann_json\include;
+        $(ThirdPartyDir)simpleini\include;
         $(ThirdPartyDir)Vulkan-Headers\include;
         $(ThirdPartyDir)vma\include;
         $(ThirdPartyDir)zlib;
