@@ -92,6 +92,7 @@
     <QtUic Include="dialogs\NewCardDialog.ui" />
     <QtUic Include="widgets\MemoryCardBrowser.ui" />
     <QtUic Include="widgets\SaveDetailsPanel.ui" />
+    <QtUic Include="widgets\IconWidget.ui" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\common\common.vcxproj">
