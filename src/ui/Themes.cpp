@@ -65,7 +65,7 @@ void Themes::SetIconThemeFromStyle()
 
 void Themes::SetStyleFromSettings(Config* config)
 {
-	std::string theme = config->getTheme();
+	std::string theme = config->UI.Theme;
 	if (theme.empty())
 		theme = GetDefaultThemeName();
 

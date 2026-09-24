@@ -25,7 +25,6 @@ public:
 
 	void saveSettings() override;
 	void loadSettings() override;
-	void restoreDefaults() override;
 
 private slots:
 	void onRendererChanged(int index);

@@ -5,7 +5,7 @@
 
 #include <string>
 
-class Config;
+struct Config;
 
 namespace Themes
 {

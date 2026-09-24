@@ -3,6 +3,6 @@
 
 #pragma once
 
-class Config;
+struct Config;
 
 int runQtMainApp(int argc, char* argv[], Config& config);

@@ -30,22 +30,6 @@ https://github.com/PCSX2/pcsx2
     <number>0</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="debugGroup">
-     <property name="title">
-      <string>Debugging</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QCheckBox" name="enableDebugLogCheck">
-        <property name="text">
-         <string>Enable Debug Logging</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <widget class="QGroupBox" name="settingsGroup">
      <property name="title">
       <string>Settings Management</string>
@@ -97,7 +81,6 @@ https://github.com/PCSX2/pcsx2
   </layout>
  </widget>
  <tabstops>
-  <tabstop>enableDebugLogCheck</tabstop>
   <tabstop>exportSettingsButton</tabstop>
   <tabstop>importSettingsButton</tabstop>
  </tabstops>

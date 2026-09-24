@@ -7,7 +7,7 @@
 #include <QBasicTimer>
 #include "core/formats/PS2Icon.h"
 
-class Config;
+struct Config;
 class PS2IconSys;
 class Renderer;
 class QWindow;

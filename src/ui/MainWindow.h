@@ -14,7 +14,7 @@ class SaveDetailsPanel;
 class CardActionHandler;
 class QStatusBar;
 class QLabel;
-class Config;
+struct Config;
 class DiscordRPCManager;
 
 class MainWindow : public QMainWindow

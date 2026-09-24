@@ -60,7 +60,7 @@ void TranslationManager::loadLanguage(const std::string& lang)
 			Logger::info("Loaded translation from app translations folder: {}", appTranslations.toStdString());
 		}
 		else if (m_translator->load("myMCpp_" + langStr,
-					 QString::fromStdString((m_config->getResourcesPath() / "translations").string())))
+					 QString::fromStdString((m_config->ResourcesPath / "translations").string())))
 		{
 			loaded = true;
 			Logger::info("Loaded translation from external resources folder");
@@ -127,7 +127,7 @@ std::vector<std::pair<QString, QString>> TranslationManager::getAvailableLanguag
 
 	if (m_config)
 	{
-		const auto translationsPath = (m_config->getResourcesPath() / "translations").string();
+		const auto translationsPath = (m_config->ResourcesPath / "translations").string();
 		addLanguagesFromDir(QDir(QString::fromStdString(translationsPath)));
 	}
 

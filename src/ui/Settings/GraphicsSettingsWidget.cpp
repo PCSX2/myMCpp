@@ -22,55 +22,38 @@ GraphicsSettingsWidget::GraphicsSettingsWidget(SettingsWindow* dialog, QWidget* 
 	registerHelp(ui->adapterCombo, tr("Graphics Adapter"), tr("Select the graphics adapter (GPU) to use for rendering."));
 	registerHelp(ui->cameraCombo, tr("Camera Angle"), tr("Change the camera angle used to view the 3D icons."));
 	registerHelp(ui->lightingCombo, tr("Lighting Mode"), tr("Select how the icons are lit."));
-	registerHelp(ui->thumbnailSizeSpinner, tr("Thumbnail Size"), tr("Adjust the size of the save icons in the main view."));
-	registerHelp(ui->antialiasingCombo, tr("Antialiasing"), tr("Enable multisample antialiasing for smoother edges. Higher values may impact performance."));
 	registerHelp(ui->animateIconsCheck, tr("Animate Icons"), tr("Enable rotating animations for the 3D icons."));
 	registerHelp(ui->fpsLimitSpinner, tr("FPS Limit"), tr("Set frame rate limit for icon preview. Set to 0 for unlimited FPS."));
 	registerHelp(ui->vsyncCheck, tr("VSync"), tr("Synchronize frame rate with monitor refresh rate to prevent screen tearing."));
 
 	ui->rendererCombo->clear();
+	ui->rendererCombo->addItem(tr("Automatic"), static_cast<int>(RendererType::Automatic));
 #if defined(ENABLE_VULKAN)
-	ui->rendererCombo->addItem(tr("Vulkan"), "vulkan");
+	ui->rendererCombo->addItem(tr("Vulkan"), static_cast<int>(RendererType::Vulkan));
 #endif
-	ui->rendererCombo->addItem(tr("OpenGL"), "opengl");
-#if defined(__APPLE__)
-	ui->rendererCombo->addItem(tr("Metal"), "metal");
+#if defined(ENABLE_OPENGL)
+	ui->rendererCombo->addItem(tr("OpenGL"), static_cast<int>(RendererType::OpenGL));
 #endif
-
-	ui->adapterCombo->clear();
-	ui->adapterCombo->addItem(tr("Default Adapter"), "");
-#if defined(ENABLE_VULKAN)
-	std::vector<std::string> vulkanAdapters = RendererFactory::getAvailableAdapters(RendererFactory::RendererType::Vulkan);
-	for (const auto& name : vulkanAdapters)
-	{
-		ui->adapterCombo->addItem(QString::fromStdString(name), QString::fromStdString(name));
-	}
+#if defined(ENABLE_METAL)
+	ui->rendererCombo->addItem(tr("Metal"), static_cast<int>(RendererType::Metal));
 #endif
 
 	ui->cameraCombo->clear();
-	ui->cameraCombo->addItem(tr("Default"), "default");
-	ui->cameraCombo->addItem(tr("Flat"), "flat");
-	ui->cameraCombo->addItem(tr("Near"), "near");
-	ui->cameraCombo->addItem(tr("High"), "high");
+	ui->cameraCombo->addItem(tr("Default"), static_cast<int>(CameraMode::Default));
+	ui->cameraCombo->addItem(tr("Flat"), static_cast<int>(CameraMode::Flat));
+	ui->cameraCombo->addItem(tr("Near"), static_cast<int>(CameraMode::Near));
+	ui->cameraCombo->addItem(tr("High"), static_cast<int>(CameraMode::High));
 
 	ui->lightingCombo->clear();
-	ui->lightingCombo->addItem(tr("Icon Lighting"), "icon");
-	ui->lightingCombo->addItem(tr("Lighting Off"), "off");
-	ui->lightingCombo->addItem(tr("Alternate 1"), "alt1");
-	ui->lightingCombo->addItem(tr("Alternate 2"), "alt2");
-
-	ui->antialiasingCombo->clear();
-	ui->antialiasingCombo->addItem(tr("Off"), 0);
-	ui->antialiasingCombo->addItem(tr("2x MSAA"), 2);
-	ui->antialiasingCombo->addItem(tr("4x MSAA"), 4);
-	ui->antialiasingCombo->addItem(tr("8x MSAA"), 8);
+	ui->lightingCombo->addItem(tr("Icon Lighting"), static_cast<int>(LightingMode::Icon));
+	ui->lightingCombo->addItem(tr("Lighting Off"), static_cast<int>(LightingMode::Off));
+	ui->lightingCombo->addItem(tr("Alternate 1"), static_cast<int>(LightingMode::Alternate1));
+	ui->lightingCombo->addItem(tr("Alternate 2"), static_cast<int>(LightingMode::Alternate2));
 
 	connect(ui->rendererCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &GraphicsSettingsWidget::onRendererChanged);
 	connect(ui->adapterCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SettingsWidget::settingChanged);
 	connect(ui->cameraCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SettingsWidget::settingChanged);
 	connect(ui->lightingCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SettingsWidget::settingChanged);
-	connect(ui->thumbnailSizeSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this, &SettingsWidget::settingChanged);
-	connect(ui->antialiasingCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SettingsWidget::settingChanged);
 	connect(ui->animateIconsCheck, &QCheckBox::toggled, this, &SettingsWidget::settingChanged);
 	connect(ui->fpsLimitSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this, &SettingsWidget::settingChanged);
 	connect(ui->vsyncCheck, &QCheckBox::toggled, this, &GraphicsSettingsWidget::onVSyncChanged);
@@ -104,8 +87,22 @@ void GraphicsSettingsWidget::onRendererChanged(int index)
 
 void GraphicsSettingsWidget::updateAdapterComboState()
 {
-	QString currentRenderer = ui->rendererCombo->currentData().toString().toLower();
-	bool isGL = (currentRenderer == "opengl");
+	const RendererType renderer = static_cast<RendererType>(ui->rendererCombo->currentData().toInt());
+	const QString selectedAdapter = ui->adapterCombo->currentData().toString();
+
+	ui->adapterCombo->clear();
+	ui->adapterCombo->addItem(tr("Default Adapter"), "");
+	for (const std::string& name : RendererFactory::getAvailableAdapters(renderer))
+	{
+		const QString adapter = QString::fromStdString(name);
+		ui->adapterCombo->addItem(adapter, adapter);
+	}
+
+	const int adapterIndex = ui->adapterCombo->findData(selectedAdapter);
+	if (adapterIndex >= 0)
+		ui->adapterCombo->setCurrentIndex(adapterIndex);
+
+	const bool isGL = (renderer == RendererType::OpenGL);
 	ui->adapterLabel->setVisible(!isGL);
 	ui->adapterCombo->setVisible(!isGL);
 }
@@ -116,39 +113,30 @@ void GraphicsSettingsWidget::loadSettings()
 	if (!config)
 		return;
 
-	QString r = QString::fromStdString(config->getRenderer()).toLower();
-	int rIdxData = ui->rendererCombo->findData(r);
+	int rIdxData = ui->rendererCombo->findData(static_cast<int>(config->Graphics.Renderer));
 	if (rIdxData >= 0)
 		ui->rendererCombo->setCurrentIndex(rIdxData);
 
-	QString adapter = QString::fromStdString(config->getAdapter());
+	updateAdapterComboState();
+
+	QString adapter = QString::fromStdString(config->Graphics.Adapter);
 	int adapterIdx = ui->adapterCombo->findData(adapter);
 	if (adapterIdx >= 0)
 		ui->adapterCombo->setCurrentIndex(adapterIdx);
 	else
 		ui->adapterCombo->setCurrentIndex(0);
 
-	updateAdapterComboState();
-
-	QString c = QString::fromStdString(config->getCameraMode()).toLower();
-	int cIdx = ui->cameraCombo->findData(c);
+	int cIdx = ui->cameraCombo->findData(static_cast<int>(config->Graphics.Camera));
 	if (cIdx >= 0)
 		ui->cameraCombo->setCurrentIndex(cIdx);
 
-	QString l = QString::fromStdString(config->getLightingMode()).toLower();
-	int lIdx = ui->lightingCombo->findData(l);
+	int lIdx = ui->lightingCombo->findData(static_cast<int>(config->Graphics.Lighting));
 	if (lIdx >= 0)
 		ui->lightingCombo->setCurrentIndex(lIdx);
 
-	ui->thumbnailSizeSpinner->setValue(config->getThumbnailSize());
-
-	int aaIdx = ui->antialiasingCombo->findData(config->getAntialiasing());
-	if (aaIdx >= 0)
-		ui->antialiasingCombo->setCurrentIndex(aaIdx);
-
-	ui->animateIconsCheck->setChecked(config->getAnimateIcons());
-	ui->fpsLimitSpinner->setValue(config->getMaxFPS() <= 0 ? 0 : config->getMaxFPS());
-	ui->vsyncCheck->setChecked(config->getVSync());
+	ui->animateIconsCheck->setChecked(config->Graphics.AnimateIcons);
+	ui->fpsLimitSpinner->setValue(config->Performance.MaxFPS <= 0 ? 0 : config->Performance.MaxFPS);
+	ui->vsyncCheck->setChecked(config->Graphics.VSync);
 }
 
 void GraphicsSettingsWidget::saveSettings()
@@ -157,28 +145,13 @@ void GraphicsSettingsWidget::saveSettings()
 	if (!config)
 		return;
 
-	config->setRenderer(ui->rendererCombo->currentData().toString().toStdString());
-	config->setAdapter(ui->adapterCombo->currentData().toString().toStdString());
-	config->setCameraMode(ui->cameraCombo->currentData().toString().toStdString());
-	config->setLightingMode(ui->lightingCombo->currentData().toString().toStdString());
-	config->setThumbnailSize(ui->thumbnailSizeSpinner->value());
-	config->setAntialiasing(ui->antialiasingCombo->currentData().toInt());
-	config->setAnimateIcons(ui->animateIconsCheck->isChecked());
-	config->setMaxFPS(ui->fpsLimitSpinner->value());
-	config->setVSync(ui->vsyncCheck->isChecked());
-}
-
-void GraphicsSettingsWidget::restoreDefaults()
-{
-	ui->rendererCombo->setCurrentIndex(0);
-	ui->adapterCombo->setCurrentIndex(0);
-	ui->cameraCombo->setCurrentIndex(0);
-	ui->lightingCombo->setCurrentIndex(0);
-	ui->thumbnailSizeSpinner->setValue(64);
-	ui->antialiasingCombo->setCurrentIndex(0);
-	ui->animateIconsCheck->setChecked(true);
-	ui->fpsLimitSpinner->setValue(30);
-	ui->vsyncCheck->setChecked(true);
+	config->Graphics.Renderer = static_cast<RendererType>(ui->rendererCombo->currentData().toInt());
+	config->Graphics.Adapter = ui->adapterCombo->currentData().toString().toStdString();
+	config->Graphics.Camera = static_cast<CameraMode>(ui->cameraCombo->currentData().toInt());
+	config->Graphics.Lighting = static_cast<LightingMode>(ui->lightingCombo->currentData().toInt());
+	config->Graphics.AnimateIcons = ui->animateIconsCheck->isChecked();
+	config->Performance.MaxFPS = ui->fpsLimitSpinner->value();
+	config->Graphics.VSync = ui->vsyncCheck->isChecked();
 }
 
 void GraphicsSettingsWidget::onVSyncChanged(bool enabled)

@@ -25,7 +25,6 @@ public:
 
 	void saveSettings() override;
 	void loadSettings() override;
-	void restoreDefaults() override;
 
 protected:
 	void changeEvent(QEvent* event) override;

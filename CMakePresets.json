@@ -9,7 +9,8 @@
             "binaryDir": "${sourceDir}/build/win-rel-2026",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "ReleaseMinSizeRel",
-                "ENABLE_VULKAN": "ON"
+                "ENABLE_VULKAN": "ON",
+                "ENABLE_OPENGL": "ON"
             }
         },
         {
@@ -20,7 +21,8 @@
             "binaryDir": "${sourceDir}/build/win-dbg-2026",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "ENABLE_VULKAN": "ON"
+                "ENABLE_VULKAN": "ON",
+                "ENABLE_OPENGL": "ON"
             }
         },
         {
@@ -31,7 +33,8 @@
             "binaryDir": "${sourceDir}/build/win-rel-2022",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "MinSizeRel",
-                "ENABLE_VULKAN": "ON"
+                "ENABLE_VULKAN": "ON",
+                "ENABLE_OPENGL": "ON"
             }
         },
         {
@@ -42,7 +45,8 @@
             "binaryDir": "${sourceDir}/build/win-dbg-2022",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "ENABLE_VULKAN": "ON"
+                "ENABLE_VULKAN": "ON",
+                "ENABLE_OPENGL": "ON"
             }
         },
         {
@@ -55,7 +59,8 @@
                 "CMAKE_BUILD_TYPE": "MinSizeRel",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
-                "ENABLE_VULKAN": "ON"
+                "ENABLE_VULKAN": "ON",
+                "ENABLE_OPENGL": "ON"
             }
         },
         {
@@ -68,7 +73,8 @@
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
-                "ENABLE_VULKAN": "ON"
+                "ENABLE_VULKAN": "ON",
+                "ENABLE_OPENGL": "ON"
             }
         },
         {
@@ -81,7 +87,8 @@
                 "CMAKE_BUILD_TYPE": "MinSizeRel",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
-                "ENABLE_VULKAN": "ON"
+                "ENABLE_VULKAN": "ON",
+                "ENABLE_OPENGL": "ON"
             }
         },
         {
@@ -94,7 +101,8 @@
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
-                "ENABLE_VULKAN": "ON"
+                "ENABLE_VULKAN": "ON",
+                "ENABLE_OPENGL": "ON"
             }
         },
         {
@@ -107,7 +115,8 @@
                 "CMAKE_BUILD_TYPE": "MinSizeRel",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
-                "ENABLE_VULKAN": "ON"
+                "ENABLE_VULKAN": "ON",
+                "ENABLE_OPENGL": "ON"
             }
         },
         {
@@ -120,7 +129,8 @@
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
-                "ENABLE_VULKAN": "ON"
+                "ENABLE_VULKAN": "ON",
+                "ENABLE_OPENGL": "ON"
             }
         },
         {
@@ -132,7 +142,9 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "MinSizeRel",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "13.0",
-                "ENABLE_VULKAN": "ON"
+                "ENABLE_VULKAN": "ON",
+                "ENABLE_OPENGL": "ON",
+                "ENABLE_METAL": "ON"
             }
         },
         {
@@ -144,7 +156,9 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "13.0",
-                "ENABLE_VULKAN": "ON"
+                "ENABLE_VULKAN": "ON",
+                "ENABLE_OPENGL": "ON",
+                "ENABLE_METAL": "ON"
             }
         }
     ],

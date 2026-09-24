@@ -133,7 +133,7 @@ bool OpenGLRenderer::initialize()
 		if (m_config)
 		{
 			m_context->makeCurrent();
-			m_context->setVSync(m_config->getVSync());
+			m_context->setVSync(m_config->Graphics.VSync);
 			m_context->releaseCurrent();
 		}
 
@@ -494,7 +494,7 @@ void OpenGLRenderer::setVSync(bool enabled)
 
 		if (m_config)
 		{
-			m_config->setVSync(enabled);
+			m_config->Graphics.VSync = enabled;
 		}
 	}
 }

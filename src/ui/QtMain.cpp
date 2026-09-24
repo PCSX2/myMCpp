@@ -23,13 +23,13 @@ static void initResourcePath(Config& config)
 {
 #if defined(__APPLE__)
 	if (auto bundlePath = CocoaTools::GetResourcePath())
-		config.setResourcesPath(*bundlePath);
+		config.ResourcesPath = *bundlePath;
 	else
-		config.setResourcesPath("resources");
+		config.ResourcesPath = "resources";
 #else
-	config.setResourcesPath(fs::path(QCoreApplication::applicationDirPath().toStdString()) / "resources");
+	config.ResourcesPath = fs::path(QCoreApplication::applicationDirPath().toStdString()) / "resources";
 #endif
-	ResourcePath::set(config.getResourcesPath());
+	ResourcePath::set(config.ResourcesPath);
 	Logger::info("Main: Resources path: {}", ResourcePath::get().string());
 }
 
@@ -43,7 +43,7 @@ int runQtMainApp(int argc, char* argv[], Config& config)
 
 	// Load translations
 	TranslationManager::instance().init(&app, &config);
-	TranslationManager::instance().loadLanguage(config.getLanguage());
+	TranslationManager::instance().loadLanguage(config.UI.Language);
 
 	QTranslator qtTranslator;
 	if (qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath)))

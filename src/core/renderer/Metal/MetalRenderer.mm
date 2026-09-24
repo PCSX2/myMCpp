@@ -129,6 +129,17 @@ MetalRenderer::~MetalRenderer()
 	shutdown();
 }
 
+std::vector<std::string> MetalRenderer::getAvailableAdapters()
+{
+	std::vector<std::string> adapters;
+	for (id<MTLDevice> device in MTLCopyAllDevices())
+	{
+		if (const char* name = [device.name UTF8String])
+			adapters.emplace_back(name);
+	}
+	return adapters;
+}
+
 bool MetalRenderer::initialize()
 {
 	if (m_initialized)
@@ -137,7 +148,7 @@ bool MetalRenderer::initialize()
 	if (!m_impl)
 		return m_error.Fail("MTL: Internal renderer state was not created");
 
-	if (!m_impl->device.initialize())
+	if (!m_impl->device.initialize(m_config ? m_config->Graphics.Adapter : ""))
 		return m_error.Assign(m_impl->device.GetError());
 
 	if (!CocoaTools::CreateMetalLayer(&m_windowInfo))
@@ -161,7 +172,7 @@ bool MetalRenderer::initialize()
 
 	if (m_config)
 	{
-		setVSync(m_config->getVSync());
+		setVSync(m_config->Graphics.VSync);
 	}
 
 	m_initialized = true;
@@ -363,7 +374,7 @@ void MetalRenderer::setVSync(bool enabled)
 
 		if (m_config)
 		{
-			m_config->setVSync(enabled);
+			m_config->Graphics.VSync = enabled;
 		}
 	}
 	else

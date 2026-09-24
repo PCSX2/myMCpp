@@ -7,6 +7,8 @@
 #include "common/BuildVersion.h"
 #include "common/Logger.h"
 #include "ui/QtMain.h"
+#include <QCoreApplication>
+#include <QStandardPaths>
 #include <filesystem>
 #include <cstdlib>
 #include <cstring>
@@ -81,37 +83,20 @@ static int appMain(int argc, char* argv[])
 	Config config;
 	fs::path config_path;
 
-#if defined(_WIN32)
-	char* appdata = nullptr;
-	size_t len = 0;
-	if (_dupenv_s(&appdata, &len, "APPDATA") == 0 && appdata != nullptr)
-	{
-		config_path = fs::path(appdata) / "myMCpp" / "config.json";
-		free(appdata);
-	}
-	else
-	{
-		config_path = "config.json";
-	}
+	QCoreApplication::setApplicationName("myMCpp");
+#if defined(__APPLE__)
+	const QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 #else
-	const char* xdg_config = std::getenv("XDG_CONFIG_HOME");
-	if (xdg_config && xdg_config[0] != '\0')
+	const QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+#endif
+	if (!configDir.isEmpty())
 	{
-		config_path = fs::path(xdg_config) / "myMCpp" / "config.json";
+		config_path = fs::path(configDir.toStdString()) / "myMCpp.ini";
 	}
 	else
 	{
-		const char* home = std::getenv("HOME");
-		if (home && home[0] != '\0')
-		{
-			config_path = fs::path(home) / ".config" / "myMCpp" / "config.json";
-		}
-		else
-		{
-			config_path = "config.json";
-		}
+		config_path = "myMCpp.ini";
 	}
-#endif
 
 	fs::path log_path = config_path.parent_path() / "myMCpp.log";
 	Logger::init(log_path.string());

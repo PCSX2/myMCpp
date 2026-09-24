@@ -29,17 +29,11 @@ https://github.com/PCSX2/pcsx2
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="minimumSize">
-      <size>
-       <width>180</width>
-       <height>0</height>
-      </size>
+     <property name="minimumWidth">
+      <number>180</number>
      </property>
-     <property name="maximumSize">
-      <size>
-       <width>180</width>
-       <height>16777215</height>
-      </size>
+     <property name="maximumWidth">
+      <number>180</number>
      </property>
      <property name="iconSize">
       <size>
@@ -70,11 +64,8 @@ https://github.com/PCSX2/pcsx2
        <height>100</height>
       </size>
      </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>120</height>
-      </size>
+     <property name="maximumHeight">
+      <number>120</number>
      </property>
      <property name="readOnly">
       <bool>true</bool>
@@ -86,7 +77,7 @@ https://github.com/PCSX2/pcsx2
      <item>
       <widget class="QPushButton" name="restoreDefaultsButton">
        <property name="text">
-        <string>Restore Category Defaults</string>
+        <string>Restore Defaults</string>
        </property>
       </widget>
      </item>
