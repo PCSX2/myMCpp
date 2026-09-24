@@ -10,7 +10,7 @@
 #include <string>
 
 class QApplication;
-class Config;
+struct Config;
 
 class TranslationManager : public QObject
 {

@@ -214,12 +214,12 @@ void SaveDetailsPanel::createIconWidget()
 	iconWidget = new IconWidget(m_config, this);
 	if (m_config)
 	{
-		m_lastRendererType = m_config->getRenderer();
-		m_lastAdapter = m_config->getAdapter();
+		m_lastRendererType = m_config->Graphics.Renderer;
+		m_lastAdapter = m_config->Graphics.Adapter;
 	}
 	else
 	{
-		m_lastRendererType = "vulkan";
+		m_lastRendererType = RendererType::Automatic;
 		m_lastAdapter = "";
 	}
 
@@ -235,8 +235,8 @@ void SaveDetailsPanel::createIconWidget()
 
 void SaveDetailsPanel::refreshConfig()
 {
-	std::string currentRenderer = m_config ? m_config->getRenderer() : "vulkan";
-	std::string currentAdapter = m_config ? m_config->getAdapter() : "";
+	RendererType currentRenderer = m_config ? m_config->Graphics.Renderer : RendererType::Automatic;
+	std::string currentAdapter = m_config ? m_config->Graphics.Adapter : "";
 	if (!iconWidget || currentRenderer != m_lastRendererType || currentAdapter != m_lastAdapter)
 	{
 		createIconWidget();

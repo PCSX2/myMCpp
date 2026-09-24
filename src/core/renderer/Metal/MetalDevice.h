@@ -12,7 +12,7 @@ public:
 	MetalDevice();
 	~MetalDevice();
 
-	bool initialize();
+	bool initialize(const std::string& preferredAdapter = "");
 	void shutdown();
 
 	const Error& GetError() const { return m_error; }

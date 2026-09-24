@@ -7,7 +7,7 @@
 #include <memory>
 #include <vector>
 
-class Config;
+struct Config;
 class QListWidget;
 class QStackedWidget;
 class QLabel;
@@ -28,6 +28,7 @@ public:
 	~SettingsWindow();
 
 	Config* getConfig() const { return m_config; }
+	void reloadSettings();
 
 	void registerWidgetHelp(QObject* widget, const QString& title, const QString& description);
 

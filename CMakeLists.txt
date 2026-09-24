@@ -18,8 +18,12 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 3rdparty dependencies
+# Renderer options
+option(ENABLE_OPENGL "Enable OpenGL renderer" ON)
 option(ENABLE_VULKAN "Enable Vulkan renderer" ON)
+if(APPLE)
+    option(ENABLE_METAL "Enable Metal renderer" ON)
+endif()
 
 if(WIN32)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_WARNINGS)
@@ -36,10 +40,12 @@ if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10.0)
     find_package(Qt6 COMPONENTS CorePrivate GuiPrivate WidgetsPrivate REQUIRED)
 endif()
 
-if(UNIX AND NOT APPLE)
-    find_package(OpenGL REQUIRED COMPONENTS EGL)
-else()
-    find_package(OpenGL REQUIRED)
+if(ENABLE_OPENGL)
+    if(UNIX AND NOT APPLE)
+        find_package(OpenGL REQUIRED COMPONENTS EGL)
+    else()
+        find_package(OpenGL REQUIRED)
+    endif()
 endif()
 # make myMCpp
 add_subdirectory(src)

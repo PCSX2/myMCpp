@@ -31,9 +31,6 @@ public:
 	// Reloads settings from config to UI.
 	virtual void loadSettings() {}
 
-	// Restores default values for this widget.
-	virtual void restoreDefaults() {}
-
 signals:
 	void settingChanged();
 

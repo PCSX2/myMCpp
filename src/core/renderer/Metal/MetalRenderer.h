@@ -11,7 +11,7 @@
 #include <memory>
 #include <chrono>
 
-class Config;
+struct Config;
 
 namespace PS2Icon
 {
@@ -25,6 +25,7 @@ class MetalRenderer : public Renderer
 public:
 	explicit MetalRenderer(const WindowInfo& windowInfo, Config* config = nullptr);
 	~MetalRenderer();
+	static std::vector<std::string> getAvailableAdapters();
 
 	bool initialize() override;
 	void shutdown() override;

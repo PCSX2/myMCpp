@@ -13,7 +13,7 @@
 #include <memory>
 #include <chrono>
 
-class Config;
+struct Config;
 
 namespace PS2Icon
 {

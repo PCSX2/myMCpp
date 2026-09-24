@@ -3,11 +3,12 @@
 
 #pragma once
 
+#include "common/Config.h"
+
 #include <memory>
 
 class PS2MemoryCard;
 class IconWidget;
-class Config;
 
 #include "ui_SaveDetailsPanel.h"
 
@@ -40,7 +41,7 @@ private:
 	QString currentSize;
 	QString currentModified;
 
-	std::string m_lastRendererType;
+	RendererType m_lastRendererType = RendererType::Automatic;
 	std::string m_lastAdapter;
 
 	std::unique_ptr<Ui::SaveDetailsPanel> ui;

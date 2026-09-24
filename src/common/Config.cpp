@@ -3,24 +3,19 @@
 
 #include "Config.h"
 #include "Logger.h"
-#include <fstream>
 
-Config::Config()
-{
-	createDefaults();
-}
+#include <SimpleIni.h>
+#include <fstream>
 
 bool Config::initialize(const fs::path& config_path)
 {
 	Logger::info("Loading config from: {}", config_path.string());
-
-	m_config_path = config_path;
+	ConfigPath = config_path;
 
 	if (!fs::exists(config_path))
 	{
 		Logger::info("Config not found, creating defaults...");
-		createDefaults();
-		return saveAs(config_path);
+		return save();
 	}
 
 	return load(config_path);
@@ -28,634 +23,191 @@ bool Config::initialize(const fs::path& config_path)
 
 bool Config::load(const fs::path& config_path)
 {
-	try
+	std::ifstream config_file(config_path, std::ios::binary);
+	if (!config_file.is_open())
 	{
-		std::ifstream config_file(config_path);
-		if (!config_file.is_open())
-		{
-			Logger::error("Config: Failed to open config file: {}", config_path.string());
-			createDefaults();
-			return false;
-		}
-
-		m_config = json::parse(config_file);
-		m_config_path = config_path;
-		ensureKeys();
-
-		return true;
-	}
-	catch (const std::exception& e)
-	{
-		Logger::error("Config: Failed to parse config file: {}", e.what());
-		createDefaults();
+		Logger::error("Config: Failed to open config file: {}", config_path.string());
 		return false;
 	}
+
+	const std::string data((std::istreambuf_iterator<char>(config_file)), std::istreambuf_iterator<char>());
+	CSimpleIniA ini(true);
+	if (ini.LoadData(data) != SI_OK)
+	{
+		Logger::error("Config: Failed to parse config file: {}", config_path.string());
+		return false;
+	}
+
+	const Config defaults;
+
+	// [Graphics]
+	const std::string renderer = ini.GetValue("Graphics", "Renderer", "Automatic");
+	if (renderer == "Vulkan")
+		Graphics.Renderer = RendererType::Vulkan;
+	else if (renderer == "OpenGL")
+		Graphics.Renderer = RendererType::OpenGL;
+	else if (renderer == "Metal")
+		Graphics.Renderer = RendererType::Metal;
+	else
+		Graphics.Renderer = RendererType::Automatic;
+
+	Graphics.Adapter = ini.GetValue("Graphics", "Adapter", defaults.Graphics.Adapter.c_str());
+	Graphics.AnimateIcons = ini.GetBoolValue("Graphics", "AnimateIcons", defaults.Graphics.AnimateIcons);
+
+	const std::string lighting = ini.GetValue("Graphics", "LightingMode", "Icon");
+	if (lighting == "Off")
+		Graphics.Lighting = LightingMode::Off;
+	else if (lighting == "Alternate1")
+		Graphics.Lighting = LightingMode::Alternate1;
+	else if (lighting == "Alternate2")
+		Graphics.Lighting = LightingMode::Alternate2;
+	else
+		Graphics.Lighting = LightingMode::Icon;
+
+	const std::string camera = ini.GetValue("Graphics", "CameraMode", "Default");
+	if (camera == "Flat")
+		Graphics.Camera = CameraMode::Flat;
+	else if (camera == "Near")
+		Graphics.Camera = CameraMode::Near;
+	else if (camera == "High")
+		Graphics.Camera = CameraMode::High;
+	else
+		Graphics.Camera = CameraMode::Default;
+
+	Graphics.VSync = ini.GetBoolValue("Graphics", "VSync", defaults.Graphics.VSync);
+
+	// [UI]
+	UI.Theme = ini.GetValue("UI", "Theme", defaults.UI.Theme.c_str());
+	UI.Language = ini.GetValue("UI", "Language", defaults.UI.Language.c_str());
+	UI.AsciiMode = ini.GetBoolValue("UI", "AsciiMode", defaults.UI.AsciiMode);
+	UI.ToolbarLocked = ini.GetBoolValue("UI", "ToolbarLocked", defaults.UI.ToolbarLocked);
+
+	// [Behavior]
+	Behavior.WarnOnDelete = ini.GetBoolValue("Behavior", "WarnOnDelete", defaults.Behavior.WarnOnDelete);
+	Behavior.ForceImport = ini.GetBoolValue("Behavior", "ForceImport", defaults.Behavior.ForceImport);
+	Behavior.DiscordRPCEnabled = ini.GetBoolValue("Behavior", "DiscordRPCEnabled", defaults.Behavior.DiscordRPCEnabled);
+
+	// [Paths]
+	Paths.MemoryCardFolder = ini.GetValue("Paths", "MemoryCardFolder", defaults.Paths.MemoryCardFolder.c_str());
+	Paths.ImportExportFolder = ini.GetValue("Paths", "ImportExportFolder", defaults.Paths.ImportExportFolder.c_str());
+
+	// [Performance]
+	Performance.MaxFPS = static_cast<int>(ini.GetLongValue("Performance", "MaxFPS", defaults.Performance.MaxFPS));
+	return true;
 }
 
 bool Config::save() const
 {
-	Logger::info("Config: Saving to: {}", m_config_path.string());
-	return saveAs(m_config_path);
+	Logger::info("Config: Saving to: {}", ConfigPath.string());
+	return saveAs(ConfigPath);
 }
 
 bool Config::saveAs(const fs::path& config_path) const
 {
-	try
+	Logger::info("Config: Writing config to: {}", config_path.string());
+
+	CSimpleIniA ini(true);
+
+	// [Graphics]
+	const char* renderer = "Automatic";
+	switch (Graphics.Renderer)
 	{
-		Logger::info("Config: Writing config to: {}", config_path.string());
-
-		// Make sure directory exists
-		if (config_path.has_parent_path())
-		{
-			fs::create_directories(config_path.parent_path());
-		}
-
-		std::ofstream config_file(config_path);
-		if (!config_file.is_open())
-		{
-			Logger::error("Config: Failed to open config file for writing: {}", config_path.string());
-			return false;
-		}
-
-		std::string json_str = m_config.dump(4);
-		config_file << json_str;
-		config_file.close();
-
-		Logger::info("Config: Saved config to: {}", config_path.string());
-		return true;
+		case RendererType::Vulkan:
+			renderer = "Vulkan";
+			break;
+		case RendererType::OpenGL:
+			renderer = "OpenGL";
+			break;
+		case RendererType::Metal:
+			renderer = "Metal";
+			break;
+		case RendererType::Automatic:
+			break;
 	}
-	catch (const std::exception& e)
+	ini.SetValue("Graphics", "Renderer", renderer);
+	ini.SetValue("Graphics", "Adapter", Graphics.Adapter.c_str());
+	ini.SetBoolValue("Graphics", "AnimateIcons", Graphics.AnimateIcons);
+
+	const char* lighting = "Icon";
+	switch (Graphics.Lighting)
 	{
-		Logger::error("Config: Failed to save config file: {}", e.what());
+		case LightingMode::Off:
+			lighting = "Off";
+			break;
+		case LightingMode::Alternate1:
+			lighting = "Alternate1";
+			break;
+		case LightingMode::Alternate2:
+			lighting = "Alternate2";
+			break;
+		case LightingMode::Icon:
+			break;
+	}
+	ini.SetValue("Graphics", "LightingMode", lighting);
+
+	const char* camera = "Default";
+	switch (Graphics.Camera)
+	{
+		case CameraMode::Flat:
+			camera = "Flat";
+			break;
+		case CameraMode::Near:
+			camera = "Near";
+			break;
+		case CameraMode::High:
+			camera = "High";
+			break;
+		case CameraMode::Default:
+			break;
+	}
+	ini.SetValue("Graphics", "CameraMode", camera);
+	ini.SetBoolValue("Graphics", "VSync", Graphics.VSync);
+
+	// [UI]
+	ini.SetValue("UI", "Theme", UI.Theme.c_str());
+	ini.SetValue("UI", "Language", UI.Language.c_str());
+	ini.SetBoolValue("UI", "AsciiMode", UI.AsciiMode);
+	ini.SetBoolValue("UI", "ToolbarLocked", UI.ToolbarLocked);
+
+	// [Behavior]
+	ini.SetBoolValue("Behavior", "WarnOnDelete", Behavior.WarnOnDelete);
+	ini.SetBoolValue("Behavior", "ForceImport", Behavior.ForceImport);
+	ini.SetBoolValue("Behavior", "DiscordRPCEnabled", Behavior.DiscordRPCEnabled);
+
+	// [Paths]
+	ini.SetValue("Paths", "MemoryCardFolder", Paths.MemoryCardFolder.c_str());
+	ini.SetValue("Paths", "ImportExportFolder", Paths.ImportExportFolder.c_str());
+
+	// [Performance]
+	ini.SetLongValue("Performance", "MaxFPS", Performance.MaxFPS);
+
+	if (config_path.has_parent_path())
+	{
+		std::error_code ec;
+		fs::create_directories(config_path.parent_path(), ec);
+	}
+
+	std::string data;
+	if (ini.Save(data) != SI_OK)
+	{
+		Logger::error("Config: Failed to serialize config");
 		return false;
 	}
-}
 
-std::string Config::getRenderer() const
-{
-	try
+	std::ofstream config_file(config_path, std::ios::binary);
+	if (!config_file.is_open())
 	{
-		return m_config["graphics"]["renderer"].get<std::string>();
-	}
-	catch (...)
-	{
-#if defined(__APPLE__)
-		return "metal";
-#else
-		return "vulkan";
-#endif
-	}
-}
-
-void Config::setRenderer(const std::string& renderer)
-{
-	m_config["graphics"]["renderer"] = renderer;
-}
-
-std::string Config::getAdapter() const
-{
-	try
-	{
-		return m_config["graphics"]["adapter"].get<std::string>();
-	}
-	catch (...)
-	{
-		return "";
-	}
-}
-
-void Config::setAdapter(const std::string& adapter)
-{
-	m_config["graphics"]["adapter"] = adapter;
-}
-
-bool Config::getAnimateIcons() const
-{
-	try
-	{
-		return m_config["graphics"]["animate_icons"].get<bool>();
-	}
-	catch (...)
-	{
-		return true;
-	}
-}
-
-void Config::setAnimateIcons(bool enabled)
-{
-	m_config["graphics"]["animate_icons"] = enabled;
-}
-
-std::string Config::getLightingMode() const
-{
-	try
-	{
-		return m_config["graphics"]["lighting_mode"].get<std::string>();
-	}
-	catch (...)
-	{
-		return "icon";
-	}
-}
-
-void Config::setLightingMode(const std::string& mode)
-{
-	m_config["graphics"]["lighting_mode"] = mode;
-}
-
-std::string Config::getCameraMode() const
-{
-	try
-	{
-		return m_config["graphics"]["camera_mode"].get<std::string>();
-	}
-	catch (...)
-	{
-		return "default";
-	}
-}
-
-void Config::setCameraMode(const std::string& mode)
-{
-	m_config["graphics"]["camera_mode"] = mode;
-}
-
-int Config::getWindowWidth() const
-{
-	try
-	{
-		return m_config["window"]["width"].get<int>();
-	}
-	catch (...)
-	{
-		return 1280;
-	}
-}
-
-int Config::getWindowHeight() const
-{
-	try
-	{
-		return m_config["window"]["height"].get<int>();
-	}
-	catch (...)
-	{
-		return 720;
-	}
-}
-
-void Config::setWindowSize(int width, int height)
-{
-	m_config["window"]["width"] = width;
-	m_config["window"]["height"] = height;
-}
-
-bool Config::getWindowFullscreen() const
-{
-	try
-	{
-		return m_config["window"]["fullscreen"].get<bool>();
-	}
-	catch (...)
-	{
+		Logger::error("Config: Failed to open config file for writing: {}", config_path.string());
 		return false;
 	}
-}
 
-void Config::setWindowFullscreen(bool fullscreen)
-{
-	m_config["window"]["fullscreen"] = fullscreen;
-}
-
-bool Config::getWindowResizable() const
-{
-	try
+	config_file.write(data.data(), static_cast<std::streamsize>(data.size()));
+	if (!config_file)
 	{
-		return m_config["window"]["resizable"].get<bool>();
-	}
-	catch (...)
-	{
-		return true;
-	}
-}
-
-void Config::setWindowResizable(bool resizable)
-{
-	m_config["window"]["resizable"] = resizable;
-}
-
-int Config::getSwapInterval() const
-{
-	try
-	{
-		return m_config["graphics"]["swap_interval"].get<int>();
-	}
-	catch (...)
-	{
-		return 1;
-	}
-}
-
-void Config::setSwapInterval(int interval)
-{
-	m_config["graphics"]["swap_interval"] = interval;
-}
-
-bool Config::getVSync() const
-{
-	try
-	{
-		return m_config["graphics"]["vsync"].get<bool>();
-	}
-	catch (...)
-	{
-		return true;
-	}
-}
-
-void Config::setVSync(bool enabled)
-{
-	m_config["graphics"]["vsync"] = enabled;
-}
-
-int Config::getAntialiasing() const
-{
-	try
-	{
-		return m_config["graphics"]["antialiasing"].get<int>();
-	}
-	catch (...)
-	{
-		return 4;
-	}
-}
-
-void Config::setAntialiasing(int samples)
-{
-	m_config["graphics"]["antialiasing"] = samples;
-}
-
-std::string Config::getTheme() const
-{
-	try
-	{
-		return m_config["ui"]["theme"].get<std::string>();
-	}
-	catch (...)
-	{
-		return "dark";
-	}
-}
-
-void Config::setTheme(const std::string& theme)
-{
-	m_config["ui"]["theme"] = theme;
-}
-
-int Config::getThumbnailSize() const
-{
-	try
-	{
-		return m_config["ui"]["thumbnail_size"].get<int>();
-	}
-	catch (...)
-	{
-		return 64;
-	}
-}
-
-void Config::setThumbnailSize(int size)
-{
-	m_config["ui"]["thumbnail_size"] = size;
-}
-
-std::string Config::getLanguage() const
-{
-	try
-	{
-		return m_config["ui"]["language"].get<std::string>();
-	}
-	catch (...)
-	{
-		return "en";
-	}
-}
-
-void Config::setLanguage(const std::string& lang)
-{
-	m_config["ui"]["language"] = lang;
-}
-
-bool Config::getWarnOnDelete() const
-{
-	try
-	{
-		return m_config["behavior"]["warn_on_delete"].get<bool>();
-	}
-	catch (...)
-	{
-		return true;
-	}
-}
-
-void Config::setWarnOnDelete(bool enabled)
-{
-	m_config["behavior"]["warn_on_delete"] = enabled;
-}
-
-bool Config::getHideToTrayOnClose() const
-{
-	try
-	{
-		return m_config["behavior"]["hide_to_tray"].get<bool>();
-	}
-	catch (...)
-	{
+		Logger::error("Config: Failed to write config file: {}", config_path.string());
 		return false;
 	}
-}
 
-void Config::setHideToTrayOnClose(bool enabled)
-{
-	m_config["behavior"]["hide_to_tray"] = enabled;
-}
-
-bool Config::getAsciiMode() const
-{
-	try
-	{
-		return m_config["ui"]["ascii_mode"].get<bool>();
-	}
-	catch (...)
-	{
-		return false;
-	}
-}
-
-void Config::setAsciiMode(bool enabled)
-{
-	m_config["ui"]["ascii_mode"] = enabled;
-}
-
-bool Config::getToolbarLocked() const
-{
-	try
-	{
-		return m_config["ui"]["toolbar_locked"].get<bool>();
-	}
-	catch (...)
-	{
-		return false;
-	}
-}
-
-void Config::setToolbarLocked(bool locked)
-{
-	m_config["ui"]["toolbar_locked"] = locked;
-}
-
-bool Config::getForceImport() const
-{
-	try
-	{
-		return m_config["behavior"]["force_import"].get<bool>();
-	}
-	catch (...)
-	{
-		return false;
-	}
-}
-
-void Config::setForceImport(bool enabled)
-{
-	m_config["behavior"]["force_import"] = enabled;
-}
-
-bool Config::getDiscordRPCEnabled() const
-{
-	try
-	{
-		return m_config["behavior"]["discord_rpc_enabled"].get<bool>();
-	}
-	catch (...)
-	{
-		return false;
-	}
-}
-
-void Config::setDiscordRPCEnabled(bool enabled)
-{
-	m_config["behavior"]["discord_rpc_enabled"] = enabled;
-}
-
-std::string Config::getMemoryCardFolder() const
-{
-	try
-	{
-		return m_config["paths"]["memory_card_folder"].get<std::string>();
-	}
-	catch (...)
-	{
-		return "";
-	}
-}
-
-void Config::setMemoryCardFolder(const std::string& path)
-{
-	m_config["paths"]["memory_card_folder"] = path;
-}
-
-std::string Config::getImportExportFolder() const
-{
-	try
-	{
-		return m_config["paths"]["import_export_folder"].get<std::string>();
-	}
-	catch (...)
-	{
-		return "";
-	}
-}
-
-void Config::setImportExportFolder(const std::string& path)
-{
-	m_config["paths"]["import_export_folder"] = path;
-}
-
-int Config::getMaxFPS() const
-{
-	try
-	{
-		return m_config["performance"]["max_fps"].get<int>();
-	}
-	catch (...)
-	{
-		return 30;
-	}
-}
-
-void Config::setMaxFPS(int fps)
-{
-	m_config["performance"]["max_fps"] = fps;
-}
-
-bool Config::getThreadedLoading() const
-{
-	try
-	{
-		return m_config["performance"]["threaded_loading"].get<bool>();
-	}
-	catch (...)
-	{
-		return true;
-	}
-}
-
-void Config::setThreadedLoading(bool enabled)
-{
-	m_config["performance"]["threaded_loading"] = enabled;
-}
-
-bool Config::getVerboseLogging() const
-{
-	try
-	{
-		return m_config["debug"]["verbose"].get<bool>();
-	}
-	catch (...)
-	{
-		return false;
-	}
-}
-
-void Config::setVerboseLogging(bool enabled)
-{
-	m_config["debug"]["verbose"] = enabled;
-}
-
-bool Config::getDebugLogging() const
-{
-	try
-	{
-		return m_config["debug"]["logging"].get<bool>();
-	}
-	catch (...)
-	{
-		return false;
-	}
-}
-
-void Config::setDebugLogging(bool enabled)
-{
-	m_config["debug"]["logging"] = enabled;
-}
-
-void Config::createDefaults()
-{
-	m_config = {
-		{"graphics", {{"renderer", "vulkan"},
-						 {"adapter", ""},
-						 {"vsync", true},
-						 {"swap_interval", 1},
-						 {"antialiasing", 4},
-						 {"animate_icons", true},
-						 {"lighting_mode", "icon"},
-						 {"camera_mode", "default"}}},
-		{"window", {{"width", 1280},
-					   {"height", 720},
-					   {"fullscreen", false},
-					   {"resizable", true}}},
-		{"ui", {{"theme", "dark"},
-				   {"thumbnail_size", 64},
-				   {"ascii_mode", false},
-				   {"toolbar_locked", false},
-				   {"language", "en"}}},
-		{"behavior", {{"warn_on_delete", true},
-						 {"hide_to_tray", false},
-						 {"force_import", false},
-						 {"discord_rpc_enabled", true}}},
-		{"paths", {{"memory_card_folder", ""}, {"import_export_folder", ""}}},
-		{"debug", {{"logging", false},
-					  {"verbose", false}}},
-		{"performance", {{"max_fps", 30},
-							{"threaded_loading", true}}}};
-}
-
-void Config::ensureKeys()
-{
-	if (!m_config.contains("graphics"))
-		m_config["graphics"] = json::object();
-	if (!m_config.contains("window"))
-		m_config["window"] = json::object();
-	if (!m_config.contains("ui"))
-		m_config["ui"] = json::object();
-	if (!m_config.contains("behavior"))
-		m_config["behavior"] = json::object();
-	if (!m_config.contains("paths"))
-		m_config["paths"] = json::object();
-	if (!m_config.contains("debug"))
-		m_config["debug"] = json::object();
-	if (!m_config.contains("performance"))
-		m_config["performance"] = json::object();
-
-	if (!m_config["graphics"].contains("renderer"))
-		m_config["graphics"]["renderer"] = "vulkan";
-	if (!m_config["graphics"].contains("adapter"))
-		m_config["graphics"]["adapter"] = "";
-	if (!m_config["graphics"].contains("vsync"))
-		m_config["graphics"]["vsync"] = true;
-	if (!m_config["graphics"].contains("swap_interval"))
-		m_config["graphics"]["swap_interval"] = 1;
-	if (!m_config["graphics"].contains("antialiasing"))
-		m_config["graphics"]["antialiasing"] = 4;
-	if (!m_config["graphics"].contains("animate_icons"))
-		m_config["graphics"]["animate_icons"] = true;
-	if (!m_config["graphics"].contains("lighting_mode"))
-		m_config["graphics"]["lighting_mode"] = "icon";
-	if (!m_config["graphics"].contains("camera_mode"))
-		m_config["graphics"]["camera_mode"] = "default";
-
-	if (!m_config["window"].contains("width"))
-		m_config["window"]["width"] = 1280;
-	if (!m_config["window"].contains("height"))
-		m_config["window"]["height"] = 720;
-	if (!m_config["window"].contains("fullscreen"))
-		m_config["window"]["fullscreen"] = false;
-	if (!m_config["window"].contains("resizable"))
-		m_config["window"]["resizable"] = true;
-
-	if (!m_config["ui"].contains("theme"))
-		m_config["ui"]["theme"] = "dark";
-	if (!m_config["ui"].contains("thumbnail_size"))
-		m_config["ui"]["thumbnail_size"] = 64;
-	if (!m_config["ui"].contains("ascii_mode"))
-		m_config["ui"]["ascii_mode"] = false;
-	if (!m_config["ui"].contains("toolbar_locked"))
-		m_config["ui"]["toolbar_locked"] = false;
-	if (!m_config["ui"].contains("language"))
-		m_config["ui"]["language"] = "en";
-
-	if (!m_config["behavior"].contains("warn_on_delete"))
-		m_config["behavior"]["warn_on_delete"] = true;
-	if (!m_config["behavior"].contains("hide_to_tray"))
-		m_config["behavior"]["hide_to_tray"] = false;
-	if (!m_config["behavior"].contains("force_import"))
-		m_config["behavior"]["force_import"] = false;
-	if (!m_config["behavior"].contains("discord_rpc_enabled"))
-		m_config["behavior"]["discord_rpc_enabled"] = true;
-
-	if (!m_config["paths"].contains("memory_card_folder"))
-		m_config["paths"]["memory_card_folder"] = "";
-	if (!m_config["paths"].contains("import_export_folder"))
-		m_config["paths"]["import_export_folder"] = "";
-
-	if (!m_config["debug"].contains("logging"))
-		m_config["debug"]["logging"] = false;
-	if (!m_config["debug"].contains("verbose"))
-		m_config["debug"]["verbose"] = false;
-
-	if (!m_config["performance"].contains("max_fps"))
-		m_config["performance"]["max_fps"] = 30;
-	if (!m_config["performance"].contains("threaded_loading"))
-		m_config["performance"]["threaded_loading"] = true;
+	Logger::info("Config: Saved config to: {}", config_path.string());
+	return true;
 }

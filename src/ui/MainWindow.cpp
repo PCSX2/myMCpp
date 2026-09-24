@@ -147,15 +147,15 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->actionFormat, &QAction::triggered, this, &MainWindow::onFormatCard);
 	connect(ui->actionEccTool, &QAction::triggered, this, &MainWindow::onEccTool);
 
-	ui->actionAscii->setChecked(m_config ? m_config->getAsciiMode() : false);
+	ui->actionAscii->setChecked(m_config ? m_config->UI.AsciiMode : false);
 	connect(ui->actionAscii, &QAction::triggered, this, &MainWindow::onToggleAscii);
 
-	ui->actionForceImport->setChecked(m_config ? m_config->getForceImport() : false);
+	ui->actionForceImport->setChecked(m_config ? m_config->Behavior.ForceImport : false);
 	connect(ui->actionForceImport, &QAction::triggered, this, &MainWindow::onToggleForceImport);
 
 	if (m_config)
 	{
-		const bool toolbarLocked = m_config->getToolbarLocked();
+		const bool toolbarLocked = m_config->UI.ToolbarLocked;
 		ui->actionLockToolbar->setChecked(toolbarLocked);
 		ui->mainToolBar->setMovable(!toolbarLocked);
 		ui->mainToolBar->setFloatable(!toolbarLocked);
@@ -208,7 +208,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 			return;
 		QString suggestedName = filenames[0];
 		QString filter = suggestedName.endsWith(QLatin1String(".max"), Qt::CaseInsensitive) ? tr("MAX Drive Format (*.max);;EMS/PSU Format (*.psu);;All Files (*.*)") : tr("EMS/PSU Format (*.psu);;MAX Drive Format (*.max);;All Files (*.*)");
-		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
+		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->Paths.ImportExportFolder);
 		QString path = QFileDialog::getSaveFileName(this, tr("Export Save"),
 			exportDir + QLatin1Char('/') + suggestedName, filter);
 		if (!path.isEmpty())
@@ -219,7 +219,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		if (!memoryCard)
 			return;
 
-		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
+		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->Paths.ImportExportFolder);
 		QString filename = QFileDialog::getSaveFileName(
 			this,
 			tr("Export File"),
@@ -245,7 +245,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		if (!memoryCard)
 			return;
 
-		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
+		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->Paths.ImportExportFolder);
 		QString targetDir = QFileDialog::getExistingDirectory(
 			this,
 			tr("Export Save as Folder"),
@@ -259,7 +259,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		if (!memoryCard || savePaths.isEmpty())
 			return;
 
-		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
+		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->Paths.ImportExportFolder);
 		QString targetDir = QFileDialog::getExistingDirectory(
 			this,
 			tr("Export Selected as Folders"),
@@ -344,7 +344,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 		if (!memoryCard || fileNames.isEmpty())
 			return;
 
-		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
+		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->Paths.ImportExportFolder);
 		QString targetDir = QFileDialog::getExistingDirectory(
 			this,
 			tr("Export Selected Files"),
@@ -442,7 +442,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->cardBrowser, &MemoryCardBrowser::importArbitraryFileRequested, this, [this](const QString& targetDir) {
 		if (!memoryCard)
 			return;
-		const QString importDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
+		const QString importDir = QtUtils::resolveConfigFolderPath(m_config->Paths.ImportExportFolder);
 		QString fileName = QFileDialog::getOpenFileName(this, tr("Import File"), importDir, tr("All Files (*.*)"));
 		if (!fileName.isEmpty())
 		{
@@ -486,7 +486,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 			return;
 
 		QStringList filenames = nameDialog.getFilenames();
-		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
+		const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->Paths.ImportExportFolder);
 		QString targetDir = QFileDialog::getExistingDirectory(
 			this,
 			tr("Export Selected Saves"),
@@ -575,7 +575,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 
 	if (m_config)
 	{
-		m_discordRpc->setEnabled(m_config->getDiscordRPCEnabled());
+		m_discordRpc->setEnabled(m_config->Behavior.DiscordRPCEnabled);
 		if (m_discordRpc && !currentCardPath.isEmpty())
 		{
 			m_discordRpc->setCardOpenContext(makeCardDisplayLabel(currentCardPath));
@@ -601,7 +601,7 @@ void MainWindow::changeEvent(QEvent* event)
 
 void MainWindow::onOpenMemoryCard()
 {
-	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->getMemoryCardFolder());
+	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->Paths.MemoryCardFolder);
 	QString filename = QFileDialog::getOpenFileName(
 		this,
 		tr("Open Memory Card"),
@@ -663,7 +663,7 @@ void MainWindow::onCreateMemoryCard()
 	const QString ext = optionsDialog.getCardExtension();
 	const bool disableEcc = !optionsDialog.usesEcc();
 	const QString fileName = optionsDialog.getFileName();
-	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->getMemoryCardFolder());
+	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->Paths.MemoryCardFolder);
 	QDir().mkpath(memoryCardDir);
 
 	QString filename = QFileDialog::getSaveFileName(
@@ -739,7 +739,7 @@ void MainWindow::onImportSave()
 		return;
 	}
 
-	const QString importDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
+	const QString importDir = QtUtils::resolveConfigFolderPath(m_config->Paths.ImportExportFolder);
 	QStringList filenames = QFileDialog::getOpenFileNames(
 		this,
 		tr("Import Save"),
@@ -757,7 +757,7 @@ void MainWindow::importSaveFiles(const QStringList& paths)
 	if (!memoryCard || paths.isEmpty())
 		return;
 
-	bool forceOverwrite = m_config ? m_config->getForceImport() : false;
+	bool forceOverwrite = m_config ? m_config->Behavior.ForceImport : false;
 
 	QList<ImportExportSavesDialog::ImportItem> importItems;
 	for (const QString& filepath : paths)
@@ -914,7 +914,7 @@ void MainWindow::onExportSave()
 		return;
 	}
 
-	const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->getImportExportFolder());
+	const QString exportDir = QtUtils::resolveConfigFolderPath(m_config->Paths.ImportExportFolder);
 	QString filename = QFileDialog::getSaveFileName(
 		this,
 		tr("Export Save"),
@@ -978,7 +978,7 @@ void MainWindow::deleteSelectedSave(const QString& savePath)
 	if (!memoryCard || savePath.isEmpty())
 		return;
 
-	if (m_config && m_config->getWarnOnDelete())
+	if (m_config && m_config->Behavior.WarnOnDelete)
 	{
 		QMessageBox::StandardButton reply = QMessageBox::question(this, tr("Delete"),
 			tr("Are you sure you want to delete '%1'?\nThis action cannot be undone.").arg(savePath),
@@ -1007,7 +1007,7 @@ void MainWindow::deleteSelectedSaves(const QStringList& savePaths)
 	if (!memoryCard || savePaths.isEmpty())
 		return;
 
-	if (m_config && m_config->getWarnOnDelete())
+	if (m_config && m_config->Behavior.WarnOnDelete)
 	{
 		QStringList displayNames;
 		for (const QString& path : savePaths)
@@ -1073,7 +1073,7 @@ void MainWindow::deleteSelectedFiles(const QString& parentPath, const QStringLis
 	if (!memoryCard || fileNames.isEmpty())
 		return;
 
-	if (m_config && m_config->getWarnOnDelete())
+	if (m_config && m_config->Behavior.WarnOnDelete)
 	{
 		const QString message = fileNames.size() == 1 ?
 		                            tr("Are you sure you want to delete '%1'?").arg(fileNames.first()) :
@@ -1147,7 +1147,7 @@ void MainWindow::onSettingsChanged()
 
 	if (m_config && m_discordRpc)
 	{
-		m_discordRpc->setEnabled(m_config->getDiscordRPCEnabled());
+		m_discordRpc->setEnabled(m_config->Behavior.DiscordRPCEnabled);
 		if (!currentCardPath.isEmpty())
 		{
 			m_discordRpc->setCardOpenContext(makeCardDisplayLabel(currentCardPath));
@@ -1510,7 +1510,7 @@ void MainWindow::onSaveAs()
 	if (!memoryCard)
 		return;
 
-	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->getMemoryCardFolder());
+	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->Paths.MemoryCardFolder);
 	const QFileInfo cardInfo(currentCardPath);
 	const QString suffix = cardInfo.suffix().isEmpty() ? "ps2" : cardInfo.suffix();
 	const QString defaultPath = memoryCardDir + QLatin1Char('/') + cardInfo.completeBaseName() + "_copy." + suffix;
@@ -1665,7 +1665,7 @@ void MainWindow::onEccTool()
 
 	bool hasEcc = memoryCard->hasEcc();
 
-	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->getMemoryCardFolder());
+	const QString memoryCardDir = QtUtils::resolveConfigFolderPath(m_config->Paths.MemoryCardFolder);
 	const QFileInfo cardInfo(currentCardPath);
 	const QString prefix = hasEcc ? "NoECC_" : "ECC_";
 	const QString defaultPath = memoryCardDir + QLatin1Char('/') + prefix + cardInfo.fileName();
@@ -1758,8 +1758,8 @@ void MainWindow::onToggleAscii()
 {
 	if (m_config)
 	{
-		bool newValue = !m_config->getAsciiMode();
-		m_config->setAsciiMode(newValue);
+		bool newValue = !m_config->UI.AsciiMode;
+		m_config->UI.AsciiMode = newValue;
 		ui->actionAscii->setChecked(newValue);
 		m_config->save();
 		updateCardView();
@@ -1770,8 +1770,8 @@ void MainWindow::onToggleForceImport()
 {
 	if (m_config)
 	{
-		bool newValue = !m_config->getForceImport();
-		m_config->setForceImport(newValue);
+		bool newValue = !m_config->Behavior.ForceImport;
+		m_config->Behavior.ForceImport = newValue;
 		ui->actionForceImport->setChecked(newValue);
 		m_config->save();
 		updateForceImportWarning();
@@ -1783,8 +1783,8 @@ void MainWindow::onToggleToolbarLock()
 	if (!m_config)
 		return;
 
-	const bool newValue = !m_config->getToolbarLocked();
-	m_config->setToolbarLocked(newValue);
+	const bool newValue = !m_config->UI.ToolbarLocked;
+	m_config->UI.ToolbarLocked = newValue;
 	ui->actionLockToolbar->setChecked(newValue);
 
 	if (ui->mainToolBar)
@@ -1838,7 +1838,7 @@ void MainWindow::importFileToCard(const QString& savePath, const QString& hostFi
 
 void MainWindow::updateForceImportWarning()
 {
-	if (m_config && m_config->getForceImport())
+	if (m_config && m_config->Behavior.ForceImport)
 	{
 		QPalette palette = ui->statusBar->palette();
 		palette.setColor(QPalette::WindowText, Qt::red);

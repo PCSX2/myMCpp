@@ -14,7 +14,7 @@
 #include "common/Config.h"
 
 #include <QTimer>
-#include <QEvent>
+#include <QMessageBox>
 
 SettingsWindow::SettingsWindow(Config* config, QWidget* parent)
 	: QDialog(parent)
@@ -63,6 +63,17 @@ SettingsWindow::~SettingsWindow()
 {
 }
 
+void SettingsWindow::reloadSettings()
+{
+	for (SettingsWidget* widget : m_settingsWidgets)
+	{
+		const QSignalBlocker blocker(widget);
+		widget->loadSettings();
+	}
+
+	onSettingChanged();
+}
+
 void SettingsWindow::changeEvent(QEvent* event)
 {
 	if (event->type() == QEvent::LanguageChange)
@@ -85,7 +96,7 @@ void SettingsWindow::onSettingChanged()
 	if (m_config)
 	{
 		Themes::UpdateApplicationTheme(m_config);
-		TranslationManager::instance().loadLanguage(m_config->getLanguage());
+		TranslationManager::instance().loadLanguage(m_config->UI.Language);
 	}
 	emit applicationSettingsChanged();
 	m_saveTimer->start();
@@ -176,10 +187,15 @@ void SettingsWindow::onClose()
 
 void SettingsWindow::onRestoreDefaults()
 {
-	int currentRow = ui->settingsCategory->currentRow();
-	if (currentRow >= 0 && currentRow < static_cast<int>(m_settingsWidgets.size()))
-	{
-		m_settingsWidgets[currentRow]->restoreDefaults();
-		onSettingChanged();
-	}
+	if (!m_config || QMessageBox::question(this, tr("Restore Defaults"),
+						 tr("This will reset all settings to their default values. Are you sure you want to continue?"),
+						 QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes)
+		return;
+
+	const fs::path config_path = m_config->ConfigPath;
+	const fs::path resources_path = m_config->ResourcesPath;
+	*m_config = Config{};
+	m_config->ConfigPath = config_path;
+	m_config->ResourcesPath = resources_path;
+	reloadSettings();
 }

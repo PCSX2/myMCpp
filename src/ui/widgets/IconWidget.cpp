@@ -14,43 +14,6 @@
 #include <qpa/qplatformnativeinterface.h>
 #endif
 
-namespace
-{
-
-	std::string toLowerCopy(std::string value)
-	{
-		std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) {
-			return static_cast<char>(std::tolower(c));
-		});
-		return value;
-	}
-
-	LightingMode parseLightingMode(const std::string& value)
-	{
-		const std::string v = toLowerCopy(value);
-		if (v == "off")
-			return LightingMode::Off;
-		if (v == "alt1" || v == "alternate" || v == "alternate_lighting")
-			return LightingMode::Alternate1;
-		if (v == "alt2" || v == "alternate2")
-			return LightingMode::Alternate2;
-		return LightingMode::Icon;
-	}
-
-	CameraMode parseCameraMode(const std::string& value)
-	{
-		const std::string v = toLowerCopy(value);
-		if (v == "flat")
-			return CameraMode::Flat;
-		if (v == "near")
-			return CameraMode::Near;
-		if (v == "high")
-			return CameraMode::High;
-		return CameraMode::Default;
-	}
-
-} // namespace
-
 IconWidget::IconWidget(Config* config, QWidget* parent)
 	: QWidget(parent)
 	, m_config(config)
@@ -99,7 +62,7 @@ bool IconWidget::loadIcon(const std::vector<uint8_t>& iconData)
 	bool animate = true;
 	if (m_config)
 	{
-		animate = m_config->getAnimateIcons();
+		animate = m_config->Graphics.AnimateIcons;
 	}
 
 	if (animate)
@@ -227,9 +190,9 @@ void IconWidget::applyConfigToRenderer(PS2IconSys* iconSys)
 	if (!m_renderer)
 		return;
 
-	const bool animate = m_config ? m_config->getAnimateIcons() : true;
-	const LightingMode lightingMode = parseLightingMode(m_config ? m_config->getLightingMode() : "icon");
-	const CameraMode cameraMode = parseCameraMode(m_config ? m_config->getCameraMode() : "default");
+	const bool animate = m_config ? m_config->Graphics.AnimateIcons : true;
+	const LightingMode lightingMode = m_config ? m_config->Graphics.Lighting : LightingMode::Icon;
+	const CameraMode cameraMode = m_config ? m_config->Graphics.Camera : CameraMode::Default;
 
 	m_renderer->setLightingMode(lightingMode);
 	m_renderer->setLightingFromIconSys(iconSys);
@@ -252,7 +215,7 @@ void IconWidget::startRendering()
 	if (m_renderTimer.isActive())
 		return;
 
-	int maxFps = m_config ? m_config->getMaxFPS() : 30;
+	int maxFps = m_config ? m_config->Performance.MaxFPS : 30;
 	int interval;
 
 	if (maxFps <= 0)
@@ -308,12 +271,7 @@ bool IconWidget::ensureRenderer()
 	m_renderWindow->create();
 
 	const QSize windowSize = m_renderWindow->size().isEmpty() ? QSize(256, 256) : m_renderWindow->size();
-
-#if defined(__APPLE__)
-	const std::string rendererType = m_config ? m_config->getRenderer() : "metal";
-#else
-	const std::string rendererType = m_config ? m_config->getRenderer() : "vulkan";
-#endif
+	const RendererType rendererType = m_config ? m_config->Graphics.Renderer : RendererType::Automatic;
 
 	WindowInfo wi{};
 	const qreal dpr = m_renderWindow->devicePixelRatio();
@@ -375,35 +333,8 @@ bool IconWidget::ensureRenderer()
 		return false;
 	}
 
-	Logger::info("IconWidget: Creating renderer: {}", rendererType);
-
 	Error rendererError;
-
-	if (rendererType == "opengl")
-	{
-		m_renderer = RendererFactory::createOpenGLRenderer(wi, m_config, &rendererError);
-	}
-#if defined(__APPLE__)
-	else if (rendererType == "metal")
-	{
-		m_renderer = RendererFactory::createMetalRenderer(wi, m_config, &rendererError);
-	}
-#endif
-	else
-	{
-#if defined(ENABLE_VULKAN)
-		m_renderer = RendererFactory::createVulkanRenderer(wi, m_config, &rendererError);
-		if (!m_renderer)
-		{
-			Logger::warn("IconWidget: Vulkan initialization failed, falling back to OpenGL: {}",
-				rendererError.IsValid() ? rendererError.GetDescription() : "Unknown error");
-			rendererError.Clear();
-			m_renderer = RendererFactory::createOpenGLRenderer(wi, m_config, &rendererError);
-		}
-#else
-		m_renderer = RendererFactory::createOpenGLRenderer(wi, m_config, &rendererError);
-#endif
-	}
+	m_renderer = RendererFactory::createRenderer(rendererType, wi, m_config, &rendererError);
 
 	if (!m_renderer)
 	{

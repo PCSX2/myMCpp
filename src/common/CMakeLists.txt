@@ -34,7 +34,6 @@ target_include_directories(myMCpp-common PUBLIC
 
 target_link_libraries(myMCpp-common PUBLIC
     spdlog::spdlog
-    nlohmann_json::nlohmann_json
     SimpleIni::SimpleIni
     utf8proc
 )

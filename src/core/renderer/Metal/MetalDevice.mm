@@ -13,11 +13,24 @@ MetalDevice::~MetalDevice()
 	shutdown();
 }
 
-bool MetalDevice::initialize()
+bool MetalDevice::initialize(const std::string& preferredAdapter)
 {
 	m_error.Clear();
 
 	m_device = MTLCreateSystemDefaultDevice();
+	if (!preferredAdapter.empty())
+	{
+		for (id<MTLDevice> device in MTLCopyAllDevices())
+		{
+			const char* name = [device.name UTF8String];
+			if (name && preferredAdapter == name)
+			{
+				m_device = device;
+				break;
+			}
+		}
+	}
+
 	if (!m_device)
 		return m_error.Fail("MTL: Failed to create Metal device");
 
@@ -25,7 +38,8 @@ bool MetalDevice::initialize()
 	if (!m_commandQueue)
 		return m_error.Fail("MTL: Failed to create Metal command queue");
 
-	Logger::info("MTL: Using device: {}", [m_device.name UTF8String]);
+	const char* deviceName = [m_device.name UTF8String];
+	Logger::info("MTL: Using device: {}", deviceName ? deviceName : "Unknown");
 	return true;
 }
 

@@ -68,10 +68,10 @@ bool VulkanRenderer::initialize()
 	CocoaTools::SetDrawableSize(&m_windowInfo, m_width, m_height);
 #endif
 
-	if (!m_vulkanDevice.create(m_windowInfo, m_config ? m_config->getAdapter() : ""))
+	if (!m_vulkanDevice.create(m_windowInfo, m_config ? m_config->Graphics.Adapter : ""))
 		return m_error.Assign(m_vulkanDevice.GetError());
 
-	if (!m_vulkanSwapchain.create(m_vulkanDevice, m_width, m_height, m_config ? m_config->getVSync() : true))
+	if (!m_vulkanSwapchain.create(m_vulkanDevice, m_width, m_height, m_config ? m_config->Graphics.VSync : true))
 		return m_error.Assign(m_vulkanSwapchain.GetError());
 
 	VkRenderPass renderPass = m_vulkanSwapchain.getRenderPass();
@@ -970,5 +970,5 @@ void VulkanRenderer::setVSync(bool enabled)
 	}
 
 	if (m_config)
-		m_config->setVSync(enabled);
+		m_config->Graphics.VSync = enabled;
 }

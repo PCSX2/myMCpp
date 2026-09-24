@@ -8,30 +8,13 @@
 #include <vector>
 #include <string>
 #include "common/Error.h"
+#include "common/Config.h"
 #include "common/WindowInfo.h"
-
-class Config;
 
 namespace PS2Icon
 {
 	class Icon;
 }
-
-enum class LightingMode
-{
-	Off,
-	Icon,
-	Alternate1,
-	Alternate2
-};
-
-enum class CameraMode
-{
-	Default,
-	Flat,
-	Near,
-	High
-};
 
 class PS2IconSys;
 
@@ -77,32 +60,32 @@ protected:
 class RendererFactory
 {
 public:
-	enum class RendererType
-	{
-		Vulkan,
-		OpenGL,
-		Metal
-	};
-
 	static std::unique_ptr<Renderer> createRenderer(
 		RendererType type,
 		const WindowInfo& windowInfo,
-		Config* config = nullptr);
+		Config* config = nullptr,
+		Error* error = nullptr);
 
+#if defined(ENABLE_VULKAN)
 	static std::unique_ptr<Renderer> createVulkanRenderer(
 		const WindowInfo& windowInfo,
 		Config* config = nullptr,
 		Error* error = nullptr);
+#endif
 
+#if defined(ENABLE_OPENGL)
 	static std::unique_ptr<Renderer> createOpenGLRenderer(
 		const WindowInfo& windowInfo,
 		Config* config = nullptr,
 		Error* error = nullptr);
+#endif
 
+#if defined(ENABLE_METAL)
 	static std::unique_ptr<Renderer> createMetalRenderer(
 		const WindowInfo& windowInfo,
 		Config* config = nullptr,
 		Error* error = nullptr);
+#endif
 
 	static void registerRenderer(Renderer* renderer);
 	static void unregisterRenderer(Renderer* renderer);
@@ -110,5 +93,6 @@ public:
 	static std::vector<std::string> getAvailableAdapters(RendererType type);
 
 private:
+	static RendererType getAutomaticRendererType();
 	static std::vector<Renderer*> s_activeRenderers;
 };

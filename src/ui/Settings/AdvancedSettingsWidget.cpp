@@ -16,11 +16,9 @@ AdvancedSettingsWidget::AdvancedSettingsWidget(SettingsWindow* dialog, QWidget* 
 	QWidget* container = new QWidget(this);
 	ui->setupUi(container);
 
-	registerHelp(ui->enableDebugLogCheck, tr("Debug Logging"), tr("Enable verbose logging to standard output for debugging purposes."));
-	registerHelp(ui->exportSettingsButton, tr("Export Settings"), tr("Save the current settings to a JSON file for backup or sharing."));
-	registerHelp(ui->importSettingsButton, tr("Import Settings"), tr("Load settings from a previously exported JSON file."));
+	registerHelp(ui->exportSettingsButton, tr("Export Settings"), tr("Save the current settings to an INI file for backup or sharing."));
+	registerHelp(ui->importSettingsButton, tr("Import Settings"), tr("Load settings from a previously exported INI file."));
 
-	connect(ui->enableDebugLogCheck, &QCheckBox::toggled, this, &SettingsWidget::settingChanged);
 	connect(ui->exportSettingsButton, &QPushButton::clicked, this, &AdvancedSettingsWidget::onExportSettings);
 	connect(ui->importSettingsButton, &QPushButton::clicked, this, &AdvancedSettingsWidget::onImportSettings);
 
@@ -44,25 +42,10 @@ void AdvancedSettingsWidget::changeEvent(QEvent* event)
 
 void AdvancedSettingsWidget::loadSettings()
 {
-	Config* config = m_dialog->getConfig();
-	if (!config)
-		return;
-
-	ui->enableDebugLogCheck->setChecked(config->getDebugLogging());
 }
 
 void AdvancedSettingsWidget::saveSettings()
 {
-	Config* config = m_dialog->getConfig();
-	if (!config)
-		return;
-
-	config->setDebugLogging(ui->enableDebugLogCheck->isChecked());
-}
-
-void AdvancedSettingsWidget::restoreDefaults()
-{
-	ui->enableDebugLogCheck->setChecked(false);
 }
 
 void AdvancedSettingsWidget::onExportSettings()
@@ -73,8 +56,8 @@ void AdvancedSettingsWidget::onExportSettings()
 
 	QString fileName = QFileDialog::getSaveFileName(this,
 		tr("Export Settings"),
-		"myMCpp-settings.json",
-		tr("JSON Files (*.json)"));
+		"myMCpp-settings.ini",
+		tr("INI Files (*.ini)"));
 
 	if (!fileName.isEmpty())
 	{
@@ -100,7 +83,7 @@ void AdvancedSettingsWidget::onImportSettings()
 	QString fileName = QFileDialog::getOpenFileName(this,
 		tr("Import Settings"),
 		QString(),
-		tr("JSON Files (*.json)"));
+		tr("INI Files (*.ini)"));
 
 	if (!fileName.isEmpty())
 	{
@@ -112,8 +95,7 @@ void AdvancedSettingsWidget::onImportSettings()
 		{
 			if (config->load(fileName.toStdString()))
 			{
-				loadSettings();
-				emit settingChanged();
+				m_dialog->reloadSettings();
 				QMessageBox::information(this, tr("Import Successful"),
 					tr("Settings have been imported from %1").arg(fileName));
 			}

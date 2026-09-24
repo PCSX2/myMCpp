@@ -51,8 +51,8 @@ void FilesSettingsWidget::loadSettings()
 	if (!config)
 		return;
 
-	ui->memoryCardPathEdit->setText(QString::fromStdString(config->getMemoryCardFolder()));
-	ui->importExportPathEdit->setText(QString::fromStdString(config->getImportExportFolder()));
+	ui->memoryCardPathEdit->setText(QString::fromStdString(config->Paths.MemoryCardFolder));
+	ui->importExportPathEdit->setText(QString::fromStdString(config->Paths.ImportExportFolder));
 }
 
 void FilesSettingsWidget::saveSettings()
@@ -61,14 +61,8 @@ void FilesSettingsWidget::saveSettings()
 	if (!config)
 		return;
 
-	config->setMemoryCardFolder(ui->memoryCardPathEdit->text().toStdString());
-	config->setImportExportFolder(ui->importExportPathEdit->text().toStdString());
-}
-
-void FilesSettingsWidget::restoreDefaults()
-{
-	ui->memoryCardPathEdit->clear();
-	ui->importExportPathEdit->clear();
+	config->Paths.MemoryCardFolder = ui->memoryCardPathEdit->text().toStdString();
+	config->Paths.ImportExportFolder = ui->importExportPathEdit->text().toStdString();
 }
 
 void FilesSettingsWidget::onBrowseImportExportPath()
