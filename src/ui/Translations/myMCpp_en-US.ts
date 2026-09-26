@@ -44,46 +44,44 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
 <context>
     <name>AdvancedSettingsWidget</name>
     <message>
-        <location filename="../Settings/AdvancedSettingsWidget.cpp" line="+19"/>
         <source>Debug Logging</source>
-        <translation type="unfinished">Debug Logging</translation>
+        <translation type="obsolete">Debug Logging</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Enable verbose logging to standard output for debugging purposes.</source>
-        <translation type="unfinished">Enable verbose logging to standard output for debugging purposes.</translation>
+        <translation type="obsolete">Enable verbose logging to standard output for debugging purposes.</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <location line="+55"/>
+        <location filename="../Settings/AdvancedSettingsWidget.cpp" line="+19"/>
+        <location line="+39"/>
         <source>Export Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-55"/>
-        <source>Save the current settings to a JSON file for backup or sharing.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <location line="+80"/>
+        <location line="-38"/>
+        <location line="+64"/>
         <source>Import Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-80"/>
-        <source>Load settings from a previously exported JSON file.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location line="-59"/>
         <source>Advanced</source>
         <translation type="unfinished">Advanced</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="-6"/>
+        <source>Save the current settings to an INI file for backup or sharing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Load settings from a previously exported INI file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+40"/>
         <location line="+26"/>
-        <source>JSON Files (*.json)</source>
+        <source>INI Files (*.ini)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -117,7 +115,7 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Import Successful</source>
         <translation type="unfinished"></translation>
     </message>
@@ -138,16 +136,6 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
     </message>
     <message>
         <location filename="../Settings/AdvancedSettingsWidget.ui" line="+35"/>
-        <source>Debugging</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Enable Debug Logging</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
         <source>Settings Management</source>
         <translation type="unfinished"></translation>
     </message>
@@ -563,7 +551,7 @@ Invalid memory card size</source>
         <translation type="unfinished">Files</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+42"/>
         <source>Select Import/Export Folder</source>
         <translation type="unfinished"></translation>
     </message>
@@ -613,7 +601,7 @@ Invalid memory card size</source>
     </message>
     <message>
         <location line="+11"/>
-        <location filename="../Settings/GeneralSettingsWidget.cpp" line="+35"/>
+        <location filename="../Settings/GeneralSettingsWidget.cpp" line="+34"/>
         <source>None</source>
         <translation type="unfinished">None</translation>
     </message>
@@ -641,11 +629,6 @@ Invalid memory card size</source>
     </message>
     <message>
         <location line="+7"/>
-        <source>Hide to System Tray on Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
         <source>Use ASCII Mode for Filenames</source>
         <translation type="unfinished"></translation>
     </message>
@@ -661,7 +644,7 @@ Invalid memory card size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/GeneralSettingsWidget.cpp" line="-6"/>
+        <location filename="../Settings/GeneralSettingsWidget.cpp" line="-5"/>
         <source>Language</source>
         <translation type="unfinished">Language</translation>
     </message>
@@ -691,14 +674,8 @@ Invalid memory card size</source>
         <translation type="unfinished">Show a warning dialog when attempting to delete files from a memory card.</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Hide to System Tray</source>
-        <translation type="unfinished">Hide to System Tray</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Minimize the application to the system tray instead of closing when you click the X button.</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Hide to System Tray</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -751,7 +728,7 @@ Invalid memory card size</source>
         <translation type="unfinished">Windows Vista</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+10"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
@@ -790,21 +767,6 @@ Invalid memory card size</source>
     </message>
     <message>
         <location line="+6"/>
-        <source>Thumbnail Size:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+28"/>
-        <source>pixels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+22"/>
-        <source>Antialiasing:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+13"/>
         <source>FPS Limit:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -825,7 +787,7 @@ Invalid memory card size</source>
     </message>
     <message>
         <location line="+6"/>
-        <location filename="../Settings/GraphicsSettingsWidget.cpp" line="+27"/>
+        <location filename="../Settings/GraphicsSettingsWidget.cpp" line="+25"/>
         <source>Animate Icons</source>
         <translation type="unfinished">Animate Icons</translation>
     </message>
@@ -835,7 +797,7 @@ Invalid memory card size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/GraphicsSettingsWidget.cpp" line="-6"/>
+        <location filename="../Settings/GraphicsSettingsWidget.cpp" line="-4"/>
         <source>Renderer</source>
         <translation type="unfinished">Renderer</translation>
     </message>
@@ -875,24 +837,12 @@ Invalid memory card size</source>
         <translation type="unfinished">Select how the icons are lit.</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Thumbnail Size</source>
-        <translation type="unfinished">Thumbnail Size</translation>
+        <translation type="obsolete">Thumbnail Size</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Adjust the size of the save icons in the main view.</source>
-        <translation type="unfinished">Adjust the size of the save icons in the main view.</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Antialiasing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Enable multisample antialiasing for smoother edges. Higher values may impact performance.</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Adjust the size of the save icons in the main view.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -920,27 +870,32 @@ Invalid memory card size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
+        <source>Automatic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Vulkan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>OpenGL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Metal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+56"/>
         <source>Default Adapter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-52"/>
         <source>Default</source>
         <translation type="unfinished">Default</translation>
     </message>
@@ -980,27 +935,7 @@ Invalid memory card size</source>
         <translation type="unfinished">Alternate 2</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>2x MSAA</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>4x MSAA</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>8x MSAA</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
+        <location line="+10"/>
         <source>Graphics</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1008,7 +943,7 @@ Invalid memory card size</source>
 <context>
     <name>IconWidget</name>
     <message>
-        <location filename="../widgets/IconWidget.cpp" line="+368"/>
+        <location filename="../widgets/IconWidget.cpp" line="+311"/>
         <source>Wayland surface is not ready yet</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1018,7 +953,7 @@ Invalid memory card size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+11"/>
         <source>Failed to initialize renderer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2736,7 +2671,7 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
 <context>
     <name>SaveDetailsPanel</name>
     <message>
-        <location filename="../widgets/SaveDetailsPanel.cpp" line="+113"/>
+        <location filename="../widgets/SaveDetailsPanel.cpp" line="+105"/>
         <source>Size: %1
 Modified: %2</source>
         <translation type="unfinished">Size: %1
@@ -2760,7 +2695,7 @@ Files: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+55"/>
         <location filename="../widgets/SaveDetailsPanel.cpp" line="+0"/>
         <source>Pause animation</source>
         <translation type="unfinished"></translation>
@@ -2781,7 +2716,7 @@ Files: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Details</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2857,11 +2792,16 @@ Files: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+147"/>
+        <source>This will reset all settings to their default values. Are you sure you want to continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>&lt;strong&gt;File Settings&lt;/strong&gt;&lt;hr&gt;Manage default paths for memory cards and other resources.</source>
         <translation type="obsolete">&lt;strong&gt;File Settings&lt;/strong&gt;&lt;hr&gt;Manage default paths for memory cards and other resources.</translation>
     </message>
     <message>
-        <location line="-2"/>
+        <location line="-149"/>
         <source>Advanced</source>
         <translation type="unfinished">Advanced</translation>
     </message>
@@ -2875,8 +2815,9 @@ Files: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+69"/>
-        <source>Restore Category Defaults</source>
+        <location line="+60"/>
+        <location filename="../Settings/SettingsWindow.cpp" line="+148"/>
+        <source>Restore Defaults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
