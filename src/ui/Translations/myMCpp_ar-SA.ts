@@ -47,46 +47,36 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
     <name>AdvancedSettingsWidget</name>
     <message>
       <location filename="../Settings/AdvancedSettingsWidget.cpp" line="+19"/>
-      <source>Debug Logging</source>
-      <translation>تسجيل أخطاء التصحيح</translation>
-    </message>
-    <message>
-      <location line="+0"/>
-      <source>Enable verbose logging to standard output for debugging purposes.</source>
-      <translation>تمكين التسجيل التفصيلي في الإخراج القياسي لأغراض تصحيح الأخطاء.</translation>
-    </message>
-    <message>
-      <location line="+1"/>
-      <location line="+55"/>
+      <location line="+39"/>
       <source>Export Settings</source>
       <translation>تصدير الإعدادات</translation>
     </message>
     <message>
-      <location line="-55"/>
-      <source>Save the current settings to a JSON file for backup or sharing.</source>
-      <translation>احفظ الإعدادات الحالية في ملف JSON لأغراض النسخ الاحتياطي أو المشاركة.</translation>
-    </message>
-    <message>
-      <location line="+1"/>
-      <location line="+80"/>
+      <location line="-38"/>
+      <location line="+64"/>
       <source>Import Settings</source>
       <translation>استيراد الإعدادات</translation>
     </message>
     <message>
-      <location line="-80"/>
-      <source>Load settings from a previously exported JSON file.</source>
-      <translation>تحميل الإعدادات من ملف JSON تم تصديره مسبقًا.</translation>
-    </message>
-    <message>
-      <location line="+6"/>
+      <location line="-59"/>
       <source>Advanced</source>
       <translation>متقدم</translation>
     </message>
     <message>
-      <location line="+50"/>
+      <location line="-6"/>
+      <source>Save the current settings to an INI file for backup or sharing.</source>
+      <translation type="unfinished">Save the current settings to an INI file for backup or sharing.</translation>
+    </message>
+    <message>
+      <location line="+1"/>
+      <source>Load settings from a previously exported INI file.</source>
+      <translation type="unfinished">Load settings from a previously exported INI file.</translation>
+    </message>
+    <message>
+      <location line="+40"/>
       <location line="+26"/>
-      <source>JSON Files (*.json)</source>
-      <translation>ملفات JSON (*.json)</translation>
+      <source>INI Files (*.ini)</source>
+      <translation type="unfinished">INI Files (*.ini)</translation>
     </message>
     <message>
       <location line="-20"/>
@@ -119,7 +109,7 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
       <translation>سيؤدي هذا إلى استبدال إعداداتك الحالية. هل أنت متأكد من رغبتك في المتابعة؟</translation>
     </message>
     <message>
-      <location line="+9"/>
+      <location line="+8"/>
       <source>Import Successful</source>
       <translation>تم الاستيراد بنجاح</translation>
     </message>
@@ -140,16 +130,6 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
     </message>
     <message>
       <location filename="../Settings/AdvancedSettingsWidget.ui" line="+35"/>
-      <source>Debugging</source>
-      <translation>تصحيح الأخطاء</translation>
-    </message>
-    <message>
-      <location line="+6"/>
-      <source>Enable Debug Logging</source>
-      <translation>تمكين تسجيل التصحيح</translation>
-    </message>
-    <message>
-      <location line="+10"/>
       <source>Settings Management</source>
       <translation>إدارة الإعدادات</translation>
     </message>
@@ -528,7 +508,7 @@ Invalid memory card size</translation>
       <translation>الملفات</translation>
     </message>
     <message>
-      <location line="+48"/>
+      <location line="+42"/>
       <source>Select Import/Export Folder</source>
       <translation>اختر مجلد الاستيراد/التصدير</translation>
     </message>
@@ -578,7 +558,7 @@ Invalid memory card size</translation>
     </message>
     <message>
       <location line="+11"/>
-      <location filename="../Settings/GeneralSettingsWidget.cpp" line="+35"/>
+      <location filename="../Settings/GeneralSettingsWidget.cpp" line="+34"/>
       <source>None</source>
       <translation>لا شيء</translation>
     </message>
@@ -606,11 +586,6 @@ Invalid memory card size</translation>
     </message>
     <message>
       <location line="+7"/>
-      <source>Hide to System Tray on Close</source>
-      <translation>إخفاء البرنامج في علبة النظام عند الإغلاق</translation>
-    </message>
-    <message>
-      <location line="+7"/>
       <source>Use ASCII Mode for Filenames</source>
       <translation>استخدم وضع ASCII لأسماء الملفات</translation>
     </message>
@@ -626,7 +601,7 @@ Invalid memory card size</translation>
       <translation>تمكين ميزة «Rich Presence» في Discord</translation>
     </message>
     <message>
-      <location filename="../Settings/GeneralSettingsWidget.cpp" line="-6"/>
+      <location filename="../Settings/GeneralSettingsWidget.cpp" line="-5"/>
       <source>Language</source>
       <translation>اللغة</translation>
     </message>
@@ -654,16 +629,6 @@ Invalid memory card size</translation>
       <location line="+0"/>
       <source>Show a warning dialog when attempting to delete files from a memory card.</source>
       <translation>اعرض مربع حوار تحذيري عند محاولة حذف ملفات من بطاقة الذاكرة.</translation>
-    </message>
-    <message>
-      <location line="+1"/>
-      <source>Hide to System Tray</source>
-      <translation>إخفاء الرمز في علبة النظام</translation>
-    </message>
-    <message>
-      <location line="+0"/>
-      <source>Minimize the application to the system tray instead of closing when you click the X button.</source>
-      <translation>قم بتصغير التطبيق إلى علبة النظام بدلاً من إغلاقه عند النقر على زر «X».</translation>
     </message>
     <message>
       <location line="+1"/>
@@ -716,7 +681,7 @@ Invalid memory card size</translation>
       <translation>ويندوز فيستا</translation>
     </message>
     <message>
-      <location line="+11"/>
+      <location line="+10"/>
       <source>General</source>
       <translation>عام</translation>
     </message>
@@ -755,21 +720,6 @@ Invalid memory card size</translation>
     </message>
     <message>
       <location line="+6"/>
-      <source>Thumbnail Size:</source>
-      <translation>حجم الصورة المصغرة:</translation>
-    </message>
-    <message>
-      <location line="+28"/>
-      <source>pixels</source>
-      <translation>بكسلات</translation>
-    </message>
-    <message>
-      <location line="+22"/>
-      <source>Antialiasing:</source>
-      <translation>تنعيم الحواف:</translation>
-    </message>
-    <message>
-      <location line="+13"/>
       <source>FPS Limit:</source>
       <translation>حد FPS:</translation>
     </message>
@@ -790,7 +740,7 @@ Invalid memory card size</translation>
     </message>
     <message>
       <location line="+6"/>
-      <location filename="../Settings/GraphicsSettingsWidget.cpp" line="+27"/>
+      <location filename="../Settings/GraphicsSettingsWidget.cpp" line="+25"/>
       <source>Animate Icons</source>
       <translation>أيقونات متحركة</translation>
     </message>
@@ -800,7 +750,7 @@ Invalid memory card size</translation>
       <translation>تمكين VSync</translation>
     </message>
     <message>
-      <location filename="../Settings/GraphicsSettingsWidget.cpp" line="-6"/>
+      <location filename="../Settings/GraphicsSettingsWidget.cpp" line="-4"/>
       <source>Renderer</source>
       <translation>برنامج العرض</translation>
     </message>
@@ -841,26 +791,6 @@ Invalid memory card size</translation>
     </message>
     <message>
       <location line="+1"/>
-      <source>Thumbnail Size</source>
-      <translation>حجم الصورة المصغرة</translation>
-    </message>
-    <message>
-      <location line="+0"/>
-      <source>Adjust the size of the save icons in the main view.</source>
-      <translation>اضبط حجم أيقونات الحفظ في الشاشة الرئيسية.</translation>
-    </message>
-    <message>
-      <location line="+1"/>
-      <source>Antialiasing</source>
-      <translation>تنعيم الحواف</translation>
-    </message>
-    <message>
-      <location line="+0"/>
-      <source>Enable multisample antialiasing for smoother edges. Higher values may impact performance.</source>
-      <translation>قم بتمكين ميزة إزالة التموجات باستخدام عينات متعددة للحصول على حواف أكثر نعومة. قد تؤثر القيم الأعلى على الأداء.</translation>
-    </message>
-    <message>
-      <location line="+1"/>
       <source>Enable rotating animations for the 3D icons.</source>
       <translation>تمكين الرسوم المتحركة الدوارة للأيقونات ثلاثية الأبعاد.</translation>
     </message>
@@ -885,27 +815,32 @@ Invalid memory card size</translation>
       <translation>قم بمزامنة معدل الإطارات مع معدل تحديث الشاشة لمنع حدوث تمزق الصورة.</translation>
     </message>
     <message>
-      <location line="+4"/>
+      <location line="+3"/>
+      <source>Automatic</source>
+      <translation type="unfinished">Automatic</translation>
+    </message>
+    <message>
+      <location line="+2"/>
       <source>Vulkan</source>
       <translation>فولكان</translation>
     </message>
     <message>
-      <location line="+2"/>
+      <location line="+3"/>
       <source>OpenGL</source>
       <translation>OpenGL</translation>
     </message>
     <message>
-      <location line="+2"/>
+      <location line="+3"/>
       <source>Metal</source>
       <translation>معدن</translation>
     </message>
     <message>
-      <location line="+4"/>
+      <location line="+56"/>
       <source>Default Adapter</source>
       <translation>المحول الافتراضي</translation>
     </message>
     <message>
-      <location line="+10"/>
+      <location line="-52"/>
       <source>Default</source>
       <translation>الافتراضي</translation>
     </message>
@@ -945,27 +880,7 @@ Invalid memory card size</translation>
       <translation>الخيار الثاني</translation>
     </message>
     <message>
-      <location line="+3"/>
-      <source>Off</source>
-      <translation>إيقاف</translation>
-    </message>
-    <message>
-      <location line="+1"/>
-      <source>2x MSAA</source>
-      <translation>2x MSAA</translation>
-    </message>
-    <message>
-      <location line="+1"/>
-      <source>4x MSAA</source>
-      <translation>4x MSAA</translation>
-    </message>
-    <message>
-      <location line="+1"/>
-      <source>8x MSAA</source>
-      <translation>8x MSAA</translation>
-    </message>
-    <message>
-      <location line="+12"/>
+      <location line="+10"/>
       <source>Graphics</source>
       <translation>الرسومات</translation>
     </message>
@@ -973,7 +888,7 @@ Invalid memory card size</translation>
   <context>
     <name>IconWidget</name>
     <message>
-      <location filename="../widgets/IconWidget.cpp" line="+368"/>
+      <location filename="../widgets/IconWidget.cpp" line="+311"/>
       <source>Wayland surface is not ready yet</source>
       <translation>لم تصبح واجهة «وايلاند» جاهزة بعد</translation>
     </message>
@@ -983,7 +898,7 @@ Invalid memory card size</translation>
       <translation>النافذة الأصلية غير متوفرة حتى الآن</translation>
     </message>
     <message>
-      <location line="+38"/>
+      <location line="+11"/>
       <source>Failed to initialize renderer</source>
       <translation>فشل تهيئة عارض العرض</translation>
     </message>
@@ -2559,7 +2474,7 @@ This action cannot be undone.</source>
   <context>
     <name>SaveDetailsPanel</name>
     <message>
-      <location filename="../widgets/SaveDetailsPanel.cpp" line="+113"/>
+      <location filename="../widgets/SaveDetailsPanel.cpp" line="+105"/>
       <source>Size: %1
 Modified: %2</source>
       <translation>الحجم: %1
@@ -2583,7 +2498,7 @@ Files: %1</source>
       <translation>أيقونة</translation>
     </message>
     <message>
-      <location line="+46"/>
+      <location line="+55"/>
       <location filename="../widgets/SaveDetailsPanel.cpp" line="+0"/>
       <source>Pause animation</source>
       <translation>إيقاف الرسوم المتحركة مؤقتًا</translation>
@@ -2604,7 +2519,7 @@ Files: %1</source>
       <translation>تصغير العرض</translation>
     </message>
     <message>
-      <location line="+34"/>
+      <location line="+35"/>
       <source>Details</source>
       <translation>التفاصيل</translation>
     </message>
@@ -2664,7 +2579,12 @@ Files: %1</source>
       <translation>&lt;strong&gt;الإعدادات المتقدمة&lt;/strong&gt;&lt;hr&gt;خيارات متقدمة تتعلق بسلوك النوافذ، وتصحيح الأخطاء، وأدوات المطورين.</translation>
     </message>
     <message>
-      <location line="-2"/>
+      <location line="+147"/>
+      <source>This will reset all settings to their default values. Are you sure you want to continue?</source>
+      <translation type="unfinished">This will reset all settings to their default values. Are you sure you want to continue?</translation>
+    </message>
+    <message>
+      <location line="-149"/>
       <source>Advanced</source>
       <translation>متقدم</translation>
     </message>
@@ -2674,9 +2594,10 @@ Files: %1</source>
       <translation>إعدادات myMCpp</translation>
     </message>
     <message>
-      <location line="+69"/>
-      <source>Restore Category Defaults</source>
-      <translation>استعادة الإعدادات الافتراضية للفئة</translation>
+      <location line="+60"/>
+      <location filename="../Settings/SettingsWindow.cpp" line="+148"/>
+      <source>Restore Defaults</source>
+      <translation type="unfinished">Restore Defaults</translation>
     </message>
     <message>
       <location line="+20"/>
