@@ -76,11 +76,6 @@ if (VULKAN_HEADERS_ENABLE_MODULE)
     )
 endif()
 
-if (VULKAN_HEADERS_ENABLE_TESTS)
-    enable_testing() # This is only effective in the top level CMakeLists.txt file.
-    add_subdirectory(tests)
-endif()
-
 if (VULKAN_HEADERS_ENABLE_INSTALL)
     include(GNUInstallDirs)
     include(CMakePackageConfigHelpers)
