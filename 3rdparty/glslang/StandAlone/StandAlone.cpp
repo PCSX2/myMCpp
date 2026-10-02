@@ -56,6 +56,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <iterator>
 #include <map>
 #include <memory>
@@ -114,6 +115,9 @@ enum TOptions : uint64_t {
     EOptionLinkTimeOptimization = (1ull << 34),
     EOptionValidateCrossStageIO = (1ull << 35),
     EOptionBindingsPerResourceType = (1ull << 36),
+    EOptionRelaxSetBindingLimits = (1ull << 37),
+    EOptionDiscardIsTerminate = (1ull << 38),
+    EOptionOptimizePerformance = (1ull << 39),
 };
 bool targetHlslFunctionality1 = false;
 bool SpvToolsDisassembler = false;
@@ -204,6 +208,7 @@ glslang::EShTargetLanguageVersion TargetVersion;     // not valid until TargetLa
 int GlslVersion = 0; // GLSL version specified on CLI, overrides #version in shader source
 
 std::vector<std::string> Processes;                     // what should be recorded by OpModuleProcessed, or equivalent
+std::string CommandLineArguments;                       // original arguments passed to the standalone compiler
 
 // Per descriptor-set binding base data
 typedef std::map<unsigned int, unsigned int> TPerSetBaseBinding;
@@ -562,6 +567,13 @@ void ProcessArguments(std::vector<std::unique_ptr<glslang::TWorkItem>>& workItem
     ExecutableName = argv[0];
     workItems.reserve(argc);
 
+    CommandLineArguments.clear();
+    for (int arg = 1; arg < argc; ++arg) {
+        if (arg > 1)
+            CommandLineArguments += ' ';
+        CommandLineArguments += argv[arg];
+    }
+
     const auto bumpArg = [&]() {
         if (argc > 0) {
             argc--;
@@ -638,6 +650,8 @@ void ProcessArguments(std::vector<std::unique_ptr<glslang::TWorkItem>>& workItem
                         lowerword == "auto-map-binding"  ||
                         lowerword == "amb") {
                         Options |= EOptionAutoMapBindings;
+                    } else if (lowerword == "relax-set-binding-limits") {
+                        Options |= EOptionRelaxSetBindingLimits;
                     } else if (lowerword == "auto-map-locations" || // synonyms
                                lowerword == "aml") {
                         Options |= EOptionAutoMapLocations;
@@ -736,6 +750,8 @@ void ProcessArguments(std::vector<std::unique_ptr<glslang::TWorkItem>>& workItem
                         AbsolutePath = true;
                     } else if (lowerword == "auto-sampled-textures") {
                         autoSampledTextures = true;
+                    } else if (lowerword == "discard-is-terminate") {
+                        Options |= EOptionDiscardIsTerminate;
                     } else if (lowerword == "invert-y" ||  // synonyms
                                lowerword == "iy") {
                         Options |= EOptionInvertY;
@@ -971,6 +987,12 @@ void ProcessArguments(std::vector<std::unique_ptr<glslang::TWorkItem>>& workItem
 #else
                     Error("-Os not available; optimizer not linked");
 #endif
+                else if (argv[0][2] == '\0')
+#if ENABLE_OPT
+                    Options |= EOptionOptimizePerformance;
+#else
+                    Error("-O not available; optimizer not linked");
+#endif
                 else
                     Error("unknown -O option");
                 break;
@@ -1205,6 +1227,8 @@ void SetMessageOptions(EShMessages& messages)
         messages = (EShMessages)(messages | EShMsgLinkTimeOptimization);
     if (Options & EOptionValidateCrossStageIO)
         messages = (EShMessages)(messages | EShMsgValidateCrossStageIO);
+    if (Options & EOptionRelaxSetBindingLimits)
+        messages = (EShMessages)(messages | EShMsgRelaxSetBindingLimits);
 }
 
 //
@@ -1471,6 +1495,9 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
         if (Options & EOptionBindingsPerResourceType)
             shader->setBindingsPerResourceType();
 
+        if (Options & EOptionDiscardIsTerminate)
+            shader->setDiscardIsTerminate(true);
+
         // Set up the environment, some subsettings take precedence over earlier
         // ways of setting things.
         if (Options & EOptionSpv) {
@@ -1512,9 +1539,9 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
         if (! (Options & EOptionSuppressInfolog) &&
             ! (Options & EOptionMemoryLeakMode)) {
             if (!beQuiet)
-                PutsIfNonEmpty(compUnit.fileName[0].c_str());
-            PutsIfNonEmpty(shader->getInfoLog());
-            PutsIfNonEmpty(shader->getInfoDebugLog());
+                StderrIfNonEmpty(compUnit.fileName[0].c_str());
+            StderrIfNonEmpty(shader->getInfoLog());
+            StderrIfNonEmpty(shader->getInfoDebugLog());
         }
     }
 
@@ -1535,8 +1562,8 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
 
         // Report
         if (!(Options & EOptionSuppressInfolog) && !(Options & EOptionMemoryLeakMode)) {
-            PutsIfNonEmpty(program.getInfoLog());
-            PutsIfNonEmpty(program.getInfoDebugLog());
+            StderrIfNonEmpty(program.getInfoLog());
+            StderrIfNonEmpty(program.getInfoDebugLog());
         }
 
         // Reflect
@@ -1586,9 +1613,16 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
                     spvOptions.stripDebugInfo = true;
                 spvOptions.disableOptimizer = (Options & EOptionOptimizeDisable) != 0;
                 spvOptions.optimizeSize = (Options & EOptionOptimizeSize) != 0;
+                spvOptions.optimizePerformance = (Options & EOptionOptimizePerformance) != 0;
                 spvOptions.disassemble = SpvToolsDisassembler;
                 spvOptions.validate = SpvToolsValidate;
                 spvOptions.compileOnly = compileOnly;
+                spvOptions.compilerSignature = "glslang";
+                spvOptions.commandLineArguments = CommandLineArguments.c_str();
+                std::error_code currentPathError;
+                const std::string currentWorkingDirectory = std::filesystem::current_path(currentPathError).string();
+                if (!currentPathError)
+                    spvOptions.currentWorkingDirectory = currentWorkingDirectory.c_str();
                 glslang::GlslangToSpv(*intermediate, spirv, &logger, &spvOptions);
 
                 // Dump the spv to a file or stdout, etc., but only if not doing
@@ -2005,8 +2039,9 @@ void usage()
            "  -H          print human readable form of SPIR-V; turns on -V\n"
            "  -I<dir>     add <dir> to the include search path; includer's directory is\n"
            "              searched first, followed by left-to-right order of -I\n"
-           "  -Od         disables optimization; may cause illegal SPIR-V for HLSL\n"
+           "  -O          optimizes SPIR-V for performance\n"
            "  -Os         optimizes SPIR-V to minimize size\n"
+           "  -Od         disables optimization; may cause illegal SPIR-V for HLSL\n"
            "  -P<text> | --P <text> | --preamble-text <text>\n"
            "              inject custom preamble text which is treated as if it appeared\n"
            "              immediately after the version declaration (if any)\n"
@@ -2054,6 +2089,8 @@ void usage()
            "              suppress GLSL warnings, except as required by '#extension : warn'\n"
            "  -x          save binary output as text-based 32-bit hexadecimal numbers\n"
            "  --absolute-path                   prints absolute path for messages\n"
+           "  --relax-set-binding-limits        allow larger layout(set) and\n"
+           "                                    layout(binding) values\n"
            "  --auto-map-binding | --auto-map-bindings | --amb\n"
            "                                    automatically bind uniform variables without\n"
            "                                    explicit bindings\n"
@@ -2064,6 +2101,8 @@ void usage()
            "  --client {vulkan<ver> | opengl<ver>}\n"
            "                                    see -V and -G\n"
            "  --depfile <file>                  writes depfile for build systems\n"
+           "  --discard-is-terminate            map GLSL discard to OpTerminateInvocation\n"
+           "                                    instead of OpDemoteToHelperInvocation\n"
            "  --dump-builtin-symbols            prints builtin symbol table prior each\n"
            "                                    compile\n"
            "  -dumpfullversion | -dumpversion   print bare major.minor.patchlevel\n"

@@ -503,7 +503,7 @@ bool HlslGrammar::acceptDeclaration(TIntermNode*& nodeList)
                         // Declare the variable and add any initializer code to the AST.
                         // The top-level node is always made into an aggregate, as that's
                         // historically how the AST has been.
-                        initializers = intermediate.growAggregate(initializers, 
+                        initializers = intermediate.growAggregate(initializers,
                             parseContext.declareVariable(idToken.loc, *fullName, variableType, expressionNode),
                             idToken.loc);
                     }
@@ -631,7 +631,7 @@ bool HlslGrammar::acceptFullySpecifiedType(TType& type, TIntermNode*& nodeList, 
     if (type.getBasicType() == EbtBlock) {
         // the type was a block, which set some parts of the qualifier
         parseContext.mergeQualifiers(type.getQualifier(), qualifier);
-    
+
         // merge in the attributes
         parseContext.transferTypeAttributes(token.loc, attributes, type);
 
@@ -1067,7 +1067,7 @@ bool HlslGrammar::acceptTessellationPatchTemplateType(TType& type)
 
     if (! acceptTessellationDeclType(patchType))
         return false;
-    
+
     if (! acceptTokenClass(EHTokLeftAngle))
         return false;
 
@@ -1101,7 +1101,7 @@ bool HlslGrammar::acceptTessellationPatchTemplateType(TType& type)
 
     return true;
 }
-    
+
 // stream_out_template_type
 //      : output_primitive_geometry_type LEFT_ANGLE type RIGHT_ANGLE
 //
@@ -1211,7 +1211,8 @@ bool HlslGrammar::acceptSubpassInputType(TType& type)
         }
     }
 
-    const TBasicType subpassBasicType = subpassType.isStruct() ? (*subpassType.getStruct())[0].type->getBasicType()
+    const TBasicType subpassBasicType = (subpassType.isStruct() && !subpassType.getStruct()->empty())
+        ? (*subpassType.getStruct())[0].type->getBasicType()
         : subpassType.getBasicType();
 
     TSampler sampler;
@@ -1226,7 +1227,7 @@ bool HlslGrammar::acceptSubpassInputType(TType& type)
     return true;
 }
 
-// sampler_type for DX9 compatibility 
+// sampler_type for DX9 compatibility
 //      : SAMPLER
 //      | SAMPLER1D
 //      | SAMPLER2D
@@ -1436,7 +1437,8 @@ bool HlslGrammar::acceptTextureType(TType& type)
     if (image || dim == EsdBuffer)
         format = parseContext.getLayoutFromTxType(token.loc, txType);
 
-    const TBasicType txBasicType = txType.isStruct() ? (*txType.getStruct())[0].type->getBasicType()
+    const TBasicType txBasicType = (txType.isStruct() && !txType.getStruct()->empty())
+        ? (*txType.getStruct())[0].type->getBasicType()
         : txType.getBasicType();
 
     // Non-image Buffers are combined
@@ -2505,7 +2507,7 @@ bool HlslGrammar::acceptConstantBufferType(TType& type)
         expected("left angle bracket");
         return false;
     }
-    
+
     TType templateType;
     if (! acceptType(templateType)) {
         expected("type");
@@ -2546,7 +2548,7 @@ bool HlslGrammar::acceptTextureBufferType(TType& type)
         expected("left angle bracket");
         return false;
     }
-    
+
     TType templateType;
     if (! acceptType(templateType)) {
         expected("type");
@@ -2627,7 +2629,7 @@ bool HlslGrammar::acceptStructBufferType(TType& type)
             expected("left angle bracket");
             return false;
         }
-    
+
         if (! acceptType(*templateType)) {
             expected("type");
             return false;
@@ -2709,7 +2711,7 @@ bool HlslGrammar::acceptStructDeclarationList(TTypeList*& typeList, TIntermNode*
             expected("member type");
             return false;
         }
-        
+
         // merge in the attributes
         parseContext.transferTypeAttributes(token.loc, attributes, memberType);
 
