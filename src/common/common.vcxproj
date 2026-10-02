@@ -50,7 +50,7 @@ call "$(SolutionDir)scripts\generate_svnrev.cmd" "$(SolutionDir)" "$(SolutionDir
     <ClCompile Include="WindowInfo.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="BuildVersion.cpp" />
-    <ClCompile Include="..\..\3rdparty\utf8proc\utf8proc.c" />
+    <ClCompile Include="$(ThirdPartyDir)utf8proc\src\utf8proc.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="round.h" />
