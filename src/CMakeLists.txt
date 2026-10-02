@@ -9,7 +9,8 @@ add_executable(myMCpp WIN32
 )
 
 if(WIN32)
-    target_sources(myMCpp PRIVATE ${CMAKE_SOURCE_DIR}/resources/myMCpp.rc)
+    target_sources(myMCpp PRIVATE ${CMAKE_SOURCE_DIR}/packaging/windows/myMCpp.rc)
+    target_include_directories(myMCpp PRIVATE ${CMAKE_SOURCE_DIR}/resources)
 endif()
 
 target_link_libraries(myMCpp PRIVATE
@@ -108,7 +109,7 @@ endif()
 if(APPLE)
     set_target_properties(myMCpp PROPERTIES
         MACOSX_BUNDLE TRUE
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/resources/Info.plist.in"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/packaging/macos/Info.plist.in"
         OUTPUT_NAME myMCpp
     )
 

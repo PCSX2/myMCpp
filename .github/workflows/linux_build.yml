@@ -218,17 +218,6 @@ jobs:
           OUTDIR=$(realpath "./$APPDIRNAME")
           rm -fr "$OUTDIR"
           
-          echo "Copying desktop file..."
-          cat > myMCpp.desktop << 'EOF'
-          [Desktop Entry]
-          Type=Application
-          Name=myMCpp
-          Comment=PlayStation 2 memory card manager
-          Exec=myMCpp
-          Icon=myMCpp
-          Categories=Utility;
-          EOF
-          
           echo "Resizing icon to 256x256..."
           convert resources/icons/AppIcon.png -resize 256x256 myMCpp.png
           
@@ -254,7 +243,7 @@ jobs:
           QMAKE="$QMAKE_PATH" \
           NO_STRIP="1" \
           $LINUXDEPLOY --plugin qt --appdir="$OUTDIR" --executable="${BUILD_DIR}/myMCpp" \
-            --desktop-file="myMCpp.desktop" --icon-file="myMCpp.png"
+            --desktop-file="packaging/linux/myMCpp.desktop" --icon-file="myMCpp.png"
           
           echo "Copying resources into AppDir..."
           if [ -d "${BUILD_DIR}/resources" ]; then

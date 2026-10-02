@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=myMCpp
+Comment=PlayStation 2 memory card manager
+Exec=myMCpp
+Icon=myMCpp
+Terminal=false
+Categories=Utility;
