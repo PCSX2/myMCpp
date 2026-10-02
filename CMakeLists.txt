@@ -52,7 +52,7 @@ add_subdirectory(src)
 
 # Installation
 install(TARGETS myMCpp DESTINATION bin)
-install(FILES README.txt DESTINATION .)
+install(FILES README.md DESTINATION .)
 
 # Translations
 if(WIN32 OR UNIX)
