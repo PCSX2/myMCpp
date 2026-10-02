@@ -56,7 +56,7 @@ jobs:
           --draft \
           --title "$NAME" \
           --notes-file "$GITHUB_WORKSPACE/release-notes.md" \
-          --target "$TAG"
+          --target "${GITHUB_SHA}"
 
         echo "new_tag=${TAG}" >> "$GITHUB_OUTPUT"
         echo "release_name=${NAME}" >> "$GITHUB_OUTPUT"
