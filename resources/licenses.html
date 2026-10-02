@@ -1,216 +1,51 @@
-<!DOCTYPE html>
-<html>
+<h2>Table of Contents</h2>
 
-<head>
-    <meta charset="utf-8">
-    <title>myMCpp Licenses</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            padding: 40px 20px;
-            max-width: 900px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            color: #333333;
-        }
+<ul>
+  <li><a href="#myMCpp">myMCpp</a></li>
+  <li><a href="#pcsx2">PCSX2</a></li>
+  <li><a href="#qt">Qt</a></li>
+  <li><a href="#vulkan">Vulkan</a></li>
+  <li><a href="#spirv">SPIRV-Headers &amp; SPIRV-Tools</a></li>
+  <li><a href="#vma">VulkanMemoryAllocator (VMA)</a></li>
+  <li><a href="#glslang">glslang</a></li>
+  <li><a href="#moltenvk">MoltenVK</a></li>
+  <li><a href="#glm">GLM</a></li>
+  <li><a href="#utf8proc">utf8proc</a></li>
+  <li><a href="#discord_rpc">discord-rpc</a></li>
+  <li><a href="#glfw">GLFW</a></li>
+  <li><a href="#glad">GLAD</a></li>
+  <li><a href="#nlohmann_json">JSON for Modern C++</a></li>
+  <li><a href="#simpleini">SimpleIni</a></li>
+  <li><a href="#remixicon">Remix Icon</a></li>
+  <li><a href="#spdlog">spdlog</a></li>
+  <li><a href="#zlib">zlib</a></li>
+</ul>
 
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            color: #1a1a1a;
-        }
+<h2>Licenses</h2>
 
-        h2 {
-            font-size: 1.3em;
-            margin-top: 40px;
-            margin-bottom: 20px;
-            color: #1a1a1a;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 10px;
-        }
+<div id="myMCpp">
+  <a name="myMCpp"></a>
+  <h3>myMCpp - <a href="https://github.com/PCSX2/myMCpp">https://github.com/PCSX2/myMCpp</a></h3>
+  <h4>Copyright &copy; 2025-2026 SternXD and other contributors</h4>
 
-        h3 {
-            font-size: 1.1em;
-            margin: 0;
-            color: #1a1a1a;
-        }
+  <p>myMCpp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+    version.</p>
 
-        ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
+  <p>myMCpp is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+    details.</p>
 
-        li {
-            flex: 0 1 calc(50% - 8px);
-        }
+  <p>You should have received a copy of the GNU General Public License along with myMCpp. If not, see <a
+      href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
 
-        li a {
-            color: #3399ff;
-            text-decoration: none;
-        }
-
-        li a:hover {
-            text-decoration: underline;
-        }
-
-        details {
-            margin-bottom: 30px;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 20px;
-            background-color: #fafafa;
-        }
-
-        summary {
-            cursor: pointer;
-            user-select: none;
-            font-weight: 600;
-            padding: 10px;
-            margin: -10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        summary:hover {
-            background-color: #f0f0f0;
-            border-radius: 4px;
-        }
-
-        summary::after {
-            content: '▶';
-            font-size: 0.8em;
-            transition: transform 0.3s;
-            display: inline-block;
-            margin-left: 10px;
-        }
-
-        details[open] summary::after {
-            transform: rotate(90deg);
-        }
-
-        .license-info {
-            margin-bottom: 15px;
-            font-size: 0.95em;
-        }
-
-        .license-info p {
-            margin: 5px 0;
-            color: #555;
-        }
-
-        .license-info a {
-            color: #3399ff;
-            text-decoration: none;
-        }
-
-        .license-info a:hover {
-            text-decoration: underline;
-        }
-
-        pre {
-            border: 1px solid #ddd;
-            padding: 20px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            background-color: #f9f9f9;
-            color: #333333;
-            font-size: 0.9em;
-            border-radius: 4px;
-            margin-top: 15px;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #1e1e1e;
-                color: #e0e0e0;
-            }
-
-            h1, h2, h3 {
-                color: #f0f0f0;
-            }
-
-            h2 {
-                border-bottom-color: #444;
-            }
-
-            details {
-                background-color: #2a2a2a;
-                border-color: #444;
-            }
-
-            summary:hover {
-                background-color: #333;
-            }
-
-            pre {
-                background-color: #252525;
-                color: #e0e0e0;
-                border-color: #444;
-            }
-
-            a {
-                color: #64b5f6;
-            }
-
-            .license-info p {
-                color: #aaa;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-    <h1>myMCpp Licenses</h1>
-
-    <h2>Table of Contents</h2>
-    <ul>
-        <li><a href="#myMCpp">myMCpp</a></li>
-        <li><a href="#pcsx2">PCSX2</a></li>
-        <li><a href="#qt">Qt</a></li>
-        <li><a href="#vulkan">Vulkan</a></li>
-      <li><a href="#vma">VulkanMemoryAllocator (VMA)</a></li>
-      <li><a href="#glslang">glslang</a></li>
-      <li><a href="#moltenvk">MoltenVK</a></li>
-        <li><a href="#spirv">SPIRV-Headers &amp; SPIRV-Tools</a></li>
-        <li><a href="#glm">GLM</a></li>
-        <li><a href="#glfw">GLFW</a></li>
-        <li><a href="#glad">GLAD</a></li>
-        <li><a href="#nlohmann_json">JSON for Modern C++</a></li>
-      <li><a href="#utf8proc">utf8proc</a></li>
-      <li><a href="#discord_rpc">discord-rpc</a></li>
-        <li><a href="#remixicon">Remix Icon</a></li>
-        <li><a href="#spdlog">spdlog</a></li>
-        <li><a href="#zlib">zlib</a></li>
-    </ul>
-
-    <h2>Licenses</h2>
-
-    <!-- myMCpp -->
-    <details id="myMCpp" open>
-        <summary>
-            <div>
-                <h3>myMCpp</h3>
-                <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">GNU General Public License (GPL) version 3</p>
-            </div>
-        </summary>
-        <div class="license-info">
-            <p><strong>Copyright:</strong> (C) 2025-2026 SternXD and other contributors</p>
-            <p><strong>Repository:</strong> <a href="https://github.com/PCSX2/myMCpp" target="_blank">https://github.com/PCSX2/myMCpp</a></p>
-            <p><strong>License:</strong> GNU General Public License (GPL) version 3</p>
-        </div>
-        <pre>
+  <p>myMCpp contains code written by, and copyrighted by third parties. The copyright statements and licenses for the
+    included third-party code is included below.</p>
+  <pre>
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
- Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ Copyright (C) 2007 Free Software Foundation, Inc. &lt;https://fsf.org/&gt;
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 
@@ -840,8 +675,8 @@ to attach them to the start of each source file to most effectively
 state the exclusion of warranty; and each file should have at least
 the "copyright" line and a pointer to where the full notice is found.
 
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
+    &lt;one line to give the program's name and a brief idea of what it does.&gt;
+    Copyright (C) &lt;year&gt;  &lt;name of author&gt;
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -854,14 +689,14 @@ the "copyright" line and a pointer to where the full notice is found.
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
 
 Also add information on how to contact you by electronic and paper mail.
 
   If the program does terminal interaction, make it output a short
 notice like this when it starts in an interactive mode:
 
-    <program>  Copyright (C) <year>  <name of author>
+    &lt;program&gt;  Copyright (C) &lt;year&gt;  &lt;name of author&gt;
     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
     This is free software, and you are welcome to redistribute it
     under certain conditions; type `show c' for details.
@@ -873,35 +708,37 @@ might be different; for a GUI interface, you would use an "about box".
   You should also get your employer (if you work as a programmer) or school,
 if any, to sign a "copyright disclaimer" for the program, if necessary.
 For more information on this, and how to apply and follow the GNU GPL, see
-<https://www.gnu.org/licenses/>.
+&lt;https://www.gnu.org/licenses/&gt;.
 
   The GNU General Public License does not permit incorporating your program
 into proprietary programs.  If your program is a subroutine library, you
 may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
-<https://www.gnu.org/licenses/why-not-lgpl.html>.
-    </pre>
-    </details>
+&lt;https://www.gnu.org/licenses/why-not-lgpl.html&gt;.
+</pre>
+</div>
 
-    <!-- PCSX2 -->
-    <details id="pcsx2">
-        <summary>
-            <div>
-                <h3>PCSX2</h3>
-                <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">GNU General Public License (GPL) version 3</p>
-            </div>
-        </summary>
-        <div class="license-info">
-            <p><strong>Copyright:</strong> (C) 2002-2026 PCSX2 Dev Team</p>
-            <p><strong>Website:</strong> <a href="https://pcsx2.net/" target="_blank">https://pcsx2.net/</a></p>
-            <p><strong>License:</strong> GNU General Public License (GPL) version 3</p>
-        </div>
-        <pre>
+<div id="pcsx2">
+  <a name="pcsx2"></a>
+  <h3>PCSX2 - <a href="https://pcsx2.net/">https://pcsx2.net/</a></h3>
+  <h4>Copyright &copy; 2002-2026 PCSX2 Dev Team</h4>
+
+  <p>PCSX2 is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+    version.</p>
+
+  <p>PCSX2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+    details.</p>
+
+  <p>You should have received a copy of the GNU General Public License along with PCSX2. If not, see <a
+      href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+  <pre>
                             GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
- Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
+ Copyright (C) 2007 Free Software Foundation, Inc. &lt;http://fsf.org/&gt;
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 
@@ -1531,8 +1368,8 @@ to attach them to the start of each source file to most effectively
 state the exclusion of warranty; and each file should have at least
 the "copyright" line and a pointer to where the full notice is found.
 
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
+    &lt;one line to give the program's name and a brief idea of what it does.&gt;
+    Copyright (C) &lt;year&gt;  &lt;name of author&gt;
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1545,14 +1382,14 @@ the "copyright" line and a pointer to where the full notice is found.
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 
 Also add information on how to contact you by electronic and paper mail.
 
   If the program does terminal interaction, make it output a short
 notice like this when it starts in an interactive mode:
 
-    <program>  Copyright (C) <year>  <name of author>
+    &lt;program&gt;  Copyright (C) &lt;year&gt;  &lt;name of author&gt;
     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
     This is free software, and you are welcome to redistribute it
     under certain conditions; type `show c' for details.
@@ -1564,39 +1401,29 @@ might be different; for a GUI interface, you would use an "about box".
   You should also get your employer (if you work as a programmer) or school,
 if any, to sign a "copyright disclaimer" for the program, if necessary.
 For more information on this, and how to apply and follow the GNU GPL, see
-<http://www.gnu.org/licenses/>.
+&lt;http://www.gnu.org/licenses/&gt;.
 
   The GNU General Public License does not permit incorporating your program
 into proprietary programs.  If your program is a subroutine library, you
 may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
-<http://www.gnu.org/philosophy/why-not-lgpl.html>.
+&lt;http://www.gnu.org/philosophy/why-not-lgpl.html&gt;.
+</pre>
+</div>
 
-        </pre>
-    </details>
-
-    <!-- Qt -->
-    <details id="qt">
-        <summary>
-            <div>
-                <h3>Qt</h3>
-                <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">GNU Lesser General Public License (LGPL) version 3</p>
-            </div>
-        </summary>
-        <div class="license-info">
-            <p><strong>Copyright:</strong> (C) 2024 The Qt Company Ltd and other contributors</p>
-            <p><strong>Website:</strong> <a href="https://www.qt.io/" target="_blank">https://www.qt.io/</a></p>
-            <p><strong>License:</strong> GNU Lesser General Public License (LGPL) version 3, with an alternative GPL version 3 licensing option</p>
-        </div>
-        <pre>
+<div id="qt">
+  <a name="qt"></a>
+  <h3>Qt - <a href="https://www.qt.io/">https://www.qt.io/</a></h3>
+  <h4>Copyright &copy; 2026 The Qt Company Ltd and other contributors</h4>
+  <pre>
 You may use, distribute and copy the Qt GUI Toolkit under the terms of
  GNU General Public License version 3, which is displayed below.
 
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
- Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
+ Copyright (C) 2007 Free Software Foundation, Inc. &lt;http://fsf.org/&gt;
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 
@@ -2226,8 +2053,8 @@ to attach them to the start of each source file to most effectively
 state the exclusion of warranty; and each file should have at least
 the "copyright" line and a pointer to where the full notice is found.
 
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
+    &lt;one line to give the program's name and a brief idea of what it does.&gt;
+    Copyright (C) &lt;year&gt;  &lt;name of author&gt;
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -2240,14 +2067,14 @@ the "copyright" line and a pointer to where the full notice is found.
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 
 Also add information on how to contact you by electronic and paper mail.
 
   If the program does terminal interaction, make it output a short
 notice like this when it starts in an interactive mode:
 
-    <program>  Copyright (C) <year>  <name of author>
+    &lt;program&gt;  Copyright (C) &lt;year&gt;  &lt;name of author&gt;
     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
     This is free software, and you are welcome to redistribute it
     under certain conditions; type `show c' for details.
@@ -2259,32 +2086,23 @@ might be different; for a GUI interface, you would use an "about box".
   You should also get your employer (if you work as a programmer) or school,
 if any, to sign a "copyright disclaimer" for the program, if necessary.
 For more information on this, and how to apply and follow the GNU GPL, see
-<http://www.gnu.org/licenses/>.
+&lt;http://www.gnu.org/licenses/&gt;.
 
   The GNU General Public License does not permit incorporating your program
 into proprietary programs.  If your program is a subroutine library, you
 may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
-<http://www.gnu.org/philosophy/why-not-lgpl.html>.
-    </pre>
-    </details>
+&lt;http://www.gnu.org/philosophy/why-not-lgpl.html&gt;.
+</pre>
+</div>
 
-    <!-- Vulkan -->
-    <details id="vulkan">
-        <summary>
-            <div>
-                <h3>Vulkan</h3>
-                <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">Apache License 2.0</p>
-            </div>
-        </summary>
-        <div class="license-info">
-            <p><strong>Copyright:</strong> (C) 2015–2024 The Khronos Group Inc.</p>
-            <p><strong>Website:</strong> <a href="https://www.khronos.org/vulkan/" target="_blank">https://www.khronos.org/vulkan/</a></p>
-          <p><strong>License:</strong> Vulkan-Headers: Apache-2.0 OR MIT, Vulkan-Loader: Apache-2.0</p>
-        </div>
-        <pre>
-Copyright 2015-2023 The Khronos Group Inc.
+<div id="vulkan">
+  <a name="vulkan"></a>
+  <h3>Vulkan - <a href="https://www.khronos.org/vulkan/">https://www.khronos.org/vulkan/</a></h3>
+  <h4>Copyright &copy; 2015–2026 The Khronos Group Inc.</h4>
+  <pre>
+Copyright 2015-2026 The Khronos Group Inc.
 
 Files in this repository fall under one of these licenses:
 
@@ -2302,25 +2120,18 @@ Full license text of these licenses is available at:
 
   * Apache-2.0: https://opensource.org/licenses/Apache-2.0
   * MIT: https://opensource.org/licenses/MIT
-    </pre>
-    </details>
+</pre>
+</div>
 
-    <!-- SPIRV -->
-    <details id="spirv">
-        <summary>
-            <div>
-                <h3>SPIRV-Headers &amp; SPIRV-Tools</h3>
-                <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">Apache License 2.0</p>
-            </div>
-        </summary>
-        <div class="license-info">
-            <p><strong>Copyright:</strong> (C) 2015-2024 The Khronos Group Inc.</p>
-            <p><strong>Repository:</strong> <a href="https://github.com/KhronosGroup/SPIRV-Headers" target="_blank">https://github.com/KhronosGroup/SPIRV-Headers</a></p>
-            <p><strong>License:</strong> Apache License 2.0</p>
-        </div>
-        <pre>
+<div id="spirv">
+  <a name="spirv"></a>
+  <h3>SPIRV-Headers &amp; SPIRV-Tools - <a
+      href="https://github.com/KhronosGroup/SPIRV-Headers">https://github.com/KhronosGroup/SPIRV-Headers</a>, <a
+      href="https://github.com/KhronosGroup/SPIRV-Tools">https://github.com/KhronosGroup/SPIRV-Tools</a></h3>
+  <h4>Copyright &copy; 2015-2026 The Khronos Group Inc.</h4>
+  <pre>
 Files: All files except for those called out below.
-Copyright (c) 2015-2024 The Khronos Group Inc.
+Copyright (c) 2015-2026 The Khronos Group Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and/or associated documentation files (the
@@ -2349,7 +2160,7 @@ MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 ---
 
 Files: include/spirv/spir-v.xml
-Copyright (c) 2015-2024 The Khronos Group Inc.
+Copyright (c) 2015-2026 The Khronos Group Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and/or associated documentation files (the
@@ -2820,24 +2631,17 @@ the avoidance of doubt, this paragraph does not form part of the
 public licenses.
 
 Creative Commons may be contacted at creativecommons.org.
-        </pre>
-    </details>
+</pre>
+</div>
 
-    <!-- VMA -->
-    <details id="vma">
-      <summary>
-        <div>
-          <h3>VulkanMemoryAllocator (VMA)</h3>
-          <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">MIT License</p>
-        </div>
-      </summary>
-      <div class="license-info">
-        <p><strong>Copyright:</strong> (C) 2017-2025 Advanced Micro Devices, Inc.</p>
-        <p><strong>Repository:</strong> <a href="https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator" target="_blank">https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator</a></p>
-        <p><strong>License:</strong> MIT License</p>
-      </div>
-      <pre>
-  Copyright (c) 2017-2025 Advanced Micro Devices, Inc. All rights reserved.
+<div id="vma">
+  <a name="vma"></a>
+  <h3>VulkanMemoryAllocator (VMA) - <a
+      href="https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator">https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator</a>
+  </h3>
+  <h4>Copyright &copy; 2017-2026 Advanced Micro Devices, Inc.</h4>
+  <pre>
+  Copyright (c) 2017-2026 Advanced Micro Devices, Inc. All rights reserved.
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -2856,23 +2660,14 @@ Creative Commons may be contacted at creativecommons.org.
   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
-    </pre>
-    </details>
+</pre>
+</div>
 
-    <!-- glslang -->
-    <details id="glslang">
-      <summary>
-        <div>
-          <h3>glslang</h3>
-          <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">BSD-3-Clause / BSD-2-Clause / MIT / Apache-2.0</p>
-        </div>
-      </summary>
-      <div class="license-info">
-        <p><strong>Copyright:</strong> Google, Khronos Group, and other contributors</p>
-        <p><strong>Repository:</strong> <a href="https://github.com/KhronosGroup/glslang" target="_blank">https://github.com/KhronosGroup/glslang</a></p>
-        <p><strong>License:</strong> Multiple licenses; see 3rdparty/glslang/LICENSE.txt</p>
-      </div>
-      <pre>
+<div id="glslang">
+  <a name="glslang"></a>
+  <h3>glslang - <a href="https://github.com/KhronosGroup/glslang">https://github.com/KhronosGroup/glslang</a></h3>
+  <h4>Copyright Google, Khronos Group, and other contributors</h4>
+  <pre>
 Here, glslang proper means core GLSL parsing, HLSL parsing, and SPIR-V code
 generation. Glslang proper requires use of a number of licenses, one that covers
 preprocessing and others that covers non-preprocessing.
@@ -2901,7 +2696,7 @@ The core of glslang-proper, minus the preprocessor is licenced as follows:
 
 //
 // Copyright (C) 2015-2018 Google, Inc.
-// Copyright (C) <various other dates and companies>
+// Copyright (C) &lt;various other dates and companies&gt;
 //
 // All rights reserved.
 //
@@ -3178,7 +2973,7 @@ GPL 3 with special bison exception
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
- Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
+ Copyright (C) 2007 Free Software Foundation, Inc. &lt;http://fsf.org/&gt;
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 
@@ -3886,23 +3681,14 @@ NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ** FROM,OUT OF OR IN CONNECTION WITH THE MATERIALS OR THE USE OR OTHER DEALINGS
 ** IN THE MATERIALS.
 */
-    </pre>
-    </details>
+</pre>
+</div>
 
-    <!-- MoltenVK -->
-    <details id="moltenvk">
-      <summary>
-        <div>
-          <h3>MoltenVK</h3>
-          <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">Apache License 2.0</p>
-        </div>
-      </summary>
-      <div class="license-info">
-        <p><strong>Copyright:</strong> (C) 2015-2023 The Khronos Group Inc.</p>
-        <p><strong>Repository:</strong> <a href="https://github.com/KhronosGroup/MoltenVK" target="_blank">https://github.com/KhronosGroup/MoltenVK</a></p>
-        <p><strong>License:</strong> Apache License 2.0</p>
-      </div>
-      <pre>
+<div id="moltenvk">
+  <a name="moltenvk"></a>
+  <h3>MoltenVK - <a href="https://github.com/KhronosGroup/MoltenVK">https://github.com/KhronosGroup/MoltenVK</a></h3>
+  <h4>Copyright &copy; 2015-2026 The Khronos Group Inc.</h4>
+  <pre>
 
                                  Apache License
                            Version 2.0, January 2004
@@ -4105,23 +3891,14 @@ NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-    </pre>
-    </details>
+</pre>
+</div>
 
-    <!-- GLM -->
-    <details id="glm">
-        <summary>
-            <div>
-                <h3>GLM</h3>
-                <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">MIT / Happy Bunny License</p>
-            </div>
-        </summary>
-        <div class="license-info">
-            <p><strong>Copyright:</strong> (C) 2005 - G-Truc Creation</p>
-            <p><strong>Repository:</strong> <a href="https://github.com/g-truc/glm" target="_blank">https://github.com/g-truc/glm</a></p>
-            <p><strong>License:</strong> MIT or Happy Bunny License (Modified MIT)</p>
-        </div>
-        <pre>
+<div id="glm">
+  <a name="glm"></a>
+  <h3>GLM - <a href="https://github.com/g-truc/glm">https://github.com/g-truc/glm</a></h3>
+  <h4>Copyright &copy; 2005-2026 G-Truc Creation</h4>
+  <pre>
 ================================================================================
 OpenGL Mathematics (GLM)
 --------------------------------------------------------------------------------
@@ -4176,24 +3953,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-        </pre>
-    </details>
+</pre>
+</div>
 
-    <!-- utf8proc -->
-    <details id="utf8proc">
-      <summary>
-        <div>
-          <h3>utf8proc</h3>
-          <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">MIT License + Unicode Data Terms</p>
-        </div>
-      </summary>
-      <div class="license-info">
-        <p><strong>Copyright:</strong> 2014-2021 by Steven G. Johnson, Jiahao Chen, Tony Kelman,
-  Jonas Fonseca, and other contributors.</p>
-        <p><strong>Repository:</strong> <a href="https://github.com/JuliaStrings/utf8proc" target="_blank">https://github.com/JuliaStrings/utf8proc</a></p>
-        <p><strong>License:</strong> MIT (library) and Unicode data license terms</p>
-      </div>
-      <pre>
+<div id="utf8proc">
+  <a name="utf8proc"></a>
+  <h3>utf8proc - <a href="https://github.com/JuliaStrings/utf8proc">https://github.com/JuliaStrings/utf8proc</a></h3>
+  <h4>Copyright &copy; 2014-2021 Steven G. Johnson, Jiahao Chen, Tony Kelman, Jonas Fonseca, and other contributors</h4>
+  <pre>
   utf8proc is licensed under the MIT license:
 
   Copyright (c) 2014-2021 by Steven G. Johnson, Jiahao Chen, Tony Kelman,
@@ -4219,23 +3986,14 @@ THE SOFTWARE.
 
   This package also includes Unicode-derived data with separate Unicode terms.
   See 3rdparty/utf8proc/LICENSE.md for full text.
-    </pre>
-    </details>
+</pre>
+</div>
 
-    <!-- discord-rpc -->
-    <details id="discord_rpc">
-      <summary>
-        <div>
-          <h3>discord-rpc</h3>
-          <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">MIT License</p>
-        </div>
-      </summary>
-      <div class="license-info">
-        <p><strong>Copyright:</strong> (C) 2017 Discord, Inc.</p>
-        <p><strong>Repository:</strong> <a href="https://github.com/discord/discord-rpc" target="_blank">https://github.com/discord/discord-rpc</a></p>
-        <p><strong>License:</strong> MIT License</p>
-      </div>
-      <pre>
+<div id="discord_rpc">
+  <a name="discord_rpc"></a>
+  <h3>discord-rpc - <a href="https://github.com/discord/discord-rpc">https://github.com/discord/discord-rpc</a></h3>
+  <h4>Copyright &copy; 2017-2026 Discord, Inc.</h4>
+  <pre>
 Copyright 2017 Discord, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -4255,23 +4013,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-    </pre>
-    </details>
+</pre>
+</div>
 
-    <!-- GLFW -->
-    <details id="glfw">
-        <summary>
-            <div>
-                <h3>GLFW</h3>
-                <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">zlib License</p>
-            </div>
-        </summary>
-        <div class="license-info">
-            <p><strong>Copyright:</strong> (C) 2002-2006 Marcus Geelnard, 2006-2019 Camilla Löwy</p>
-            <p><strong>Website:</strong> <a href="https://www.glfw.org/" target="_blank">https://www.glfw.org/</a></p>
-            <p><strong>License:</strong> zlib License</p>
-        </div>
-        <pre>
+<div id="glfw">
+  <a name="glfw"></a>
+  <h3>GLFW - <a href="https://www.glfw.org/">https://www.glfw.org/</a></h3>
+  <h4>Copyright &copy; 2002-2006 Marcus Geelnard, 2006-2026 Camilla Löwy</h4>
+  <pre>
 Copyright (c) 2002-2006 Marcus Geelnard
 
 Copyright (c) 2006-2019 Camilla Löwy
@@ -4294,23 +4043,14 @@ freely, subject to the following restrictions:
 
 3. This notice may not be removed or altered from any source
    distribution.
-        </pre>
-    </details>
+</pre>
+</div>
 
-    <!-- GLAD -->
-    <details id="glad">
-        <summary>
-            <div>
-                <h3>GLAD</h3>
-                <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">MIT License</p>
-            </div>
-        </summary>
-        <div class="license-info">
-            <p><strong>Copyright:</strong> (C) 2013-2022 David Herberth</p>
-            <p><strong>Repository:</strong> <a href="https://github.com/Dav1dde/glad" target="_blank">https://github.com/Dav1dde/glad</a></p>
-            <p><strong>License:</strong> MIT License</p>
-        </div>
-        <pre>
+<div id="glad">
+  <a name="glad"></a>
+  <h3>GLAD - <a href="https://github.com/Dav1dde/glad">https://github.com/Dav1dde/glad</a></h3>
+  <h4>Copyright &copy; 2013-2026 David Herberth</h4>
+  <pre>
 The glad source code:
 
     The MIT License (MIT)
@@ -4374,23 +4114,14 @@ The EGL Specification and various headers:
     CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
     MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
-        </pre>
-    </details>
+</pre>
+</div>
 
-    <!-- JSON -->
-    <details id="nlohmann_json">
-        <summary>
-            <div>
-                <h3>JSON for Modern C++</h3>
-                <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">MIT License</p>
-            </div>
-        </summary>
-        <div class="license-info">
-            <p><strong>Copyright:</strong> (C) 2013-2026 Niels Lohmann</p>
-            <p><strong>Repository:</strong> <a href="https://github.com/nlohmann/json" target="_blank">https://github.com/nlohmann/json</a></p>
-            <p><strong>License:</strong> MIT License</p>
-        </div>
-        <pre>
+<div id="nlohmann_json">
+  <a name="nlohmann_json"></a>
+  <h3>JSON for Modern C++ - <a href="https://github.com/nlohmann/json">https://github.com/nlohmann/json</a></h3>
+  <h4>Copyright &copy; 2013-2026 Niels Lohmann</h4>
+  <pre>
 MIT License
 
 Copyright (c) 2013-2026 Niels Lohmann
@@ -4400,23 +4131,42 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-        </pre>
-    </details>
+</pre>
+</div>
 
-    <!-- Remix Icon -->
-    <details id="remixicon">
-        <summary>
-            <div>
-                <h3>Remix Icon</h3>
-                <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">Apache License 2.0</p>
-            </div>
-        </summary>
-        <div class="license-info">
-            <p><strong>Copyright:</strong> (C) 2020-2024 Remix Design</p>
-            <p><strong>Website:</strong> <a href="https://remixicon.com/" target="_blank">https://remixicon.com/</a></p>
-            <p><strong>License:</strong> Apache License 2.0</p>
-        </div>
-        <pre>
+<div id="simpleini">
+  <a name="simpleini"></a>
+  <h3>SimpleIni - <a href="https://github.com/brodie/simpleini">https://github.com/brodie/simpleini</a></h3>
+  <h4>Copyright &copy; 2006-2026 Brodie Thiesfield</h4>
+  <pre>
+The MIT License (MIT)
+
+Copyright (c) 2006-2026 Brodie Thiesfield
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</pre>
+</div>
+
+<div id="remixicon">
+  <a name="remixicon"></a>
+  <h3>Remix Icon - <a href="https://remixicon.com/">https://remixicon.com/</a></h3>
+  <h4>Copyright &copy; 2020-2026 Remix Design</h4>
+  <pre>
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
@@ -4618,23 +4368,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-        </pre>
-    </details>
+</pre>
+</div>
 
-    <!-- spdlog -->
-    <details id="spdlog">
-        <summary>
-            <div>
-                <h3>spdlog</h3>
-                <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">MIT License</p>
-            </div>
-        </summary>
-        <div class="license-info">
-            <p><strong>Copyright:</strong> (C) 2016 - present, Gabi Melman and spdlog contributors.</p>
-            <p><strong>Repository:</strong> <a href="https://github.com/gabime/spdlog" target="_blank">https://github.com/gabime/spdlog</a></p>
-            <p><strong>License:</strong> MIT License</p>
-        </div>
-        <pre>
+<div id="spdlog">
+  <a name="spdlog"></a>
+  <h3>spdlog - <a href="https://github.com/gabime/spdlog">https://github.com/gabime/spdlog</a></h3>
+  <h4>Copyright &copy; 2016 - present, Gabi Melman and spdlog contributors.</h4>
+  <pre>
 The MIT License (MIT)
 
 Copyright (c) 2016 - present, Gabi Melman and spdlog contributors.
@@ -4660,27 +4401,18 @@ THE SOFTWARE.
 -- NOTE: Third party dependency used by this software --
 This software depends on the fmt lib (MIT License),
 and users must comply to its license: https://raw.githubusercontent.com/fmtlib/fmt/master/LICENSE
-    </pre>
-    </details>
+</pre>
+</div>
 
-    <!-- zlib -->
-    <details id="zlib">
-        <summary>
-            <div>
-                <h3>zlib</h3>
-                <p style="margin: 5px 0; font-size: 0.9em; font-weight: normal; color: #666;">zlib License</p>
-            </div>
-        </summary>
-        <div class="license-info">
-            <p><strong>Copyright:</strong> (C) 1995-2024 Jean-loup Gailly and Mark Adler</p>
-            <p><strong>Website:</strong> <a href="https://www.zlib.net/" target="_blank">https://www.zlib.net/</a></p>
-            <p><strong>License:</strong> zlib License</p>
-        </div>
-        <pre>
+<div id="zlib">
+  <a name="zlib"></a>
+  <h3>zlib - <a href="https://www.zlib.net/">https://www.zlib.net/</a></h3>
+  <h4>Copyright &copy; 1995-2026 Jean-loup Gailly and Mark Adler</h4>
+  <pre>
  zlib.h -- interface of the 'zlib' general purpose compression library
-  version 1.3.1, January 22nd, 2024
+  version 1.3.2, February 17th, 2026
 
-  Copyright (C) 1995-2024 Jean-loup Gailly and Mark Adler
+  Copyright (C) 1995-2026 Jean-loup Gailly and Mark Adler
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -4700,27 +4432,5 @@ and users must comply to its license: https://raw.githubusercontent.com/fmtlib/f
 
   Jean-loup Gailly        Mark Adler
   jloup@gzip.org          madler@alumni.caltech.edu
-        </pre>
-    </details>
-
-    <script>
-        function openDetailsFromHash() {
-            if (window.location.hash) {
-                const id = window.location.hash.substring(1);
-                const element = document.getElementById(id);
-                if (element && element.tagName === 'DETAILS') {
-                    element.open = true;
-                    setTimeout(() => {
-                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }, 100);
-                }
-            }
-        }
-
-        window.addEventListener('load', openDetailsFromHash);
-        window.addEventListener('hashchange', openDetailsFromHash);
-    </script>
-
-</body>
-
-</html>
+</pre>
+</div>
