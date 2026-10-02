@@ -4,7 +4,7 @@
     <ThirdPartyDir>$(SolutionDir)3rdparty\</ThirdPartyDir>
     <ThirdPartyBuildDir>$(ThirdPartyDir)build_msvc_$(Platform)\</ThirdPartyBuildDir>
     <ThirdPartyBuildDir Condition="$(Configuration.Contains('Clang'))">$(ThirdPartyDir)build_clang_$(Platform)\</ThirdPartyBuildDir>
-    <ThirdPartyCMakeConfig>MinSizeRel</ThirdPartyCMakeConfig>
+    <ThirdPartyCMakeConfig>Release</ThirdPartyCMakeConfig>
     <ThirdPartyCMakeConfig Condition="$(Configuration.StartsWith('Debug'))">Debug</ThirdPartyCMakeConfig>
   </PropertyGroup>
   <ItemDefinitionGroup>

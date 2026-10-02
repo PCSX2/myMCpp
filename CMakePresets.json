@@ -8,7 +8,7 @@
             "generator": "Visual Studio 18 2026",
             "binaryDir": "${sourceDir}/build/win-rel-2026",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "ReleaseMinSizeRel",
+                "CMAKE_BUILD_TYPE": "Release",
                 "ENABLE_VULKAN": "ON",
                 "ENABLE_OPENGL": "ON"
             }
@@ -32,7 +32,7 @@
             "generator": "Visual Studio 17 2022",
             "binaryDir": "${sourceDir}/build/win-rel-2022",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "MinSizeRel",
+                "CMAKE_BUILD_TYPE": "Release",
                 "ENABLE_VULKAN": "ON",
                 "ENABLE_OPENGL": "ON"
             }
@@ -56,7 +56,7 @@
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/win-clang-rel",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "MinSizeRel",
+                "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
                 "ENABLE_VULKAN": "ON",
@@ -84,7 +84,7 @@
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/linux-clang-x64-rel",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "MinSizeRel",
+                "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
                 "ENABLE_VULKAN": "ON",
@@ -112,7 +112,7 @@
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/linux-clang-arm64-rel",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "MinSizeRel",
+                "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
                 "ENABLE_VULKAN": "ON",
@@ -140,7 +140,7 @@
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/macos-rel",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "MinSizeRel",
+                "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "13.0",
                 "ENABLE_VULKAN": "ON",
                 "ENABLE_OPENGL": "ON",
@@ -166,7 +166,7 @@
         {
             "name": "win-rel-2026",
             "configurePreset": "win-rel-2026",
-            "configuration": "MinSizeRel",
+            "configuration": "Release",
             "jobs": 0
         },
         {
@@ -178,7 +178,7 @@
         {
             "name": "win-rel-2022",
             "configurePreset": "win-rel-2022",
-            "configuration": "MinSizeRel",
+            "configuration": "Release",
             "jobs": 0
         },
         {

@@ -177,13 +177,8 @@ jobs:
         shell: bash
         run: |
           set -e
-          if [ "${{ inputs.buildType }}" = "Debug" ]; then
-            CONF="Debug"
-          else
-            CONF="MinSizeRel"
-          fi
           APPIMAGE_NAME="${{ steps.artifact-metadata.outputs.artifact-name }}.AppImage"
-          BUILD_DIR="build/${{ env.PRESET }}/bin/$CONF"
+          BUILD_DIR="build/${{ env.PRESET }}/bin"
           APPDIRNAME="myMCpp.AppDir"
           
           if [ ! -f "${BUILD_DIR}/myMCpp" ]; then
