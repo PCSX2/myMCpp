@@ -176,6 +176,7 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->actionPreferences, &QAction::triggered, this, &MainWindow::onPreferences);
 	connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::onAbout);
 	connect(ui->actionGitHub, &QAction::triggered, this, &MainWindow::onGitHubRepository);
+	connect(ui->actionDiscord, &QAction::triggered, this, &MainWindow::onDiscordServer);
 	connect(ui->actionDocumentation, &QAction::triggered, this, &MainWindow::onDocumentation);
 	connect(ui->actionAboutQt, &QAction::triggered, this, &MainWindow::onAboutQt);
 
@@ -1217,6 +1218,11 @@ void MainWindow::onGitHubRepository()
 void MainWindow::onDocumentation()
 {
 	QDesktopServices::openUrl(QUrl("https://github.com/PCSX2/myMCpp/wiki"));
+}
+
+void MainWindow::onDiscordServer()
+{
+	QDesktopServices::openUrl(QUrl("https://discord.gg/muHT5TBteJ"));
 }
 
 void MainWindow::onAboutQt()
