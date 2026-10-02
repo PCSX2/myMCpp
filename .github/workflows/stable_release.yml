@@ -199,8 +199,8 @@ jobs:
         TAG: ${{ needs.cut_release.outputs.new_tag }}
       run: gh release upload "$TAG" release-assets/* --clobber
 
-    - name: Publish release
-      env:
-        GH_TOKEN: ${{ github.token }}
-        TAG: ${{ needs.cut_release.outputs.new_tag }}
-      run: gh release edit "$TAG" --draft=false
+    # - name: Publish release
+    #   env:
+    #     GH_TOKEN: ${{ github.token }}
+    #     TAG: ${{ needs.cut_release.outputs.new_tag }}
+    #   run: gh release edit "$TAG" --draft=false
