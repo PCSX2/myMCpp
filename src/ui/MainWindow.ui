@@ -105,8 +105,6 @@
     <addaction name="separator"/>
     <addaction name="actionGitHub"/>
     <addaction name="separator"/>
-    <addaction name="actionCheckUpdates"/>
-    <addaction name="separator"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQt"/>
    </widget>
@@ -399,17 +397,6 @@
    </property>
    <property name="statusTip">
     <string>Visit myMCpp on GitHub</string>
-   </property>
-  </action>
-  <action name="actionCheckUpdates">
-   <property name="icon">
-    <iconset theme="refresh-fill"/>
-   </property>
-   <property name="text">
-    <string>&amp;Check for Updates...</string>
-   </property>
-   <property name="statusTip">
-    <string>Check if a new version is available</string>
    </property>
   </action>
   <action name="actionAbout">

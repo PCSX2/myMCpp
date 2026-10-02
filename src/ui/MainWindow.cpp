@@ -177,7 +177,6 @@ MainWindow::MainWindow(Config* config, QWidget* parent)
 	connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::onAbout);
 	connect(ui->actionGitHub, &QAction::triggered, this, &MainWindow::onGitHubRepository);
 	connect(ui->actionDocumentation, &QAction::triggered, this, &MainWindow::onDocumentation);
-	connect(ui->actionCheckUpdates, &QAction::triggered, this, &MainWindow::onCheckForUpdates);
 	connect(ui->actionAboutQt, &QAction::triggered, this, &MainWindow::onAboutQt);
 
 	connect(ui->cardBrowser, &QTreeWidget::itemSelectionChanged,
@@ -1218,13 +1217,6 @@ void MainWindow::onGitHubRepository()
 void MainWindow::onDocumentation()
 {
 	QDesktopServices::openUrl(QUrl("https://github.com/PCSX2/myMCpp/wiki"));
-}
-
-void MainWindow::onCheckForUpdates()
-{
-	QMessageBox::information(this, tr("Check for Updates"),
-		tr("TBD\n\n"
-		   "For updates, visit: https://github.com/PCSX2/myMCpp/releases"));
 }
 
 void MainWindow::onAboutQt()
