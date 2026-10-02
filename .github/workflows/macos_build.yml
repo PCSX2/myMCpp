@@ -130,13 +130,11 @@ jobs:
         run: |
           if [ "${{ inputs.buildType }}" = "Debug" ]; then
             PRESET="macos-dbg"
-            CONF="Debug"
           else
             PRESET="macos-rel"
-            CONF="MinSizeRel"
           fi
           mkdir -p ci-artifacts
-          mv build/$PRESET/bin/$CONF/myMCpp.app ci-artifacts/
+          mv build/$PRESET/bin/myMCpp.app ci-artifacts/
 
       - name: Zip Build Artifacts
         run: |

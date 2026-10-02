@@ -22,7 +22,7 @@ if /I "%PLATFORM%"=="x64" (
     exit /b 1
 )
 
-set CMAKE_CONFIG=MinSizeRel
+set CMAKE_CONFIG=Release
 echo %CONFIG% | findstr /I /B "Debug" >nul && set CMAKE_CONFIG=Debug
 
 set CMAKE_TOOLSET=
