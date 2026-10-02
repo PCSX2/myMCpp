@@ -337,6 +337,9 @@ typedef enum spv_operand_type_t {
   SPV_OPERAND_TYPE_OPTIONAL_CAPABILITY,
   SPV_OPERAND_TYPE_VARIABLE_CAPABILITY,
 
+  // SPV_QCOM_image_processing3
+  SPV_OPERAND_TYPE_GATHER_MODES,
+
   // This is a sentinel value, and does not represent an operand type.
   // It should come last.
   SPV_OPERAND_TYPE_NUM_OPERAND_TYPES,
@@ -361,10 +364,12 @@ typedef enum spv_ext_inst_type_t {
   SPV_EXT_INST_TYPE_DEBUGINFO,
   SPV_EXT_INST_TYPE_OPENCL_DEBUGINFO_100,
   SPV_EXT_INST_TYPE_NONSEMANTIC_CLSPVREFLECTION,
+  SPV_EXT_INST_TYPE_NONSEMANTIC_GRAPH_DEBUGINFO,
   SPV_EXT_INST_TYPE_NONSEMANTIC_SHADER_DEBUGINFO_100,
   SPV_EXT_INST_TYPE_NONSEMANTIC_VKSPREFLECTION,
   SPV_EXT_INST_TYPE_TOSA_001000_1,
   SPV_EXT_INST_TYPE_ARM_MOTION_ENGINE_100,
+  SPV_EXT_INST_TYPE_ARM_EXPERIMENTAL_ML_OPERATIONS,
 
   // Multiple distinct extended instruction set types could return this
   // value, if they are prefixed with NonSemantic. and are otherwise
@@ -396,6 +401,11 @@ typedef enum spv_fp_encoding_t {
   SPV_FP_ENCODING_BFLOAT16,
   SPV_FP_ENCODING_FLOAT8_E4M3,
   SPV_FP_ENCODING_FLOAT8_E5M2,
+  SPV_FP_ENCODING_FLOAT6_E2M3,
+  SPV_FP_ENCODING_FLOAT6_E3M2,
+  SPV_FP_ENCODING_FLOAT4_E2M1,
+  SPV_FP_ENCODING_FLOAT8_UNSIGNED_E8M0,
+  SPV_FP_ENCODING_MXINT8,
 } spv_fp_encoding_t;
 
 typedef enum spv_text_to_binary_options_t {

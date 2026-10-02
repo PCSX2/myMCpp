@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "source/diagnostic.h"
+#include "source/latest_version_opencl_std_header.h"
 #include "source/opcode.h"
 #include "source/spirv_constant.h"
 #include "source/spirv_target_env.h"
@@ -1250,6 +1251,14 @@ spv_result_t CheckDecorationsOfVariables(ValidationState_t& vstate) {
                     "decorations specified";
         }
       }
+      if (storageClass == spv::StorageClass::TileImageEXT) {
+        if (!hasDecoration(var_id, spv::Decoration::Location, vstate)) {
+          return vstate.diag(SPV_ERROR_INVALID_DATA, vstate.FindDef(var_id))
+                 << vstate.VkErrorID(8723)
+                 << "Variable with TileImageEXT Storage Class must be "
+                    "decorated with Location.";
+        }
+      }
     }
   }
   return SPV_SUCCESS;
@@ -1823,11 +1832,23 @@ spv_result_t CheckFPRoundingModeForShaders(ValidationState_t& vstate,
 
 spv_result_t CheckFPRoundingModeForKernels(ValidationState_t& vstate,
                                            const Instruction& inst) {
-  // Validates conversion instruction to or from a floating-point type
   const auto opcode = inst.opcode();
-  if (opcode != spv::Op::OpConvertFToU && opcode != spv::Op::OpConvertFToS &&
-      opcode != spv::Op::OpConvertSToF && opcode != spv::Op::OpConvertUToF &&
-      opcode != spv::Op::OpFConvert) {
+  const bool isSqrtExtendedInstruction =
+      spvIsExtendedInstruction(inst.opcode()) &&
+      inst.ext_inst_type() == SPV_EXT_INST_TYPE_OPENCL_STD &&
+      inst.word(4) == OpenCLLIB::Sqrt;
+  if (opcode == spv::Op::OpFDiv || isSqrtExtendedInstruction) {
+    if (!vstate.HasCapability(spv::Capability::RoundedDivideSqrtINTEL)) {
+      return vstate.diag(SPV_ERROR_INVALID_ID, &inst)
+             << "FPRoundingMode decoration can be applied to OpFDiv and "
+                "sqrt extended instructions only if the RoundedDivideSqrtINTEL "
+                "capability is enabled.";
+    }
+  } else if (opcode != spv::Op::OpConvertFToU &&
+             opcode != spv::Op::OpConvertFToS &&
+             opcode != spv::Op::OpConvertSToF &&
+             opcode != spv::Op::OpConvertUToF &&
+             opcode != spv::Op::OpFConvert) {
     return vstate.diag(SPV_ERROR_INVALID_ID, &inst)
            << "FPRoundingMode decoration can be applied only to a conversion "
               "instruction to or from a floating-point type.";
@@ -2446,20 +2467,13 @@ spv_result_t CheckInvalidVulkanExplicitLayout(ValidationState_t& vstate) {
       case spv::Op::OpBufferPointerEXT: {
         const auto ptr_id = inst.GetOperandAs<uint32_t>(1);
         const auto ptr_type = vstate.FindDef(vstate.FindDef(ptr_id)->type_id());
-        // Check the type of the data operand for an invalid layout.
         sc = ptr_type->GetOperandAs<spv::StorageClass>(1);
-        if (!AllowsLayout(vstate, sc) &&
-            UsesExplicitLayout(vstate, type_id, cache) !=
-                spv::Decoration::Max) {
+        // OpBufferPointerEXT needs to be in explicit layout, which it is,
+        // because it must be Uniform/StorageBuffer
+        if (sc != spv::StorageClass::StorageBuffer &&
+            sc != spv::StorageClass::Uniform) {
           return vstate.diag(SPV_ERROR_INVALID_ID, &inst)
-                 << vstate.VkErrorID(11346)
-                 << "The result type operand of OpBufferPointerEXT must have "
-                 << "a Type operand that is explicitly laid out : "
-                 << vstate.getIdName(type_id);
-        } else if (sc != spv::StorageClass::StorageBuffer &&
-                   sc != spv::StorageClass::Uniform) {
-          return vstate.diag(SPV_ERROR_INVALID_ID, &inst)
-                 << "OpBufferPointerEXT's Result Type must be a pointer type "
+                 << "OpBufferPointerEXT Result Type must be a pointer type "
                  << "with a Storage Class of Uniform or StorageBuffer.";
         }
         break;
