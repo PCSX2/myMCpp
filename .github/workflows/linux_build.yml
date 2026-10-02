@@ -125,7 +125,7 @@ jobs:
           host: 'linux'
           target: 'desktop'
           arch: 'linux_gcc_64'
-          modules: 'qtimageformats qtwaylandcompositor'
+          modules: 'qtwaylandcompositor'
           cache: true
           use-official: true
 
@@ -137,7 +137,7 @@ jobs:
           host: 'linux_arm64'
           target: 'desktop'
           arch: 'linux_gcc_arm64'
-          modules: 'qtimageformats qtwaylandcompositor'
+          modules: 'qtwaylandcompositor'
           cache: true
           use-official: true
 

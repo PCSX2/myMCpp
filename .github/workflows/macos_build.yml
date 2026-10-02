@@ -97,7 +97,6 @@ jobs:
           host: 'mac'
           target: 'desktop'
           arch: 'clang_64'
-          modules: 'qtimageformats'
           cache: true
           use-official: true
 

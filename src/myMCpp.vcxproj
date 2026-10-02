@@ -30,6 +30,10 @@
     <Import Condition="$(Configuration.Contains('Release'))" Project="$(MSBuildThisFileDirectory)common\vsprops\opt_release.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
 
   <!-- Project-specific settings -->
   <ItemDefinitionGroup>
@@ -91,9 +95,10 @@ if not exist "%QT_BIN%\lrelease.exe" (
 
 :after_lrelease
 xcopy /Y /E /I "$(SolutionDir)resources" "$(TargetDir)resources"
+xcopy /Y "$(SolutionDir)packaging\windows\qt.conf" "$(TargetDir)"
 
 if exist "%QT_BIN%\windeployqt.exe" (
-  "%QT_BIN%\windeployqt.exe" --no-compiler-runtime --no-opengl-sw "$(TargetPath)"
+  "%QT_BIN%\windeployqt.exe" --no-compiler-runtime --no-opengl-sw --plugindir "$(TargetDir)plugins" --exclude-plugins qpdf,qicns,qtga,qtiff,qwbmp,qwebp "$(TargetPath)"
 ) else (
   echo Qt windeployqt not found at "%QT_BIN%". Qt DLLs/plugins will not be deployed.
 )
@@ -106,6 +111,7 @@ if exist "%QT_BIN%\windeployqt.exe" (
     <ClCompile Include="main.cpp" />
     <ResourceCompile Include="$(SolutionDir)packaging\windows\myMCpp.rc" />
     <QtRcc Include="$(SolutionDir)resources\resources.qrc" />
+    <None Include="$(SolutionDir)packaging\windows\qt.conf" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="common\common.vcxproj">
