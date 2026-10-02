@@ -82,12 +82,17 @@ if(WIN32)
             COMMAND "${WINDEPLOYQT_EXECUTABLE}"
             --no-compiler-runtime
             --no-opengl-sw
+            --plugindir "$<TARGET_FILE_DIR:myMCpp>/plugins"
+            --exclude-plugins qpdf,qicns,qtga,qtiff,qwbmp,qwebp
             "$<TARGET_FILE:myMCpp>"
             VERBATIM
         )
     endif()
 
     add_custom_command(TARGET myMCpp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/packaging/windows/qt.conf"
+        "$<TARGET_FILE_DIR:myMCpp>/qt.conf"
         COMMAND ${CMAKE_COMMAND} -E echo "Copying resources folder to output directory..."
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/resources

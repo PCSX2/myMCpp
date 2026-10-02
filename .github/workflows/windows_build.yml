@@ -87,7 +87,6 @@ jobs:
           host: 'windows'
           target: 'desktop'
           arch: 'win64_msvc2022_64'
-          modules: 'qtimageformats'
           cache: true
           aqtsource: 'git+https://github.com/miurahr/aqtinstall.git'
           use-official: true
@@ -100,7 +99,6 @@ jobs:
           host: 'windows_arm64'
           target: 'desktop'
           arch: 'win64_msvc2022_arm64'
-          modules: 'qtimageformats'
           cache: true
           aqtsource: 'git+https://github.com/miurahr/aqtinstall.git'
           use-official: true

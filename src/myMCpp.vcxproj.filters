@@ -28,5 +28,8 @@
     <QtRcc Include="$(SolutionDir)resources\resources.qrc">
       <Filter>resources</Filter>
     </QtRcc>
+    <None Include="$(SolutionDir)packaging\windows\qt.conf">
+      <Filter>packaging\windows</Filter>
+    </None>
   </ItemGroup>
 </Project>
