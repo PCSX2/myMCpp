@@ -75,41 +75,38 @@ LOADER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(VkI
         // Always can get a global entrypoint from vkGetInstanceProcAddr with a NULL instance handle
         if (instance == VK_NULL_HANDLE) {
             return addr;
-        } else {
-            // New behavior only returns a global entrypoint if the instance handle is NULL.
-            // Old behavior is to return a global entrypoint regardless of the value of the instance handle.
-            // Use new behavior if: The instance is valid and the minor version of the instance is greater than 1.2, which
-            // was when the new behavior was added. (eg, it is enforced in the next minor version of vulkan, which will be 1.3)
-
-            // First check if instance is valid - loader_get_instance() returns NULL if it isn't.
-            struct loader_instance *ptr_instance = loader_get_instance(instance);
-            if (ptr_instance != NULL &&
-                loader_check_version_meets_required(loader_combine_version(1, 3, 0), ptr_instance->app_api_version)) {
-                // New behavior
-                return NULL;
-            } else {
-                // Old behavior
-                return addr;
-            }
         }
-    } else {
-        // All other functions require a valid instance handle to get
-        if (instance == VK_NULL_HANDLE) {
+        // New behavior only returns a global entrypoint if the instance handle is NULL.
+        // Old behavior is to return a global entrypoint regardless of the value of the instance handle.
+        // Use new behavior if: The instance is valid and the minor version of the instance is greater than 1.2, which
+        // was when the new behavior was added. (eg, it is enforced in the next minor version of vulkan, which will be 1.3)
+
+        // First check if instance is valid - loader_get_instance() returns NULL if it isn't.
+        struct loader_instance *ptr_instance = loader_get_instance(instance);
+        if (ptr_instance != NULL &&
+            loader_check_version_meets_required(loader_combine_version(1, 3, 0), ptr_instance->app_api_version)) {
+            // New behavior
             return NULL;
         }
-        struct loader_instance *ptr_instance = loader_get_instance(instance);
-        // If we've gotten here and the pointer is NULL, it's invalid
-        if (ptr_instance == NULL) {
-            loader_log(NULL, VULKAN_LOADER_FATAL_ERROR_BIT | VULKAN_LOADER_ERROR_BIT | VULKAN_LOADER_VALIDATION_BIT, 0,
-                       "vkGetInstanceProcAddr: Invalid instance [VUID-vkGetInstanceProcAddr-instance-parameter]");
-            abort(); /* Intentionally fail so user can correct issue. */
-        }
-        // Return trampoline code for non-global entrypoints including any extensions.
-        // Device extensions are returned if a layer or ICD supports the extension.
-        // Instance extensions are returned if the extension is enabled and the
-        // loader or someone else supports the extension
-        return trampoline_get_proc_addr(ptr_instance, pName);
+        // Old behavior
+        return addr;
     }
+    // All other functions require a valid instance handle to get
+    if (instance == VK_NULL_HANDLE) {
+        return NULL;
+    }
+    struct loader_instance *ptr_instance = loader_get_instance(instance);
+    // If we've gotten here and the pointer is NULL, it's invalid
+    if (ptr_instance == NULL) {
+        loader_log(NULL, VULKAN_LOADER_FATAL_ERROR_BIT | VULKAN_LOADER_ERROR_BIT | VULKAN_LOADER_VALIDATION_BIT, 0,
+                   "vkGetInstanceProcAddr: Invalid instance [VUID-vkGetInstanceProcAddr-instance-parameter]");
+        abort(); /* Intentionally fail so user can correct issue. */
+    }
+    // Return trampoline code for non-global entrypoints including any extensions.
+    // Device extensions are returned if a layer or ICD supports the extension.
+    // Instance extensions are returned if the extension is enabled and the
+    // loader or someone else supports the extension
+    return trampoline_get_proc_addr(ptr_instance, pName);
 }
 
 // Get a device level or global level entry point address.
@@ -452,7 +449,7 @@ void loader_add_instance_only_debug_funcs(struct loader_instance *ptr_instance) 
                 break;
             }
             // Last item
-            else if (cur_node->pNext == NULL) {
+            if (cur_node->pNext == NULL) {
                 cur_node->pNext = ptr_instance->instance_only_dbg_function_head;
             }
             cur_node = cur_node->pNext;
@@ -857,7 +854,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyInstance(VkInstance instance, 
         for (uint32_t i = 0; i < ptr_instance->phys_dev_count_tramp; i++) {
             loader_instance_heap_free(ptr_instance, ptr_instance->phys_devs_tramp[i]);
         }
-        loader_instance_heap_free(ptr_instance, ptr_instance->phys_devs_tramp);
+        loader_instance_heap_free(ptr_instance, (void *)ptr_instance->phys_devs_tramp);
     }
 
     // Destroy the debug callbacks created during instance creation
@@ -877,6 +874,10 @@ LOADER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstan
     VkResult res = VK_SUCCESS;
     struct loader_instance *inst;
 
+    struct loader_envvar_id_filter device_id_filter = {0, NULL};
+    struct loader_envvar_id_filter vendor_id_filter = {0, NULL};
+    struct loader_envvar_id_filter driver_id_filter = {0, NULL};
+
     loader_platform_thread_lock_mutex(&loader_lock);
 
     inst = loader_get_instance(instance);
@@ -893,10 +894,6 @@ LOADER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstan
         res = VK_ERROR_INITIALIZATION_FAILED;
         goto out;
     }
-
-    struct loader_envvar_id_filter device_id_filter;
-    struct loader_envvar_id_filter vendor_id_filter;
-    struct loader_envvar_id_filter driver_id_filter;
 
     parse_id_filter_environment_var(inst, VK_DEVICE_ID_FILTER_ENV_VAR, &device_id_filter);
     parse_id_filter_environment_var(inst, VK_VENDOR_ID_FILTER_ENV_VAR, &vendor_id_filter);
@@ -918,9 +915,9 @@ LOADER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstan
             goto out;
         }
 
-        res = loader_filter_enumerated_physical_device(inst, &device_id_filter, &vendor_id_filter, &driver_id_filter,
-                                                       physical_device_count, physical_devices, pPhysicalDeviceCount,
-                                                       pPhysicalDevices);
+        res = loader_filter_enumerated_physical_devices(inst, &device_id_filter, &vendor_id_filter, &driver_id_filter,
+                                                        physical_device_count, physical_devices, pPhysicalDeviceCount,
+                                                        pPhysicalDevices);
     }
 
     if (NULL != pPhysicalDevices && (VK_SUCCESS == res || VK_INCOMPLETE == res)) {
@@ -935,6 +932,9 @@ LOADER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstan
     }
 
 out:
+    free_id_filters(inst, &device_id_filter);
+    free_id_filters(inst, &vendor_id_filter);
+    free_id_filters(inst, &driver_id_filter);
 
     loader_platform_thread_unlock_mutex(&loader_lock);
 
@@ -956,7 +956,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFeatures(VkPhysicalD
 }
 
 LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format,
-                                                                             VkFormatProperties *pFormatInfo) {
+                                                                             VkFormatProperties *pFormatProperties) {
     const VkLayerInstanceDispatchTable *disp;
     VkPhysicalDevice unwrapped_phys_dev = loader_unwrap_physical_device(physicalDevice);
     if (VK_NULL_HANDLE == unwrapped_phys_dev) {
@@ -966,7 +966,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFormatProperties(VkP
         abort(); /* Intentionally fail so user can correct issue. */
     }
     disp = loader_get_instance_layer_dispatch(physicalDevice);
-    disp->GetPhysicalDeviceFormatProperties(unwrapped_phys_dev, format, pFormatInfo);
+    disp->GetPhysicalDeviceFormatProperties(unwrapped_phys_dev, format, pFormatProperties);
 }
 
 LOADER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceImageFormatProperties(
@@ -1001,7 +1001,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceProperties(VkPhysica
 
 LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice,
                                                                                   uint32_t *pQueueFamilyPropertyCount,
-                                                                                  VkQueueFamilyProperties *pQueueProperties) {
+                                                                                  VkQueueFamilyProperties *pQueueFamilyProperties) {
     const VkLayerInstanceDispatchTable *disp;
     VkPhysicalDevice unwrapped_phys_dev = loader_unwrap_physical_device(physicalDevice);
     if (VK_NULL_HANDLE == unwrapped_phys_dev) {
@@ -1011,7 +1011,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyPropertie
         abort(); /* Intentionally fail so user can correct issue. */
     }
     disp = loader_get_instance_layer_dispatch(physicalDevice);
-    disp->GetPhysicalDeviceQueueFamilyProperties(unwrapped_phys_dev, pQueueFamilyPropertyCount, pQueueProperties);
+    disp->GetPhysicalDeviceQueueFamilyProperties(unwrapped_phys_dev, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 }
 
 LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice,
@@ -1133,7 +1133,7 @@ LOADER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(Vk
     return VK_SUCCESS;
 }
 
-LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetDeviceQueue(VkDevice device, uint32_t queueNodeIndex, uint32_t queueIndex,
+LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex,
                                                           VkQueue *pQueue) {
     const VkLayerDispatchTable *disp = loader_get_dispatch(device);
     if (NULL == disp) {
@@ -1142,7 +1142,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetDeviceQueue(VkDevice device, uint3
         abort(); /* Intentionally fail so user can correct issue. */
     }
 
-    disp->GetDeviceQueue(device, queueNodeIndex, queueIndex, pQueue);
+    disp->GetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
     if (pQueue != NULL && *pQueue != NULL) {
         loader_set_dispatch(*pQueue, disp);
     }
@@ -2475,7 +2475,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResetEvent(VkCommandBuffer command
 }
 
 LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent *pEvents,
-                                                         VkPipelineStageFlags sourceStageMask, VkPipelineStageFlags dstStageMask,
+                                                         VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
                                                          uint32_t memoryBarrierCount, const VkMemoryBarrier *pMemoryBarriers,
                                                          uint32_t bufferMemoryBarrierCount,
                                                          const VkBufferMemoryBarrier *pBufferMemoryBarriers,
@@ -2488,7 +2488,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents(VkCommandBuffer command
         abort(); /* Intentionally fail so user can correct issue. */
     }
 
-    disp->CmdWaitEvents(commandBuffer, eventCount, pEvents, sourceStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers,
+    disp->CmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers,
                         bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 
@@ -2510,7 +2510,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier(VkCommandBuffer co
                              bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 
-LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t slot,
+LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
                                                          VkFlags flags) {
     const VkLayerDispatchTable *disp = loader_get_dispatch(commandBuffer);
     if (NULL == disp) {
@@ -2519,10 +2519,10 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBeginQuery(VkCommandBuffer command
         abort(); /* Intentionally fail so user can correct issue. */
     }
 
-    disp->CmdBeginQuery(commandBuffer, queryPool, slot, flags);
+    disp->CmdBeginQuery(commandBuffer, queryPool, query, flags);
 }
 
-LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t slot) {
+LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
     const VkLayerDispatchTable *disp = loader_get_dispatch(commandBuffer);
     if (NULL == disp) {
         loader_log(NULL, VULKAN_LOADER_FATAL_ERROR_BIT | VULKAN_LOADER_ERROR_BIT | VULKAN_LOADER_VALIDATION_BIT, 0,
@@ -2530,7 +2530,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdEndQuery(VkCommandBuffer commandBu
         abort(); /* Intentionally fail so user can correct issue. */
     }
 
-    disp->CmdEndQuery(commandBuffer, queryPool, slot);
+    disp->CmdEndQuery(commandBuffer, queryPool, query);
 }
 
 LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
@@ -2546,7 +2546,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResetQueryPool(VkCommandBuffer com
 }
 
 LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
-                                                             VkQueryPool queryPool, uint32_t slot) {
+                                                             VkQueryPool queryPool, uint32_t query) {
     const VkLayerDispatchTable *disp = loader_get_dispatch(commandBuffer);
     if (NULL == disp) {
         loader_log(NULL, VULKAN_LOADER_FATAL_ERROR_BIT | VULKAN_LOADER_ERROR_BIT | VULKAN_LOADER_VALIDATION_BIT, 0,
@@ -2554,7 +2554,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp(VkCommandBuffer com
         abort(); /* Intentionally fail so user can correct issue. */
     }
 
-    disp->CmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, slot);
+    disp->CmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
 }
 
 LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
@@ -2618,7 +2618,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdEndRenderPass(VkCommandBuffer comm
     disp->CmdEndRenderPass(commandBuffer);
 }
 
-LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBuffersCount,
+LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
                                                               const VkCommandBuffer *pCommandBuffers) {
     const VkLayerDispatchTable *disp = loader_get_dispatch(commandBuffer);
     if (NULL == disp) {
@@ -2627,7 +2627,7 @@ LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdExecuteCommands(VkCommandBuffer co
         abort(); /* Intentionally fail so user can correct issue. */
     }
 
-    disp->CmdExecuteCommands(commandBuffer, commandBuffersCount, pCommandBuffers);
+    disp->CmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
 }
 
 // ---- Vulkan core 1.1 trampolines
@@ -2636,6 +2636,10 @@ LOADER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceGroups(
     VkInstance instance, uint32_t *pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties *pPhysicalDeviceGroupProperties) {
     VkResult res = VK_SUCCESS;
     struct loader_instance *inst = NULL;
+
+    struct loader_envvar_id_filter device_id_filter = {0, NULL};
+    struct loader_envvar_id_filter vendor_id_filter = {0, NULL};
+    struct loader_envvar_id_filter driver_id_filter = {0, NULL};
 
     loader_platform_thread_lock_mutex(&loader_lock);
 
@@ -2653,10 +2657,6 @@ LOADER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceGroups(
         res = VK_ERROR_INITIALIZATION_FAILED;
         goto out;
     }
-
-    struct loader_envvar_id_filter device_id_filter;
-    struct loader_envvar_id_filter vendor_id_filter;
-    struct loader_envvar_id_filter driver_id_filter;
 
     parse_id_filter_environment_var(inst, VK_DEVICE_ID_FILTER_ENV_VAR, &device_id_filter);
     parse_id_filter_environment_var(inst, VK_VENDOR_ID_FILTER_ENV_VAR, &vendor_id_filter);
@@ -2697,6 +2697,9 @@ LOADER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceGroups(
     }
 
 out:
+    free_id_filters(inst, &device_id_filter);
+    free_id_filters(inst, &vendor_id_filter);
+    free_id_filters(inst, &driver_id_filter);
 
     loader_platform_thread_unlock_mutex(&loader_lock);
     return res;
@@ -2774,9 +2777,8 @@ vkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice physicalDevice, const
 
     if (inst != NULL && inst->enabled_extensions.khr_get_physical_device_properties2) {
         return disp->GetPhysicalDeviceImageFormatProperties2KHR(unwrapped_phys_dev, pImageFormatInfo, pImageFormatProperties);
-    } else {
-        return disp->GetPhysicalDeviceImageFormatProperties2(unwrapped_phys_dev, pImageFormatInfo, pImageFormatProperties);
     }
+    return disp->GetPhysicalDeviceImageFormatProperties2(unwrapped_phys_dev, pImageFormatInfo, pImageFormatProperties);
 }
 
 LOADER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyProperties2(

@@ -538,7 +538,6 @@ void *loader_get_dev_ext_trampoline(uint32_t index) {
         CASE_HANDLE(247);
         CASE_HANDLE(248);
         CASE_HANDLE(249);
+        default: return NULL;
     }
-
-    return NULL;
 }

@@ -18,7 +18,7 @@
 # ~~~
 cmake_minimum_required(VERSION 3.22.1)
 
-project(VULKAN_LOADER VERSION 1.4.356 LANGUAGES C)
+project(VULKAN_LOADER VERSION 1.4.363 LANGUAGES C)
 
 option(CODE_COVERAGE "Enable Code Coverage" OFF)
 if (CODE_COVERAGE)
@@ -26,6 +26,14 @@ if (CODE_COVERAGE)
     add_code_coverage_all_targets()
 endif()
 
+option(USE_CLANG_TIDY "Run clang-tidy on the loader sources as part of the build")
+if (USE_CLANG_TIDY)
+    if (CMAKE_VERSION VERSION_LESS "3.27")
+        message(FATAL_ERROR "USE_CLANG_TIDY requires CMake 3.27 or newer (for the SKIP_LINTING source property)")
+    endif()
+    find_program(CLANG_TIDY_EXE NAMES clang-tidy REQUIRED)
+    set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}")
+endif()
 
 # This variable enables downstream users to customize the target API
 # variant (e.g. Vulkan SC)
@@ -53,8 +61,16 @@ if(WIN32)
 endif()
 
 find_package(VulkanHeaders ${PROJECT_VERSION} CONFIG QUIET)
-if (${VulkanHeaders_VERSION} VERSION_GREATER ${PROJECT_VERSION})
+if (DEFINED ${VulkanHeaders_VERSION} AND ${VulkanHeaders_VERSION} VERSION_GREATER ${PROJECT_VERSION})
     message(WARNING "The Vulkan Headers version ${VulkanHeaders_VERSION} is newer than the expected version ${PROJECT_VERSION} used by the Vulkan-Loader. May cause issues.")
+endif()
+
+# Workaround AppleClang using the wrong headers when there are headers in /usr/local/include
+if (CMAKE_C_COMPILER_ID STREQUAL AppleClang AND TARGET Vulkan::Headers AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.25)
+    get_target_property(vulkan_headers_aliased Vulkan::Headers ALIASED_TARGET)
+    if (NOT vulkan_headers_aliased)
+        set_target_properties(Vulkan::Headers PROPERTIES SYSTEM OFF)
+    endif()
 endif()
 
 include(GNUInstallDirs)

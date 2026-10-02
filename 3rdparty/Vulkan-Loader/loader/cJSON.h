@@ -175,8 +175,8 @@ loader_cJSON_PrintBuffered(const cJSON *item, int prebuffer, cJSON_bool fmt, boo
  * failure. */
 /* NOTE: cJSON is not always 100% accurate in estimating how much memory it will use, so to be safe allocate 5 bytes more than you
  * actually need */
-CJSON_PUBLIC(cJSON_bool)
-loader_cJSON_PrintPreallocated(cJSON *item, char *buffer, const int length, const cJSON_bool format);
+TEST_FUNCTION_EXPORT CJSON_PUBLIC(cJSON_bool)
+    loader_cJSON_PrintPreallocated(cJSON *item, char *buffer, const int length, const cJSON_bool format);
 /* Delete a cJSON entity and all subentities. */
 TEST_FUNCTION_EXPORT CJSON_PUBLIC(void) loader_cJSON_Delete(cJSON *item);
 
@@ -188,7 +188,7 @@ CJSON_PUBLIC(cJSON *) loader_cJSON_GetArrayItem(const cJSON *array, int index);
 CJSON_PUBLIC(cJSON *) loader_cJSON_GetObjectItem(const cJSON *const object, const char *const string);
 CJSON_PUBLIC(cJSON *) loader_cJSON_GetObjectItemCaseSensitive(const cJSON *const object, const char *const string);
 CJSON_PUBLIC(cJSON_bool) loader_cJSON_HasObjectItem(const cJSON *object, const char *string);
-/* For analysing failed parses. This returns a pointer to the parse error. You'll probably need to look a few chars back to make
+/* For analyzing failed parses. This returns a pointer to the parse error. You'll probably need to look a few chars back to make
  * sense of it. Defined when loader_cJSON_Parse() returns 0. 0 when loader_cJSON_Parse() succeeds. */
 CJSON_PUBLIC(const char *) cJSON_GetErrorPtr(void);
 
