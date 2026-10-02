@@ -298,7 +298,7 @@ extern "C" {
  *  release is made that does not contain any API changes.
  *  @ingroup init
  */
-#define GLFW_VERSION_REVISION       0
+#define GLFW_VERSION_REVISION       1
 /*! @} */
 
 /*! @brief One.
@@ -1343,6 +1343,10 @@ extern "C" {
 #define GLFW_PLATFORM_X11           0x00060004
 #define GLFW_PLATFORM_NULL          0x00060005
 /*! @} */
+
+/* Reserved platform define for external Emscripten ports: 0x00060006
+ * See https://github.com/pongasoft/emscripten-glfw
+ */
 
 #define GLFW_DONT_CARE              -1
 
@@ -6169,6 +6173,10 @@ GLFWAPI GLFWwindow* glfwGetCurrentContext(void);
  *
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
  *  GLFW_NO_WINDOW_CONTEXT and @ref GLFW_PLATFORM_ERROR.
+ *
+ *  @remark __Wayland:__ When the swap interval is greater than zero and the
+ *  window is not in view, this function may take a few extra milliseconds to
+ *  return.
  *
  *  @remark __EGL:__ The context of the specified window must be current on the
  *  calling thread.
