@@ -38,7 +38,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)build\$(Platform)\$(Configuration)\generated;$(SolutionDir)build\$(Platform)\$(Configuration)\obj\myMCpp-qt\qt\uic;$(Qt_INCLUDEPATH_);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)build\$(Platform)\$(Configuration)\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)resources;$(SolutionDir)build\$(Platform)\$(Configuration)\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -90,7 +90,7 @@ if not exist "%QT_BIN%\lrelease.exe" (
 "%QT_BIN%\lrelease.exe" "$(ProjectDir)ui\Translations\myMCpp_zh-TW.ts" -qm "$(TargetDir)translations\myMCpp_zh-TW.qm"
 
 :after_lrelease
-xcopy /Y /E /I "$(ProjectDir)..\resources" "$(TargetDir)resources"
+xcopy /Y /E /I "$(SolutionDir)resources" "$(TargetDir)resources"
 
 if exist "%QT_BIN%\windeployqt.exe" (
   "%QT_BIN%\windeployqt.exe" --no-compiler-runtime --no-opengl-sw "$(TargetPath)"
@@ -104,8 +104,8 @@ if exist "%QT_BIN%\windeployqt.exe" (
 
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ResourceCompile Include="..\resources\myMCpp.rc" />
-    <QtRcc Include="..\resources\resources.qrc" />
+    <ResourceCompile Include="$(SolutionDir)packaging\windows\myMCpp.rc" />
+    <QtRcc Include="$(SolutionDir)resources\resources.qrc" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="common\common.vcxproj">

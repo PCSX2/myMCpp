@@ -18,6 +18,7 @@
       - 'cmake/**/*'
       - '.github/**/*'
       - 'scripts/**/*'
+      - 'packaging/**/*'
 
 "OS: Linux":
   - changed-files:
@@ -26,13 +27,14 @@
       - '**/*linux*'
       - '**/*Wayland*'
       - '**/*X11*'
+      - 'packaging/linux/**/*'
 
 "OS: Windows":
   - changed-files:
     - any-glob-to-any-file:
       - '**/*WGL*'
       - '**/*win32*'
-      - 'resources/myMCpp.rc'
+      - 'packaging/windows/**/*'
 
 "OS: macOS":
   - changed-files:
@@ -41,6 +43,7 @@
       - '**/*AGL*'
       - '**/*.mm'
       - '**/*Cocoa*'
+      - 'packaging/macos/**/*'
 
 "CLI":
   - changed-files:
