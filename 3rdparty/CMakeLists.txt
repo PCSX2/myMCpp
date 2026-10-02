@@ -126,7 +126,7 @@ if(ENABLE_VULKAN)
             add_library(MoltenVK::MoltenVK SHARED IMPORTED GLOBAL)
             set_target_properties(MoltenVK::MoltenVK PROPERTIES
                 IMPORTED_LOCATION "${MOLTENVK_DYLIB}"
-                INTERFACE_INCLUDE_DIRECTORIES "${MOLTENVK_PREBUILT_DIR}/MoltenVK/include"
+                INTERFACE_INCLUDE_DIRECTORIES "${MOLTENVK_PREBUILT_DIR}/MoltenVK/include;${CMAKE_CURRENT_SOURCE_DIR}/Vulkan-Headers/include"
             )
             if(NOT TARGET Vulkan::Vulkan)
                 add_library(Vulkan::Vulkan ALIAS MoltenVK::MoltenVK)

@@ -1,7 +1,7 @@
 /*
  * mvk_datatypes.h
  *
- * Copyright (c) 2015-2025 The Brenwill Workshop Ltd. (http://www.brenwill.com)
+ * Copyright (c) 2015-2026 The Brenwill Workshop Ltd. (http://www.brenwill.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -316,6 +316,11 @@ MTLSamplerMinMagFilter mvkMTLSamplerMinMagFilterFromVkFilter(VkFilter vkFilter);
  */
 MTLSamplerMipFilter mvkMTLSamplerMipFilterFromVkSamplerMipmapMode(VkSamplerMipmapMode vkMode);
 
+#if MVK_XCODE_26 && !MVK_TVOS && !MVK_VISIONOS
+MTLSamplerReductionMode mvkMTLSamplerReductionModeFromVkSamplerReductionMode(VkSamplerReductionMode vkMode)
+	API_AVAILABLE(macos(26.0), ios(26.0));
+#endif
+
 
 #pragma mark -
 #pragma mark Render pipeline
@@ -468,6 +473,9 @@ MTLRenderStages mvkMTLRenderStagesFromVkPipelineStageFlags(VkPipelineStageFlags2
 
 /** Returns the combination of Metal MTLBarrierScope bits corresponding to the specified Vulkan VkAccessFlags2. */
 MTLBarrierScope mvkMTLBarrierScopeFromVkAccessFlags(VkAccessFlags2 vkAccess);
+
+/** Returns the mask of MVKBarrierStage bits corresponding to the specified Vulkan VkPipelineStageFlags2.  */
+uint64_t mvkBarrierStagesFromPipelineStageFlags(VkPipelineStageFlags2 flags);
 
 #pragma mark -
 #pragma mark Geometry conversions
