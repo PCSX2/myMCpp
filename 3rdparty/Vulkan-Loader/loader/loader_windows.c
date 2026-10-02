@@ -95,8 +95,8 @@ void windows_initialization(void) {
 #endif
 }
 
-BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
-    (void)hinst;
+BOOL WINAPI DllMain(HINSTANCE hinstance, DWORD reason, LPVOID reserved) {
+    (void)hinstance;
     switch (reason) {
         case DLL_PROCESS_ATTACH:
             // Only initialize necessary sync primitives
@@ -162,7 +162,7 @@ VkResult windows_get_device_registry_entry(const struct loader_instance *inst, s
 
     if (ret != ERROR_SUCCESS) {
         if (ret == ERROR_FILE_NOT_FOUND) {
-            loader_log(inst, VULKAN_LOADER_INFO_BIT | VULKAN_LOADER_DRIVER_BIT, 0,
+            loader_log(inst, VULKAN_LOADER_DEBUG_BIT | VULKAN_LOADER_DRIVER_BIT, 0,
                        "windows_get_device_registry_entry: Device ID(%ld) Does not contain a value for \"%s\"", dev_id, value_name);
         } else {
             loader_log(inst, VULKAN_LOADER_INFO_BIT | VULKAN_LOADER_DRIVER_BIT, 0,
@@ -413,8 +413,12 @@ VkResult windows_get_registry_files(const struct loader_instance *inst, char *lo
                                location);
                     if (is_driver) {
                         uint32_t i = 0;
+                        size_t name_len = strlen(name);
                         for (i = 0; i < sizeof(known_drivers) / sizeof(known_drivers[0]); ++i) {
-                            if (!strcmp(name + strlen(name) - strlen(known_drivers[i].filename), known_drivers[i].filename)) {
+                            size_t filename_len = strlen(known_drivers[i].filename);
+                            // A name shorter than the filename cannot end with it, and name + name_len - filename_len would
+                            // point before the start of the name buffer.
+                            if (name_len >= filename_len && !strcmp(name + name_len - filename_len, known_drivers[i].filename)) {
                                 break;
                             }
                         }
@@ -598,11 +602,16 @@ VkResult windows_read_manifest_from_d3d_adapters(const struct loader_instance *i
 
         // Iterate over each component string
         for (const wchar_t *curr_path = full_info->output_string; curr_path[0] != '\0'; curr_path += wcslen(curr_path) + 1) {
-            WideCharToMultiByte(CP_UTF8, 0, curr_path, -1, json_path, (int)json_path_size, NULL, NULL);
+            // json_path is only sized to the UTF-16 byte length, but the UTF-8 form can be longer (a U+0800-U+FFFF code
+            // point takes 2 bytes in UTF-16 and 3 in UTF-8). When it does not fit, WideCharToMultiByte returns 0 and does
+            // not null-terminate json_path, so use its return value for the length instead of running strlen off the end.
+            int json_path_len = WideCharToMultiByte(CP_UTF8, 0, curr_path, -1, json_path, (int)json_path_size, NULL, NULL);
+            if (json_path_len <= 0) {
+                continue;
+            }
 
             // Add the string to the output list
-            result = windows_add_json_entry(inst, search_paths, (LPCTSTR)L"EnumAdapters", REG_SZ, json_path,
-                                            (DWORD)strlen(json_path) + 1);
+            result = windows_add_json_entry(inst, search_paths, (LPCTSTR)L"EnumAdapters", REG_SZ, json_path, (DWORD)json_path_len);
             if (result != VK_SUCCESS) {
                 goto out;
             }
@@ -742,7 +751,7 @@ VkResult enumerate_adapter_physical_devices(struct loader_instance *inst, struct
     if (res != VK_SUCCESS) {
         loader_instance_heap_free(inst, next_icd_phys_devs->physical_devices);
         next_icd_phys_devs->physical_devices = NULL;
-        // Unless OOHM occurs, only return VK_SUCCESS
+        // Unless OUT_OF_HOST_MEMORY occurs, only return VK_SUCCESS
         if (res != VK_ERROR_OUT_OF_HOST_MEMORY) {
             res = VK_SUCCESS;
             loader_log(inst, VULKAN_LOADER_WARN_BIT, 0, "Failed to convert DXGI adapter into Vulkan physical device");

@@ -45,6 +45,7 @@ char *loader_getenv(const char *name, const struct loader_instance *inst) {
     // No allocation of memory necessary for Linux, but we should at least touch
     // the inst pointer to get rid of compiler warnings.
     (void)inst;
+    // NOLINTNEXTLINE(concurrency-mt-unsafe) - there is no portable reentrant getenv; the loader never calls setenv concurrently
     return getenv(name);
 }
 
@@ -79,7 +80,7 @@ char *loader_secure_getenv(const char *name, const struct loader_instance *inst)
 #endif
 }
 
-void loader_free_getenv(char *val, const struct loader_instance *inst) {
+void loader_free_getenv(const char *val, const struct loader_instance *inst) {
     // No freeing of memory necessary for Linux, but we should at least touch
     // the val and inst pointers to get rid of compiler warnings.
     (void)val;
@@ -160,7 +161,7 @@ char *loader_secure_getenv(const char *name, const struct loader_instance *inst)
     return loader_getenv(name, inst);
 }
 
-void loader_free_getenv(char *val, const struct loader_instance *inst) { loader_instance_heap_free(inst, (void *)val); }
+void loader_free_getenv(const char *val, const struct loader_instance *inst) { loader_instance_heap_free(inst, (void *)val); }
 
 #else
 
@@ -173,7 +174,7 @@ char *loader_getenv(const char *name, const struct loader_instance *inst) {
     (void)name;
     return NULL;
 }
-void loader_free_getenv(char *val, const struct loader_instance *inst) {
+void loader_free_getenv(const char *val, const struct loader_instance *inst) {
     // stub func
     (void)val;
     (void)inst;
@@ -205,19 +206,19 @@ void determine_filter_type(const char *filter_string, enum loader_filter_string_
                 *filter_type = FILTER_STRING_SPECIAL;
                 *new_start = filter_string;
                 *new_length = filter_length;
-            } else {
-                star_begin = true;
+                return;
             }
+            star_begin = true;
         }
         if ('*' == filter_string[filter_length - 1]) {
             // Not really valid, but just catch this case so if someone accidentally types "**" it will also mean everything
-            if (filter_length == 2) {
+            if (star_begin && filter_length == 2) {
                 *filter_type = FILTER_STRING_SPECIAL;
                 *new_start = filter_string;
                 *new_length = filter_length;
-            } else {
-                star_end = true;
+                return;
             }
+            star_end = true;
         }
         if (star_begin && star_end) {
             *filter_type = FILTER_STRING_SUBSTRING;
@@ -385,6 +386,7 @@ VkResult parse_layer_environment_var_filters(const struct loader_instance *inst,
 // Case-insensitive compare of `count` bytes of a name against a filter value. Filter values are already lowercased when
 // they get parsed (see parse_generic_filter_environment_var), so we only need to fold the name side as we go. The caller
 // guarantees both sides have at least `count` valid bytes.
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters) - distinct, well documented roles (raw name vs. pre-lowercased filter)
 static bool name_segment_matches_filter_value(const char *name_segment, const char *lowercase_filter_value, size_t count) {
     for (size_t iii = 0; iii < count; ++iii) {
         if ((char)tolower((unsigned char)name_segment[iii]) != lowercase_filter_value[iii]) {
@@ -517,37 +519,32 @@ VkResult loader_add_environment_layers(struct loader_instance *inst, const char 
             continue;
         }
 
-        // We found a layer we're interested in, but has it been disabled...
-        bool adding = true;
+        // A layer matching the enable filter is force-enabled even if it also matches the disable filter - this mirrors
+        // VK_INSTANCE_LAYERS, which VK_LOADER_LAYERS_ENABLE is a generalization of, and which overrides disables.
+        // Also make sure the layer isn't already in the output_list, skip adding it if it is.
+        bool force_enabled = check_name_matches_filter_environment_var(source_prop->info.layerName, &filters->enable_filter) &&
+                             !loader_find_layer_name_in_list(source_prop->info.layerName, target_list);
+
         bool is_implicit = (0 == (source_prop->type_flags & VK_LAYER_TYPE_FLAG_EXPLICIT_LAYER));
         bool disabled_by_type =
-            (is_implicit) ? (filters->disable_filter.disable_all_implicit) : (filters->disable_filter.disable_all_explicit);
-        if ((filters->disable_filter.disable_all || disabled_by_type ||
+            is_implicit ? filters->disable_filter.disable_all_implicit : filters->disable_filter.disable_all_explicit;
+        if (!force_enabled &&
+            (filters->disable_filter.disable_all || disabled_by_type ||
              check_name_matches_filter_environment_var(source_prop->info.layerName, &filters->disable_filter.additional_filters)) &&
             !check_name_matches_filter_environment_var(source_prop->info.layerName, &filters->allow_filter)) {
             loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_LAYER_BIT, 0,
                        "Layer \"%s\" ignored because it has been disabled by env var \'%s\'", source_prop->info.layerName,
                        VK_LAYERS_DISABLE_ENV_VAR);
-            adding = false;
-        }
-
-        // If we are supposed to filter through all layers, we need to compare the layer name against the filter.
-        // This can override the disable above, so we want to do it second.
-        // Also make sure the layer isn't already in the output_list, skip adding it if it is.
-        if (check_name_matches_filter_environment_var(source_prop->info.layerName, &filters->enable_filter) &&
-            !loader_find_layer_name_in_list(source_prop->info.layerName, target_list)) {
-            adding = true;
-            // Only way is_substring is true is if there are enable variables.  If that's the case, and we're past the
-            // above, we should indicate that it was forced on in this way.
-            loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_LAYER_BIT, 0,
-                       "Layer \"%s\" forced enabled due to env var \'%s\'", source_prop->info.layerName, VK_LAYERS_ENABLE_ENV_VAR);
-        } else {
-            adding = false;
-        }
-
-        if (!adding) {
             continue;
         }
+
+        if (!force_enabled) {
+            continue;
+        }
+        // Only way is_substring is true is if there are enable variables.  If that's the case, and we're past the
+        // above, we should indicate that it was forced on in this way.
+        loader_log(inst, VULKAN_LOADER_WARN_BIT | VULKAN_LOADER_LAYER_BIT, 0, "Layer \"%s\" forced enabled due to env var \'%s\'",
+                   source_prop->info.layerName, VK_LAYERS_ENABLE_ENV_VAR);
 
         // If not a meta-layer, simply add it.
         if (0 == (source_prop->type_flags & VK_LAYER_TYPE_FLAG_META_LAYER)) {
@@ -580,24 +577,22 @@ void parse_id_filter_environment_var(const struct loader_instance *inst, const c
         goto out;
     }
     // Allocate a separate string since scan_for_next_comma modifies the original string
+    uint32_t num_commas = 0;
     parsing_string = loader_stack_alloc(env_var_len + 1);
     for (uint32_t iii = 0; iii < env_var_len; ++iii) {
+        if (env_var_value[iii] == ',') {
+            num_commas++;
+        }
         parsing_string[iii] = (char)tolower((unsigned char)env_var_value[iii]);
     }
     parsing_string[env_var_len] = '\0';
 
+    filter_struct->filters = (struct loader_envvar_id_filter_value *)loader_instance_heap_alloc(
+        inst, (num_commas + 1) * sizeof(struct loader_envvar_id_filter_value), VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
     filter_struct->count = 0;
     char *context = NULL;
     char *token = thread_safe_strtok(parsing_string, ",", &context);
     while (NULL != token) {
-        if (filter_struct->count >= MAX_ADDITIONAL_FILTERS) {
-            loader_log(inst, VULKAN_LOADER_WARN_BIT, 0,
-                       "parse_id_filter_environment_var: Exceeded maximum number of filters (%d) for env var '%s'. "
-                       "Remaining entries will be ignored.",
-                       MAX_ADDITIONAL_FILTERS, env_var_name);
-            break;
-        }
-
         struct loader_envvar_id_filter_value *filter_value = &filter_struct->filters[filter_struct->count];
 
         char *pEnd;
@@ -626,4 +621,10 @@ bool check_id_matches_filter_environment_var(const uint32_t id, const struct loa
         }
     }
     return false;
+}
+
+void free_id_filters(const struct loader_instance *inst, struct loader_envvar_id_filter *filter_struct) {
+    if (filter_struct != NULL && filter_struct->filters != NULL) {
+        loader_instance_heap_free(inst, filter_struct->filters);
+    }
 }

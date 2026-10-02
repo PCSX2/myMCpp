@@ -33,7 +33,7 @@
 // Common functionality for accessing environemnt variables and whether the process is running in priviledged mode
 
 char *loader_getenv(const char *name, const struct loader_instance *inst);
-void loader_free_getenv(char *val, const struct loader_instance *inst);
+void loader_free_getenv(const char *val, const struct loader_instance *inst);
 
 #if defined(WIN32) || COMMON_UNIX_PLATFORMS
 
@@ -58,3 +58,4 @@ VkResult loader_add_environment_layers(struct loader_instance *inst, const char 
 void parse_id_filter_environment_var(const struct loader_instance *inst, const char *env_var_name,
                                      struct loader_envvar_id_filter *filter_struct);
 bool check_id_matches_filter_environment_var(const uint32_t id, const struct loader_envvar_id_filter *filter_struct);
+void free_id_filters(const struct loader_instance *inst, struct loader_envvar_id_filter *filter_struct);

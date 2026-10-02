@@ -801,8 +801,8 @@ void *loader_get_phys_dev_ext_tramp(uint32_t index) {
         TRAMP_CASE_HANDLE(247);
         TRAMP_CASE_HANDLE(248);
         TRAMP_CASE_HANDLE(249);
+        default: return NULL;
     }
-    return NULL;
 }
 
 void *loader_get_phys_dev_ext_termin(uint32_t index) {
@@ -1058,6 +1058,6 @@ void *loader_get_phys_dev_ext_termin(uint32_t index) {
         TERM_CASE_HANDLE(247);
         TERM_CASE_HANDLE(248);
         TERM_CASE_HANDLE(249);
+        default: return NULL;
     }
-    return NULL;
 }
