@@ -122,14 +122,20 @@ if(APPLE)
     target_sources(myMCpp PRIVATE ${MACOS_ICON})
     set_source_files_properties(${MACOS_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources/icons)
 
-    get_target_property(_qt_core_loc Qt6::Core LOCATION)
-    get_filename_component(_qt_framework_dir "${_qt_core_loc}" DIRECTORY)
-    get_filename_component(_qt_lib_dir "${_qt_framework_dir}/../../.." ABSOLUTE)
-
     set_target_properties(myMCpp PROPERTIES
-        BUILD_RPATH "${_qt_lib_dir};/opt/homebrew/lib"
+        BUILD_RPATH "@executable_path/../Frameworks"
         INSTALL_RPATH "@executable_path/../Frameworks"
-        BUILD_WITH_INSTALL_RPATH FALSE
+        BUILD_WITH_INSTALL_RPATH TRUE
+    )
+
+    add_custom_command(TARGET myMCpp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:myMCpp>/Frameworks"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/3rdparty/MoltenVK/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib"
+            "$<TARGET_BUNDLE_CONTENT_DIR:myMCpp>/Frameworks/libMoltenVK.dylib"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/resources"
+            "$<TARGET_BUNDLE_CONTENT_DIR:myMCpp>/Resources"
     )
 
     option(SKIP_POSTPROCESS_BUNDLE "Skip running macdeployqt" OFF)
@@ -139,18 +145,12 @@ if(APPLE)
         get_filename_component(QT_LIB_DIR "${QT_BIN_DIR}/../lib" ABSOLUTE)
 
         add_custom_target(myMCpp-postprocess-bundle ALL
-            COMMAND Qt6::macdeployqt "$<TARGET_FILE_DIR:myMCpp>/../.." -no-strip -always-overwrite -libpath=${QT_LIB_DIR}
-            COMMAND codesign --force --deep --sign - "$<TARGET_FILE_DIR:myMCpp>/../.."
+            COMMAND "${QT_BIN_DIR}/macdeployqt" "$<TARGET_BUNDLE_DIR:myMCpp>" -no-strip -always-overwrite -libpath=${QT_LIB_DIR}
+            COMMAND codesign --force --deep --sign - "$<TARGET_BUNDLE_DIR:myMCpp>"
             COMMENT "Running macdeployqt and signing bundle..."
         )
         add_dependencies(myMCpp-postprocess-bundle myMCpp)
     endif()
-
-    add_custom_command(TARGET myMCpp POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/resources
-        $<TARGET_FILE_DIR:myMCpp>/../Resources
-    )
 
     include(MetalShaders)
     myMCpp_bundle_metal(myMCpp)
