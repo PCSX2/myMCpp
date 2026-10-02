@@ -119,9 +119,7 @@ static GLFWbool chooseGLXFBConfig(const _GLFWfbconfig* desired,
         u->accumAlphaBits = getGLXFBConfigAttrib(n, GLX_ACCUM_ALPHA_SIZE);
 
         u->auxBuffers = getGLXFBConfigAttrib(n, GLX_AUX_BUFFERS);
-
-        if (getGLXFBConfigAttrib(n, GLX_STEREO))
-            u->stereo = GLFW_TRUE;
+        u->stereo = getGLXFBConfigAttrib(n, GLX_STEREO);
 
         if (_glfw.glx.ARB_multisample)
             u->samples = getGLXFBConfigAttrib(n, GLX_SAMPLES);
@@ -367,7 +365,7 @@ GLFWbool _glfwInitGLX(void)
             getProcAddressGLX("glXSwapIntervalEXT");
 
         if (_glfw.glx.SwapIntervalEXT)
-            _glfw.glx.EXT_swap_control = GLFW_TRUE;
+            _glfw.glx.EXT_swap_control = true;
     }
 
     if (extensionSupportedGLX("GLX_SGI_swap_control"))
@@ -376,7 +374,7 @@ GLFWbool _glfwInitGLX(void)
             getProcAddressGLX("glXSwapIntervalSGI");
 
         if (_glfw.glx.SwapIntervalSGI)
-            _glfw.glx.SGI_swap_control = GLFW_TRUE;
+            _glfw.glx.SGI_swap_control = true;
     }
 
     if (extensionSupportedGLX("GLX_MESA_swap_control"))
@@ -385,17 +383,17 @@ GLFWbool _glfwInitGLX(void)
             getProcAddressGLX("glXSwapIntervalMESA");
 
         if (_glfw.glx.SwapIntervalMESA)
-            _glfw.glx.MESA_swap_control = GLFW_TRUE;
+            _glfw.glx.MESA_swap_control = true;
     }
 
     if (extensionSupportedGLX("GLX_ARB_multisample"))
-        _glfw.glx.ARB_multisample = GLFW_TRUE;
+        _glfw.glx.ARB_multisample = true;
 
     if (extensionSupportedGLX("GLX_ARB_framebuffer_sRGB"))
-        _glfw.glx.ARB_framebuffer_sRGB = GLFW_TRUE;
+        _glfw.glx.ARB_framebuffer_sRGB = true;
 
     if (extensionSupportedGLX("GLX_EXT_framebuffer_sRGB"))
-        _glfw.glx.EXT_framebuffer_sRGB = GLFW_TRUE;
+        _glfw.glx.EXT_framebuffer_sRGB = true;
 
     if (extensionSupportedGLX("GLX_ARB_create_context"))
     {
@@ -403,23 +401,23 @@ GLFWbool _glfwInitGLX(void)
             getProcAddressGLX("glXCreateContextAttribsARB");
 
         if (_glfw.glx.CreateContextAttribsARB)
-            _glfw.glx.ARB_create_context = GLFW_TRUE;
+            _glfw.glx.ARB_create_context = true;
     }
 
     if (extensionSupportedGLX("GLX_ARB_create_context_robustness"))
-        _glfw.glx.ARB_create_context_robustness = GLFW_TRUE;
+        _glfw.glx.ARB_create_context_robustness = true;
 
     if (extensionSupportedGLX("GLX_ARB_create_context_profile"))
-        _glfw.glx.ARB_create_context_profile = GLFW_TRUE;
+        _glfw.glx.ARB_create_context_profile = true;
 
     if (extensionSupportedGLX("GLX_EXT_create_context_es2_profile"))
-        _glfw.glx.EXT_create_context_es2_profile = GLFW_TRUE;
+        _glfw.glx.EXT_create_context_es2_profile = true;
 
     if (extensionSupportedGLX("GLX_ARB_create_context_no_error"))
-        _glfw.glx.ARB_create_context_no_error = GLFW_TRUE;
+        _glfw.glx.ARB_create_context_no_error = true;
 
     if (extensionSupportedGLX("GLX_ARB_context_flush_control"))
-        _glfw.glx.ARB_context_flush_control = GLFW_TRUE;
+        _glfw.glx.ARB_context_flush_control = true;
 
     return GLFW_TRUE;
 }

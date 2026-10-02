@@ -118,6 +118,10 @@ guide](https://github.com/glfw/glfw/blob/master/docs/CONTRIBUTING.md) for
 information on what to include when reporting a bug.
 
 
+## Changelog since 3.5
+
+None.
+
 ## Changelog since 3.4
 
  - Added `GLFW_UNLIMITED_MOUSE_BUTTONS` input mode that allows mouse buttons beyond
@@ -127,8 +131,11 @@ information on what to include when reporting a bug.
  - Updated minimum CMake version to 3.16 (#2541)
  - Removed support for building with original MinGW (#2540)
  - [Win32] Removed support for Windows XP and Vista (#2505)
+ - [Win32] Bugfix: Media keys were reported with a scancode of 256 (#1768,#2417,#2625)
  - [Cocoa] Added `QuartzCore` framework as link-time dependency
  - [Cocoa] Removed support for OS X 10.10 Yosemite and earlier (#2506)
+ - [Cocoa] Bugfix: Cmd+Period, Ctrl+Tab and Ctrl+Esc key events were not emitted
+   (#1362,#2278)
  - [Wayland] Bugfix: The fractional scaling related objects were not destroyed
  - [Wayland] Bugfix: `glfwInit` would segfault on compositor with no seat (#2517)
  - [Wayland] Bugfix: A drag entering a non-GLFW surface could cause a segfault
@@ -152,6 +159,14 @@ information on what to include when reporting a bug.
  - [Wayland] Bugfix: The `libwayland-client` library was not unloaded at termination
  - [Wayland] Bugfix: Scroll events were sent twice on some versions of GNOME (#2494)
  - [Wayland] Bugfix: Two-dimensional scroll input was emitted as separate axes
+ - [Wayland] Bugfix: Mouse wheel scroll distance was incorrect on some compositors
+ - [Wayland] Bugfix: `glfwSwapBuffers` would halt with nonzero swap interval when window
+   was suspended (#1350,#2582,#2640,#2719,#2723,#2800,#2827)
+ - [Wayland] Bugfix: `glfwPostEmptyEvent` would leak a callback proxy (#2836)
+ - [Wayland] Bugfix: `glfwHideWindow` did not always send its request immediately
+ - [Wayland] Bugfix: Some event types were not always processed by `glfwPollEvents` or
+   `glfwWait*Events` (#2793,#2795)
+ - [Wayland] Bugfix: Scaled framebuffer size was sometimes incorect (#2713,#2810)
  - [X11] Bugfix: Running without a WM could trigger an assert (#2593,#2601,#2631)
  - [X11] Bugfix: Occasional crash when an idle display awakes (#2766) 
  - [X11] Bugfix: Prevent BadWindow when creating small windows with a content scale
