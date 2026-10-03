@@ -14,7 +14,7 @@ public:
 	int m_animCount = 0;
 	std::string m_title;
 	std::string m_subtitle;
-	std::string m_iconFileNormal;
+	std::string m_iconFileIdle;
 	std::string m_iconFileCopy;
 	std::string m_iconFileDelete;
 	uint16_t m_titleLineOffset = 0;
@@ -103,11 +103,11 @@ public:
 			m_subtitle = "";
 		}
 
-		m_iconFileNormal = extractString(ptr + 0x104, 64);
+		m_iconFileIdle = extractString(ptr + 0x104, 64);
 		m_iconFileCopy = extractString(ptr + 0x144, 64);
 		m_iconFileDelete = extractString(ptr + 0x184, 64);
 
-		m_iconCount = !m_iconFileNormal.empty() ? 1 : 0;
+		m_iconCount = !m_iconFileIdle.empty() ? 1 : 0;
 		m_animCount = 0;
 	}
 };
@@ -137,9 +137,9 @@ std::string PS2IconSys::getSubtitle(const std::string& encoding) const
 	return m_impl->m_subtitle;
 }
 
-std::string PS2IconSys::getIconFileNormal() const
+std::string PS2IconSys::getIconFileIdle() const
 {
-	return m_impl->m_iconFileNormal;
+	return m_impl->m_iconFileIdle;
 }
 
 std::string PS2IconSys::getIconFileCopy() const

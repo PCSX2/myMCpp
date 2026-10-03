@@ -31,7 +31,7 @@ public:
 	std::string getTitle(const std::string& encoding = "") const;
 	std::string getSubtitle(const std::string& encoding = "") const;
 
-	std::string getIconFileNormal() const;
+	std::string getIconFileIdle() const;
 	std::string getIconFileCopy() const;
 	std::string getIconFileDelete() const;
 

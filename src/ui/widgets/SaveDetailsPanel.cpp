@@ -6,6 +6,7 @@
 #include "TranslationManager.h"
 
 #include "core/formats/PS2MemoryCard.h"
+#include "core/formats/PS2Icon.h"
 #include "core/formats/PS2IconSys.h"
 
 #include "common/Config.h"
@@ -20,13 +21,18 @@ SaveDetailsPanel::SaveDetailsPanel(QWidget* parent)
 
 	connect(&TranslationManager::instance(), &TranslationManager::languageChanged, this, [this]() {
 		ui->retranslateUi(this);
+		updateIconControls();
+	});
+
+	connect(ui->iconTypeComboBox, &QComboBox::currentIndexChanged, this, [this](int) {
+		loadSelectedIcon(true);
 	});
 
 	connect(ui->playPauseButton, &QPushButton::clicked, this, [this]() {
 		if (!iconWidget)
 			return;
 		iconWidget->setAnimationEnabled(!iconWidget->isAnimationEnabled());
-		updatePlayPauseButton();
+		updateIconControls();
 	});
 
 	connect(ui->resetViewButton, &QPushButton::clicked, this, [this]() {
@@ -73,6 +79,8 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 
 	this->show();
 
+	const bool sameSave = currentCard == card && currentSavePath == savePath;
+	const int previousType = sameSave ? ui->iconTypeComboBox->currentData().toInt() : static_cast<int>(PS2MemoryCard::IconType::Idle);
 	currentCard = card;
 	currentSavePath = savePath;
 	currentSize = size;
@@ -128,49 +136,68 @@ void SaveDetailsPanel::setSave(PS2MemoryCard* card, const QString& savePath,
 	ui->detailsLabel->setText(details);
 
 	{
-		auto iconData = card->getIconData(savePath.toStdString());
-
-		if (iconData.empty())
+		const QSignalBlocker blocker(ui->iconTypeComboBox);
+		ui->iconTypeComboBox->clear();
+		for (int type = 0; type < static_cast<int>(m_iconData.size()); ++type)
 		{
-			if (iconWidget)
-				iconWidget->hide();
-		}
-
-		if (!iconData.empty() && iconWidget)
-		{
-			if (iconWidget->loadIcon(iconData))
+			m_iconData[type] = card->getIconData(savePath.toStdString(),
+				static_cast<PS2MemoryCard::IconType>(type));
+			if (m_iconData[type].empty() ||
+				std::find(m_iconData.begin(), m_iconData.begin() + type, m_iconData[type]) != m_iconData.begin() + type)
 			{
-				iconWidget->show();
-				PS2IconSys* iconSys = card->getIconSys(savePath.toStdString());
-				if (iconSys)
-				{
-					iconWidget->applyConfigToRenderer(iconSys);
-					iconWidget->setBackgroundFromIconSys(iconSys);
-					delete iconSys; // Clean up the pointer after use
-				}
-				else
-				{
-					iconWidget->applyConfigToRenderer(nullptr);
-					iconWidget->setBackgroundFromIconSys(nullptr);
-				}
-
-				iconWidget->setRotation(0.0f, 0.0f, 0.0f);
-				iconWidget->setZoom(1.0f);
-				updatePlayPauseButton();
-				return;
+				m_iconData[type].clear();
+				continue;
 			}
+			PS2Icon::Icon icon;
+			if (icon.load(m_iconData[type]))
+				ui->iconTypeComboBox->addItem(QString(), type);
 			else
-			{
-				if (iconWidget)
-					iconWidget->hide();
-			}
+				m_iconData[type].clear();
 		}
+		const int previousIndex = ui->iconTypeComboBox->findData(previousType);
+		if (previousIndex >= 0)
+			ui->iconTypeComboBox->setCurrentIndex(previousIndex);
 	}
-	updatePlayPauseButton();
+	loadSelectedIcon();
+}
+
+void SaveDetailsPanel::loadSelectedIcon(bool preserveState)
+{
+	if (!iconWidget)
+	{
+		updateIconControls();
+		return;
+	}
+
+	const bool animating = iconWidget->isAnimationEnabled();
+	if (currentCard && ui->iconTypeComboBox->currentIndex() >= 0 &&
+		iconWidget->loadIcon(m_iconData[ui->iconTypeComboBox->currentData().toInt()]))
+	{
+		std::unique_ptr<PS2IconSys> iconSys(currentCard->getIconSys(currentSavePath.toStdString()));
+		iconWidget->applyConfigToRenderer(iconSys.get());
+		iconWidget->setBackgroundFromIconSys(iconSys.get());
+		if (preserveState)
+			iconWidget->setAnimationEnabled(animating);
+		else
+		{
+			iconWidget->setRotation(0.0f, 0.0f, 0.0f);
+			iconWidget->setZoom(1.0f);
+		}
+		iconWidget->show();
+	}
+	else
+		iconWidget->hide();
+	updateIconControls();
 }
 
 void SaveDetailsPanel::clear()
 {
+	{
+		const QSignalBlocker blocker(ui->iconTypeComboBox);
+		ui->iconTypeComboBox->clear();
+	}
+	for (auto& iconData : m_iconData)
+		iconData.clear();
 	if (ui->titleLabel)
 		ui->titleLabel->setText(tr("No save selected"));
 	if (ui->dirNameLabel)
@@ -179,14 +206,19 @@ void SaveDetailsPanel::clear()
 		ui->detailsLabel->setText(tr("No details available"));
 	if (iconWidget)
 		iconWidget->hide();
-	updatePlayPauseButton();
+	updateIconControls();
 	currentCard = nullptr;
 	currentSavePath.clear();
 	this->hide();
 }
 
-void SaveDetailsPanel::updatePlayPauseButton()
+void SaveDetailsPanel::updateIconControls()
 {
+	const std::array<QString, 3> labels = {tr("Idle"), tr("Copy"), tr("Delete")};
+	for (int index = 0; index < ui->iconTypeComboBox->count(); ++index)
+		ui->iconTypeComboBox->setItemText(index, labels[ui->iconTypeComboBox->itemData(index).toInt()]);
+	ui->iconTypeComboBox->setVisible(ui->iconTypeComboBox->count() > 1);
+
 	const bool visible = iconWidget && iconWidget->isVisible();
 	ui->playPauseButton->setVisible(visible);
 	ui->resetViewButton->setVisible(visible);

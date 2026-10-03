@@ -1457,7 +1457,7 @@ bool PS2MemoryCard::exportFile(const std::string& path, const std::string& dest_
 	return true;
 }
 
-std::vector<uint8_t> PS2MemoryCard::getIconData(const std::string& savePath)
+std::vector<uint8_t> PS2MemoryCard::getIconData(const std::string& savePath, IconType type)
 {
 	Logger::debug("getIconData: Trying to load icon for path: {}", savePath);
 
@@ -1470,7 +1470,19 @@ std::vector<uint8_t> PS2MemoryCard::getIconData(const std::string& savePath)
 		PS2IconSys iconSys;
 		iconSys.load(iconSysData);
 
-		std::string iconFile = iconSys.getIconFileNormal();
+		std::string iconFile;
+		switch (type)
+		{
+			case IconType::Idle:
+				iconFile = iconSys.getIconFileIdle();
+				break;
+			case IconType::Copy:
+				iconFile = iconSys.getIconFileCopy();
+				break;
+			case IconType::Delete:
+				iconFile = iconSys.getIconFileDelete();
+				break;
+		}
 		Logger::debug("getIconData: icon.sys specifies icon file: {}", iconFile);
 		if (!iconFile.empty())
 		{
@@ -1484,6 +1496,13 @@ std::vector<uint8_t> PS2MemoryCard::getIconData(const std::string& savePath)
 				return data;
 			}
 		}
+	}
+
+	// Only the idle icon uses fallback filenames.
+	if (type != IconType::Idle)
+	{
+		m_error.Clear();
+		return {};
 	}
 
 	std::vector<std::string> iconPaths = {
