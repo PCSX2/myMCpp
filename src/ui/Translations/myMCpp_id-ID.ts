@@ -29,8 +29,8 @@ This application is not affiliated in any way with Sony Interactive Entertainmen
     </message>
     <message>
       <location line="+45"/>
-      <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/PCSX2/myMCpp&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;GitHub Repository&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://github.com/PCSX2/myMCpp/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Documentation&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;#licenses&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Licenses&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-      <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/PCSX2/myMCpp&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;GitHub Repository&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://github.com/PCSX2/myMCpp/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Documentation&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;#licenses&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Licenses&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+      <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/PCSX2/myMCpp&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;GitHub Repository&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://discord.gg/muHT5TBteJ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Discord Server&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://github.com/PCSX2/myMCpp/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Documentation&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;#licenses&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Licenses&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+      <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/PCSX2/myMCpp&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;GitHub Repository&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://discord.gg/muHT5TBteJ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Discord Server&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://github.com/PCSX2/myMCpp/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Documentation&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;#licenses&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Licenses&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
       <location line="+49"/>
@@ -1178,16 +1178,7 @@ Continue?</translation>
       <translation type="unfinished">Deleted %1 Saves</translation>
     </message>
     <message>
-      <location line="+162"/>
-      <source>TBD
-
-For updates, visit: https://github.com/PCSX2/myMCpp/releases</source>
-      <translation type="unfinished">TBD
-
-For updates, visit: https://github.com/PCSX2/myMCpp/releases</translation>
-    </message>
-    <message>
-      <location line="+18"/>
+      <location line="+178"/>
       <source>Save</source>
       <translation type="unfinished">Save</translation>
     </message>
@@ -1611,7 +1602,7 @@ Pick another name for the ECC copy.</translation>
       <translation type="unfinished">Failed to import file: %1</translation>
     </message>
     <message>
-      <location line="-1217"/>
+      <location line="-1215"/>
       <source>Open Memory Card</source>
       <translation>Buka Kartu Memori</translation>
     </message>
@@ -1862,14 +1853,14 @@ Continue?</translation>
       <location line="+63"/>
       <location line="+66"/>
       <location line="+69"/>
-      <location line="+205"/>
+      <location line="+203"/>
       <location line="+210"/>
       <location line="+157"/>
       <source>Card: %1</source>
       <translation type="unfinished">Card: %1</translation>
     </message>
     <message>
-      <location line="-802"/>
+      <location line="-800"/>
       <source>Imported %1 Saves</source>
       <translation type="unfinished">Imported %1 Saves</translation>
     </message>
@@ -1916,19 +1907,14 @@ This action cannot be undone.</translation>
       <translation type="unfinished">Formatted Memory Card</translation>
     </message>
     <message>
-      <location line="+92"/>
-      <source>Check for Updates</source>
-      <translation>Cek pembaruan</translation>
-    </message>
-    <message>
-      <location line="+252"/>
+      <location line="+342"/>
       <source>No memory card open</source>
       <translation>Tidak ada kartu memori yang terbuka</translation>
     </message>
     <message>
-      <location line="-1239"/>
+      <location line="-1237"/>
       <location line="+236"/>
-      <location line="+904"/>
+      <location line="+902"/>
       <location line="+54"/>
       <location line="+107"/>
       <location line="+22"/>
@@ -1991,7 +1977,7 @@ This action cannot be undone.</translation>
       <translation type="unfinished">&amp;Help</translation>
     </message>
     <message>
-      <location line="+21"/>
+      <location line="+19"/>
       <source>Main Toolbar</source>
       <translation type="unfinished">Main Toolbar</translation>
     </message>
@@ -2232,13 +2218,13 @@ This action cannot be undone.</translation>
     </message>
     <message>
       <location line="+8"/>
-      <source>&amp;Check for Updates...</source>
-      <translation type="unfinished">&amp;Check for Updates...</translation>
+      <source>&amp;Discord Server...</source>
+      <translation type="unfinished">&amp;Discord Server...</translation>
     </message>
     <message>
       <location line="+3"/>
-      <source>Check if a new version is available</source>
-      <translation type="unfinished">Check if a new version is available</translation>
+      <source>Join the Discord server</source>
+      <translation type="unfinished">Join the Discord server</translation>
     </message>
     <message>
       <location line="+9"/>
