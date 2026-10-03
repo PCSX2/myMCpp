@@ -31,7 +31,8 @@ signals:
 
 private:
 	void createIconWidget();
-	void updatePlayPauseButton();
+	void updateIconControls();
+	void loadSelectedIcon(bool preserveState = false);
 
 	Config* m_config;
 	IconWidget* iconWidget;
@@ -40,6 +41,7 @@ private:
 	QString currentSavePath;
 	QString currentSize;
 	QString currentModified;
+	std::array<std::vector<uint8_t>, 3> m_iconData;
 
 	RendererType m_lastRendererType = RendererType::Automatic;
 	std::string m_lastAdapter;

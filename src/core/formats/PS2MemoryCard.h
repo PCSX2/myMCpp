@@ -89,7 +89,14 @@ public:
 	bool importSaveFile(class PS2SaveFile& save, bool ignoreExisting = false, const std::string& targetDir = "");
 	bool exportSaveFile(const std::string& savePath, class PS2SaveFile& save);
 
-	std::vector<uint8_t> getIconData(const std::string& savePath);
+	enum class IconType
+	{
+		Idle,
+		Copy,
+		Delete
+	};
+
+	std::vector<uint8_t> getIconData(const std::string& savePath, IconType type = IconType::Idle);
 
 	class PS2IconSys* getIconSys(const std::string& savePath);
 
