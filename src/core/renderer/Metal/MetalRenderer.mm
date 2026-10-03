@@ -300,7 +300,6 @@ void MetalRenderer::render()
 		pushCB._pad = 0.0f;
 
 		[encoder setFragmentBytes:&pushCB length:sizeof(PushCB) atIndex:1];
-		[encoder setFragmentBuffer:frameRes.uniformBuffer offset:0 atIndex:0];
 
 		if (m_impl->resources.getTexture())
 		{

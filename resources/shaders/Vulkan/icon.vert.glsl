@@ -18,22 +18,24 @@ layout(binding = 0) uniform UniformBufferObject {
     vec4 time;
 } ubo;
 
-layout(location = 0) out vec3 fragNormal;
 layout(location = 1) out vec2 fragTexCoord;
-layout(location = 2) out vec4 fragColor;
-layout(location = 3) out vec3 fragWorldPos;
+layout(location = 2) noperspective out vec4 fragColor;
 
 void main() {
     vec3 position = (inPosition / 4096.0) * vec3(1.0, -1.0, -1.0);
 
     vec4 worldPos = ubo.model * vec4(position, 1.0);
-    fragWorldPos = worldPos.xyz;
-
     gl_Position = ubo.projection * ubo.view * worldPos;
 
-    mat3 normalMatrix = transpose(inverse(mat3(ubo.model)));
-    fragNormal = normalize(normalMatrix * ((inNormal / 4096.0) * vec3(1.0, -1.0, -1.0)));
+    // Reverse rotation for PS2 lighting.
+    mat3 normalMatrix = transpose(mat3(ubo.model));
+    vec3 normal = normalize(normalMatrix * ((inNormal / 4096.0) * vec3(1.0, -1.0, -1.0)));
 
     fragTexCoord = inTexCoord / 4096.0;
-    fragColor = inColor;
+    vec3 light = ubo.ambientLight.rgb;
+    for (int i = 0; i < 3; i++) {
+        float diffuse = max(dot(normalize(ubo.lightPos[i].xyz), normal), 0.0);
+        light += diffuse * ubo.lightColor[i].rgb;
+    }
+    fragColor = vec4(floor(clamp(inColor.rgb * 255.0 * light, 0.0, 255.0)), inColor.a);
 }

@@ -29,33 +29,32 @@ void LightingState::applyMode()
 	switch (mode)
 	{
 		case LightingMode::Off:
-			lightDirs[0] = glm::vec3(0.0f);
-			lightDirs[1] = glm::vec3(0.0f);
-			lightDirs[2] = glm::vec3(0.0f);
-			lightColors[0] = glm::vec3(1.0f);
-			lightColors[1] = glm::vec3(1.0f);
-			lightColors[2] = glm::vec3(1.0f);
+			for (int i = 0; i < 3; ++i)
+			{
+				lightDirs[i] = glm::vec3(0.0f, 1.0f, 0.0f);
+				lightColors[i] = glm::vec3(0.0f);
+			}
 			ambientLight = glm::vec3(1.0f);
 			break;
 
 		case LightingMode::Alternate1:
-			lightDirs[0] = glm::normalize(glm::vec3(0.7f, 0.9f, 0.4f));
-			lightDirs[1] = glm::normalize(glm::vec3(-0.6f, 0.8f, 0.5f));
-			lightDirs[2] = glm::normalize(glm::vec3(0.0f, -0.7f, 0.8f));
-			lightColors[0] = glm::vec3(1.0f, 0.95f, 0.9f);
-			lightColors[1] = glm::vec3(0.85f, 0.9f, 1.0f);
-			lightColors[2] = glm::vec3(0.35f);
-			ambientLight = glm::vec3(0.55f);
+			lightDirs[0] = glm::normalize(glm::vec3(1.0f, -1.0f, 2.0f));
+			lightDirs[1] = glm::normalize(glm::vec3(-1.0f, 1.0f, -2.0f));
+			lightDirs[2] = glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f));
+			lightColors[0] = glm::vec3(1.0f);
+			lightColors[1] = glm::vec3(1.0f);
+			lightColors[2] = glm::vec3(0.7f);
+			ambientLight = glm::vec3(0.5f);
 			break;
 
 		case LightingMode::Alternate2:
-			lightDirs[0] = glm::normalize(glm::vec3(0.3f, 1.0f, 0.6f));
-			lightDirs[1] = glm::normalize(glm::vec3(-0.8f, 0.6f, 0.4f));
-			lightDirs[2] = glm::normalize(glm::vec3(0.0f, -1.0f, 0.4f));
-			lightColors[0] = glm::vec3(1.1f, 1.05f, 0.95f);
-			lightColors[1] = glm::vec3(0.7f, 0.8f, 1.0f);
-			lightColors[2] = glm::vec3(0.25f);
-			ambientLight = glm::vec3(0.5f);
+			lightDirs[0] = glm::normalize(glm::vec3(1.0f, -1.0f, 2.0f));
+			lightDirs[1] = glm::normalize(glm::vec3(-1.0f, 1.0f, -2.0f));
+			lightDirs[2] = glm::normalize(glm::vec3(0.0f, 4.0f, 1.0f));
+			lightColors[0] = glm::vec3(0.7f);
+			lightColors[1] = glm::vec3(0.7f);
+			lightColors[2] = glm::vec3(0.2f);
+			ambientLight = glm::vec3(0.3f);
 			break;
 
 		case LightingMode::Icon:
@@ -85,7 +84,7 @@ void LightingState::applyMode()
 
 void LightingState::loadFromIconSys(PS2IconSys* iconSys)
 {
-	if (!iconSys)
+	if (!iconSys || !iconSys->isValid())
 	{
 		hasIconSysLighting = false;
 		applyMode();
@@ -96,58 +95,51 @@ void LightingState::loadFromIconSys(PS2IconSys* iconSys)
 	const auto& colors = iconSys->getLightColors();
 	const auto& ambient = iconSys->getAmbientLight();
 
+	auto isFinite = [](const glm::vec3& value) {
+		return std::isfinite(value.x) && std::isfinite(value.y) && std::isfinite(value.z);
+	};
+	bool hasValidLighting = isFinite(glm::vec3(ambient.r, ambient.g, ambient.b));
+	for (int i = 0; i < 3 && hasValidLighting; ++i)
+	{
+		const glm::vec3 dir(dirs[i].x, dirs[i].y, dirs[i].z);
+		hasValidLighting = isFinite(dir) && std::isfinite(glm::length(dir)) &&
+		                   isFinite(glm::vec3(colors[i].r, colors[i].g, colors[i].b));
+	}
+	if (!hasValidLighting)
+	{
+		Logger::debug("LightingState: Invalid icon.sys lighting, using defaults");
+		hasIconSysLighting = false;
+		applyMode();
+		return;
+	}
+
 	for (int i = 0; i < 3 && i < static_cast<int>(dirs.size()); ++i)
 	{
-		glm::vec3 dir = glm::vec3(dirs[i].x, -dirs[i].y, -dirs[i].z);
+		// Convert to viewer coords.
+		glm::vec3 dir = glm::vec3(-dirs[i].x, dirs[i].y, dirs[i].z);
 		float len = glm::length(dir);
-		if (len > 0.0001f)
+		iconSysLightColors[i] = glm::vec3(colors[i].r, colors[i].g, colors[i].b);
+		if (len > 0.0f)
 		{
 			iconSysLightDirs[i] = dir / len;
 		}
 		else
 		{
 			iconSysLightDirs[i] = glm::vec3(0.0f, 1.0f, 0.0f);
+			iconSysLightColors[i] = glm::vec3(0.0f);
 		}
 		Logger::debug("LightingState: Light[{}] raw=({:.4f},{:.4f},{:.4f}), processed=({:.4f},{:.4f},{:.4f})",
 			i, dirs[i].x, dirs[i].y, dirs[i].z,
 			iconSysLightDirs[i].x, iconSysLightDirs[i].y, iconSysLightDirs[i].z);
 	}
 
-	for (int i = 0; i < 3 && i < static_cast<int>(colors.size()); ++i)
-	{
-		iconSysLightColors[i] = glm::vec3(colors[i].r, colors[i].g, colors[i].b);
-	}
-
 	iconSysAmbient = glm::vec3(ambient.r, ambient.g, ambient.b);
-	const float MIN_AMBIENT = 0.3f;
-	iconSysAmbient.r = glm::max(iconSysAmbient.r, MIN_AMBIENT);
-	iconSysAmbient.g = glm::max(iconSysAmbient.g, MIN_AMBIENT);
-	iconSysAmbient.b = glm::max(iconSysAmbient.b, MIN_AMBIENT);
-
-	bool allZero = true;
-	for (int i = 0; i < 3 && allZero; ++i)
-	{
-		if (iconSysLightColors[i].r > 0.1f || iconSysLightColors[i].g > 0.1f || iconSysLightColors[i].b > 0.1f)
-		{
-			allZero = false;
-		}
-	}
-
-	if (allZero)
-	{
-		Logger::debug("LightingState: All-zero lighting detected, using default fallback");
-		hasIconSysLighting = false; // Fall back to default lighting
-	}
-	else
-	{
-		hasIconSysLighting = true;
-	}
+	hasIconSysLighting = true;
 	applyMode();
 
 	Logger::info("LightingState: Loaded lighting from icon.sys");
-	Logger::debug("LightingState: Ambient=({:.2f},{:.2f},{:.2f}), fallback={}",
-		iconSysAmbient.r, iconSysAmbient.g, iconSysAmbient.b,
-		allZero ? "yes" : "no");
+	Logger::debug("LightingState: Ambient=({:.2f},{:.2f},{:.2f})",
+		iconSysAmbient.r, iconSysAmbient.g, iconSysAmbient.b);
 	for (int i = 0; i < 3; ++i)
 	{
 		Logger::debug("LightingState: LightColor[{}]=({:.2f},{:.2f},{:.2f})",
@@ -225,7 +217,7 @@ BackgroundState::BackgroundState()
 
 bool BackgroundState::loadFromIconSys(PS2IconSys* iconSys)
 {
-	if (!iconSys)
+	if (!iconSys || !iconSys->isValid())
 	{
 		shouldRender = false;
 		return false;
@@ -239,36 +231,12 @@ bool BackgroundState::loadFromIconSys(PS2IconSys* iconSys)
 		// icon.sys loader already normalized to 0-1
 		alpha = glm::clamp(bgTransparency, 0.0f, 1.0f);
 
-		// Check if all background colors are zero
-		bool allZero = true;
 		for (size_t i = 0; i < 4 && i < bgColors.size(); ++i)
 		{
-			if (bgColors[i].r > 0.001f || bgColors[i].g > 0.001f || bgColors[i].b > 0.001f)
-			{
-				allZero = false;
-				break;
-			}
-		}
-
-		if (allZero)
-		{
-			const float gray = 0.31f;
-			for (int i = 0; i < 4; ++i)
-			{
-				colors[i] = glm::vec4(gray, gray, gray, 1.0f);
-			}
-			alpha = 1.0f;
-			Logger::debug("BackgroundState: All-zero colors detected, using gray fallback");
-		}
-		else
-		{
-			for (size_t i = 0; i < 4 && i < bgColors.size(); ++i)
-			{
-				float r = glm::clamp(bgColors[i].r, 0.0f, 1.0f);
-				float g = glm::clamp(bgColors[i].g, 0.0f, 1.0f);
-				float b = glm::clamp(bgColors[i].b, 0.0f, 1.0f);
-				colors[i] = glm::vec4(r, g, b, alpha);
-			}
+			float r = glm::clamp(bgColors[i].r, 0.0f, 1.0f);
+			float g = glm::clamp(bgColors[i].g, 0.0f, 1.0f);
+			float b = glm::clamp(bgColors[i].b, 0.0f, 1.0f);
+			colors[i] = glm::vec4(r, g, b, alpha);
 		}
 
 		shouldRender = true;
@@ -303,36 +271,36 @@ namespace LightingPresets
 	glm::vec3 getAlt1LightDir(int index)
 	{
 		static const glm::vec3 dirs[3] = {
-			glm::normalize(glm::vec3(0.7f, 0.9f, 0.4f)),
-			glm::normalize(glm::vec3(-0.6f, 0.8f, 0.5f)),
-			glm::normalize(glm::vec3(0.0f, -0.7f, 0.8f))};
+			glm::normalize(glm::vec3(1.0f, -1.0f, 2.0f)),
+			glm::normalize(glm::vec3(-1.0f, 1.0f, -2.0f)),
+			glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f))};
 		return dirs[index % 3];
 	}
 
 	glm::vec3 getAlt1LightColor(int index)
 	{
 		static const glm::vec3 colors[3] = {
-			glm::vec3(1.0f, 0.95f, 0.9f),
-			glm::vec3(0.85f, 0.9f, 1.0f),
-			glm::vec3(0.35f)};
+			glm::vec3(1.0f),
+			glm::vec3(1.0f),
+			glm::vec3(0.7f)};
 		return colors[index % 3];
 	}
 
 	glm::vec3 getAlt2LightDir(int index)
 	{
 		static const glm::vec3 dirs[3] = {
-			glm::normalize(glm::vec3(0.3f, 1.0f, 0.6f)),
-			glm::normalize(glm::vec3(-0.8f, 0.6f, 0.4f)),
-			glm::normalize(glm::vec3(0.0f, -1.0f, 0.4f))};
+			glm::normalize(glm::vec3(1.0f, -1.0f, 2.0f)),
+			glm::normalize(glm::vec3(-1.0f, 1.0f, -2.0f)),
+			glm::normalize(glm::vec3(0.0f, 4.0f, 1.0f))};
 		return dirs[index % 3];
 	}
 
 	glm::vec3 getAlt2LightColor(int index)
 	{
 		static const glm::vec3 colors[3] = {
-			glm::vec3(1.1f, 1.05f, 0.95f),
-			glm::vec3(0.7f, 0.8f, 1.0f),
-			glm::vec3(0.25f)};
+			glm::vec3(0.7f),
+			glm::vec3(0.7f),
+			glm::vec3(0.2f)};
 		return colors[index % 3];
 	}
 
@@ -370,13 +338,15 @@ namespace TextureUtils
 		for (size_t i = 0; i < pixelCount; ++i)
 		{
 			uint16_t pixel = textureData[i];
-			uint8_t r5 = static_cast<uint8_t>((pixel >> 0) & 0x1F); // Red (bits 0-4)
-			uint8_t g5 = static_cast<uint8_t>((pixel >> 5) & 0x1F); // Green (bits 5-9)
+			// clang-format off
+			uint8_t r5 = static_cast<uint8_t>((pixel >> 0) & 0x1F);  // Red (bits 0-4)
+			uint8_t g5 = static_cast<uint8_t>((pixel >> 5) & 0x1F);  // Green (bits 5-9)
 			uint8_t b5 = static_cast<uint8_t>((pixel >> 10) & 0x1F); // Blue (bits 10-14)
-			rgba[i * 4 + 0] = (r5 << 3) | (r5 >> 2); // Red
-			rgba[i * 4 + 1] = (g5 << 3) | (g5 >> 2); // Green
-			rgba[i * 4 + 2] = (b5 << 3) | (b5 >> 2); // Blue
-			rgba[i * 4 + 3] = 0xFF; // Alpha
+			rgba[i * 4 + 0] = r5 << 3; // Red
+			rgba[i * 4 + 1] = g5 << 3; // Green
+			rgba[i * 4 + 2] = b5 << 3; // Blue
+			rgba[i * 4 + 3] = 0xFF;    // Alpha
+			// clang-format on
 		}
 
 		return rgba;
