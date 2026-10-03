@@ -10,6 +10,7 @@ class PS2IconSys::Impl
 {
 public:
 	std::vector<uint8_t> m_data;
+	bool m_valid = false;
 	int m_iconCount = 0;
 	int m_animCount = 0;
 	std::string m_title;
@@ -27,6 +28,7 @@ public:
 
 	void parse()
 	{
+		m_valid = false;
 		if (m_data.size() < 964)
 		{
 			return;
@@ -48,41 +50,21 @@ public:
 			return result;
 		};
 
-		m_titleLineOffset = static_cast<uint16_t>((ptr[0x06] << 8) | ptr[0x07]);
-		m_bgTransparency = static_cast<float>(ptr[0x0C]) / 255.0f;
+		m_titleLineOffset = static_cast<uint16_t>(ptr[0x06] | (ptr[0x07] << 8));
+		m_bgTransparency = std::min(1.0f, static_cast<float>(ptr[0x0C]) / 128.0f);
 
 		for (int i = 0; i < 4; ++i)
 		{
 			size_t offset = 0x10 + (i * 16);
-			// Background color is stored as four uint32 values (RGBA), with each channel using the low byte (0-255).			m_bgColors[i].r = static_cast<float>(ptr[offset + 0]) / 255.0f;
+			m_bgColors[i].r = static_cast<float>(ptr[offset + 0]) / 255.0f;
 			m_bgColors[i].g = static_cast<float>(ptr[offset + 4]) / 255.0f;
 			m_bgColors[i].b = static_cast<float>(ptr[offset + 8]) / 255.0f;
-			m_bgColors[i].a = static_cast<float>(ptr[offset + 12]) / 255.0f;
+			m_bgColors[i].a = std::min(1.0f, static_cast<float>(ptr[offset + 12]) / 128.0f);
 		}
 
-		for (int i = 0; i < 3; ++i)
-		{
-			size_t offset = 0x50 + (i * 16);
-			m_lightDirs[i].x = (static_cast<float>(ptr[offset + 0]) / 64.0f) - 1.0f;
-			m_lightDirs[i].y = (static_cast<float>(ptr[offset + 4]) / 64.0f) - 1.0f;
-			m_lightDirs[i].z = (static_cast<float>(ptr[offset + 8]) / 64.0f) - 1.0f;
-			m_lightDirs[i].w = 0.0f;
-		}
-
-		for (int i = 0; i < 3; ++i)
-		{
-			size_t offset = 0x80 + (i * 16);
-			m_lightColors[i].r = static_cast<float>(ptr[offset + 0]) / 128.0f;
-			m_lightColors[i].g = static_cast<float>(ptr[offset + 4]) / 128.0f;
-			m_lightColors[i].b = static_cast<float>(ptr[offset + 8]) / 128.0f;
-			m_lightColors[i].a = 1.0f;
-		}
-
-		// Ambient light at offset 0xB0 (176)
-		m_ambientLight.r = static_cast<float>(ptr[0xB0 + 0]) / 128.0f;
-		m_ambientLight.g = static_cast<float>(ptr[0xB0 + 4]) / 128.0f;
-		m_ambientLight.b = static_cast<float>(ptr[0xB0 + 8]) / 128.0f;
-		m_ambientLight.a = 1.0f;
+		std::memcpy(m_lightDirs.data(), ptr + 0x50, sizeof(m_lightDirs));
+		std::memcpy(m_lightColors.data(), ptr + 0x80, sizeof(m_lightColors));
+		std::memcpy(&m_ambientLight, ptr + 0xB0, sizeof(m_ambientLight));
 
 		std::string titleSjis;
 		for (size_t i = 0; i < 68 && ptr[0xC0 + i] != 0; ++i)
@@ -109,6 +91,7 @@ public:
 
 		m_iconCount = !m_iconFileIdle.empty() ? 1 : 0;
 		m_animCount = 0;
+		m_valid = true;
 	}
 };
 
@@ -123,6 +106,11 @@ void PS2IconSys::load(const std::vector<uint8_t>& data)
 {
 	m_impl->m_data = data;
 	m_impl->parse();
+}
+
+bool PS2IconSys::isValid() const
+{
+	return m_impl->m_valid;
 }
 
 std::string PS2IconSys::getTitle(const std::string& encoding) const

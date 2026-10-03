@@ -44,29 +44,29 @@ file** for the save icon.
 
 ### `icon.sys` Structure
 
-| Offset | Length       | Description                                                                 |
-|--------|--------------|-----------------------------------------------------------------------------|
-| 0      | byte[4]      | magic: `PS2D`                                                               |
-| 4      | uint16       | `0`                                                                         |
-| 6      | uint16       | Position of newline character in the game title (see Note 1)               |
-| 8      | uint32       | `0`                                                                         |
-| 12     | uint32       | bg_transparency: Background transparency (0-255)                           |
-| 16     | uint32[4]    | bg_color: Top-left corner background color (RGB, 0-255)                    |
-| 32     | uint32[4]    | bg_color: Top-right corner background color (RGB, 0-255)                   |
-| 48     | uint32[4]    | bg_color: Bottom-left corner background color (RGB, 0-255)                 |
-| 64     | uint32[4]    | bg_color: Bottom-right corner background color (RGB, 0-255)                |
-| 80     | uint32[4]    | light_pos1: Light position 1 (XYZ, 0-1)                                     |
-| 96     | uint32[4]    | light_pos2: Light position 2 (XYZ, 0-1)                                     |
-| 112    | uint32[4]    | light_pos3: Light position 3 (XYZ, 0-1)                                     |
-| 128    | uint32[4]    | light_color1: Light color 1 (RGB, 0-1)                                      |
-| 144    | uint32[4]    | light_color2: Light color 2 (RGB, 0-1)                                      |
-| 160    | uint32[4]    | light_color3: Light color 3 (RGB, 0-1)                                      |
-| 176    | uint32[4]    | ambient: Ambient light color (RGB, 0-1)                                    |
-| 192    | byte[68]     | sub_title: Game title (null-terminated, SJIS encoding)                     |
-| 260    | byte[64]     | icon_file_normal: Normal icon filename (null-terminated)                   |
-| 324    | byte[64]     | icon_file_copy: Copy icon filename (null-terminated)                       |
-| 388    | byte[64]     | icon_file_delete: Delete icon filename (null-terminated)                   |
-| 452    | byte[512]    | All zero                                                                    |
+| Offset | Length     | Description                                                  |
+| ------ | ---------- | ------------------------------------------------------------ |
+| 0      | byte[4]    | magic: `PS2D`                                                |
+| 4      | uint16     | `0`                                                          |
+| 6      | uint16     | Position of newline character in the game title (see Note 1) |
+| 8      | uint32     | `0`                                                          |
+| 12     | uint32     | bg_transparency: Background transparency (0-128)             |
+| 16     | uint32[4]  | bg_color: Top-left corner background color (RGB, 0-255)      |
+| 32     | uint32[4]  | bg_color: Top-right corner background color (RGB, 0-255)     |
+| 48     | uint32[4]  | bg_color: Bottom-left corner background color (RGB, 0-255)   |
+| 64     | uint32[4]  | bg_color: Bottom-right corner background color (RGB, 0-255)  |
+| 80     | float32[4] | light_pos1: Light direction 1 (XYZ)                          |
+| 96     | float32[4] | light_pos2: Light direction 2 (XYZ)                          |
+| 112    | float32[4] | light_pos3: Light direction 3 (XYZ)                          |
+| 128    | float32[4] | light_color1: Light color 1 (RGB intensity, usually 0-1)     |
+| 144    | float32[4] | light_color2: Light color 2 (RGB intensity, usually 0-1)     |
+| 160    | float32[4] | light_color3: Light color 3 (RGB intensity, usually 0-1)     |
+| 176    | float32[4] | ambient: Ambient light color (RGB intensity, usually 0-1)    |
+| 192    | byte[68]   | sub_title: Game title (null-terminated, SJIS encoding)       |
+| 260    | byte[64]   | icon_file_normal: Normal icon filename (null-terminated)     |
+| 324    | byte[64]   | icon_file_copy: Copy icon filename (null-terminated)         |
+| 388    | byte[64]   | icon_file_delete: Delete icon filename (null-terminated)     |
+| 452    | byte[512]  | All zero                                                     |
 
 ---
 

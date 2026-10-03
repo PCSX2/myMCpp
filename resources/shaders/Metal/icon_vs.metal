@@ -14,8 +14,6 @@ vertex VSOutput IconVSMain(
         (in.position / 4096.0f) * float3(1.0, -1.0, -1.0);
 
     float4 worldPos = scene.model * float4(position, 1.0);
-    out.fragWorldPos = worldPos.xyz;
-
     out.position = scene.projection * scene.view * worldPos;
 
     float3x3 modelMat3x3 = float3x3(
@@ -23,15 +21,22 @@ vertex VSOutput IconVSMain(
         scene.model[1].xyz,
         scene.model[2].xyz
     );
+    // Reverse rotation for PS2 lighting.
     float3x3 normalMatrix = transpose(modelMat3x3);
     
     float3 normal =
         (in.normal / 4096.0f) * float3(1.0, -1.0, -1.0);
 
-    out.fragNormal = normalize(normalMatrix * normal);
+    normal = normalize(normalMatrix * normal);
 
     out.fragTexCoord = in.texCoord / 4096.0f;
-    out.fragColor    = in.color;
+    float3 light = scene.ambientLight.rgb;
+    for (uint i = 0; i < 3; i++)
+    {
+        float diffuse = max(dot(normalize(scene.lightPos[i].xyz), normal), 0.0f);
+        light += diffuse * scene.lightColor[i].rgb;
+    }
+    out.fragColor = float4(floor(clamp(in.color.rgb * 255.0f * light, 0.0f, 255.0f)), in.color.a);
 
     return out;
 }

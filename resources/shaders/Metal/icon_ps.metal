@@ -5,7 +5,6 @@
 
 fragment float4 IconPSMain(
     VSOutput in                      [[stage_in]],
-    constant SceneCB& scene          [[buffer(0)]],
     constant PushCB& push            [[buffer(1)]],
     texture2d<float> tex             [[texture(0)]],
     sampler texSampler               [[sampler(0)]]
@@ -15,17 +14,9 @@ fragment float4 IconPSMain(
         ? tex.sample(texSampler, in.fragTexCoord)
         : float4(1.0);
 
-    float3 baseColor = (push.useTexture != 0) ? (in.fragColor.rgb * texColor.rgb) : in.fragColor.rgb;
-
-    float3 normal = normalize(in.fragNormal);
-    float3 color  = baseColor * scene.ambientLight.rgb;
-
-    for (uint i = 0; i < 3; i++)
-    {
-        float3 lightDir = normalize(scene.lightPos[i].xyz);
-        float lambert   = max(dot(lightDir, normal), 0.0);
-        color += lambert * scene.lightColor[i].rgb * baseColor;
-    }
+    float3 color = (push.useTexture != 0)
+        ? floor(texColor.rgb * 255.0f * in.fragColor.rgb / 128.0f + 0.0001f) / 255.0f
+        : floor(in.fragColor.rgb + 0.0001f) / 255.0f;
 
     float alpha = (push.enableAlpha != 0) ? in.fragColor.a : push.alphaOverride;
 

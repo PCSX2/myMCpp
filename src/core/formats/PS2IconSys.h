@@ -27,6 +27,7 @@ public:
 	~PS2IconSys();
 
 	void load(const std::vector<uint8_t>& data);
+	bool isValid() const;
 
 	std::string getTitle(const std::string& encoding = "") const;
 	std::string getSubtitle(const std::string& encoding = "") const;

@@ -35,8 +35,6 @@ struct VSInput
 struct VSOutput
 {
     float4 position     [[position]];
-    float3 fragNormal;
     float2 fragTexCoord;
-    float4 fragColor;
-    float3 fragWorldPos;
+    float4 fragColor    [[center_no_perspective]];
 };
