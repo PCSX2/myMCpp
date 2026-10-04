@@ -2663,7 +2663,7 @@ For updates, visit: https://github.com/SternXD/myMCpp/releases</translation>
 <context>
     <name>SaveDetailsPanel</name>
     <message>
-        <location filename="../widgets/SaveDetailsPanel.cpp" line="+105"/>
+        <location filename="../widgets/SaveDetailsPanel.cpp" line="+113"/>
         <source>Size: %1
 Modified: %2</source>
         <translation type="unfinished">Size: %1
@@ -2677,7 +2677,22 @@ Files: %1</source>
 Files: %1</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+85"/>
+        <source>Idle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Delete</source>
+        <translation type="unfinished">Delete</translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Play animation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2687,7 +2702,17 @@ Files: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+29"/>
+        <source>Choose which save icon to preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Icon animation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
         <location filename="../widgets/SaveDetailsPanel.cpp" line="+0"/>
         <source>Pause animation</source>
         <translation type="unfinished"></translation>
@@ -2708,13 +2733,13 @@ Files: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+36"/>
         <source>Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+12"/>
-        <location filename="../widgets/SaveDetailsPanel.cpp" line="-27"/>
+        <location filename="../widgets/SaveDetailsPanel.cpp" line="-32"/>
         <source>No save selected</source>
         <translation type="unfinished">No save selected</translation>
     </message>

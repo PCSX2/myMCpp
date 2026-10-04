@@ -2460,7 +2460,7 @@ This action cannot be undone.</source>
   <context>
     <name>SaveDetailsPanel</name>
     <message>
-      <location filename="../widgets/SaveDetailsPanel.cpp" line="+105"/>
+      <location filename="../widgets/SaveDetailsPanel.cpp" line="+113"/>
       <source>Size: %1
 Modified: %2</source>
       <translation>الحجم: %1
@@ -2474,7 +2474,22 @@ Files: %1</source>
 الملفات: %1</translation>
     </message>
     <message>
-      <location line="+78"/>
+      <location line="+85"/>
+      <source>Idle</source>
+      <translation>خامل</translation>
+    </message>
+    <message>
+      <location line="+0"/>
+      <source>Copy</source>
+      <translation type="unfinished">Copy</translation>
+    </message>
+    <message>
+      <location line="+0"/>
+      <source>Delete</source>
+      <translation>حذف</translation>
+    </message>
+    <message>
+      <location line="+17"/>
       <source>Play animation</source>
       <translation>تشغيل الرسوم المتحركة</translation>
     </message>
@@ -2484,7 +2499,17 @@ Files: %1</source>
       <translation>أيقونة</translation>
     </message>
     <message>
-      <location line="+55"/>
+      <location line="+29"/>
+      <source>Choose which save icon to preview</source>
+      <translation type="unfinished">Choose which save icon to preview</translation>
+    </message>
+    <message>
+      <location line="+3"/>
+      <source>Icon animation</source>
+      <translation type="unfinished">Icon animation</translation>
+    </message>
+    <message>
+      <location line="+21"/>
       <location filename="../widgets/SaveDetailsPanel.cpp" line="+0"/>
       <source>Pause animation</source>
       <translation>إيقاف الرسوم المتحركة مؤقتًا</translation>
@@ -2505,13 +2530,13 @@ Files: %1</source>
       <translation>تصغير العرض</translation>
     </message>
     <message>
-      <location line="+35"/>
+      <location line="+36"/>
       <source>Details</source>
       <translation>التفاصيل</translation>
     </message>
     <message>
       <location line="+12"/>
-      <location filename="../widgets/SaveDetailsPanel.cpp" line="-27"/>
+      <location filename="../widgets/SaveDetailsPanel.cpp" line="-32"/>
       <source>No save selected</source>
       <translation>لم يتم تحديد أي ملف حفظ</translation>
     </message>
