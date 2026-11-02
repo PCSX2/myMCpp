@@ -56,6 +56,7 @@
       - '**/vulkan*'
       - '**/Vulkan*'
       - 'src/core/renderer/Vulkan/**/*'
+      - 'resources/shaders/Vulkan/**/*'
 
 "Renderer: OpenGL":
   - changed-files:
@@ -63,6 +64,7 @@
       - '**/opengl*'
       - '**/OpenGL*'
       - 'src/core/renderer/OpenGL/**/*'
+      - 'resources/shaders/OpenGL/**/*'
 
 "Renderer: Metal":
   - changed-files:
@@ -70,6 +72,7 @@
       - '**/metal*'
       - '**/Metal*'
       - 'src/core/renderer/Metal/**/*'
+      - 'resources/shaders/Metal/**/*'
 
 "Documentation":
   - changed-files:
